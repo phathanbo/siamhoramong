@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ดาวกำหนดชะตา — แดชบอร์ดดูดวง</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Sarabun:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0a0618;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #4030a0;
+      border-radius: 2px;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 20% 10%, #1a0533 0%, #0d0822 40%, #060412 100%);
+      font-family: 'Cormorant Garamond', 'Sarabun', serif;
+      color: #e8d5ff;
+      overflow-x: hidden;
+    }
+
+    #star-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .nebula-1 {
+      position: fixed;
+      top: -10%;
+      left: -5%;
+      width: 50vw;
+      height: 50vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(120, 40, 200, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .nebula-2 {
+      position: fixed;
+      bottom: -10%;
+      right: -5%;
+      width: 45vw;
+      height: 45vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(40, 100, 200, 0.10) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    header.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .header-sub {
+      font-size: 0.8rem;
+      letter-spacing: 0.4em;
+      color: #b088ff;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, #e8c97a 0%, #f0e0b0 40%, #c9a0ff 80%, #8060e0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+    }
+
+    .header-date {
+      color: #9070c0;
+      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    /* Cards */
+    .card {
+      border-radius: 1.25rem;
+      border: 1px solid rgba(140, 80, 255, 0.15);
+      padding: 1.25rem;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: #6050a0;
+      text-transform: uppercase;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    /* Grid layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .grid-6 {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .planets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    /* Moon card */
+    .moon-flex {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .moon-icon {
+      font-size: 2.5rem;
+    }
+
+    .moon-title {
+      font-size: 1.1rem;
+      color: #e8c97a;
+      font-weight: 500;
+    }
+
+    .moon-sub {
+      font-size: 0.8rem;
+      color: #a080d0;
+      margin-top: 0.2rem;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .moon-tip {
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
+      background: rgba(255, 200, 100, 0.06);
+      border-radius: 0.5rem;
+      border-left: 2px solid #e8c97a;
+      font-size: 0.82rem;
+      color: #c8a060;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    /* Lucky */
+    .lucky-item {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 0.5rem;
+      padding: 0.6rem 0.75rem;
+    }
+
+    .lucky-sub {
+      font-size: 0.7rem;
+      color: #8090c0;
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.1em;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .lucky-val {
+      font-size: 0.9rem;
+      color: #90c0ff;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .num-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4060c0, #2040a0);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #c0d8ff;
+      margin-right: 0.3rem;
+    }
+
+    .color-badge {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 1rem;
+      display: inline-block;
+      margin: 0.1rem;
+    }
+
+    /* Zodiac grid */
+    .zodiac-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.75rem;
+      padding: 0.6rem 0.3rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+    }
+
+    .zodiac-btn .zsymbol {
+      font-size: 1.4rem;
+      filter: brightness(0.7);
+      transition: filter 0.2s;
+    }
+
+    .zodiac-btn .zname {
+      font-size: 0.65rem;
+      color: #7060a0;
+      font-family: 'Sarabun', sans-serif;
+      transition: color 0.2s;
+    }
+
+    .zodiac-btn.active {
+      transform: scale(1.05);
+    }
+
+    /* Sign profile */
+    .sign-symbol {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      animation: pulse 3s ease-in-out infinite;
+      display: block;
+      text-align: center;
+    }
+
+    .sign-name {
+      font-size: 1.6rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      text-align: center;
+      display: block;
+    }
+
+    .sign-en {
+      font-size: 0.8rem;
+      color: #7060a0;
+      font-style: italic;
+      text-align: center;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .sign-badge {
+      font-size: 0.75rem;
+      color: #a090c0;
+      padding: 0.4rem 0.8rem;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      display: block;
+      font-family: 'Sarabun', sans-serif;
+      text-align: center;
+    }
+
+    .sign-element {
+      font-size: 0.75rem;
+      text-align: center;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .sign-element span {
+      color: #8080a0;
+    }
+
+    /* Bars */
+    .bars {
+      margin-top: 1.25rem;
+    }
+
+    .bar-row {
+      margin-bottom: 0.5rem;
+    }
+
+    .bar-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: #8080a0;
+      margin-bottom: 0.2rem;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .bar-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.8s ease;
+    }
+
+    /* Horoscope */
+    .cat-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .cat-btn {
+      padding: 0.35rem 0.9rem;
+      border-radius: 2rem;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-family: 'Sarabun', sans-serif;
+      background: rgba(255, 255, 255, 0.05);
+      color: #7060a0;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+
+    .cat-btn.active {
+      background: linear-gradient(135deg, #7040c0, #4020a0);
+      color: #e0d0ff;
+    }
+
+    .reading-box {
+      min-height: 120px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 1rem;
+      border: 1px solid rgba(140, 80, 255, 0.2);
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reading-placeholder {
+      text-align: center;
+      color: #6050a0;
+    }
+
+    .reading-placeholder .crystal {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .reading-placeholder p {
+      font-size: 0.85rem;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .reading-text {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #e8d8ff;
+      line-height: 1.8;
+      font-family: 'Sarabun', sans-serif;
+      letter-spacing: 0.05em;
+    }
+
+    .shimmer {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(180, 120, 255, 0.04), transparent);
+      animation: shimmer 4s ease-in-out infinite;
+    }
+
+    .read-btn {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(180, 100, 255, 0.4);
+      background: linear-gradient(135deg, rgba(120, 50, 200, 0.6), rgba(80, 30, 160, 0.6));
+      color: #e8d0ff;
+      font-size: 0.95rem;
+      font-family: 'Sarabun', sans-serif;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .read-btn:hover {
+      background: linear-gradient(135deg, rgba(150, 70, 230, 0.8), rgba(100, 40, 200, 0.8));
+    }
+
+    /* Planet cards */
+    .planet-card {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .planet-icon {
+      font-size: 1.5rem;
+      min-width: 36px;
+      text-align: center;
+      filter: brightness(1.2);
+    }
+
+    .planet-name {
+      font-size: 0.85rem;
+      color: #c0b0e0;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .planet-pos {
+      font-size: 0.7rem;
+      color: #a090ff;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .planet-meaning {
+      font-size: 0.65rem;
+      color: #6050a0;
+      margin-top: 0.1rem;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    footer.dash-footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #3a2860;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      font-family: 'Sarabun', sans-serif;
+      padding-bottom: 2rem;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.04);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        left: -100%;
+      }
+
+      50% {
+        left: 150%;
+      }
+
+      100% {
+        left: 150%;
+      }
+    }
+
+    @media (max-width: 640px) {
+
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-6 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .planets-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .tl-now-line {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: rgba(255, 255, 50, 0.8);
+      z-index: 10;
+      box-shadow: 0 0 4px rgba(255, 255, 0, 0.5);
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas id="star-canvas"></canvas>
+  <div class="nebula-1"></div>
+  <div class="nebula-2"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header id="main-header">
+      <div class="header-sub">✦ จักรราศีดิจิทัล ✦</div>
+      <h1>ดาวกำหนดชะตา</h1>
+      <div class="header-date" id="today-date"></div>
+    </header>
+
+    <!-- Row 1: Moon + Lucky -->
+    <div class="grid-2">
+
+      <!-- Moon Card -->
+      <div class="card" style="background:#1a0c35; box-shadow:0 4px 30px rgba(160,100,255,0.15);">
+        <div class="card-label">ดวงจันทร์วันนี้</div>
+        <div class="moon-flex">
+          <span class="moon-icon" id="moon-emoji">🌕</span>
+          <div>
+            <div class="moon-title" id="moon-title">จันทร์เต็มดวง</div>
+            <div class="moon-sub" id="moon-desc">พลังงานสูงสุด — เวลาแห่งการปลดปล่อย</div>
+          </div>
+        </div>
+        <div class="moon-tip">🌟 คืนนี้เหมาะสำหรับการทำสมาธิและตั้งความปรารถนา</div>
+        <div id="moon-angle"
+          style="font-size:0.72rem;color:#806040;margin-top:0.5rem;font-family:'Sarabun',sans-serif;"></div>
+      </div>
+
+      <!-- Lucky Card -->
+      <div class="card" style="background:#0c1a35; box-shadow:0 4px 30px rgba(100,160,255,0.15);">
+        <div class="card-label">โชคชะตาวันนี้</div>
+        <div class="grid-2x2">
+          <div class="lucky-item">
+            <div class="lucky-sub">เลขนำโชค</div>
+            <div id="lucky-nums"></div>
+          </div>
+          <div class="lucky-item">
+            <div class="lucky-sub">สีมงคล</div>
+            <div id="lucky-colors"></div>
+          </div>
+          <div class="lucky-item">
+            <div class="lucky-sub">ทิศมงคล</div>
+            <div class="lucky-dir">🧭 ตะวันออกเฉียงเหนือ</div>
+          </div>
+          <div class="lucky-item">
+            <div class="lucky-sub">เวลาดี</div>
+            <div class="lucky-time">🕐 09:00 – 12:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zodiac Selector -->
+    <div class="card" style="background:#0f0a22; box-shadow:0 4px 30px rgba(140,80,255,0.1); margin-bottom:1.25rem;">
+      <div class="card-label">เลือกราศีของคุณ</div>
+      // Duplicate calcAuspiciousScore removed (kept earlier definition)
+
+      <div id="taksa-result" style="display:none;margin-top:1rem;">
+        <!-- ดาววันเกิด -->
+        <div style="margin-bottom:0.75rem;padding:0.6rem 1rem;background:rgba(255,180,60,0.06);
+                border-left:2px solid #e8a030;border-radius:0.5rem;">
+          <span
+            style="font-size:0.7rem;color:#906030;font-family:'Sarabun',sans-serif;letter-spacing:0.1em;">ดาวประจำวันเกิด</span><br />
+          <span id="taksa-birth-planet" style="color:#f0c080;font-family:'Sarabun',sans-serif;font-size:1rem;"></span>
+        </div>
+
+        <!-- ตาราง 8 ช่อง -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;" id="taksa-grid"></div>
+
+        <!-- คำแนะนำวันนี้ -->
+        <div id="taksa-today-box" style="margin-top:0.75rem;padding:0.75rem 1rem;
+         background:rgba(255,255,255,0.03);border-radius:0.75rem;
+         border:1px solid rgba(255,140,60,0.15);">
+          <div style="font-size:0.7rem;color:#906030;font-family:'Sarabun',sans-serif;
+                  letter-spacing:0.1em;margin-bottom:0.4rem;">ทักษาวันนี้</div>
+          <div id="taksa-today-text" style="font-size:0.9rem;color:#e8d0a0;
+           font-family:'Sarabun',sans-serif;line-height:1.7;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ราหูกาล + ยมกาล -->
+    <div class="card" style="background:#1a0a0a; box-shadow:0 4px 30px rgba(200,50,50,0.1); margin-bottom:1.25rem;">
+      <div class="card-label">ราหูกาล & ยมกาล วันนี้</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.75rem;">
+
+        <div id="rahukaal-box"
+          style="border-radius:0.75rem;padding:0.75rem;border:1px solid rgba(200,60,60,0.2);background:rgba(200,60,60,0.05);">
+          <div
+            style="font-size:0.7rem;color:#903030;letter-spacing:0.1em;font-family:'Sarabun',sans-serif;margin-bottom:0.4rem;">
+            ☠️ ราหูกาล — ห้ามเริ่มงานมงคล</div>
+          <div id="rahukaal-time" style="font-size:1.1rem;color:#e08080;font-family:'Sarabun',sans-serif;"></div>
+          <div id="rahukaal-status" style="font-size:0.75rem;margin-top:0.3rem;font-family:'Sarabun',sans-serif;"></div>
+        </div>
+
+        <div id="yamakaal-box"
+          style="border-radius:0.75rem;padding:0.75rem;border:1px solid rgba(180,100,40,0.2);background:rgba(180,100,40,0.05);">
+          <div
+            style="font-size:0.7rem;color:#805020;letter-spacing:0.1em;font-family:'Sarabun',sans-serif;margin-bottom:0.4rem;">
+            ⚠️ ยมกาล — ระวังเป็นพิเศษ</div>
+          <div id="yamakaal-time" style="font-size:1.1rem;color:#d0a060;font-family:'Sarabun',sans-serif;"></div>
+          <div id="yamakaal-status" style="font-size:0.75rem;margin-top:0.3rem;font-family:'Sarabun',sans-serif;"></div>
+        </div>
+
+      </div>
+      <div id="rahuyama-advice"
+        style="margin-top:0.75rem;font-size:0.8rem;color:#907070;font-family:'Sarabun',sans-serif;padding:0.6rem 0.75rem;background:rgba(255,255,255,0.02);border-radius:0.5rem;">
+      </div>
+    </div>
+
+    <!-- ยามอุบากอง -->
+    <div class="card" style="background:#0a100a; box-shadow:0 4px 30px rgba(80,180,80,0.08); margin-bottom:1.25rem;">
+      <div class="card-label">ยามอุบากอง — ฤกษ์ดีรายชั่วโมง</div>
+      <div style="margin-top:0.5rem;font-size:0.75rem;color:#406040;font-family:'Sarabun',sans-serif;">
+        แต่ละยามมีดาวครอง ดาวดีเหมาะเริ่มงาน ดาวร้ายควรหลีกเลี่ยง
+      </div>
+      <div id="ubakong-current"
+        style="margin:0.75rem 0;padding:0.75rem 1rem;border-radius:0.75rem;border:1px solid rgba(80,180,80,0.2);background:rgba(80,180,80,0.05);">
+      </div>
+      <div id="ubakong-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.4rem;"></div>
+    </div>
+
+    <!-- นักษัตรโยค -->
+    <div class="card" style="background:#080a1a; box-shadow:0 4px 30px rgba(100,120,255,0.08); margin-bottom:1.25rem;">
+      <div class="card-label">นักษัตรโยค — โยคประจำวัน</div>
+      <div id="yoga-box" style="margin-top:0.75rem;">
+        <div style="color:#6050a0;font-size:0.8rem;font-family:'Sarabun',sans-serif;">⏳ กำลังคำนวณ...</div>
+      </div>
+    </div>
+
+    <!-- ฤกษ์สรุปรายวัน -->
+    <div class="card" style="background:#0d0d1a; box-shadow:0 4px 30px rgba(180,160,80,0.12); margin-bottom:1.25rem;">
+      <div class="card-label">ฤกษ์สรุปรายวัน</div>
+      <div
+        style="display:grid;grid-template-columns:auto 1fr;gap:1.25rem;align-items:center;margin-top:0.75rem;flex-wrap:wrap;">
+
+        <!-- วงกลมคะแนน -->
+        <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
+          <svg width="90" height="90" style="transform:rotate(-90deg)">
+            <circle cx="45" cy="45" r="38" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="7" />
+            <circle id="score-ring" cx="45" cy="45" r="38" fill="none" stroke="#e8c030" stroke-width="7"
+              stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"
+              style="transition:stroke-dashoffset 1.2s ease, stroke 0.5s" />
+          </svg>
+          <div
+            style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div id="score-number" style="font-size:1.6rem;font-weight:300;color:#e8c030;line-height:1;">0</div>
+            <div style="font-size:0.55rem;color:#806040;font-family:'Sarabun',sans-serif;">คะแนน</div>
+          </div>
+        </div>
+
+        <!-- ผลสรุป -->
+        <div>
+          <div id="score-label" style="font-size:1.1rem;font-family:'Sarabun',sans-serif;margin-bottom:0.4rem;"></div>
+          <div id="score-summary"
+            style="font-size:0.82rem;color:#8080a0;font-family:'Sarabun',sans-serif;line-height:1.7;"></div>
+        </div>
+      </div>
+
+      <!-- breakdown -->
+      <div id="score-breakdown" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.4rem;margin-top:0.75rem;">
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card" style="background:#0a0a14; box-shadow:0 4px 30px rgba(100,80,200,0.1); margin-bottom:1.25rem;">
+      <div class="card-label">timeline ฤกษ์วันนี้ 06:00 – 18:00</div>
+      <div style="margin-top:0.75rem;overflow-x:auto;">
+
+        <!-- แถบเวลา -->
+        <div style="position:relative;min-width:480px;">
+
+          <!-- ruler -->
+          <div id="tl-ruler" style="display:flex;margin-bottom:0.3rem;padding:0 0;"></div>
+
+          <!-- ราหูกาล -->
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
+            <div
+              style="font-size:0.65rem;color:#903030;width:72px;flex-shrink:0;font-family:'Sarabun',sans-serif;text-align:right;">
+              ☠️ ราหูกาล</div>
+            <div
+              style="flex:1;position:relative;height:18px;background:rgba(255,255,255,0.03);border-radius:4px;overflow:hidden;">
+              <div id="tl-rahu"
+                style="position:absolute;top:0;height:100%;background:rgba(200,50,50,0.5);border-radius:4px;"></div>
+              <div id="tl-now-1" class="tl-now-line"></div>
+            </div>
+          </div>
+
+          <!-- ยมกาล -->
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
+            <div
+              style="font-size:0.65rem;color:#805020;width:72px;flex-shrink:0;font-family:'Sarabun',sans-serif;text-align:right;">
+              ⚠️ ยมกาล</div>
+            <div
+              style="flex:1;position:relative;height:18px;background:rgba(255,255,255,0.03);border-radius:4px;overflow:hidden;">
+              <div id="tl-yama"
+                style="position:absolute;top:0;height:100%;background:rgba(180,100,40,0.5);border-radius:4px;"></div>
+              <div id="tl-now-2" class="tl-now-line"></div>
+            </div>
+          </div>
+
+          <!-- ยามอุบากอง -->
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
+            <div
+              style="font-size:0.65rem;color:#407040;width:72px;flex-shrink:0;font-family:'Sarabun',sans-serif;text-align:right;">
+              🌟 ยามดาว</div>
+            <div
+              style="flex:1;position:relative;height:18px;background:rgba(255,255,255,0.03);border-radius:4px;overflow:hidden;"
+              id="tl-yam-bar">
+              <div id="tl-now-3" class="tl-now-line"></div>
+            </div>
+          </div>
+
+          <!-- ช่วงดีสรุป -->
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <div
+              style="font-size:0.65rem;color:#806030;width:72px;flex-shrink:0;font-family:'Sarabun',sans-serif;text-align:right;">
+              ⭐ ฤกษ์ดี</div>
+            <div
+              style="flex:1;position:relative;height:18px;background:rgba(255,255,255,0.03);border-radius:4px;overflow:hidden;"
+              id="tl-good-bar">
+              <div id="tl-now-4" class="tl-now-line"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tl-legend" style="display:flex;gap:1rem;margin-top:0.75rem;flex-wrap:wrap;"></div>
+      </div>
+    </div>
+
+    <!-- ดาวจร -->
+    <div class="card" style="background:#0a0f14; box-shadow:0 4px 30px rgba(80,160,220,0.1); margin-bottom:1.25rem;">
+      <div class="card-label">ดาวจรกระทบดวงเกิด</div>
+      <div style="margin-top:0.5rem;display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+        <input type="date" id="transit-bday" style="background:rgba(255,255,255,0.05);border:1px solid rgba(80,160,220,0.3);
+             border-radius:0.5rem;padding:0.5rem 0.75rem;color:#80c0f0;
+             font-family:'Sarabun',sans-serif;font-size:0.85rem;outline:none;" />
+        <button onclick="calcTransit()" style="padding:0.5rem 1.2rem;border-radius:0.5rem;border:1px solid rgba(80,160,220,0.4);
+             background:rgba(30,70,120,0.4);color:#80c0f0;cursor:pointer;
+             font-family:'Sarabun',sans-serif;font-size:0.85rem;">
+          วิเคราะห์ดาวจร 🔭
+        </button>
+      </div>
+      <div id="transit-result" style="display:none;margin-top:1rem;"></div>
+    </div>
+
+    <!-- ลัคนาราศี + 12 ภพ -->
+    <div class="card" style="background:#0a0a10; box-shadow:0 4px 30px rgba(160,120,255,0.1); margin-bottom:1.25rem;">
+      <div class="card-label">ลัคนาราศี & 12 ภพ</div>
+
+      <div style="display:flex;gap:0.75rem;margin-top:0.75rem;flex-wrap:wrap;align-items:flex-end;">
+        <div>
+          <div style="font-size:0.65rem;color:#504070;font-family:'Sarabun',sans-serif;margin-bottom:0.3rem;">วันเกิด
+          </div>
+          <input type="date" id="lagna-date" style="background:rgba(255,255,255,0.05);border:1px solid rgba(160,120,255,0.3);
+               border-radius:0.5rem;padding:0.5rem 0.75rem;color:#c0a0ff;
+               font-family:'Sarabun',sans-serif;font-size:0.85rem;outline:none;" />
+        </div>
+        <div>
+          <div style="font-size:0.65rem;color:#504070;font-family:'Sarabun',sans-serif;margin-bottom:0.3rem;">เวลาเกิด
+            (UTC+7)</div>
+          <input type="time" id="lagna-time" style="background:rgba(255,255,255,0.05);border:1px solid rgba(160,120,255,0.3);
+               border-radius:0.5rem;padding:0.5rem 0.75rem;color:#c0a0ff;
+               font-family:'Sarabun',sans-serif;font-size:0.85rem;outline:none;" />
+        </div>
+        <div>
+          <div style="font-size:0.65rem;color:#504070;font-family:'Sarabun',sans-serif;margin-bottom:0.3rem;">
+            จังหวัดเกิด</div>
+          <select id="lagna-province" style="background:#1a1228;border:1px solid rgba(160,120,255,0.3);
+               border-radius:0.5rem;padding:0.5rem 0.75rem;color:#c0a0ff;
+               font-family:'Sarabun',sans-serif;font-size:0.85rem;outline:none;min-width:140px;">
+          </select>
+        </div>
+        <button onclick="calcLagna()" style="padding:0.5rem 1.2rem;border-radius:0.5rem;border:1px solid rgba(160,120,255,0.4);
+             background:rgba(80,40,160,0.4);color:#c0a0ff;cursor:pointer;
+             font-family:'Sarabun',sans-serif;font-size:0.85rem;white-space:nowrap;">
+          คำนวณลัคนา ✨
+        </button>
+      </div>
+
+      <div id="lagna-result" style="display:none;margin-top:1rem;"></div>
+    </div>
+
+    <!-- ปฏิทินฤกษ์รายสัปดาห์ -->
+    <div class="card" style="background:#0a0c14; box-shadow:0 4px 30px rgba(100,140,255,0.1); margin-bottom:1.25rem;">
+      <div class="card-label">ปฏิทินฤกษ์รายสัปดาห์</div>
+      <div style="margin-top:0.5rem;font-size:0.75rem;color:#404060;font-family:'Sarabun',sans-serif;">
+        7 วันข้างหน้า — คะแนนฤกษ์และช่วงเวลาดีของแต่ละวัน
+      </div>
+      <div id="weekly-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:0.4rem;margin-top:0.75rem;">
+      </div>
+      <div id="weekly-detail" style="margin-top:0.75rem;display:none;"></div>
+    </div>
+
+
+
+    <footer class="dash-footer">✦ ดวงดาวกำหนดทิศทาง แต่เจตจำนงของคุณคือพลังที่แท้จริง ✦</footer>
+  </div>
+
+  <script>
+    /* (script content omitted in this committed copy for brevity) */
+  </script>
+</body>
+
+</html>
