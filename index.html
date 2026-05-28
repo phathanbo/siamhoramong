@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="สยามโหรามงคล - เว็บไซต์ดูดวงชะตา พยากรณ์ตามตำราโบราณ ทำนายดวงชะตารายปี ปีนักษัตร ยามอัฏฐกาล ฉัตร ๙ ชั้น มหาทักษา และอีกมากมาย">
+    <title>สยามโหรามงคล</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="bg-dark text-white py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 onclick="navigateTo('mainContent')" style="cursor: pointer;">🔮 สยามโหรามงคล</h1>
+            <nav>
+                <ul class="nav">
+                    <li class="nav-item d-flex align-items-center ml-3">
+                        <div id="navYarmBadge" class="badge badge-gold p-2"
+                            style="border: 1px solid #d4af37; background: rgb(255, 255, 255); cursor: pointer;"
+                            onclick="quickPredictYarm()">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span id="navYarmName">กำลังคำนวณยาม...</span>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#mainContent" onclick="goBack()">
+                            <i class="fas fa-home mr-2"></i> หน้าหลัก
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#mainpage" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-place-of-worship mr-2"></i> ห้องพยากรณ์
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#knowledgePage" onclick="navigateTo('knowledgePage')">
+                            <i class="fas fa-book-open mr-2"></i> ความรู้พื้นฐาน
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#historySection" onclick="navigateTo('historySection')">
+                            <i class="fas fa-user-clock mr-2"></i> ทะเบียนสมาชิก
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div id="dailyColorHeader" class="container"></div> <!-- colors.js -->
+    </header>
+
+    <!--<main id="mainContent" class="main-section" style="display: none;">
+        <div id="auth-section" class="container mt-4">
+                <div id="logged-out-view" class="card p-4 shadow-sm">
+                    <h3 class="text-center">🔮 เข้าสู่ระบบสมาชิก</h3>
+                    <div id="login-form">
+                        <input type="email" id="auth-email" class="form-control mb-2" placeholder="อีเมล">
+                        <input type="password" id="auth-pass" class="form-control mb-2" placeholder="รหัสผ่าน">
+                        <button class="btn btn-primary btn-block" onclick="memberApp.login()">เข้าสู่ระบบ</button>
+                        <p class="text-center mt-2">
+                            <small>ยังไม่มีบัญชี? <a href="javascript:void(0)" onclick="memberApp.toggleForm(true)">สมัครสมาชิก</a></small>
+                        </p>
+                    </div>
+
+                    <div id="register-form" class="d-none">
+                        <input type="text" id="reg-name" class="form-control mb-2" placeholder="ชื่อ-นามสกุล">
+                        <input type="email" id="reg-email" class="form-control mb-2" placeholder="อีเมล">
+                        <input type="password" id="reg-pass" class="form-control mb-2" placeholder="ตั้งรหัสผ่าน">
+                        <label><small>เลือกแพ็กเกจสมาชิก:</small></label>
+                        <select id="reg-package" class="form-control mb-2">
+                            <option value="ทดลองใช้">ทดลองใช้</option>
+                            <option value="ธรรมดา">ธรรมดา</option>
+                            <option value="ทองแดง">ทองแดง</option>
+                            <option value="เงิน">เงิน</option>
+                            <option value="ทองคำ">ทองคำ</option>
+                            <option value="วิมาน">วิมาน (VIP)</option>
+                        </select>
+                        <button class="btn btn-success btn-block" onclick="memberApp.register()">ยืนยันการสมัคร</button>
+                        <p class="text-center mt-2">
+                            <small>มีบัญชีแล้ว? <a href="javascript:void(0)" onclick="memberApp.toggleForm(false)">กลับไปล็อกอิน</a></small>
+                        </p>
+                    </div>
+                </div>
+                <div id="logged-in-view" class="card p-4 shadow-sm d-none" style="border-left: 5px solid #d4af37;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">สวัสดีคุณ <span id="display-user-name" class="text-gold"></span></h4>
+                            <span id="display-package" class="badge badge-warning">ระดับ: -</span>
+                        </div>
+                        <button class="btn btn-outline-danger btn-sm" onclick="memberApp.logout()">ออกจากระบบ</button>
+                    </div>
+                </div>
+            </div>
+    </main> -->
+
+
+    <!-- 1.หน้าหลัก กรอกชื่อสมัคร ไฟล์ membermanager.js -->
+    <div id="mainContent" class="main-section">
+        <span id="userGreeting" class="text-center font-weight-bold mb-4 d-block" style="font-size: 50px;">✨
+            ยินดีต้อนรับท่านเจ้าชะตา ✨</span>
+        <section id="form" class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="text-center mb-4">กรอกข้อมูลเพื่อทำนายดวง</h2>
+                <div class="form-group">
+                    <label>ชื่อผู้รับคำทำนาย:</label>
+                    <input type="text" class="form-control" id="targetName" placeholder="กรุณากรอกชื่อ" required>
+                </div>
+                <div class="form-group">
+                    <label>นามสกุล:</label>
+                    <input type="text" class="form-control" id="targetLastName" placeholder="กรุณากรอกนามสกุล" required>
+                </div>
+                <div class="form-group">
+                    <label for="birthdate">วันเกิด (ปี ค.ศ.):</label>
+                    <input type="text" class="form-control" id="birthdate" placeholder="วว/ดด/ปปปป" required
+                        autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="birthMonththai">เดือนเกิด(ไทย):</label>
+                    <input type="number" class="form-control" id="birthMonththai" max="12" min="1" placeholder="1-12"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="birthtime">เวลาเกิด:</label>
+                    <input type="time" class="form-control" id="birthtime" required>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-gold btn-block" onclick="calculateEsh()">ดูดวงชะตา</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <!-- 2.หน้าประวัติ ไฟล์ membermanager.js-->
+    <section id="historySection" class="main-section" style="display: none;">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4">📜 ประวัติสมาชิก</h4>
+            <input type="text" id="searchInput" class="form-control mb-3" placeholder="🔍 ค้นหาชื่อหรือรหัส..."
+                onkeyup="searchHistory()">
+            <div class="table-responsive">
+                <table class="table text-center" style="background: rgb(255, 255, 255);">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>รหัสสมาชิก</th>
+                            <th>ชื่อ</th>
+                            <th>นามสกุล</th>
+                            <th>วันเกิด</th>
+                            <th>เดือนเกิด(ไทย)</th>
+                            <th>นักษัตร</th>
+                            <th>ยาม</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody"></tbody>
+                </table>
+            </div>
+            <div id="historyCount" class="text-right small text-muted"></div>
+        </div>
+    </section>
+
+
+    <!-- 3.หน้าโปรไฟล์ ไฟล์ membermanager.js -->
+    <section id="profilePage" class="main-section" style="display: none;">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card-body bg-light text-dark shadow-lg">
+                    <div class="card-body text-center">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="100"
+                            class="rounded-circle mb-3">
+                        <h1 id="profullname" class="card-title">-</h1>
+                        <hr>
+                        <div class="text-left">
+                            <p><strong>รหัสสมาชิก:</strong> <span id="profId">-</span></p>
+                            <p><strong>วันเกิด:</strong> <span id="profBirth">-</span></p>
+                            <p><strong>เวลาเกิด:</strong> <span id="profTime">-</span></p>
+                            <p><strong>ปีนักษัตร:</strong> <span id="profZodiac">-</span></p>
+                            <p><strong>ยามที่:</strong> <span id="profYam">-</span></p>                            
+                        </div>
+                            <p>ตรวจดวงประจำวันเกิด <strong onclick= "navigateTo('daily-horoscope')" style="cursor: pointer;">คลิก</strong> </p>
+                    </div>
+                </div>
+                <div id="personalFortuneArea" class="mt-4"></div>
+                <button type="button" class="btn btn-outline-primary btn-block mt-2" onclick="calculateLifeGraph()">✨
+                    กราฟชีวิตพยากรณ์</button>
+                <button type="button" class="btn btn-outline-gold btn-block mt-2"
+                    onclick="navigateTo('nameAnalysisPage'); analyzeName();">🔮 วิเคราะห์ชื่อสมาชิกทันที</button>
+                <button type="button" class="btn btn-outline-warning btn-block mt-2"
+                    onclick="navigateTo('mahathaksaPage'); calculateThaksa(false);"><i
+                        class="fas fa-dharmachakra mr-2"></i> มหาทักษาพยากรณ์</button>
+                <button class="btn btn-secondary btn-block mb-3" onclick="goBack()">🔙 กลับหน้าหลัก</button>
+                <button class="btn btn-secondary btn-block mb-3" onclick="navigateTo('historySection')">🔙
+                    ทะเบียนสมาชิก</button>
+                <button class="btn btn-outline-secondary btn-block mt-4 border-0" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                </button>
+            </div>
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-body book-page" id="profPredictionArea"></div>
+                </div>
+                <div class="text-center mt-3">
+                    <button class="btn btn-success" onclick="downloadImageFromProfile()">📸 บันทึกเป็นรูปภาพ</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4.หน้าองค์ประกอบธาตุ ไฟล์ elementmanual.js -->
+    <section id="elementManualPage" class="main-section" style="display: none;">
+        <div id="elementManualContainer"></div>
+    </section>
+
+
+    <!-- 5.หน้าปฏิทินฤกษ์มงคล ไฟล์ AuspiciousDays.js -->
+    <section id="auspiciousPage" class="main-section" style="display: none;">
+        <div id="calendarBodypage"></div>
+    </section>
+
+
+    <!-- 6.ตำราดาวคู่มิตร - คู่ศัตรู ไฟล์ relation.js -->
+    <section id="planetRelationPage" class="main-section" style="display: none;">
+        <div id="relationTableBodypage"></div>
+    </section>
+
+
+    <!--  7.วิเคราะห์เลขศาสตร์มงคล ไฟล์ numerology.js -->
+    <section id="numerologyPage" class="main-section" style="display: none;">
+        <div id="numberlogypage"></div>
+    </section>
+
+
+    <!-- 8.วิเคราะห์ดวงสมพงษ์ ไฟล์ compatibility.js-->
+    <section id="compatibilityPage" class="main-section" style="display: none;">
+        <div id="compatipage"></div>
+    </section>
+
+
+    <!-- 9.หอคำนวณเลขมงคล ไฟล์ lotto.js-->
+    <section id="lottoPage" class="main-section" style="display: none;">
+        <div id="lottoResultpage"></div>
+    </section>
+
+    <!-- 10.หอพยากรณ์สีมงคล ไฟล์ colors.js-->
+    <section id="weeklyColorSection" class="main-section" style="display: none;">
+        <div id="colorpage"></div>
+    </section>
+
+    <!-- 11.ทักษาพยากรณ์ ไฟล์ taksaPage.js -->
+    <section id="taksaPage" class="main-section" style="display: none;">
+        <div id="taksaTablepage"></div>
+    </section>
+
+    <!-- 12.ยามอัฏฐกาลพยากรณ์ ไฟล์ yarmPage.js -->
+    <section id="yarmPage" class="main-section" style="display: none;">
+        <div id="showyarmpage"></div>
+    </section>
+
+    <!-- 13.แผนที่ฤกษ์มงคลรายวัน ไฟล์ dailyHighlights.js-->
+    <section id="dailyHighlightPage" class="main-section" style="display: none;">
+        <div id="showdailytablepage"></div>
+    </section>
+
+    <!-- 14.ข้อห้ามรายวัน ไฟล์ dailyTaboo.js-->
+    <section id="dailyTabooPage" class="main-section" style="display: none;">
+        <div id="showdailytaboopage"></div>
+    </section>
+
+
+    <!-- 15.กราฟชีวิตพยากรณ์ ไฟล์ lifeGraph.js -->
+    <section id="lifeGraphPage" class="main-section" style="display: none;">
+        <div id="showlifeGraphPage"></div>
+    </section>
+
+    <!-- 16.ทำนายฝัน + เลขเด็ด ไฟล์ dreamInterpretation.js -->
+    <section id="dreamPage" class="main-section" style="display: none;">
+        <div id="dreampage"></div>
+    </section>
+
+    <!-- 17.เลข 7 ตัว ฐาน 4 ไฟล์ sevenDigits.js-->
+    <section id="sevenDigitsPage" class="main-section" style="display: none;">
+        <div id="sevenPage"></div>
+    </section>
+
+    <!-- 18.ความรู้-->
+    <section id="knowledgePage" class="main-section" style="display: none;">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4">📚 คลังความรู้มหาโหรา</h4>
+            <input type="text" id="knowledgeSearchInput" class="form-control mb-3"
+                placeholder="🔍 ค้นหาหัวข้อตำรา หรือเคล็ดวิชา..." onkeyup="searchKnowledge()">
+            <div class="d-flex flex-wrap justify-content-center mb-4" id="knowledgeCategoryFilter">
+                <button class="btn btn-sm btn-outline-gold m-1 active" onclick="filterKnowledge('all')">ทั้งหมด</button>
+                <button class="btn btn-sm btn-outline-gold m-1"
+                    onclick="filterKnowledge('ตำราโบราณ')">ตำราโบราณ</button>
+                <button class="btn btn-sm btn-outline-gold m-1"
+                    onclick="filterKnowledge('โหราศาสตร์')">โหราศาสตร์</button>
+                <button class="btn btn-sm btn-outline-gold m-1"
+                    onclick="filterKnowledge('วิถีสิริมงคล')">สิริมงคล</button>
+                <button class="btn btn-sm btn-outline-gold m-1"
+                    onclick="filterKnowledge('วิเคราะห์ลักษณะ')">ลักษณะบุคคล</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover text-center bg-light">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>หมวดหมู่</th>
+                            <th>หัวข้อตำรา</th>
+                            <th>ประเภท</th>
+                            <th>ระดับความรู้</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="knowledgeBody">
+                    </tbody>
+                </table>
+            </div>
+            <div id="knowledgeCount" class="text-right small text-muted"></div>
+        </div>
+    </section>
+
+    <!-- 18..1 ความรู้-->
+    <section id="articleViewPage" class="main-section" style="display: none;">
+        <div class="card-body">
+            <div class="mb-4">
+                <button class="btn btn-outline-gold btn-sm" onclick="navigateTo('knowledgePage')">
+                    <i class="fas fa-chevron-left"></i> ย้อนกลับไปคลังความรู้
+                </button>
+            </div>
+            <div id="fullContentArea" class="article-container"></div>
+            <div id="articleAction" class="text-center mt-5 pb-5"></div>
+        </div>
+    </section>
+
+    <!-- 19.วิเคราะห์เลขศาสตร์ ชื่อ-นามสกุล ไฟล์ nameAnalysis.js-->
+    <section id="nameAnalysisPage" class="main-section" style="display: none;">
+        <div id="shownamepage"></div>
+    </section>
+
+    <!-- 20. วิชามหามงคล "ฉัตร 3 ชั้น" ไฟล์ chatraPage.js-->
+    <section id="chatraPage" class="main-section" style="display: none;">
+        <div id="showchatriPage"></div>
+    </section>
+
+
+    <!-- 21.วิชามหามงคล "ต่อชะตาชีวิต" ไฟล์ lifeExtension.js-->
+    <section id="lifeExtensionPage" class="main-section" style="display: none;">
+        <div id="showlifeextensionpage"></div>
+    </section>
+
+
+    <!-- 22.วิชามหามงคล "มหาทักษาพยากรณ์"-->
+    <section id="mahathaksaPage" class="main-section" style="display: none;">
+        <div class="container mt-4 text-center">
+            <div class="card bg-dark border-gold p-4 shadow-lg">
+                <h2 class="text-gold mb-4"><i class="fas fa-dharmachakra mr-2"></i> มหาทักษาพยากรณ์</h2>
+                <div class="row justify-content-center mb-4" style="display: none;">
+                    <div class="col-md-6">
+                        <label class="text-white">เลือกวันเกิดของท่าน</label>
+                        <select id="birthDaySelecttaksa" class="form-control bg-black text-gold border-gold">
+                            <option value="0">วันอาทิตย์</option>
+                            <option value="1">วันจันทร์</option>
+                            <option value="2">วันอังคาร</option>
+                            <option value="3">วันพุธ (กลางวัน)</option>
+                            <option value="4">วันเสาร์</option>
+                            <option value="5">วันพฤหัสบดี</option>
+                            <option value="6">วันพุธ (กลางคืน/ราหู)</option>
+                            <option value="7">วันศุกร์</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center mb-3">
+                    <div class="form-group">
+                        <label class="text-gold">เลือกจากรายชื่อสมาชิก (ประวัติ):</label>
+                        <select id="memberSelect"
+                            class="form-control bg-dark text-white border-gold member-selector-shared"
+                            onchange="autoFillMemberData(this.value); calculateThaksa(true)">
+                            <option value="">-- เลือกสมาชิก --</option>
+                        </select>
+                    </div>
+                    <label class="text-white-50 small d-block">ระบุวันเดือนปีเกิดเพื่อคำนวณอายุย่าง
+                        (วัน/เดือน/ค.ศ.)</label>
+                    <input type="date" id="birthDate" class="form-control bg-black text-gold border-gold mx-auto"
+                        style="max-width: 250px;" onchange="calculateThaksa(false)">
+
+                    <div id="displayAgeYang" class="mt-2 badge badge-warning p-2 px-3"
+                        style="font-size: 1.1rem; color: #000;">
+                        ยังไม่ได้ระบุวันเกิด
+                    </div>
+                </div>
+
+                <div class="thaksa-wheel-container mb-4">
+                    <div id="thaksaDisplay" class="row">
+                    </div>
+                </div>
+
+                <div id="thaksaResult" class="text-center mt-3 p-3 rounded"
+                    style="background: rgba(0,0,0,0.5); display: none;">
+                    <h4 class="text-gold border-bottom pb-2">คำทำนายภูมิพื้นดวง</h4>
+                    <div id="thaksaDetail" class="text-white"></div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <button class="btn btn-outline-secondary btn-block border-0"
+                                onclick="navigateTo('mainpage')">
+                                <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                                <i class="fas fa-home"></i> กลับหน้าหลัก
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 23.คำนวณลัคนาพยากรณ์ ไฟล์ ascendant.js-->
+    <section id="ascendantPage" class="main-section" style="display: none;">
+            <div id="showascPage"></div>
+    </section>
+
+
+    <!-- 24.ฉัตร 9 ชั้น ไฟล์ chatnine.js-->
+    <section id="chatninePage" class="main-section" style="display: none;">
+            <div id="showchatraninePage"></div>
+    </section>
+
+    <!-- 25.หาคู่รักหรือคู่สมรส ไฟล์ ElementMatch.js -->
+    <section id="marriage-compatibility" class="main-section" style="display: none;">
+        <div id="showMatchpage"></div>
+    </section>
+
+
+
+    <section id="patient-prognosis" class="main-section" style="display: none;">
+        <div class="compatibility-container">
+            <h2 class="section-title">วิธีพยากรณ์ตัดอายุคนป่วย</h2>
+            <p class="section-subtitle">คำทำนายเกณฑ์ชะตาว่าจะตายหรือมิตายตามตำราฉัตร ๙ ชั้น</p>
+            <div class="selection-grid">
+                <div class="input-box">
+                    <label for="patientAge">อายุบริบูรณ์ (ปี)</label>
+                    <input type="number" id="patientAge" class="form-control" placeholder="ระบุอายุคนป่วย">
+                </div>
+                <div class="input-box">
+                    <label for="birthDayNum">วันเกิด (๑-๗)</label>
+                    <select id="birthDayNum" class="form-control">
+                        <option value="1">วันอาทิตย์ (๑)</option>
+                        <option value="2">วันจันทร์ (๒)</option>
+                        <option value="3">วันอังคาร (๓)</option>
+                        <option value="4">วันพุธ (๔)</option>
+                        <option value="5">วันพฤหัสบดี (๕)</option>
+                        <option value="6">วันศุกร์ (๖)</option>
+                        <option value="7">วันเสาร์ (๗)</option>
+                    </select>
+                </div>
+                <div class="input-box" style="grid-column: span 2;">
+                    <label for="birthMonthNum">เดือนเกิด (๑-๑๒)</label>
+                    <input type="number" id="birthMonthNum" class="form-control"
+                        placeholder="เช่น เดือน ๕ หรือ เดือน ๑๒" min="1" max="12">
+                </div>
+            </div>
+
+            <button type="button" class="btn-predict" onclick="calculatePatientFate()">พยากรณ์เกณฑ์ชะตา</button>
+
+            <div id="patient-result-display" class="result-card" style="display: none;">
+                <div class="method-box">
+                    <strong>วิธีที่ ๑: คำนวณด้วยธาตุและเบญจขันธ์</strong>
+                    <div id="method1-result"></div>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #d4af37; margin: 15px 0;">
+                <div class="method-box">
+                    <strong>วิธีที่ ๒: คำนวณด้วยวันและเดือน</strong>
+                    <div id="method2-result"></div>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #d4af37; margin: 15px 0;">
+                <div class="method-box">
+                    <strong>วิธีที่ ๓: คำนวณตัดอายุ (สูตร ๗ บวก ๓ คูณ)</strong>
+                    <div id="method3-result"></div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                        <i class="fas fa-home"></i> กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <section id="soulmate-direction" class="main-section" style="display: none;">
+        <div class="compatibility-container">
+            <h2 class="section-title">ดูที่อยู่เนื้อคู่ประจำทิศ</h2>
+            <p class="section-subtitle">คำนวณหาลักษณะและทิศที่อยู่ของเนื้อคู่ตามเศษวันเกิดและปี</p>
+
+            <div class="selection-grid">
+                <div class="input-box">
+                    <label for="userBirthDay">วันเกิดของผู้ดู</label>
+                    <select id="userBirthDay" class="form-control">
+                        <option value="1">วันอาทิตย์ (๑)</option>
+                        <option value="2">วันจันทร์ (๒)</option>
+                        <option value="3">วันอังคาร (๓)</option>
+                        <option value="4">วันพุธ (๔)</option>
+                        <option value="5">วันพฤหัสบดี (๕)</option>
+                        <option value="6">วันศุกร์ (๖)</option>
+                        <option value="7">วันเสาร์ (๗)</option>
+                    </select>
+                </div>
+                <div class="input-box">
+                    <label for="userBirthYear">ปีเกิด (นับลำดับนักษัตร)</label>
+                    <select id="userBirthYear" class="form-control">
+                        <option value="1">ปีชวด (๑)</option>
+                        <option value="2">ปีฉลู (๒)</option>
+                        <option value="3">ปีขาล (๓)</option>
+                        <option value="4">ปีเถาะ (๔)</option>
+                        <option value="5">ปีมะโรง (๕)</option>
+                        <option value="6">ปีมะเส็ง (๖)</option>
+                        <option value="7">ปีมะเมีย (๗)</option>
+                        <option value="8">ปีมะแม (๘)</option>
+                        <option value="9">ปีวอก (๙)</option>
+                        <option value="10">ปีระกา (๑๐)</option>
+                        <option value="11">ปีจอ (๑๑)</option>
+                        <option value="12">ปีกุน (๑๒)</option>
+                    </select>
+                </div>
+            </div>
+            <button type="button" class="btn-predict"
+                onclick="calculateSoulmateDirection()">ทำนายที่อยู่เนื้อคู่</button>
+
+            <div id="soulmate-result-display" class="result-card" style="display: none;">
+                <div id="soulmate-text-content"></div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                        <i class="fas fa-home"></i> กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <section id="birth-fortune" class="main-section" style="display: none;">
+        <div class="compatibility-container">
+            <h2 class="section-title">คำนวณโชคกำเนิด (พยากรณ์อาชีพ)</h2>
+            <p class="section-subtitle">วิเคราะห์อาชีพที่ถูกโฉลกตามวันเดือนปีเกิดและจุลศักราช</p>
+
+            <div class="selection-grid">
+                <div class="input-box">
+                    <label>วันเกิด (๑-๗)</label>
+                    <select id="fortuneDay" class="form-control">
+                        <option value="1">วันอาทิตย์ (๑)</option>
+                        <option value="2">วันจันทร์ (๒)</option>
+                        <option value="3">วันอังคาร (๓)</option>
+                        <option value="4">วันพุธ (๔)</option>
+                        <option value="5">วันพฤหัสบดี (๕)</option>
+                        <option value="6">วันศุกร์ (๖)</option>
+                        <option value="7">วันเสาร์ (๗)</option>
+                    </select>
+                </div>
+                <div class="input-box">
+                    <label>เดือนเกิด (๑-๑๒)</label>
+                    <input type="number" id="fortuneMonth" class="form-control" placeholder="ระบุเดือนเกิด" min="1"
+                        max="12">
+                </div>
+                <div class="input-box">
+                    <label>ปีเกิด (ลำดับนักษัตร ๑-๑๒)</label>
+                    <select id="fortuneYear" class="form-control">
+                        <option value="1">ปีชวด (๑)</option>
+                        <option value="2">ปีฉลู (๒)</option>
+                        <option value="3">ปีขาล (๓)</option>
+                        <option value="4">ปีเถาะ (๔)</option>
+                        <option value="5">ปีมะโรง (๕)</option>
+                        <option value="6">ปีมะเส็ง (๖)</option>
+                        <option value="7">ปีมะเมีย (๗)</option>
+                        <option value="8">ปีมะแม (๘)</option>
+                        <option value="9">ปีวอก (๙)</option>
+                        <option value="10">ปีระกา (๑๐)</option>
+                        <option value="11">ปีจอ (๑๑)</option>
+                        <option value="12">ปีกุน (๑๒)</option>
+                    </select>
+                </div>
+                <div class="input-box">
+                    <label>ปีพุทธศักราชเกิด (พ.ศ.)</label>
+                    <input type="number" id="fortuneBE" class="form-control" placeholder="เช่น ๒๕๓๐" min="1182">
+                    <small style="color: #888;">*ระบบจะแปลงเป็น จ.ศ. ให้โดยอัตโนมัติ</small>
+                </div>
+            </div>
+
+            <button type="button" class="btn-predict" onclick="calculateBirthFortune()">ทำนายโชคกำเนิด</button>
+
+            <div id="fortune-result-display" class="result-card" style="display: none;">
+                <div class="method-box">
+                    <strong>แบบที่ ๑: โชคกำเนิดทั่วไป</strong>
+                    <div id="fortune-res-1"></div>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #d4af37; margin: 15px 0;">
+                <div class="method-box">
+                    <strong>แบบที่ ๒: โชคกำเนิด (พยากรณ์เสริม)</strong>
+                    <div id="fortune-res-2"></div>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #d4af37; margin: 15px 0;">
+                <div class="method-box">
+                    <strong>แบบที่ ๓: โชคกำเนิดตามจุลศักราช</strong>
+                    <div id="fortune-res-3"></div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                        <i class="fas fa-home"></i> กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section id="auspicious-day" class="main-section" style="display: none;">
+        <div class="compatibility-container">
+            <h2 class="section-title">ตารางฤกษ์มงคลกาลวัตถุ</h2>
+            <p class="section-subtitle">เทียบข้างขึ้น-ข้างแรม ตามตำราเขษมบรรณกิจ</p>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="text-gold text-center mb-3"><i class="fas fa-moon"></i> ฝั่งข้างขึ้น (๑-๑๕ ค่ำ)</h4>
+                    <div class="table-responsive">
+                        <table class="table table-dark-custom">
+                            <thead>
+                                <tr>
+                                    <th>วัน</th>
+                                    <th>คำทำนายฤกษ์</th>
+                                </tr>
+                            </thead>
+                            <tbody id="waxingTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4 class="text-danger text-center mb-3"><i class="far fa-moon"></i> ฝั่งข้างแรม (๑-๑๕ ค่ำ)</h4>
+                    <div class="table-responsive">
+                        <table class="table table-dark-custom">
+                            <thead>
+                                <tr>
+                                    <th>วัน</th>
+                                    <th>คำทำนายฤกษ์</th>
+                                </tr>
+                            </thead>
+                            <tbody id="waningTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                        <i class="fas fa-home"></i> กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section id="ubakong-yarm" class="main-section" style="display: none;">
+        <div class="compatibility-container">
+            <h2 class="section-title">ยามอุบากอง (ยันต์ยาตรา)</h2>
+            <p class="section-subtitle" id="current-date-display"></p>
+            <div class="selection-grid" style="margin-bottom: 20px;">
+                <div class="input-box">
+                    <label>ตรวจเช็กฤกษ์เดินทางวันอื่นๆ</label>
+                    <select id="ubakongDay" class="form-control" onchange="renderUbakongDay(); renderTravelRites()">
+                        <option value="0">วันอาทิตย์</option>
+                        <option value="1">วันจันทร์</option>
+                        <option value="2">วันอังคาร</option>
+                        <option value="3">วันพุธ</option>
+                        <option value="4">วันพฤหัสบดี</option>
+                        <option value="5">วันศุกร์</option>
+                        <option value="6">วันเสาร์</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ubakong-dashboard" id="ubakong-list">
+            </div>
+            <div class="legend-box" style="margin-top: 20px;">
+                <p><span style="color: #d4af37;">▶</span> คือช่วงเวลาปัจจุบัน | <span
+                        style="color: #28a745;">●●●●</span> ยามดีมาก | <span
+                        style="color: #dc3545;">✖</span>ยามห้ามเดินทาง</p>
+            </div>
+        </div>
+        <div class="compatibility-container">
+            <h2 class="section-title">ฤกษ์ยาตราและทิศผีหลวง</h2>
+            <p class="section-subtitle">ตรวจสอบทิศมงคลและข้อห้ามในการเดินทางรายชั่วโมง</p>
+            <div id="phi-luang-info" class="result-card" style="margin-bottom: 20px; border-left: 5px solid #ff4757;">
+                <h4 id="phi-luang-dir" style="color: #ff4757; margin-bottom: 5px;"></h4>
+                <p id="phi-luang-advice" style="font-size: 0.95em; line-height: 1.5;"></p>
+            </div>
+            <div class="ubakong-dashboard" id="travel-slots-list">
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                    <i class="fas fa-home"></i> กลับหน้าหลัก
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section id="lunarSection" class="main-section" style="display: none;">
+        <div class="card-header bg-gold text-white text-center">
+            <h4 class="mb-0">🌙 ตรวจสอบวันทางจันทรคติ</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>เลือกวันที่ต้องการตรวจสอบ:</label>
+                        <input type="date" class="form-control" id="checkDate" required>
+                    </div>
+                    <button type="button" class="btn btn-outline-gold btn-block" onclick="displayLunar()">
+                        คำนวณวันทางจันทรคติ
+                    </button>
+                </div>
+            </div>
+
+            <div id="lunarResult" class="mt-4 text-center d-none">
+                <hr>
+                <div class="p-3 mb-2 bg-light rounded">
+                    <h5 class="text-muted">ผลการคำนวณ</h5>
+                    <div class="display-4 mb-2" id="resMoonPhase" style="font-size: 24px; color: #b8860b;"></div>
+                    <div class="h4" id="resThaiMonth"></div>
+                    <div class="badge badge-warning p-2" id="resZodiac" style="font-size: 16px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                    <i class="fas fa-home"></i> กลับหน้าหลัก
+                </button>
+            </div>
+        </div>
+
+
+    </section>
+
+    <section id="exportdata" class="main-section" style="display: none;">
+        <div class="container text-center py-5">
+            <h1 class="text-gold mb-4">ส่งออกข้อมูลดวงชะตา</h1>
+        </div>
+    </section>
+
+
+    <section id="package" class="main-section" style="display: none;">
+        <div class="container">
+            <h2 class="title">Package ทำนายดวงชะตา</h2>
+            <div class="table-container">
+                <table id="fortuneTable">
+                    <thead>
+                        <tr id="headerRow">
+                            <th class="sticky-col">รายการพยากรณ์</th>
+                        </tr>
+                    </thead>
+                    <tbody id="serviceBody">
+                    </tbody>
+                    <tfoot id="priceFoot">
+                        <tr class="row-m">
+                            <td class="sticky-col">รายเดือน (30 วัน)</td>
+                        </tr>
+                        <tr class="row-y">
+                            <td class="sticky-col">รายปี (365 วัน)</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                    <i class="fas fa-home"></i> กลับหน้าหลัก
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- วงล้อพยากรณ์ ไฟล์ promchart.js-->
+    <section id="promchartsection" class="main-section" style="display: none;">
+        <div class="container">
+            <h2 class="title">ทำนายดวงชะตาตามอายุ (ตำราพรหมชาติ)</h2>
+            <div class="calc-box">
+                <div class="input-group">
+                    <label>ระบุเพศ:</label>
+                    <select id="userGender">
+                        <option value="male">ชาย (นับเวียนขวา)</option>
+                        <option value="female">หญิง (นับเวียนซ้าย)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>อายุปัจจุบัน (ปี):</label>
+                    <input type="number" id="userAgeprom" placeholder="ตัวอย่าง: 25" min="1">
+                </div>
+                <button onclick="calculateFortune()" class="btn-predict">ทำนายดวงปีนี้</button>
+            </div>
+            <div id="resultDisplay" class="result-container" style="display:none;">
+                <div class="action-buttons">
+                    <button onclick="downloadHoroscopeImage()" class="btn-download">
+                        <span>📥</span> บันทึกรูปภาพ (ลงเครื่อง)
+                    </button>
+                    <button onclick="shareToFacebook()" class="btn-share-fb">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
+                            width="18">
+                        แชร์ไป Facebook
+                    </button>
+                </div>
+            </div>
+            <canvas id="shareCanvas" width="1200" height="1200" style="display:none;"></canvas>
+            <div class="horoscope-wheel">
+                <svg viewBox="0 0 400 400" id="wheel-svg">
+                    <circle cx="200" cy="200" r="190" fill="#f8f9ff" stroke="#6c5ce7" stroke-width="2" />
+                    <circle cx="200" cy="200" r="130" fill="white" stroke="#6c5ce7" stroke-width="1" />
+                    <circle id="highlight-circle" cx="200" cy="45" r="35" fill="rgba(255, 215, 0, 0.3)" stroke="#f1c40f"
+                        stroke-width="3" style="display:none;" />
+                    <g id="all-positions" font-family="Sarabun" font-size="11" text-anchor="middle" font-weight="bold">
+                        <g id="pos-0" transform="translate(200, 45)">
+                            <path d="M-10 10 L0 -15 L10 10 Z" fill="#f1c40f" />
+                            <text y="25">เจดีย์</text>
+                        </g>
+                        <g id="pos-1" transform="translate(275, 65)">
+                            <path d="M-10 0 Q0 -15 10 0 Z" fill="#bdc3c7" />
+                            <line y1="0" y2="10" stroke="#7f8c8d" stroke-width="2" />
+                            <text y="25">ฉัตรเงิน</text>
+                        </g>
+                        <g id="pos-2" transform="translate(335, 125)">
+                            <circle cy="-5" r="7" fill="#e74c3c" />
+                            <text y="25">คอขาด</text>
+                        </g>
+                        <g id="pos-3" transform="translate(355, 200)">
+                            <path d="M-10 10 V0 L0 -10 L10 0 V10 Z" fill="#2980b9" />
+                            <text y="25">เรือนหลวง</text>
+                        </g>
+                        <g id="pos-4" transform="translate(335, 275)">
+                            <path d="M-10 10 V-5 L0 -15 L10 -5 V10 Z" fill="#8e44ad" />
+                            <text y="25">ปราสาท</text>
+                        </g>
+                        <g id="pos-5" transform="translate(275, 335)">
+                            <circle r="10" fill="#2c3e50" />
+                            <text y="25">ราหู</text>
+                        </g>
+                        <g id="pos-6" transform="translate(200, 355)">
+                            <path d="M-10 0 Q0 -15 10 0 Z" fill="#f1c40f" />
+                            <line y1="0" y2="10" stroke="#d4ac0d" stroke-width="2" />
+                            <text y="25">ฉัตรทอง</text>
+                        </g>
+                        <g id="pos-7" transform="translate(125, 335)">
+                            <ellipse cy="5" rx="12" ry="7" fill="#27ae60" />
+                            <circle cy="-5" r="6" fill="#f1c40f" />
+                            <text y="25">เทวดาขี่เต่า</text>
+                        </g>
+                        <g id="pos-8" transform="translate(65, 275)">
+                            <rect x="-12" y="-5" width="24" height="8" fill="#7f8c8d" />
+                            <text y="25">คนต้องข้อคา</text>
+                        </g>
+                        <g id="pos-9" transform="translate(45, 200)">
+                            <path d="M-8 10 L0 -10 L8 10 Z" fill="#34495e" />
+                            <text y="25">พ่อมด</text>
+                        </g>
+                        <g id="pos-10" transform="translate(65, 125)">
+                            <path d="M-10 8 Q0 -12 10 8" fill="#9b59b6" />
+                            <text y="25">แม่มด</text>
+                        </g>
+                        <g id="pos-11" transform="translate(125, 65)">
+                            <path d="M-10 5 Q0 -15 10 5" fill="none" stroke="#16a085" stroke-width="3" />
+                            <text y="25">นาคราช</text>
+                        </g>
+                    </g>
+                    <line id="wheel-needle" x1="200" y1="200" x2="200" y2="80" stroke="#6c5ce7" stroke-width="3"
+                        stroke-linecap="round" style="display:none;" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                    <i class="fas fa-home"></i> กลับหน้าหลัก
+                </button>
+            </div>
+        </div>
+
+
+
+    </section>
+
+
+    <!-- ไฟล์ Fortune.js-->
+    <section id="zodiacdetailsection" class="main-section" style="display:none;">
+        <div class="container" style="text-align: center;">
+            <h1>ดูดวงตามปีนักษัตร (ตำราพรหมชาติ)</h1>
+            <h3>เลือกปีนักษัตรของคุณ</h3>
+        </div>
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchZodiac('rat')">ปีชวด</button>
+            <button class="tab-btn" onclick="switchZodiac('ox')">ปีฉลู</button>
+            <button class="tab-btn" onclick="switchZodiac('tiger')">ปีขาล</button>
+            <button class="tab-btn" onclick="switchZodiac('rabbit')">ปีเถาะ</button>
+            <button class="tab-btn" onclick="switchZodiac('dragon')">ปีมะโรง</button>
+            <button class="tab-btn" onclick="switchZodiac('snake')">ปีมะเส็ง</button>
+            <button class="tab-btn" onclick="switchZodiac('horse')">ปีมะเมีย</button>
+            <button class="tab-btn" onclick="switchZodiac('goat')">ปีมะแม</button>
+            <button class="tab-btn" onclick="switchZodiac('monkey')">ปีวอก</button>
+            <button class="tab-btn" onclick="switchZodiac('rooster')">ปีระกา</button>
+            <button class="tab-btn" onclick="switchZodiac('dog')">ปีจอ</button>
+            <button class="tab-btn" onclick="switchZodiac('pig')">ปีกุน</button>
+        </div>
+        <div class="container">
+            <div class="zodiac-card-main">
+                <h1 id="zodiacBadge" class="zodiac-badge"></h1>
+                <h2 id="zodiacTitle" class="section-title"></h2>
+                <p id="zodiacMeta" class="zodiac-meta"></p>
+                <p id="zodiacBasic" class="zodiac-basic"></p>
+                <div class="calc-form-zodiac" style="text-align: center;">
+                    <div class="form-row" style="justify-content: center;">
+                        <div class="form-col">
+                            <label>เลือกเดือนเกิด (ไทย):</label>
+                            <select id="dynamicMonth" class="form-select" onchange="calculateDynamicFortune()"></select>
+                        </div>
+                        <div class="form-col">
+                            <label>  เลือกวันเกิด:</label>
+                            <select id="dynamicDay" class="form-select" onchange="calculateDynamicFortune()">
+                                <option value="0">วันอาทิตย์</option>
+                                <option value="1">วันจันทร์</option>
+                                <option value="2">วันอังคาร</option>
+                                <option value="3">วันพุธ</option>
+                                <option value="4">วันพฤหัสบดี</option>
+                                <option value="5">วันศุกร์</option>
+                                <option value="6">วันเสาร์</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="calculateDynamicFortune()" class="btn-primary-gold">เปิดตำราทำนาย</button>
+                </div>
+
+                <div id="dynamicResultArea" class="prediction-grid" style="display:none;">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                    <i class="fas fa-home"></i> กลับหน้าหลัก
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ไฟล์ dayBirthData.js-->
+    <section id="daily-horoscope" class="main-section" style="display: none;">
+        <div id="showdaybirthpage"></div>
+    </section>
+
+
+
+    <section id="sompong-wealth" class="main-section" style="display: none;">
+        <div class="container wiki-article">
+            <h2 class="wiki-section-title" style="justify-self: center;">สมพงศ์มหาสมบัติ</h2>
+            <p class="wiki-text">
+                <b>สิทธิการิยะ</b> เกจิอาจารย์ท่านรจนาไว้สำหรับผู้ที่ประสงค์จะทราบว่า ดวงชะตาคู่ครองเมื่ออยู่ร่วมกันแล้ว
+                จะตกอยู่ในเกณฑ์สมบัติประการใด ให้พิจารณาตามปีนักษัตรของทั้งสองฝ่ายดังนี้:
+            </p>
+            <div class="wiki-infobox mb-4 p-3" style="justify-content: center;">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-5">
+                        <label class="small fw-bold">ปีนักษัตรของคุณ:</label><br>
+                        <select id="userYear" class="form-select form-select-sm" onchange="calculateWealth()">
+                            <option value="">-- เลือกปี --</option>
+                            <option value="rat">ชวด</option>
+                            <option value="ox">ฉลู</option>
+                            <option value="tiger">ขาล</option>
+                            <option value="rabbit">เถาะ</option>
+                            <option value="dragon">มะโรง</option>
+                            <option value="snake">มะเส็ง</option>
+                            <option value="horse">มะเมีย</option>
+                            <option value="goat">มะแม</option>
+                            <option value="monkey">วอก</option>
+                            <option value="rooster">ระกา</option>
+                            <option value="dog">จอ</option>
+                            <option value="pig">กุน</option>
+                        </select>
+                        <div class="p-2 bg-light rounded">
+                            <small>คุณคือ:</small>
+                            <div id="user-race-display" class="fw-bold text-primary">-</div>
+                        </div>
+                        <div class="p-2 bg-light rounded">
+                            <small>ธาตุคุณ:</small>
+                            <div id="uElement-display" class="fw-bold text-primary">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="small fw-bold ">ปีนักษัตรของคู่ครอง:</label><br>
+                        <select id="partnerYear" class="form-select form-select-sm" onchange="calculateWealth()">
+                            <option value="">-- เลือกปี --</option>
+                            <option value="rat">ชวด</option>
+                            <option value="ox">ฉลู</option>
+                            <option value="tiger">ขาล</option>
+                            <option value="rabbit">เถาะ</option>
+                            <option value="dragon">มะโรง</option>
+                            <option value="snake">มะเส็ง</option>
+                            <option value="horse">มะเมีย</option>
+                            <option value="goat">มะแม</option>
+                            <option value="monkey">วอก</option>
+                            <option value="rooster">ระกา</option>
+                            <option value="dog">จอ</option>
+                            <option value="pig">กุน</option>
+                        </select>
+                        <div class="p-2 bg-light rounded">
+                            <small>คู่ครองคือ:</small>
+                            <div id="partner-race-display" class="fw-bold text-danger">-</div>
+                        </div>
+                        <div class="p-2 bg-light rounded">
+                            <small>ธาตุคู่ครอง:</small>
+                            <div id="pElement-display" class="fw-bold text-danger">-</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <div id="marriage-result-box" class="p-3 border rounded bg-white mt-2 d-none">
+                        <div id="wealthResult" class="h5 text-primary fw-bold"></div>
+                        <h5 class="wiki-section-title mt-0" style="font-size: 1.1rem;">คำทำนายสมพงศ์คู่ครอง : <span
+                                id="marriage-text" class="wiki-text mb-0" style="font-size: 0.95rem;"></span></h5>
+                        <div> <b>ธาตุสมพงศ์ของคุณ</b> คือ :<span id="element-compatibility-text"></span></div>
+                        <br>
+                        <h5 class="wiki-section-title mt-0" style="font-size: 1.1rem; color: #27ae60;">
+                            <i class="fas fa-dragon"></i> ผลทำนายสมพงศ์นาคคู่
+                        </h5>
+                        <div id="naga-text" class="wiki-text mb-2"></div>
+                        <h5 class="wiki-section-title mt-3" style="font-size: 1.1rem; color: #2980b9;">
+                            <i class="fas fa-calculator"></i> เกณฑ์คำนวณเศษ (ความยั่งยืน)
+                        </h5>
+                        <div id="remainder-text" class="wiki-text mb-0 fw-bold text-primary"></div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="wiki-ref mt-3">
+                <small class="text-muted">หมายเหตุ: คำทำนายนี้ใช้เกณฑ์สมพงศ์ปีนักษัตรตามตำราพรหมชาติโบราณ</small>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                        <i class="fas fa-home"></i> กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- เกณฑ์พิรุณศาสตร์และชะตาโลก ไฟล์ climate.js -->
+    <section id="climate-section" class="main-section" style="display: none;">
+        <div id="showclimatepage"></div>
+    </section>
+
+     <!-- เกณฑ์พิรุณศาสตร์และชะตาโลก ไฟล์ thaksanine.js -->
+    <section id="thaksaninesection" class="main-section" style="display: none;">
+        <div id="showthaksaninepage"></div>
+    </section>
+
+
+    <!-- ไฟล์ horoscopeseven.js-->
+    <section id="horoscope-seven" class="main-section" style="display:none;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-dark text-white p-3">
+                        <h4 class="mb-0"><i class="bi bi-pentagon-fill me-2"></i>ตารางพยากรณ์เลข ๗ ตัว</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3">
+                            <label>วันเกิด</label>
+                                <select id="input-day" class="form-select border-primary">
+                                    <option value="1">วันอาทิตย์</option>
+                                    <option value="2">วันจันทร์</option>
+                                    <option value="3">วันอังคาร</option>
+                                    <option value="4">วันพุธ</option>
+                                    <option value="5">วันพฤหัสบดี</option>
+                                    <option value="6">วันศุกร์</option>
+                                    <option value="7">วันเสาร์</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">เดือนเกิด </label>
+                                <select id="input-month" class="form-select border-primary">
+                                    <option value="1">เดือนอ้าย (1)</option>
+                                    <option value="2">เดือนยี่ (2)</option>
+                                    <option value="3">เดือนสาม (3)</option>
+                                    <option value="4">เดือนสี่ (4)</option>
+                                    <option value="5">เดือนห้า (5)</option>
+                                    <option value="6">เดือนหก (6)</option>
+                                    <option value="7">เดือนเจ็ด (7)</option>
+                                    <option value="8">เดือนแปด (8)</option>
+                                    <option value="9">เดือนเก้า (9)</option>
+                                    <option value="10">เดือนสิบ (10)</option>
+                                    <option value="11">เดือนสิบเอ็ด (11)</option>
+                                    <option value="12">เดือนสิบสอง (12)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">ปีนักษัตร</label>
+                                <select id="input-zodiac" class="form-select border-primary">
+                                    <option value="1">ปีชวด</option>
+                                    <option value="2">ปีฉลู</option>
+                                    <option value="3">ปีขาล</option>
+                                    <option value="4">ปีเถาะ</option>
+                                    <option value="5">ปีมะโรง</option>
+                                    <option value="6">ปีมะเส็ง</option>
+                                    <option value="7">ปีมะเมีย</option>
+                                    <option value="8">ปีมะแม</option>
+                                    <option value="9">ปีวอก</option>
+                                    <option value="10">ปีระกา</option>
+                                    <option value="11">ปีจอ</option>
+                                    <option value="12">ปีกุน</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">
+                                    เวลาเกิด <span class="text-muted">(สำหรับคำนวณยาม)</span>
+                                </label>
+                                <input type="time" id="input-birthtime" class="form-select border-primary">
+                                <small class="text-muted">ถ้าไม่ทราบใช้ 12:00 น.</small>
+                            </div>
+                            <div class="col-md-3 ">
+                                <label class="form-label fw-bold">อายุปัจจุบัน (ปี)</label>
+                                <input type="number" id="input-age" class="form-select border-primary"
+                                    placeholder="เช่น 20" min="1">
+                            </div>
+                            <div class="col-12 text-center mt-3">
+                            
+                                <button type="button" class="btn btn-primary px-5 shadow-sm"
+                                    onclick="calculateHoroscope()">
+                                    <i class="bi bi-magic me-2"></i>คำนวณดวงชะตา
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="result-area" class="container">
+                            <div class="text-center">
+                                <p>กรุณากรอกข้อมูลเพื่อคำนวณดวงชะตา</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                        <i class="fas fa-home"></i> กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+
+
+
+        </div>
+    </section>
+
+
+    <section id="kaliyokepage" class="main-section" style="display: none;">
+        <div class="container text-center">
+            <h1>🔮 เครื่องคำนวณกาลโยค</h1>
+            <p>คำนวณตามคัมภีร์กาลโยค (ฉบับมาตรฐาน)</p>
+        </div>
+
+        <div class="input-group">
+            <label for="yearkarayokInput">ระบุปี พ.ศ.: </label>
+            <input type="number" id="yearkarayokInput" value="2569" min="1182">
+        </div>
+        <div style="text-align: center;"><span id="kaliyokeError" class="text-danger"
+                style="margin-left: 10px;">หากยังไม่ถึงวันสงกรานต์ กาลโยคจะต้องไปดูปีก่อนหน้า</span></div><br>
+
+        <div id="kaliyoke-resultArea" class="result-grid">
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                    <i class="fas fa-home"></i> กลับหน้าหลัก
+                </button>
+            </div>
+        </div>
+
+
+    </section>
+
+
+    <section id="reuxpage" class="main-section" style="display: none;">
+        <div class="container text-center">
+            <h1>📜 การให้ฤกษ์ฉบับง่าย</h1>
+            <p>โดย &ldquo;พลูหลวง&rdquo; &nbsp;·&nbsp; กฎเกณฑ์โบราณาจารย์สำหรับชาวบ้าน</p>
+        </div>
+        <!-- ======= CLOCK BAR ======= -->
+        <div class="clock-bar" id="clockBar">
+            <div><span>วัน </span><strong id="clkDay">—</strong> <span> ที่ </span><strong id="clkDate">—</strong></div>
+            <div><span>เวลา </span><strong id="clkTime">—</strong></div>
+            <div><span>ธาตุวัน </span><strong id="clkElement">—</strong></div>
+        </div>
+
+        <div class="main-wrapper">
+            <!-- ===== SECTION 1: ข้อมูลวันนี้ ===== -->
+            <div id="sec-today" class="section-header">
+                <h2><span class="section-icon">☀ </span>ข้อมูลฤกษ์วันนี้</h2>
+                <div class="today-grid" id="todayGrid"></div><br>
+                <!-- ===== SECTION 2: ดิถีดี ===== -->
+                <div id="sec-dithee" class="section-header">
+                    <h2><span class="section-icon">🌙 </span>ดิถีมงคลประจำวันนี้</h2>
+                </div>
+                <div class="section-body">
+                    <table class="dithee-table" style="width:100%;max-width:600px;margin:0 auto;">
+                        <thead>
+                            <tr>
+                                <th>ระดับ</th>
+                                <th>ค่ำที่</th>
+                                <th>ข้างขึ้น/แรม</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ditheeBody"></tbody>
+                    </table>
+                </div><br>
+                <!-- ===== SECTION 3: ทิศ ===== -->
+                <div id="sec-direction" class="section-header">
+                    <h2><span class="section-icon">🧭 </span>ทิศมงคลและทิศอันตราย</h2>
+                </div>
+                <div class="section-body">
+                    <div class="dir-grid" id="dirGrid"></div>
+                </div><br>
+
+                <!-- ===== SECTION 4: ราหูจร ===== -->
+                <div id="sec-rahu" class="section-header">
+                    <h2><span class="section-icon">🌑 </span>ทิศราหูจรตามเวลา</h2>
+                </div>
+                <div class="section-body">
+                    <p style="font-size:.82rem;color:var(--muted);margin-bottom:.9rem;">
+                        หลีกเลี่ยงการหันหน้าสู่ทิศที่ราหูจร — ช่วงเวลาปัจจุบันไฮไลต์ด้วยสีส้ม</p>
+                    <div class="rahu-grid">
+                        <table class="rahu-table" style="width:100%;max-width:600px;margin:0 auto;">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>เวลา</th>
+                                    <th>ทิศ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rahuGrid"></tbody>
+                        </table>
+                    </div><br>
+                    <!-- ===== SECTION 5: หมวดฤกษ์ ===== -->
+                    <div id="sec-reux" class="section-header">
+                        <h2><span class="section-icon">📜</span>หมวดฤกษ์ทั้ง ๙ — ค้นหาตามกิจการ</h2>
+                    </div>
+                    <div class="section-body">
+                        <div class="search-bar">
+                            <input type="text" id="reuxSearch" placeholder="ค้นหาเช่น แต่งงาน, ปลูกบ้าน, ทหาร, ดิน …"
+                                onclick="searchReux()">
+                            <button onclick="searchReux()">ค้นหา</button>
+                        </div>
+                        <div class="reux-grid" id="reuxGrid" style="display:none;"><!-- JS inject --></div>
+                    </div><br>
+                    <!-- ===== SECTION 6: กาลกิณี + แต่งงาน + ข้อห้าม ===== -->
+                    <div id="sec-misc" class="section-header">
+                        <h2><span class="section-icon">⚠ </span>กาลกิณี · ดิถีแต่งงาน · ข้อห้ามประจำวัน</h2>
+                    </div>
+                    <div class="section-body" style="display:grid;gap:1.8rem;">
+                        <!-- กาลกิณี -->
+                        <div>
+                            <h3 style="font-size:.9rem;color:var(--gold);margin-bottom:.7rem;">วันกาลกิณี —
+                                เลือกวันเกิดของท่าน</h3>
+                            <div class="kk-row" id="kkButtons"><!-- JS inject --></div>
+                            <div id="kk-result">← กดเลือกวันเกิดเพื่อดูวันกาลกิณีของท่าน</div>
+                        </div>
+                        <!-- ดิถีแต่งงาน -->
+                        <div>
+                            <h3 style="font-size:.9rem;color:var(--gold);margin-bottom:.7rem;">ดิถีเรียงหมอน
+                                (ดิถีแต่งงาน)</h3>
+                            <div class="wd-grid">
+                                <div class="wd-box">
+                                    <h3>ข้างขึ้น</h3>
+                                    <span id="wdUp"></span>
+                                </div>
+                                <div class="wd-box">
+                                    <h3>ข้างแรม</h3>
+                                    <span id="wdDown"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ข้อห้ามวันนี้ -->
+                        <div>
+                            <h3 style="font-size:.9rem;color:var(--gold);margin-bottom:.7rem;">
+                                ข้อห้ามและข้อควรปฏิบัติวันนี้</h3>
+                            <ul class="taboo-list" id="tabooList"><!-- JS inject --></ul>
+                        </div>
+                    </div>
+                </div><!-- end main-wrapper -->
+
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                            <i class="fas fa-home"></i> กลับหน้าหลัก
+                        </button>
+                    </div>
+                </div>
+
+                <footer class="footer-note"
+                    style="margin-top: 2rem; font-size: 0.8rem; color: var(--muted); text-align: center;">
+                    ข้อมูลจากตำรา &ldquo;การให้ฤกษ์ฉบับง่าย&rdquo; โดย พลูหลวง &nbsp;·&nbsp;
+                    คำนวณเพื่อเป็นแนวทางเท่านั้น ไม่ใช่การพยากรณ์อย่างเป็นทางการ
+                </footer>
+    </section>
+
+    
+
+
+
+
+    <section id="mainpage" class="main-section" style="display: none;">
+        <div class="container text-center py-5">
+            <h1 class="text-gold mb-4">ห้องพยากรณ์</h1>
+            <div class="row" id="menuGrid"></div>
+        </div>
+    </section>
+
+         <!-- เกณฑ์พิรุณศาสตร์และชะตาโลก ไฟล์ TaksaSattalek.js -->
+    <section id="TaksaSattalek" class="main-section" style="display: none;">
+        <div id="showTaksaSattalekpage"></div>
+    </section>
+
+
+    <footer class="bg-dark text-white py-3 mt-5">
+        <div class="container text-center">
+            <p>สงวนลิขสิทธิ์ &copy; 2568 - <span id="yearTH"></span> เว็บไซต์ดูดวงสยามโหรามงคล</p>
+        </div>
+    </footer>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="dayBirthData.js"></script>
+    <script src="element.js"></script>
+    <script src="namesdb.js"></script>
+    <script src="chatraPage.js"></script>
+    <script src="lifeExtension.js"></script>
+    <script src="nameAnalysis.js"></script>
+    <script src="relation.js"></script>
+    <script src="lucky.js"></script>
+    <script src="numerology.js"></script>
+    <script src="compatibility.js"></script>
+    <script src="lotto.js"></script>
+    <script src="colors.js"></script>
+    <script src="taksaPage.js"></script>
+    <script src="dailyTaboo.js"></script>
+    <script src="dreamInterpretation.js"></script>
+    <script src="sevenDigits.js"></script>
+    <script src="AuspiciousDays.js"></script>
+    <script src="script.js"></script>
+    <script src="yarmPage.js"></script>
+    <script src="personalFortune.js"></script>
+    <script src="dailyHighlights.js"></script>
+    <script type="module" src="mahataksa.js"></script>
+    <script src="lifeGraph.js"></script>
+    <script src="chatnine.js"></script>
+    <script src="knowledge-data.js"></script>
+    <script src="knowledge.js"></script>
+    <script type="module" src="reux.js"></script>
+    <script src="mainpage.js"></script>
+    <script src="ascendant.js"></script>
+    <script src="ElementMatch.js"></script>
+    <script src="PatientFate.js"></script>
+    <script src="SoulmateDirection.js"></script>
+    <script src="BirthFortune.js"></script>
+    <script src="AuspiciousDay.js"></script>
+    <script src="Ubakong.js"></script>
+    <script src="travelData.js"></script>
+    <script src="memberApp.js"></script>
+    <script src="ThaiLunar.js"></script>
+    <script src="tiers.js"></script>
+    <script src="promchart.js"></script>
+    <script src="Fortune.js"></script>
+    <script src="fortuneWealthData.js"></script>
+    <script src="Climate.js"></script>
+    <script src="horoscopeseven.js"></script>
+    <script src="kaliyoke.js"></script>
+    <script src="elementmanual.js"></script>
+    <script src="thaksanine.js"></script>
+    <script src="TaksaSattalek.js"></script>
+    <script type="module" src="membermanager.js"></script>
+
+
+
+
+
+
+
+    <script>
+        const year = new Date().getFullYear() + 543;
+        document.getElementById("yearTH").innerText = year;
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#birthdate").datepicker({
+                dateFormat: 'dd/mm/yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "1940:2140",
+                dayNamesMin: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
+                monthNamesShort: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+            });
+        });
+    </script>
+
+    <div id="shareImageTemplate" style="
+                    width: 1080px; 
+                    height: 1080px; 
+                    background: #1a1a1a; 
+                    color: #ffffff;
+                    font-family: 'Sarabun', sans-serif;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between; 
+                    align-items: center;
+                    padding: 50px 80px; /* ลด Padding บนลงนิดหน่อย */
+                    box-sizing: border-box;
+                    border: 15px solid #d4af37;
+                    border-radius: 10px;
+                    position: absolute; 
+                    left: -9999px; 
+                    top: -9999px;
+                    overflow: hidden;
+                ">
+        <div style="text-align: center; margin-bottom: 5px;">
+            <div style="font-size: 50px; color: #d4af37; font-weight: bold; letter-spacing: 2px;">🔮 สยามโหรามงคล 🔮
+            </div>
+            <div style="font-size: 26px; color: #f0f0f0; opacity: 0.8; margin-top: 5px;">
+                วิเคราะห์<span id="shareTypeName">หมายเลข</span>: <span id="inputNumDisplay"
+                    style="color: #d4af37; font-weight: bold;"></span>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1;">
+            <div id="shareGrade" style="
+                            padding: 8px 45px; 
+                            border-radius: 50px; 
+                            font-size: 38px; 
+                            font-weight: bold; 
+                            margin-bottom: 10px;
+                            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                        "></div>
+
+            <div id="shareSumNum" style="
+                        font-size: 280px; 
+                        font-weight: bold; 
+                        line-height: 1; 
+                        margin: 40px 0; /* เพิ่ม Margin บน-ล่าง ให้เลขไม่เบียด */
+                        text-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
+                        "></div>
+        </div>
+
+        <div style="
+                        background: rgba(255, 255, 255, 0.07);
+                        padding: 35px 50px;
+                        border-radius: 20px;
+                        border: 1px solid rgba(212, 175, 55, 0.3);
+                        width: 100%;
+                        box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        margin-bottom: 20px;
+                    ">
+            <p style="
+                            font-size: 40px; /* ลดลงเล็กน้อยเพื่อความอ่านง่าย */
+                            line-height: 1.5; 
+                            color: #fff; 
+                            margin: 0; 
+                            text-align: center; 
+                            word-break: break-word;
+                            font-weight: 300;
+                        ">
+                " <span id="shareMeaning"></span> "
+            </p>
+
+            <div id="sharePairs" style="
+                            margin-top: 25px;
+                            padding-top: 20px;
+                            padding-bottom: 20px;
+                            border-top: 1px dashed rgba(212, 175, 55, 0.4);
+                            width: 90%;
+                            display: flex;
+                            justify-content: center;
+                            gap: 20px;
+                            color: #d4af37;
+                            font-size: 30px;
+                            font-weight: bold;
+                        "></div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
