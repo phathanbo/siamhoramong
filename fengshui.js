@@ -23,15 +23,13 @@ const ELEMENT_FENGSHUI = {
     4: { name: "น้ำ", color: "ดำ/น้ำเงิน", colors: ["ดำ", "น้ำเงิน"], numbers: [1], symbol: "💧", luckyDirection: "เหนือ" }
 };
 
-// โชคลาภรวมของเดือน (อิงจากความสัมพันธ์ธาตุ)
+// โชคลาภรวมของเดือน (อิงจากธาตุประจำเดือน)
 const MONTHLY_FORTUNE_LEVEL = {
-    "ไม้": {
-        "ไม้": { level: "ปกติ", fortune: "⭐⭐⭐", text: "พลังสม่ำเสมอ ไม่มีการเปลี่ยนแปลง" },
-        "ไฟ": { level: "ดี", fortune: "⭐⭐⭐⭐", text: "โชคลาภดีเยี่ยม ก้าวหน้าเร็ว" },
-        "ดิน": { level: "อ่อน", fortune: "⭐⭐", text: "พลังอ่อนไหว ต้องระวัง" },
-        "โลหะ": { level: "ร้าย", fortune: "⭐", text: "มีอุปสรรค ต้องระมัดระวัง" },
-        "น้ำ": { level: "ดี", fortune: "⭐⭐⭐⭐⭐", text: "โชคลาภสูง เจริญรุ่งเรือง" }
-    }
+    "ไม้": { level: "ดี", fortune: "⭐⭐⭐⭐", text: "พลังเจริญ เข้ากับการงานใหม่" },
+    "ไฟ": { level: "ดี", fortune: "⭐⭐⭐⭐", text: "พลังสว่าง โชคลาภดี ก้าวหน้าเร็ว" },
+    "ดิน": { level: "ปกติ", fortune: "⭐⭐⭐", text: "พลังมั่นคง เสถียร ต้องพยายาม" },
+    "โลหะ": { level: "ดี", fortune: "⭐⭐⭐⭐", text: "พลังเข้มแข็ง การเงินดี" },
+    "น้ำ": { level: "ดี", fortune: "⭐⭐⭐⭐⭐", text: "พลังปรับตัวได้ โชคลาภสูง เจริญรุ่งเรือง" }
 };
 
 // สัตว์นักษัตรที่เข้ากับเดือน (อิงธาตุ)
@@ -513,11 +511,8 @@ function displayFengShuiCalendar() {
 
     // เพิ่มส่วน โชคลาภ + สัตว์นักษัตร + พืช + รสชาติ
     if (resultEl) {
-        // คำนวณโชคลาภจากความสัมพันธ์ธาตุ
-        let fortuneData = MONTHLY_FORTUNE_LEVEL[monthElement][monthElement];
-        if (MONTHLY_FORTUNE_LEVEL[monthElement] && MONTHLY_FORTUNE_LEVEL[monthElement][monthElement]) {
-            fortuneData = MONTHLY_FORTUNE_LEVEL[monthElement][monthElement];
-        }
+        // ดึงข้อมูลโชคลาภจากธาตุประจำเดือน
+        const fortuneData = MONTHLY_FORTUNE_LEVEL[monthElement] || MONTHLY_FORTUNE_LEVEL["ดิน"];
 
         const easyLevelInfo = `
             <div class="row mt-4">
