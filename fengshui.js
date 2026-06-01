@@ -16,11 +16,45 @@
 
 // ธาตุ 5 ประการ (Wu Xing)
 const ELEMENT_FENGSHUI = {
-    0: { name: "ไม้", color: "เขียว", number: 3, symbol: "♻️", luckyDirection: "ตะวันออก" },
-    1: { name: "ไฟ", color: "แดง", number: 9, symbol: "🔥", luckyDirection: "ใต้" },
-    2: { name: "ดิน", color: "เหลือง", number: 5, symbol: "🏔️", luckyDirection: "ตรงกลาง" },
-    3: { name: "โลหะ", color: "ขาว", number: 7, symbol: "⚔️", luckyDirection: "ตะวันตก" },
-    4: { name: "น้ำ", color: "ดำ/น้ำเงิน", number: 1, symbol: "💧", luckyDirection: "เหนือ" }
+    0: { name: "ไม้", color: "เขียว", colors: ["เขียว", "ฟ้า"], numbers: [3, 8], symbol: "♻️", luckyDirection: "ตะวันออก" },
+    1: { name: "ไฟ", color: "แดง", colors: ["แดง", "ส้ม"], numbers: [9], symbol: "🔥", luckyDirection: "ใต้" },
+    2: { name: "ดิน", color: "เหลือง", colors: ["เหลือง", "น้ำตาล"], numbers: [5], symbol: "🏔️", luckyDirection: "ตรงกลาง" },
+    3: { name: "โลหะ", color: "ขาว", colors: ["ขาว", "เงิน"], numbers: [7], symbol: "⚔️", luckyDirection: "ตะวันตก" },
+    4: { name: "น้ำ", color: "ดำ/น้ำเงิน", colors: ["ดำ", "น้ำเงิน"], numbers: [1], symbol: "💧", luckyDirection: "เหนือ" }
+};
+
+// กิจกรรมห้ามตามธาตุ (ตรงข้ามกับสิ่งที่ดี)
+const FORBIDDEN_ACTIVITIES = {
+    "ไม้": [
+        "❌ ห้ามตัดต้นไม้หรือทำลายสัตว์เลี้ยง",
+        "❌ ห้ามใช้เครื่องมือโลหะตัดสิ่งของ",
+        "❌ ห้ามการปรับปรุงลำเลียงหรือการตัดแต่งกิ่ง",
+        "❌ ห้ามขุดดิน หรือการก่อสร้างลึก"
+    ],
+    "ไฟ": [
+        "❌ ห้ามจัดงานเกี่ยวกับน้ำหรือสระว่ายน้ำ",
+        "❌ ห้ามการโลดแลนน้ำ หรือการล่องเรือ",
+        "❌ ห้ามวางสิ่งของใกล้แหล่งน้ำ",
+        "❌ ห้ามการซ่อมแซมหลังคา หรือบ้านสูง"
+    ],
+    "ดิน": [
+        "❌ ห้ามปลูกต้นไม้ ใหญ่ๆ อยู่ใกล้บ้าน",
+        "❌ ห้ามดำเนินการเกี่ยวกับการขึ้นบ้าน",
+        "❌ ห้ามการจัดวางสิ่งของจำนวนมาก",
+        "❌ ห้ามการรีโนเวทบ้านเต็มหลัง"
+    ],
+    "โลหะ": [
+        "❌ ห้ามการเผาไฟ หรือการปรุงอาหารใหญ่",
+        "❌ ห้ามการสีทาบ้านแดง ส้ม",
+        "❌ ห้ามการติดตั้งเทียนหรือหลอดไฟสีแดง",
+        "❌ ห้ามการทำงานเกี่ยวกับไม้ใหญ่"
+    ],
+    "น้ำ": [
+        "❌ ห้ามการปรับปรุงหรือสร้างเสริมบ้าน",
+        "❌ ห้ามการตัดต้นไม้ใหญ่ หรือดิน",
+        "❌ ห้ามการเก็บของหลายๆ ที่",
+        "❌ ห้ามการสร้างพื้นหรือลูกตาข่ายใหม่"
+    ]
 };
 
 // ดาว 9 ดวง และทิศมงคลที่เกี่ยวข้อง
@@ -404,7 +438,75 @@ function displayFengShuiCalendar() {
         `;
     }
 
+    // เพิ่มส่วน สีมงคล + เลขมงคล + กิจกรรมห้าม
+    if (resultEl) {
+        const colorsAndNumbers = `
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-palette mr-2"></i>สีมงคล + เลขมงคล
+                            </h5>
+                            <div style="padding: 10px;">
+                                <p class="mb-2"><strong>🎨 สีมงคล:</strong></p>
+                                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                    ${monthElementData.colors.map(c => `
+                                        <div style="width: 50px; height: 50px; border-radius: 8px; background: ${getColorCodeForName(c)}; border: 2px solid #d4af37; display: flex; align-items: center; justify-content: center;">
+                                            <span style="color: white; font-size: 12px; text-align: center;">${c}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <p class="mb-0"><strong>🔢 เลขมงคล:</strong></p>
+                                <p style="font-size: 20px; color: #d4af37; font-weight: bold; margin-top: 8px;">
+                                    ${monthElementData.numbers.join(', ')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-ban mr-2"></i>กิจกรรมห้ามเดือนนี้
+                            </h5>
+                            <ul class="list-unstyled small">
+                                ${FORBIDDEN_ACTIVITIES[monthElement].map(activity => `
+                                    <li style="padding: 8px 0; border-bottom: 1px solid rgba(220, 53, 69, 0.3);">
+                                        ${activity}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        resultEl.innerHTML += colorsAndNumbers;
+    }
+
     resultEl.style.display = 'block';
+}
+
+/**
+ * 🎨 แปลงชื่อสี → รหัส RGB
+ */
+function getColorCodeForName(colorName) {
+    const colorMap = {
+        "เขียว": "#28a745",
+        "ฟ้า": "#0084ff",
+        "แดง": "#dc3545",
+        "ส้ม": "#fd7e14",
+        "เหลือง": "#ffc107",
+        "น้ำตาล": "#8b4513",
+        "ขาว": "#f0f0f0",
+        "เงิน": "#c0c0c0",
+        "ดำ": "#1a1a1a",
+        "น้ำเงิน": "#001a4d"
+    };
+    return colorMap[colorName] || "#d4af37";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
