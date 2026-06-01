@@ -36,6 +36,7 @@ const APP_MENU = [
     { id: 'lunarSection' ,title: 'คำนวณจันทรคติ' ,icon: 'fa-calendar-alt', color: '#d4af37' },
     { id: 'showdaylife', title: 'คำนวณวันเกิด', icon: 'fa-birthday-cake', color: '#d4af37' },
     { id: 'fengshuiCalendar', title: '🧭 ปฏิทินฮวงจุ้ย<br>(ทิศมงคล)', icon: 'fa-compass', color: '#d4af37' },
+    { id: 'fengShuiPage', title: '🏠 วิเคราะห์ฮวงจุ้ย<br>(เฉพาะบุคคล)', icon: 'fa-home', color: '#d4af37' },
     { id: 'businessFortune', title: '💼 พยากรณ์ธุรกิจ<br>/การเงิน', icon: 'fa-chart-line', color: '#d4af37' },
     { id: 'auspiciousOpening', title: '🏠 วันเปิดร้าน<br>/ลงหลัก', icon: 'fa-store', color: '#d4af37' },
     { id: 'ceremonyDate', title: '💍 กำหนดวัน<br>ประกอบพิธี', icon: 'fa-ring', color: '#d4af37' },

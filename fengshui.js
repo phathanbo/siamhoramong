@@ -980,5 +980,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ fengshui.js loaded - อิงธาตุ 5 + ดาว 9 ดวง (authentic Feng Shui)");
 });
 
+window.showFengShuiPage = showFengShuiPage;
 window.analyzeFengShui = analyzeFengShui;
 window.displayFengShuiCalendar = displayFengShuiCalendar;

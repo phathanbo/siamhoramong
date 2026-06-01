@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คำนวณสารัมภ์</title>
+  <style>
+    :root {
+      --ink: #17201d;
+      --muted: #66736f;
+      --paper: #fbfaf6;
+      --line: #d9d3c4;
+      --panel: #ffffff;
+      --accent: #1f7a6b;
+      --accent-2: #9b4f24;
+      --warn: #b87b16;
+      --ok: #2f7d52;
+      --soft: #eef5f2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Tahoma", "Noto Sans Thai", sans-serif;
+      line-height: 1.55;
+    }
+
+    header {
+      padding: 24px clamp(16px, 4vw, 42px) 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fffdf8;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 38px);
+      letter-spacing: 0;
+    }
+
+    .subhead {
+      margin: 6px 0 0;
+      color: var(--muted);
+      max-width: 960px;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(280px, 420px) 1fr;
+      gap: 18px;
+      padding: 18px clamp(16px, 4vw, 42px) 40px;
+      align-items: start;
+    }
+
+    .inputs {
+      position: sticky;
+      top: 12px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 1px 0 rgba(23, 32, 29, 0.04);
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    label {
+      display: grid;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 10px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      min-height: 40px;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      min-height: 40px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 8px 12px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+    }
+
+    button.secondary {
+      background: #fff;
+      color: var(--accent);
+    }
+
+    .note {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border-top: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      width: 230px;
+      color: var(--accent-2);
+      font-weight: 700;
+    }
+
+    td:last-child {
+      color: var(--muted);
+      width: 32%;
+    }
+
+    #results {
+      display: grid;
+      gap: 12px;
+    }
+
+    .compact {
+      display: grid;
+      gap: 8px;
+    }
+
+    .status {
+      min-height: 20px;
+      color: var(--warn);
+      font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .inputs {
+        position: static;
+      }
+
+      th,
+      td,
+      tr {
+        display: block;
+        width: 100%;
+      }
+
+      td:last-child {
+        width: 100%;
+      }
+
+      th {
+        border-top: 1px solid var(--line);
+        padding-bottom: 2px;
+      }
+
+      td {
+        border-top: 0;
+        padding-top: 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>คำนวณสารัมภ์</h1>
+    <p class="subhead">โปรแกรมนี้ถอดสูตรจากคัมภีร์สารัมภ์เฉพาะส่วนคำนวณ แล้วตัดคำบรรยายยาวออก เหลืออินพุต ผลลัพธ์ และขั้นตอนที่ตรวจสอบได้</p>
+  </header>
+
+  <main>
+    <aside class="inputs">
+      <section class="panel compact">
+        <h2>ตั้งค่าอุณทิน</h2>
+        <div class="grid">
+          <label>จุลศักราช
+            <input id="csYear" inputmode="numeric" value="1257">
+          </label>
+          <label>หรคุณอัตตา
+            <input id="harakhun" inputmode="numeric" value="459131">
+          </label>
+          <label>สุทิน
+            <input id="suthin" inputmode="numeric" value="320">
+          </label>
+        </div>
+        <label>อุณทินโดยตรง
+          <input id="directUnathin" inputmode="numeric" placeholder="เว้นว่างถ้าให้คำนวณจากหรคุณ">
+        </label>
+        <div class="grid">
+          <label>คตมาสราศี
+            <select id="sunMonthSign">
+              <option value="0">0 เมษ</option>
+              <option value="1">1 พฤษภ</option>
+              <option value="2">2 เมถุน</option>
+              <option value="3">3 กรกฎ</option>
+              <option value="4">4 สิงห์</option>
+              <option value="5">5 กันย์</option>
+              <option value="6">6 ตุล</option>
+              <option value="7">7 พิจิก</option>
+              <option value="8">8 ธนู</option>
+              <option value="9">9 มังกร</option>
+              <option value="10" selected>10 กุมภ์</option>
+              <option value="11">11 มีน</option>
+            </select>
+          </label>
+          <label>องศาอาทิตย์
+            <input id="sunMonthDegree" inputmode="numeric" value="17">
+          </label>
+          <label>ละติจูดลิบดา
+            <input id="latitudeMinute" inputmode="numeric" value="44">
+          </label>
+        </div>
+        <label>ละติจูดองศา
+          <input id="latitudeDegree" inputmode="numeric" value="13">
+        </label>
+        <p class="note">ถ้ากรอกอุณทินโดยตรง โปรแกรมจะใช้ค่านั้นก่อน ถ้าไม่กรอกจะใช้หรคุณและสุทิน</p>
+      </section>
+
+      <section class="panel compact">
+        <h2>สมผุสสำหรับตรวจคราส</h2>
+        <span class="badge">ราศีเริ่ม 0 = เมษ</span>
+        <div class="grid">
+          <label>อาทิตย์ ราศี<input id="manualSunSign" value="10"></label>
+          <label>องศา<input id="manualSunDegree" value="17"></label>
+          <label>ลิบดา<input id="manualSunMinute" value="26"></label>
+        </div>
+        <div class="grid">
+          <label>จันทร์ ราศี<input id="manualMoonSign" value="4"></label>
+          <label>องศา<input id="manualMoonDegree" value="16"></label>
+          <label>ลิบดา<input id="manualMoonMinute" value="50"></label>
+        </div>
+        <div class="grid">
+          <label>ราหู ราศี<input id="manualRahuSign" value="10"></label>
+          <label>องศา<input id="manualRahuDegree" value="10"></label>
+          <label>ลิบดา<input id="manualRahuMinute" value="38"></label>
+        </div>
+      </section>
+
+      <section class="panel compact">
+        <h2>ข้อมูลภายนอก</h2>
+        <label>URL ปฏิทินหรือข้อมูลดาราศาสตร์
+          <input id="externalUrl" type="url" placeholder="https://...">
+        </label>
+        <div class="actions">
+          <button id="fetchExternalBtn" class="secondary" type="button">ดึงข้อมูล</button>
+        </div>
+        <div id="externalStatus" class="status"></div>
+        <textarea id="externalText" placeholder="ข้อมูลที่ดึงมา หรือวางเอง เพื่ออ่านตัวเลขแล้วนำไปกรอกช่องสมผุส"></textarea>
+        <p class="note">ส่วนนี้ไม่เอาไปคำนวณอัตโนมัติ เพราะข้อมูลเว็บแต่ละแห่งไม่เหมือนกัน ต้องตรวจเลขก่อนเพื่อกันผิดสูตร</p>
+      </section>
+
+      <section class="panel">
+        <div class="actions">
+          <button id="calculateBtn" type="button">คำนวณ</button>
+          <button id="exampleBtn" class="secondary" type="button">ใส่ตัวอย่างในตำรา</button>
+        </div>
+      </section>
+    </aside>
+
+    <section id="results"></section>
+  </main>
+
+  <script src="sarampha-calculator.js"></script>
+</body>
+</html>

@@ -515,6 +515,15 @@ function navigateTo(pageId, addHistory = true) {
         initKnowledgeTable();
     }
 
+    // 2.5 จัดการหน้า Feng Shui (วิเคราะห์ฮวงจุ้ย)
+    if (pageId === 'fengShuiPage') {
+        setTimeout(() => {
+            if (typeof showFengShuiPage === 'function') {
+                showFengShuiPage();
+            }
+        }, 50);
+    }
+
     if (pageId === 'auspiciousPage') {
     setTimeout(() => {
         if (typeof renderAuspiciousCalendar === 'function') {
