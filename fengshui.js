@@ -23,6 +23,79 @@ const ELEMENT_FENGSHUI = {
     4: { name: "น้ำ", color: "ดำ/น้ำเงิน", colors: ["ดำ", "น้ำเงิน"], numbers: [1], symbol: "💧", luckyDirection: "เหนือ" }
 };
 
+// โชคลาภรวมของเดือน (อิงจากความสัมพันธ์ธาตุ)
+const MONTHLY_FORTUNE_LEVEL = {
+    "ไม้": {
+        "ไม้": { level: "ปกติ", fortune: "⭐⭐⭐", text: "พลังสม่ำเสมอ ไม่มีการเปลี่ยนแปลง" },
+        "ไฟ": { level: "ดี", fortune: "⭐⭐⭐⭐", text: "โชคลาภดีเยี่ยม ก้าวหน้าเร็ว" },
+        "ดิน": { level: "อ่อน", fortune: "⭐⭐", text: "พลังอ่อนไหว ต้องระวัง" },
+        "โลหะ": { level: "ร้าย", fortune: "⭐", text: "มีอุปสรรค ต้องระมัดระวัง" },
+        "น้ำ": { level: "ดี", fortune: "⭐⭐⭐⭐⭐", text: "โชคลาภสูง เจริญรุ่งเรือง" }
+    }
+};
+
+// สัตว์นักษัตรที่เข้ากับเดือน (อิงธาตุ)
+const ZODIAC_COMPATIBILITY = {
+    "ไม้": { animals: ["หนู", "เสือ", "กระต่าย"], description: "ปีสัตว์แบบไม้ มีพลังสนับสนุน" },
+    "ไฟ": { animals: ["งู", "ม้า"], description: "ปีสัตว์แบบไฟ เข้าข้อมูลเดือนนี้" },
+    "ดิน": { animals: ["วัว", "มังกร", "แพะ", "สุนัข"], description: "ปีสัตว์แบบดิน มั่นคง" },
+    "โลหะ": { animals: ["ลิง", "ไก่"], description: "ปีสัตว์แบบโลหะ เข้มแข็ง" },
+    "น้ำ": { animals: ["หนู", "หมู"], description: "ปีสัตว์แบบน้ำ ปรับตัวได้" }
+};
+
+// พืชมงคลตามธาตุ (อิงธาตุและความหมายสัญลักษณ์)
+const AUSPICIOUS_PLANTS = {
+    "ไม้": {
+        plants: ["ต้นไม้สูงใหญ่", "ต้นมะนาว", "ต้นมะไฟ"],
+        description: "ต้นไม้ขึ้นแข็งแรง สัญลักษณ์การเจริญ"
+    },
+    "ไฟ": {
+        plants: ["ดอกกุหลาบแดง", "บัวแดง", "ดาวแดง"],
+        description: "ดอกไม้แดงสัญลักษณ์ความกล้าหาญ พลัง"
+    },
+    "ดิน": {
+        plants: ["มะเขือ", "มะมุม", "ต้นยางอินเดีย"],
+        description: "พืชเสถียร สัญลักษณ์ความมั่นคง"
+    },
+    "โลหะ": {
+        plants: ["ดอกมะลิ", "กุหลาบขาว", "ออร์คิดขาว"],
+        description: "ดอกไม้ขาวสัญลักษณ์ความบริสุทธิ์ เข้มแข็ง"
+    },
+    "น้ำ": {
+        plants: ["ต้นมะปรางต้นรูปปลา", "ไร้มะนาว", "ต้นหญ้าลมหายใจ"],
+        description: "พืชปรับตัวได้ สัญลักษณ์ความยืดหยุ่น"
+    }
+};
+
+// รสชาติอาหารมงคลตามธาตุ (อิงสมดุลธาตุ 5)
+const LUCKY_FOOD_FLAVORS = {
+    "ไม้": {
+        flavor: "เปรี้ยว",
+        foods: ["ส้มควัน", "มะขาม", "เลมอนสดชื่น"],
+        description: "รสเปรี้ยวช่วยกระตุ้นพลังเจริญ"
+    },
+    "ไฟ": {
+        flavor: "ขม",
+        foods: ["ชาดำ", "โกโก้", "กาแฟเข้มข้น"],
+        description: "รสขมกระตุ้นพลังและความกล้า"
+    },
+    "ดิน": {
+        flavor: "หวาน",
+        foods: ["น้ำเต้า", "มันหวาน", "คุกกี้หวาน"],
+        description: "รสหวานสร้างความสุข สมดุล"
+    },
+    "โลหะ": {
+        flavor: "เค็ม",
+        foods: ["เกลือแห้ง", "แหนม", "ปูเค็ม"],
+        description: "รสเค็มเสริมความเข้มแข็งเสถียร"
+    },
+    "น้ำ": {
+        flavor: "เค็มเปรี้ยว",
+        foods: ["น้ำปลา", "แจ่วฮ้อ", "เกาลัด"],
+        description: "รสเค็มเปรี้ยวสร้างสมดุล"
+    }
+};
+
 // กิจกรรมห้ามตามธาตุ (ตรงข้ามกับสิ่งที่ดี)
 const FORBIDDEN_ACTIVITIES = {
     "ไม้": [
@@ -438,10 +511,90 @@ function displayFengShuiCalendar() {
         `;
     }
 
+    // เพิ่มส่วน โชคลาภ + สัตว์นักษัตร + พืช + รสชาติ
+    if (resultEl) {
+        // คำนวณโชคลาภจากความสัมพันธ์ธาตุ
+        let fortuneData = MONTHLY_FORTUNE_LEVEL[monthElement][monthElement];
+        if (MONTHLY_FORTUNE_LEVEL[monthElement] && MONTHLY_FORTUNE_LEVEL[monthElement][monthElement]) {
+            fortuneData = MONTHLY_FORTUNE_LEVEL[monthElement][monthElement];
+        }
+
+        const easyLevelInfo = `
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-star mr-2"></i>โชคลาภเดือนนี้
+                            </h5>
+                            <div style="padding: 10px; text-align: center;">
+                                <p style="font-size: 24px; color: #d4af37; margin-bottom: 5px;">${fortuneData.fortune}</p>
+                                <p class="mb-2"><strong>${fortuneData.level}</strong></p>
+                                <p class="small">${fortuneData.text}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-dragon mr-2"></i>สัตว์นักษัตรที่โชค
+                            </h5>
+                            <div style="padding: 10px;">
+                                <p class="mb-2" style="font-size: 18px; color: #d4af37;">
+                                    ${ZODIAC_COMPATIBILITY[monthElement].animals.join(', ')}
+                                </p>
+                                <p class="small">${ZODIAC_COMPATIBILITY[monthElement].description}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-leaf mr-2"></i>พืชมงคล
+                            </h5>
+                            <div style="padding: 10px;">
+                                <p class="mb-2" style="color: #28a745;">
+                                    ${AUSPICIOUS_PLANTS[monthElement].plants.join(', ')}
+                                </p>
+                                <p class="small">${AUSPICIOUS_PLANTS[monthElement].description}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-utensils mr-2"></i>รสชาติมงคล
+                            </h5>
+                            <div style="padding: 10px;">
+                                <p class="mb-2" style="font-size: 18px; color: #d4af37;">
+                                    🍴 ${LUCKY_FOOD_FLAVORS[monthElement].flavor}
+                                </p>
+                                <p class="small mb-2">${LUCKY_FOOD_FLAVORS[monthElement].foods.join(', ')}</p>
+                                <p class="small">${LUCKY_FOOD_FLAVORS[monthElement].description}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        resultEl.innerHTML += easyLevelInfo;
+    }
+
     // เพิ่มส่วน สีมงคล + เลขมงคล + กิจกรรมห้าม
     if (resultEl) {
         const colorsAndNumbers = `
-            <div class="row mt-4">
+            <div class="row mt-3">
                 <div class="col-md-6">
                     <div class="card bg-dark border-gold">
                         <div class="card-body">
