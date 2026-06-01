@@ -398,7 +398,7 @@ function displayFengShuiCalendar() {
                 </ul>
                 <p class="small mt-3 mb-0">
                     <strong>💡 เดือนปัจจุบัน:</strong> ธาตุ${monthElement} (ปี${year}) + ธาตุปี${yearElementData.name}<br>
-                    <strong>🔄 ความสัมพันธ์:</strong> ${monthElement} ${ELEMENT_RELATIONSHIP[monthElement].description.toLowerCase()}
+                    <strong>🔄 ความสัมพันธ์:</strong> รักษา = ${ELEMENT_COMPATIBILITY[monthElement].support}, หวาดกลัว = ${ELEMENT_COMPATIBILITY[monthElement].suppress}
                 </p>
             </div>
         `;
