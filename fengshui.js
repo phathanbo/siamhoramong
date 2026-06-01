@@ -212,6 +212,108 @@ const ELEMENT_COMPATIBILITY = {
     "น้ำ": { support: "โลหะ", suppress: "ดิน", avoid: "ดิน" }
 };
 
+// ระดับลึก: ดาวประจำเดือน (อิงจากลัคนา + เดือน)
+const MONTHLY_PLANETS = {
+    "ไม้": {
+        planet: "พฤหัสบดี (Jupiter)",
+        symbol: "♃",
+        impact: "ปัญญา โชค การเจริญ",
+        activities: "ดีสำหรับ: การศึกษา บูชาพระ ตัดสินใจใหญ่",
+        caution: "ระวัง: การออกเดินทาง ความโล่ง"
+    },
+    "ไฟ": {
+        planet: "อาทิตย์ (Sun)",
+        symbol: "☀️",
+        impact: "พลัง แสง ความสำเร็จ",
+        activities: "ดีสำหรับ: การเปิดตัวใหม่ งานเปิด ตัดสินใจเด่น",
+        caution: "ระวัง: ความเหนื่อยล้า การทะเลาะวิวาท"
+    },
+    "ดิน": {
+        planet: "ม้าม (Saturn)",
+        symbol: "♄",
+        impact: "เสถียร มั่นคง โครงสร้าง",
+        activities: "ดีสำหรับ: ก่อสร้าง ซ่อมแซม การสะสม",
+        caution: "ระวัง: ความล่าช้า ปัญหาเก่าขึ้นมา"
+    },
+    "โลหะ": {
+        planet: "ศุกร์ (Venus)",
+        symbol: "♀",
+        impact: "ความงาม ความรัก การเงิน",
+        activities: "ดีสำหรับ: การแต่งตัว อาหาร ความสัมพันธ์",
+        caution: "ระวัง: ความสำราญจนเกินไป การใช้จ่ายเกิน"
+    },
+    "น้ำ": {
+        planet: "พุธ (Mercury)",
+        symbol: "☿️",
+        impact: "สื่อสาร ปัญญา การเจรจา",
+        activities: "ดีสำหรับ: การเดินทาง การค้า การติดต่อ",
+        caution: "ระวัง: สับสน ข้อมูลผิด ความเหงา"
+    }
+};
+
+// ระดับลึก: วิธีเสริมพลังมงคล (authentic practices)
+const ENHANCEMENT_METHODS = {
+    "ไม้": {
+        rituals: ["ไหว้ธรรมชาติ/ต้นไม้", "ทำบุญปลูกป่า", "สวดมนต์ 108 ครั้ง"],
+        feng_shui: ["วางต้นไม้สด", "ใช้สีเขียว/ฟ้า", "วางของทิศตะวันออก"],
+        charity: "บริจาคหนังสือ สนับสนุนการศึกษา"
+    },
+    "ไฟ": {
+        rituals: ["ไหว้พระ จุดเทียนแดง", "ทำบุญศาสนา", "สวดมนต์เช้า"],
+        feng_shui: ["วางเทียน โคมไฟ", "ใช้สีแดง/ส้ม", "เปิดหน้าต่างหลังคา"],
+        charity: "บริจาคอาหาร สนับสนุนวัด"
+    },
+    "ดิน": {
+        rituals: ["ไหว้พื้นดิน/ท้องฟ้า", "ทำบุญเลี้ยงสัตว์", "สวดมนต์บ่าย"],
+        feng_shui: ["วางหินแร่/ผลึก", "ใช้สีเหลือง/น้ำตาล", "ตั้งพื้นที่ศูนย์กลาง"],
+        charity: "บริจาคสิ่งของ สนับสนุนชุมชน"
+    },
+    "โลหะ": {
+        rituals: ["ไหว้ศาสตร์ พระ", "ทำบุญจำสำนัก", "สวดมนต์เยน"],
+        feng_shui: ["วางกระดิ่ง/เหรียญ", "ใช้สีขาว/เงิน", "เก็บความสะอาด"],
+        charity: "บริจาคเงิน สนับสนุนศาสตร์"
+    },
+    "น้ำ": {
+        rituals: ["ไหว้เจ้าน้ำ/ปลา", "ปล่อยสัตว์น้ำ", "สวดมนต์ค่ำ"],
+        feng_shui: ["วางน้ำพุ/ตู้ปลา", "ใช้สีดำ/น้ำเงิน", "ไหลเวียนอากาศ"],
+        charity: "บริจาคเมล็ดพืช สนับสนุนสิ่งแวดล้อม"
+    }
+};
+
+// ระดับลึก: ความขัดแย้งปีนักษัตร (authentic zodiac conflicts)
+const ZODIAC_CONFLICTS = {
+    "ไม้": {
+        wood_animals: ["หนู", "เสือ", "กระต่าย"],
+        conflict_with: ["วัว", "ลิง"],
+        reason: "โลหะขัดไม้ ดินสลายไม้",
+        impact: "อาจมีปัญหาด้านการงาน ความสัมพันธ์"
+    },
+    "ไฟ": {
+        fire_animals: ["งู", "ม้า"],
+        conflict_with: ["หนู", "หมู"],
+        reason: "น้ำดับไฟ เกิดความขัดแย้ง",
+        impact: "ต้องระวังการสูญเสีย ความหวังแตกหัก"
+    },
+    "ดิน": {
+        earth_animals: ["วัว", "มังกร", "แพะ", "สุนัข"],
+        conflict_with: ["เสือ", "กระต่าย"],
+        reason: "ไม้ลำเลียงดิน ความไม่มั่นคง",
+        impact: "อาจมีปัญหาเงิน บ้านเรือน"
+    },
+    "โลหะ": {
+        metal_animals: ["ลิง", "ไก่"],
+        conflict_with: ["งู", "ม้า"],
+        reason: "ไฟหลอมโลหะ ความแตกแยก",
+        impact: "ต้องระวังการหลงผิด ความเสื่อม"
+    },
+    "น้ำ": {
+        water_animals: ["หนู", "หมู"],
+        conflict_with: ["มังกร", "แพะ"],
+        reason: "ดินกั้นน้ำ ความติดขัด",
+        impact: "อาจมีปัญหาการเดินทาง การทำงาน"
+    }
+};
+
 /**
  * 🎯 แสดงหน้า Feng Shui
  */
@@ -695,6 +797,79 @@ function displayFengShuiCalendar() {
             </div>
         `;
         resultEl.innerHTML += colorsAndNumbers;
+    }
+
+    // เพิ่มส่วน ดาวประจำเดือน + วิธีเสริม + ความขัดแย้ง (ระดับลึก)
+    if (resultEl) {
+        // ดึงข้อมูลระดับลึกพร้อม fallback
+        const planetData = MONTHLY_PLANETS[monthElement] || MONTHLY_PLANETS["ดิน"];
+        const enhanceData = ENHANCEMENT_METHODS[monthElement] || ENHANCEMENT_METHODS["ดิน"];
+        const conflictData = ZODIAC_CONFLICTS[monthElement] || ZODIAC_CONFLICTS["ดิน"];
+
+        const deepLevelInfo = `
+            <hr class="border-gold-30 my-4">
+            <h4 class="text-gold mb-3 text-center">🔥 ระดับลึก (Deep Insights)</h4>
+
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-star mr-2"></i>ดาวประจำเดือน
+                            </h5>
+                            <div style="padding: 10px;">
+                                <p class="mb-2" style="font-size: 20px; font-weight: bold;">
+                                    ${planetData.symbol} ${planetData.planet}
+                                </p>
+                                <p class="small mb-2"><strong>อิทธิพล:</strong> ${planetData.impact}</p>
+                                <p class="small mb-2"><strong>✅ ดี:</strong> ${planetData.activities}</p>
+                                <p class="small"><strong>⚠️ ระวัง:</strong> ${planetData.caution}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-magic mr-2"></i>วิธีเสริมพลัง
+                            </h5>
+                            <div style="padding: 10px;">
+                                <p class="small mb-2"><strong>🙏 พิธี:</strong></p>
+                                <ul class="small list-unstyled mb-2">
+                                    ${enhanceData.rituals.map(r => `<li>• ${r}</li>`).join('')}
+                                </ul>
+                                <p class="small mb-2"><strong>🏠 ฮวงจุ้ย:</strong></p>
+                                <ul class="small list-unstyled mb-2">
+                                    ${enhanceData.feng_shui.map(f => `<li>• ${f}</li>`).join('')}
+                                </ul>
+                                <p class="small"><strong>💝 บุญ:</strong> ${enhanceData.charity}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-warning mr-2"></i>ขัดแย้งปีอื่น
+                            </h5>
+                            <div style="padding: 10px;">
+                                <p class="small mb-2"><strong>🐉 ปีนักษัตรของเดือน:</strong></p>
+                                <p class="small font-weight-bold mb-2">${conflictData.wood_animals.join(', ')}</p>
+                                <p class="small mb-2"><strong>❌ ขัดแย้งกับ:</strong></p>
+                                <p class="small font-weight-bold mb-2">${conflictData.conflict_with.join(', ')}</p>
+                                <p class="small mb-2"><strong>เหตุผล:</strong> ${conflictData.reason}</p>
+                                <p class="small"><strong>ผลกระทบ:</strong> ${conflictData.impact}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        resultEl.innerHTML += deepLevelInfo;
     }
 
     // เพิ่มส่วน ความเสี่ยง + วัตถุเสริม + ส่วนกาย (ระดับกลาง)
