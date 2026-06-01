@@ -799,31 +799,38 @@ function displayFengShuiCalendar() {
         resultEl.innerHTML += colorsAndNumbers;
     }
 
-    // เพิ่มส่วน ดาวประจำเดือน + วิธีเสริม + ความขัดแย้ง (ระดับลึก)
+    // เพิ่มส่วน ดาวประจำตัว + วิธีเสริมพลัง + ความขัดแย้ง (ระดับลึก เฉพาะบุคคล)
     if (resultEl) {
-        // ดึงข้อมูลระดับลึกพร้อม fallback
-        const planetData = MONTHLY_PLANETS[monthElement] || MONTHLY_PLANETS["ดิน"];
-        const enhanceData = ENHANCEMENT_METHODS[monthElement] || ENHANCEMENT_METHODS["ดิน"];
-        const conflictData = ZODIAC_CONFLICTS[monthElement] || ZODIAC_CONFLICTS["ดิน"];
+        // ใช้ birthDay เพื่อคำนวณดาวประจำตัว (personalized)
+        const personifiedPlanetNum = (birthDay % 9) || 9;
+        const personifiedPlanet = PLANET_DIRECTION[personifiedPlanetNum];
+
+        // ใช้ธาตุประจำปีของบุคคล (ไม่ใช่เดือน)
+        const personifiedEnhanceData = ENHANCEMENT_METHODS[element.name] || ENHANCEMENT_METHODS["ดิน"];
+        const personifiedConflictData = ZODIAC_CONFLICTS[element.name] || ZODIAC_CONFLICTS["ดิน"];
 
         const deepLevelInfo = `
             <hr class="border-gold-30 my-4">
-            <h4 class="text-gold mb-3 text-center">🔥 ระดับลึก (Deep Insights)</h4>
+            <h4 class="text-gold mb-3 text-center">🔥 ระดับลึก (Deep Insights เฉพาะบุคคล)</h4>
+
+            <div class="alert alert-info small mb-3">
+                <strong>📊 พื้นฐาน:</strong> ดาวเกิด (${personifiedPlanetNum}) + ธาตุประจำปี (${element.name}) + ทิศหลังบ้าน (${sittingDir})
+            </div>
 
             <div class="row mt-3">
                 <div class="col-md-4">
                     <div class="card bg-dark border-gold">
                         <div class="card-body">
                             <h5 class="text-gold mb-3">
-                                <i class="fas fa-star mr-2"></i>ดาวประจำเดือน
+                                <i class="fas fa-star mr-2"></i>ดาวประจำตัวของคุณ
                             </h5>
                             <div style="padding: 10px;">
                                 <p class="mb-2" style="font-size: 20px; font-weight: bold;">
-                                    ${planetData.symbol} ${planetData.planet}
+                                    ⭐ ${personifiedPlanet.name}
                                 </p>
-                                <p class="small mb-2"><strong>อิทธิพล:</strong> ${planetData.impact}</p>
-                                <p class="small mb-2"><strong>✅ ดี:</strong> ${planetData.activities}</p>
-                                <p class="small"><strong>⚠️ ระวัง:</strong> ${planetData.caution}</p>
+                                <p class="small mb-2"><strong>วันเกิด:</strong> วันที่ ${birthDay}</p>
+                                <p class="small mb-2"><strong>ทิศมงคล:</strong> ${personifiedPlanet.direction}</p>
+                                <p class="small"><strong>⚡ ธาตุ:</strong> ${personifiedPlanet.element}</p>
                             </div>
                         </div>
                     </div>
@@ -833,18 +840,18 @@ function displayFengShuiCalendar() {
                     <div class="card bg-dark border-gold">
                         <div class="card-body">
                             <h5 class="text-gold mb-3">
-                                <i class="fas fa-magic mr-2"></i>วิธีเสริมพลัง
+                                <i class="fas fa-magic mr-2"></i>วิธีเสริมพลัง (${element.name})
                             </h5>
                             <div style="padding: 10px;">
                                 <p class="small mb-2"><strong>🙏 พิธี:</strong></p>
                                 <ul class="small list-unstyled mb-2">
-                                    ${enhanceData.rituals.map(r => `<li>• ${r}</li>`).join('')}
+                                    ${personifiedEnhanceData.rituals.map(r => `<li>• ${r}</li>`).join('')}
                                 </ul>
                                 <p class="small mb-2"><strong>🏠 ฮวงจุ้ย:</strong></p>
                                 <ul class="small list-unstyled mb-2">
-                                    ${enhanceData.feng_shui.map(f => `<li>• ${f}</li>`).join('')}
+                                    ${personifiedEnhanceData.feng_shui.map(f => `<li>• ${f}</li>`).join('')}
                                 </ul>
-                                <p class="small"><strong>💝 บุญ:</strong> ${enhanceData.charity}</p>
+                                <p class="small"><strong>💝 บุญ:</strong> ${personifiedEnhanceData.charity}</p>
                             </div>
                         </div>
                     </div>
@@ -854,15 +861,15 @@ function displayFengShuiCalendar() {
                     <div class="card bg-dark border-gold">
                         <div class="card-body">
                             <h5 class="text-gold mb-3">
-                                <i class="fas fa-warning mr-2"></i>ขัดแย้งปีอื่น
+                                <i class="fas fa-warning mr-2"></i>ขัดแย้งปีอื่น (${element.name})
                             </h5>
                             <div style="padding: 10px;">
-                                <p class="small mb-2"><strong>🐉 ปีนักษัตรของเดือน:</strong></p>
-                                <p class="small font-weight-bold mb-2">${conflictData.animals.join(', ')}</p>
+                                <p class="small mb-2"><strong>🐉 นักษัตรของคุณ:</strong></p>
+                                <p class="small font-weight-bold mb-2">${personifiedConflictData.animals.join(', ')}</p>
                                 <p class="small mb-2"><strong>❌ ขัดแย้งกับ:</strong></p>
-                                <p class="small font-weight-bold mb-2">${conflictData.conflict_with.join(', ')}</p>
-                                <p class="small mb-2"><strong>เหตุผล:</strong> ${conflictData.reason}</p>
-                                <p class="small"><strong>ผลกระทบ:</strong> ${conflictData.impact}</p>
+                                <p class="small font-weight-bold mb-2">${personifiedConflictData.conflict_with.join(', ')}</p>
+                                <p class="small mb-2"><strong>เหตุผล:</strong> ${personifiedConflictData.reason}</p>
+                                <p class="small"><strong>ผลกระทบ:</strong> ${personifiedConflictData.impact}</p>
                             </div>
                         </div>
                     </div>
