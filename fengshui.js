@@ -94,6 +94,68 @@ const LUCKY_FOOD_FLAVORS = {
     }
 };
 
+// ระดับกลาง: ความเสี่ยงของเดือน (อิงจากการขัดแย้งธาตุ)
+const RISK_LEVEL = {
+    "ไม้": { level: "🟢 ต่ำ", percentage: "20-30%", text: "ปลอดภัย ระวังเพียงเล็กน้อย" },
+    "ไฟ": { level: "🟡 กลาง", percentage: "40-50%", text: "ต้องระมัดระวังน้ำและของเหลว" },
+    "ดิน": { level: "🟢 ต่ำ", percentage: "10-20%", text: "ปลอดภัยที่สุด ดินเป็นกลาง" },
+    "โลหะ": { level: "🟡 กลาง", percentage: "40-50%", text: "ต้องระมัดระวังไฟและความร้อน" },
+    "น้ำ": { level: "🟡 กลาง", percentage: "30-40%", text: "ต้องระมัดระวังดินและสิ่งมั่นคง" }
+};
+
+// ระดับกลาง: วัตถุเสริมมงคล (อิงธาตุและตำรากำจัดเคราะห์)
+const AUSPICIOUS_OBJECTS = {
+    "ไม้": {
+        objects: ["ต้นไม้สด", "รูปไม้ตัดปลูก", "บอนไซ", "ศิลปะไม้"],
+        description: "วัตถุจากไม้เสริมพลังเจริญ"
+    },
+    "ไฟ": {
+        objects: ["เทียนแดง", "โคมไฟ", "หลอดไฟแดง", "รูปดาว"],
+        description: "วัตถุไฟเสริมพลังและสว่าง"
+    },
+    "ดิน": {
+        objects: ["หินแร่", "ผลึกควอตซ์", "เซรามิก", "ดินเหนียวปั้น"],
+        description: "วัตถุดินเสริมเสถียรและมั่นคง"
+    },
+    "โลหะ": {
+        objects: ["เหรียญโชค", "กระดิ่งทองแดง", "รูปทองเหลืองเด็ก", "จี้โลหะ"],
+        description: "วัตถุโลหะเสริมความเข้มแข็ง"
+    },
+    "น้ำ": {
+        objects: ["น้ำพุ", "ตู้ปลา", "ความเหนียวน้ำ", "รูปสัตว์น้ำ"],
+        description: "วัตถุน้ำเสริมการไหลและปรับตัว"
+    }
+};
+
+// ระดับกลาง: ส่วนกายที่ต้องดูแล (อิงจาก 5 Elements medicine)
+const BODY_PARTS_TO_CARE = {
+    "ไม้": {
+        organs: ["ตับ", "ตา", "เอ็น", "โลหิต"],
+        symptoms: "อาจเจ็บท้อง ปัญหาด้านตา หรืออารมณ์ไม่สดชื่น",
+        care: "ดื่มน้ำเปลี่ยวให้มากพอ ออกกำลังกายสม่ำเสมอ หลีกเลี่ยงความเครียด"
+    },
+    "ไฟ": {
+        organs: ["หัวใจ", "ลิ้น", "ลำไส้เล็ก", "เลือด"],
+        symptoms: "อาจมีปัญหาหัวใจ นอนไม่หลับ หรือปากหำหามอาหาร",
+        care: "นอนให้พอ เสริมวิตามิน ลดความร้อนโกรธ ดื่มน้ำเย็น"
+    },
+    "ดิน": {
+        organs: ["ม้าม", "ท้อง", "ปาก", "กล้ามเนื้อ"],
+        symptoms: "อาจท้องเสีย เหนื่อย หรือปัญหาระบบย่อยอาหาร",
+        care: "ทานอาหารสม่ำเสมอ หลีกเลี่ยงความเครียด บริหารร่างกาย"
+    },
+    "โลหะ": {
+        organs: ["ปอด", "ลำไส้ใหญ่", "ผิวหนัง", "จมูก"],
+        symptoms: "อาจซึมหรือหอบ ปัญหาผิวหนัง หรือภูมิแพ้",
+        care: "หลีกเลี่ยงมลภาวะ ดูแลผิวหนัง หายใจเชื่อมั่น"
+    },
+    "น้ำ": {
+        organs: ["ไต", "膀胱", "หู", "กระดูก"],
+        symptoms: "อาจเมื่อยล้า ปัญหาการได้ยิน หรือเบื่อ",
+        care: "นอนให้เพียงพอ หลีกเลี่ยงเย็นจัด อุ่นร่างกายดี"
+    }
+};
+
 // กิจกรรมห้ามตามธาตุ (ตรงข้ามกับสิ่งที่ดี)
 const FORBIDDEN_ACTIVITIES = {
     "ไม้": [
@@ -633,6 +695,67 @@ function displayFengShuiCalendar() {
             </div>
         `;
         resultEl.innerHTML += colorsAndNumbers;
+    }
+
+    // เพิ่มส่วน ความเสี่ยง + วัตถุเสริม + ส่วนกาย (ระดับกลาง)
+    if (resultEl) {
+        // ดึงข้อมูลระดับกลางพร้อม fallback
+        const riskData = RISK_LEVEL[monthElement] || RISK_LEVEL["ดิน"];
+        const objectsData = AUSPICIOUS_OBJECTS[monthElement] || AUSPICIOUS_OBJECTS["ดิน"];
+        const bodyData = BODY_PARTS_TO_CARE[monthElement] || BODY_PARTS_TO_CARE["ดิน"];
+
+        const mediumLevelInfo = `
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>ความเสี่ยงเดือนนี้
+                            </h5>
+                            <div style="padding: 10px;">
+                                <p class="mb-2" style="font-size: 18px; font-weight: bold;">
+                                    ${riskData.level}
+                                </p>
+                                <p class="small mb-2">ระดับความเสี่ยง: <strong>${riskData.percentage}</strong></p>
+                                <p class="small">${riskData.text}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-box mr-2"></i>วัตถุเสริมมงคล
+                            </h5>
+                            <div style="padding: 10px;">
+                                <p class="small mb-2">${objectsData.objects.join(', ')}</p>
+                                <p class="small">${objectsData.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3 mb-3">
+                <div class="col-12">
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-heart mr-2"></i>ส่วนกายที่ต้องดูแล
+                            </h5>
+                            <div style="padding: 10px;">
+                                <p class="small mb-2"><strong>🫀 อวัยวะหลัก:</strong> ${bodyData.organs.join(', ')}</p>
+                                <p class="small mb-2"><strong>⚠️ อาการที่อาจเกิด:</strong> ${bodyData.symptoms}</p>
+                                <p class="small mb-0"><strong>💊 วิธีดูแล:</strong> ${bodyData.care}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        resultEl.innerHTML += mediumLevelInfo;
     }
 
     resultEl.style.display = 'block';
