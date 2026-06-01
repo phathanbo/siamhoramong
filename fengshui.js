@@ -240,6 +240,8 @@ function displayFengShuiCalendar() {
     const resultEl = document.getElementById('fengshuiResult');
     const luckyDirEl = document.getElementById('luckyDirection');
     const unluckyDirEl = document.getElementById('unluckyDirection');
+    const importantDaysEl = document.getElementById('importantDays');
+    const fengshuiTipsEl = document.getElementById('fengshuiTips');
 
     if (!monthEl || !yearEl || !resultEl) return;
 
@@ -267,8 +269,73 @@ function displayFengShuiCalendar() {
         12: "โลหะ"  // ธันวาคม
     };
 
+    // วันสำคัญและข้อห้ามตามธาตุ
+    const importantDaysByElement = {
+        "ไม้": {
+            important: "1, 8, 15, 22, 29",
+            forbidden: "7, 14, 21, 28",
+            description: "วันงอก เจริญ ขยายตัว - หมั่นทำการงานสร้างสรรค์"
+        },
+        "ไฟ": {
+            important: "3, 10, 17, 24",
+            forbidden: "6, 13, 20, 27",
+            description: "วันพลัง อุ่น สว่าง - เหมาะสำหรับเปิดตัวใหม่"
+        },
+        "ดิน": {
+            important: "5, 12, 19, 26",
+            forbidden: "2, 9, 16, 23, 30",
+            description: "วันมั่นคง ตั้งมั่น - ดีสำหรับตั้งฐาน สร้างสิ่งก่อสร้าง"
+        },
+        "โลหะ": {
+            important: "4, 11, 18, 25",
+            forbidden: "3, 10, 17, 24",
+            description: "วันเข้มแข็ง ทำความสะอาด - ดีสำหรับการดำเนินการ"
+        },
+        "น้ำ": {
+            important: "2, 9, 16, 23, 30",
+            forbidden: "5, 12, 19, 26",
+            description: "วันไหล ปรับตัว - ดีสำหรับการเยี่ยมอื่นๆ"
+        }
+    };
+
+    // คำแนะนำตามธาตุ
+    const recommendationsByElement = {
+        "ไม้": [
+            "✅ ดีสำหรับ: ปลูกบ้าน, ปลูกต้นไม้, เปิดธุรกิจใหม่",
+            "✅ สี: เขียว, ฟ้า",
+            "✅ ตัวเลข: 3, 8",
+            "❌ หลีกเลี่ยง: ลงทุนในโลหะ, งานเลิกจ้าง"
+        ],
+        "ไฟ": [
+            "✅ ดีสำหรับ: ซ่อมแซม, ทำความสะอาด, เปิดร้าน",
+            "✅ สี: แดง, ส้ม",
+            "✅ ตัวเลข: 9",
+            "❌ หลีกเลี่ยง: การเดินทางไกล, สัญญาน้ำ"
+        ],
+        "ดิน": [
+            "✅ ดีสำหรับ: ไหว้บ้าน, บูรณะ, การจ้าง",
+            "✅ สี: เหลือง, น้ำตาล",
+            "✅ ตัวเลข: 5",
+            "❌ หลีกเลี่ยง: การขุด, งานที่ทำลาย"
+        ],
+        "โลหะ": [
+            "✅ ดีสำหรับ: การ์ดการเงิน, ซ่อมเครื่องจักร",
+            "✅ สี: ขาว, เงิน",
+            "✅ ตัวเลข: 7",
+            "❌ หลีกเลี่ยง: งานเกี่ยวกับไม้, การเก็บของ"
+        ],
+        "น้ำ": [
+            "✅ ดีสำหรับ: ท่องเที่ยว, ซ่อมแซมที่ฝา, การขนส่ง",
+            "✅ สี: ดำ, น้ำเงิน",
+            "✅ ตัวเลข: 1",
+            "❌ หลีกเลี่ยง: งานเกี่ยวกับไฟ, การเก็บความร้อน"
+        ]
+    };
+
     const monthElement = monthElements[month];
     const monthElementData = ELEMENT_FENGSHUI[Object.keys(ELEMENT_FENGSHUI).find(k => ELEMENT_FENGSHUI[k].name === monthElement)];
+    const importantDays = importantDaysByElement[monthElement];
+    const recommendations = recommendationsByElement[monthElement];
 
     // คำนวณธาตุประจำปี
     const yearElement = (year - 1900) % 5;
@@ -295,7 +362,7 @@ function displayFengShuiCalendar() {
             <div style="padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; border-left: 4px solid #d4af37;">
                 <p class="mb-2"><strong>📍 เดือน:</strong> <span style="color: #d4af37; font-size: 18px;">${monthElementData.symbol} ${monthElement}</span></p>
                 <p class="mb-2"><strong>🧭 ทิศมงคล:</strong> <span style="color: #28a745; font-size: 18px; font-weight: bold;">${luckyDir}</span></p>
-                <p class="small mb-0"><strong>💡 คำแนะนำ:</strong> ในเดือนนี้ ควรตั้งเตียง โต๊ะทำงาน หรือประตูหลักโดยเพื่อให้เข้าข้อมูลจากทิศ ${luckyDir}</p>
+                <p class="small mb-0"><strong>💡 คำแนะนำ:</strong> ตั้งเตียง โต๊ะทำงาน หรือประตูหลักโดยเข้ากับทิศ ${luckyDir}</p>
             </div>
         `;
     }
@@ -305,7 +372,34 @@ function displayFengShuiCalendar() {
             <div style="padding: 15px; background: rgba(220, 53, 69, 0.1); border-radius: 8px; border-left: 4px solid #dc3545;">
                 <p class="mb-2"><strong>📍 ธาตุตรงข้าม:</strong> <span style="color: #dc3545; font-size: 18px;">${oppositeElementData.symbol} ${oppositeElement}</span></p>
                 <p class="mb-2"><strong>🚫 ทิศหลีกเลี่ยง:</strong> <span style="color: #dc3545; font-size: 18px; font-weight: bold;">${unluckyDir}</span></p>
-                <p class="small mb-0"><strong>⚠️ คำแนะนำ:</strong> ควรหลีกเลี่ยงการตั้งสิ่งสำคัญทางทิศ ${unluckyDir} ในเดือนนี้</p>
+                <p class="small mb-0"><strong>⚠️ คำแนะนำ:</strong> หลีกเลี่ยงการตั้งสิ่งสำคัญทางทิศ ${unluckyDir}</p>
+            </div>
+        `;
+    }
+
+    if (importantDaysEl) {
+        importantDaysEl.innerHTML = `
+            <div style="padding: 15px;">
+                <p class="mb-3"><strong>✅ วันมงคล:</strong></p>
+                <p style="font-size: 18px; color: #28a745; font-weight: bold; margin-bottom: 10px;">${importantDays.important}</p>
+                <p class="small mb-3">${importantDays.description}</p>
+
+                <p class="mb-3"><strong>❌ วันข้อห้าม:</strong></p>
+                <p style="font-size: 18px; color: #dc3545; font-weight: bold;">${importantDays.forbidden}</p>
+            </div>
+        `;
+    }
+
+    if (fengshuiTipsEl) {
+        fengshuiTipsEl.innerHTML = `
+            <div style="padding: 15px;">
+                <ul class="list-unstyled">
+                    ${recommendations.map(rec => `<li style="padding: 8px 0; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">${rec}</li>`).join('')}
+                </ul>
+                <p class="small mt-3 mb-0">
+                    <strong>💡 เดือนปัจจุบัน:</strong> ธาตุ${monthElement} (ปี${year}) + ธาตุปี${yearElementData.name}<br>
+                    <strong>🔄 ความสัมพันธ์:</strong> ${monthElement} ${ELEMENT_RELATIONSHIP[monthElement].description.toLowerCase()}
+                </p>
             </div>
         `;
     }
