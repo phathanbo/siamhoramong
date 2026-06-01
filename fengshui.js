@@ -231,9 +231,108 @@ function getColorCode(colorName) {
     return colorMap[colorName] || "#d4af37";
 }
 
+/**
+ * 🏠 แสดงปฏิทินฮวงจุ้ยรายเดือน
+ */
+function displayFengShuiCalendar() {
+    const monthEl = document.getElementById('fengshuiMonth');
+    const yearEl = document.getElementById('fengshuiYear');
+    const resultEl = document.getElementById('fengshuiResult');
+    const luckyDirEl = document.getElementById('luckyDirection');
+    const unluckyDirEl = document.getElementById('unluckyDirection');
+
+    if (!monthEl || !yearEl || !resultEl) return;
+
+    const month = parseInt(monthEl.value);
+    const year = parseInt(yearEl.value);
+
+    if (!month) {
+        alert('⚠️ กรุณาเลือกเดือน');
+        return;
+    }
+
+    // คำนวณธาตุประจำเดือน (fixed per month)
+    const monthElements = {
+        1: "ไฟ",    // มกราคม
+        2: "โลหะ",  // กุมภาพันธ์
+        3: "ไม้",    // มีนาคม
+        4: "น้ำ",    // เมษายน
+        5: "ดิน",   // พฤษภาคม
+        6: "ไฟ",    // มิถุนายน
+        7: "โลหะ",  // กรกฎาคม
+        8: "ไม้",    // สิงหาคม
+        9: "น้ำ",    // กันยายน
+        10: "ดิน",  // ตุลาคม
+        11: "ไฟ",   // พฤศจิกายน
+        12: "โลหะ"  // ธันวาคม
+    };
+
+    const monthElement = monthElements[month];
+    const monthElementData = ELEMENT_FENGSHUI[Object.keys(ELEMENT_FENGSHUI).find(k => ELEMENT_FENGSHUI[k].name === monthElement)];
+
+    // คำนวณธาตุประจำปี
+    const yearElement = (year - 1900) % 5;
+    const yearElementData = ELEMENT_FENGSHUI[yearElement];
+
+    // ทิศมงคล (จากธาตุประจำเดือน)
+    const luckyDir = monthElementData.luckyDirection;
+
+    // ทิศไม่มงคล (ธาตุตรงข้าม)
+    const oppositeElements = {
+        "ไม้": "โลหะ",
+        "ไฟ": "น้ำ",
+        "ดิน": "ดิน",
+        "โลหะ": "ไม้",
+        "น้ำ": "ไฟ"
+    };
+    const oppositeElement = oppositeElements[monthElement];
+    const oppositeElementData = ELEMENT_FENGSHUI[Object.keys(ELEMENT_FENGSHUI).find(k => ELEMENT_FENGSHUI[k].name === oppositeElement)];
+    const unluckyDir = oppositeElementData.luckyDirection;
+
+    // แสดงผลลัพธ์
+    if (luckyDirEl) {
+        luckyDirEl.innerHTML = `
+            <div style="padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; border-left: 4px solid #d4af37;">
+                <p class="mb-2"><strong>📍 เดือน:</strong> <span style="color: #d4af37; font-size: 18px;">${monthElementData.symbol} ${monthElement}</span></p>
+                <p class="mb-2"><strong>🧭 ทิศมงคล:</strong> <span style="color: #28a745; font-size: 18px; font-weight: bold;">${luckyDir}</span></p>
+                <p class="small mb-0"><strong>💡 คำแนะนำ:</strong> ในเดือนนี้ ควรตั้งเตียง โต๊ะทำงาน หรือประตูหลักโดยเพื่อให้เข้าข้อมูลจากทิศ ${luckyDir}</p>
+            </div>
+        `;
+    }
+
+    if (unluckyDirEl) {
+        unluckyDirEl.innerHTML = `
+            <div style="padding: 15px; background: rgba(220, 53, 69, 0.1); border-radius: 8px; border-left: 4px solid #dc3545;">
+                <p class="mb-2"><strong>📍 ธาตุตรงข้าม:</strong> <span style="color: #dc3545; font-size: 18px;">${oppositeElementData.symbol} ${oppositeElement}</span></p>
+                <p class="mb-2"><strong>🚫 ทิศหลีกเลี่ยง:</strong> <span style="color: #dc3545; font-size: 18px; font-weight: bold;">${unluckyDir}</span></p>
+                <p class="small mb-0"><strong>⚠️ คำแนะนำ:</strong> ควรหลีกเลี่ยงการตั้งสิ่งสำคัญทางทิศ ${unluckyDir} ในเดือนนี้</p>
+            </div>
+        `;
+    }
+
+    resultEl.style.display = 'block';
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     showFengShuiPage();
+
+    // Populate month dropdown in Feng Shui calendar
+    const monthSelect = document.getElementById('fengshuiMonth');
+    if (monthSelect) {
+        const months = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+                       "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        months.forEach((month, index) => {
+            if (index > 0) {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = month;
+                monthSelect.appendChild(option);
+            }
+        });
+    }
+
     console.log("✅ fengshui.js loaded - อิงธาตุ 5 + ดาว 9 ดวง (authentic Feng Shui)");
 });
 
 window.analyzeFengShui = analyzeFengShui;
+window.displayFengShuiCalendar = displayFengShuiCalendar;
