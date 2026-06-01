@@ -1,0 +1,77 @@
+{
+  "name": "สยามโหรามงคล - ดูดวงชะตา",
+  "short_name": "โหรามงคล",
+  "description": "เว็บดูดวงตามหลักโหราศาสตร์ไทยที่แม่นยำ พยากรณ์ตามตำราโบราณ ทำนายดวงชะตารายปี ปีนักษัตร ยามอัฏฐกาล ฉัตร ๙ ชั้น มหาทักษา",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1a1a1a",
+  "theme_color": "#d4af37",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1995/1995434.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1995/1995434.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1995/1995434.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": [
+    "lifestyle",
+    "productivity"
+  ],
+  "screenshots": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1995/1995434.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1995/1995434.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ห้องพยากรณ์",
+      "short_name": "พยากรณ์",
+      "description": "เข้าไปที่ห้องพยากรณ์",
+      "url": "/?page=prediction",
+      "icons": [
+        {
+          "src": "https://cdn-icons-png.flaticon.com/512/1995/1995434.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "ความรู้พื้นฐาน",
+      "short_name": "ความรู้",
+      "description": "ค้นหาความรู้เกี่ยวกับโหราศาสตร์",
+      "url": "/?page=knowledge",
+      "icons": [
+        {
+          "src": "https://cdn-icons-png.flaticon.com/512/1995/1995434.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

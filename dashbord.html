@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>สยามโหรามงคล - แดชบอร์ดดูดวง</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Sarabun:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0618;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4030a0;
+            border-radius: 2px;
+        }
+
+        body {
+            background: #0f172a;
+            font-family: 'Cormorant Garamond', 'Sarabun', serif;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        #star-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .nebula-1 {
+            position: fixed;
+            top: -10%;
+            left: -5%;
+            width: 50vw;
+            height: 50vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(120, 40, 200, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .nebula-2 {
+            position: fixed;
+            bottom: -10%;
+            right: -5%;
+            width: 45vw;
+            height: 45vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(40, 100, 200, 0.10) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .dash-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        #main-header {
+            opacity: 1;
+            transform: none;
+            transition: none;
+        }
+
+        header.visible #main-header {
+            opacity: 1;
+        }
+
+        .header-sub {
+            font-size: 0.8rem;
+            letter-spacing: 0.4em;
+            color: #b088ff;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            background: linear-gradient(135deg, #e8c97a 0%, #f0e0b0 40%, #c9a0ff 80%, #8060e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+        }
+
+        .header-date {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        /* Cards */
+        .card {
+            background: #1e293b;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(234, 179, 8, 0.1);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.25em;
+            color: #eab308;
+            text-transform: uppercase;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        /* Grid layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .grid-6 {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .grid-2x2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .planets-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        /* Moon card */
+        .moon-flex {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .moon-icon {
+            font-size: 2.5rem;
+        }
+
+        .moon-title {
+            font-size: 1.1rem;
+            color: #fbbf24;
+            font-weight: 500;
+        }
+
+        .moon-sub {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 0.2rem;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .moon-tip {
+            margin-top: 1rem;
+            padding: 0.6rem 1rem;
+            background: rgba(234, 179, 8, 0.05);
+            border-radius: 0.5rem;
+            border-left: 2px solid #eab308;
+            font-size: 0.82rem;
+            color: #fbbf24;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        /* Lucky */
+        .lucky-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            padding: 0.6rem 0.75rem;
+        }
+
+        .lucky-sub {
+            font-size: 0.7rem;
+            color: #8090c0;
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.1em;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .lucky-val {
+            font-size: 0.9rem;
+            color: #90c0ff;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .num-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #eab308, #b45309);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-right: 0.3rem;
+        }
+
+        .color-badge {
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 1rem;
+            display: inline-block;
+            margin: 0.1rem;
+        }
+
+        /* Zodiac grid */
+        .zodiac-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0.75rem;
+            padding: 0.6rem 0.3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .zodiac-btn .zsymbol {
+            font-size: 1.4rem;
+            filter: brightness(0.7);
+            transition: filter 0.2s;
+        }
+
+        .zodiac-btn .zname {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            font-family: 'Sarabun', sans-serif;
+            transition: color 0.2s;
+        }
+
+        .zodiac-btn.active {
+            transform: scale(1.05);
+            border-color: #eab308;
+        }
+
+        /* Sign profile */
+        .sign-symbol {
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            animation: pulse 3s ease-in-out infinite;
+            display: block;
+            text-align: center;
+        }
+
+        .sign-name {
+            font-size: 1.6rem;
+            font-weight: 300;
+            letter-spacing: 0.08em;
+            text-align: center;
+            display: block;
+        }
+
+        .sign-en {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-style: italic;
+            text-align: center;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .sign-badge {
+            font-size: 0.75rem;
+            color: #a090c0;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-family: 'Sarabun', sans-serif;
+            text-align: center;
+        }
+
+        .sign-element {
+            font-size: 0.75rem;
+            text-align: center;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .sign-element span {
+            color: #8080a0;
+        }
+
+        /* Bars */
+        .bars {
+            margin-top: 1.25rem;
+        }
+
+        .bar-row {
+            margin-bottom: 0.5rem;
+        }
+
+        .bar-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #8080a0;
+            margin-bottom: 0.2rem;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .bar-track {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.8s ease;
+        }
+
+        /* Horoscope */
+        .cat-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .cat-btn {
+            padding: 0.35rem 0.9rem;
+            border-radius: 2rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: 'Sarabun', sans-serif;
+            background: #0f172a;
+            color: #94a3b8;
+            transition: all 0.2s;
+            letter-spacing: 0.05em;
+        }
+
+        .cat-btn.active {
+            background: #eab308;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .reading-box {
+            min-height: 120px;
+            background: #0f172a;
+            border-radius: 1rem;
+            border: 1px solid rgba(234, 179, 8, 0.2);
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reading-placeholder {
+            text-align: center;
+            color: #475569;
+        }
+
+        .reading-placeholder .crystal {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reading-placeholder p {
+            font-size: 0.85rem;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .reading-text {
+            text-align: center;
+            font-size: 1.1rem;
+            color: white;
+            line-height: 1.8;
+            font-family: 'Sarabun', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        .shimmer {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(180, 120, 255, 0.04), transparent);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        .read-btn {
+            width: 100%;
+            padding: 0.85rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(180, 100, 255, 0.4);
+            background: linear-gradient(135deg, rgba(120, 50, 200, 0.6), rgba(80, 30, 160, 0.6));
+            color: #e8d0ff;
+            font-size: 0.95rem;
+            font-family: 'Sarabun', sans-serif;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .read-btn:hover {
+            transform: scale(1.02);
+        }
+
+        /* Planet cards */
+        .planet-card {
+            background: #0f172a;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .planet-icon {
+            font-size: 1.5rem;
+            min-width: 36px;
+            text-align: center;
+            filter: brightness(1.2);
+        }
+
+        .planet-name {
+            font-size: 0.85rem;
+            color: white;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .planet-pos {
+            font-size: 0.7rem;
+            color: #a090ff;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .planet-meaning {
+            font-size: 0.65rem;
+            color: #64748b;
+            margin-top: 0.1rem;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        footer.dash-footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #475569;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            font-family: 'Sarabun', sans-serif;
+            padding-bottom: 2rem;
+        }
+        
+        /* ปรับความสูง Iframe ให้พอดีกับหน้าจออัตโนมัติ */
+        #content-frame {
+            height: 75vh; /* Fallback สำหรับเบราว์เซอร์เก่า */
+            height: calc(100dvh - 240px); /* หักลบความสูง Header และระยะขอบ */
+        }
+
+        @media (max-width: 768px) {
+            #content-frame {
+                height: calc(100dvh - 160px); /* ในมือถือเมนูจะน้อยลง จึงใช้พื้นที่ได้มากขึ้น */
+                border-radius: 1.5rem; /* ลดขนาดขอบมนเล็กน้อยในมือถือ */
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.04);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            50% {
+                left: 150%;
+            }
+
+            100% {
+                left: 150%;
+            }
+        }
+
+        @media (max-width: 640px) {
+
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-6 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .planets-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="star-canvas"></canvas>
+    <div class="nebula-1"></div>
+    <div class="nebula-2"></div>
+
+    <header class="bg-slate-900 border-b border-yellow-500/30 sticky top-0 z-50 dash-container">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-moon text-yellow-400 text-3xl"></i>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-wider text-white">สยามโหรามงคล</h1>
+                    <p class="text-xs text-yellow-400 -mt-1">ดวงดาวกำหนดชะตา</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <div class="relative hidden sm:block">
+                    <input type="text" id="searchInput"
+                        class="bg-slate-800 border border-slate-700 rounded-full py-2 px-5 pl-10 w-64 focus:outline-none focus:border-yellow-400 transition text-white"
+                        placeholder="ค้นหาดวง...">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3 text-slate-400"></i>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="user-avatar" class="w-9 h-9 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-2xl flex items-center justify-center font-bold text-slate-900">
+                        พ
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto flex dash-container">
+        <aside class="w-72 bg-slate-900 border-r border-slate-700 min-h-screen p-6 hidden md:block">
+            <nav class="space-y-2">
+                <a href="javascript:void(0)" onclick="loadExternalPage('dashboard')" id="nav-dash" class="flex items-center gap-3 px-4 py-3 bg-slate-800 rounded-2xl text-yellow-400 nav-link-item group">
+                    <i class="fa-solid fa-house w-5"></i>
+                    <span class="font-medium">แดชบอร์ด</span>
+                </a>
+                <a href="javascript:void(0)" onclick="loadExternalPage('index.html', this, 'mainpage')" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-2xl transition text-slate-300 nav-link-item">
+                    <i class="fa-solid fa-wand-magic-sparkles w-5"></i>
+                    <span>ห้องพยากรณ์หลัก</span>
+                </a>
+                <a href="javascript:void(0)" onclick="loadExternalPage('taksasattalek.html', this)" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-2xl transition text-slate-300 nav-link-item">
+                    <i class="fa-solid fa-chart-pie w-5"></i>
+                    <span>มหาทักษาสัตตเลข</span>
+                </a>
+                <a href="javascript:void(0)" onclick="loadExternalPage('quick-fortune.html', this)" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-2xl transition text-slate-300 nav-link-item">
+                    <i class="fa-solid fa-bolt-lightning w-5"></i>
+                    <span>วิเคราะห์ดวงฉับพลัน</span>
+                </a>
+                <a href="javascript:void(0)" onclick="loadExternalPage('index.html', this, 'nameAnalysisPage')" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-2xl transition text-slate-300 nav-link-item">
+                    <i class="fa-solid fa-signature w-5"></i>
+                    <span>วิเคราะห์ชื่อมงคล</span>
+                </a>
+                <a href="javascript:void(0)" onclick="loadExternalPage('pakka.html', this)" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-2xl transition text-slate-300 nav-link-item">
+                    <i class="fa-solid fa-calendar w-5"></i>
+                    <span>ปฏิทินฤกษ์</span>
+                </a>
+                <a href="javascript:void(0)" onclick="loadExternalPage('index.html', this, 'historySection')" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-2xl transition text-slate-300 nav-link-item">
+                    <i class="fa-solid fa-address-book w-5"></i>
+                    <span>ทะเบียนสมาชิก</span>
+                </a>
+            </nav>
+
+            <!-- ส่วนข้อมูลผู้ใช้จากการคำนวน (Independent Calculations) -->
+            <div class="mt-8 pt-6 border-t border-slate-700">
+                <h3 class="text-yellow-400 text-xs font-medium mb-3 flex items-center gap-2 uppercase tracking-widest">
+                    <i class="fa-solid fa-sparkles"></i>
+                    ข้อมูลของคุณ
+                </h3>
+                <!-- ส่วนแสดงข้อมูล จะสร้างแบบ Static แล้วให้ JS อัปเดต -->
+                <div class="space-y-2 text-xs">
+                    <!-- ชื่อ -->
+                    <div class="bg-slate-800/40 p-2 rounded-lg">
+                        <div class="text-slate-400 text-xs">👤 ชื่อคุณ</div>
+                        <div id="sidebar-name" class="text-white font-semibold">-</div>
+                    </div>
+                    <!-- ราศี -->
+                    <div class="bg-slate-800/40 p-2 rounded-lg">
+                        <div class="text-slate-400 text-xs">♈ ราศี</div>
+                        <div id="sidebar-zodiac" class="text-white font-semibold">-</div>
+                    </div>
+                    <!-- หลักชีวิต -->
+                    <div class="bg-slate-800/40 p-2 rounded-lg">
+                        <div class="text-slate-400 text-xs">🔢 หลักชีวิต</div>
+                        <div id="sidebar-life" class="text-white font-semibold">-</div>
+                    </div>
+                    <!-- เลขนำโชค -->
+                    <div class="bg-slate-800/40 p-2 rounded-lg">
+                        <div class="text-slate-400 text-xs">🎰 เลขนำโชค</div>
+                        <div id="sidebar-lucky" class="text-emerald-400 font-semibold">-</div>
+                    </div>
+                    <!-- สีมงคล -->
+                    <div class="bg-slate-800/40 p-2 rounded-lg">
+                        <div class="text-slate-400 text-xs">🎨 สีมงคล</div>
+                        <div id="sidebar-colors" class="text-amber-400 font-semibold">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="text-yellow-400 text-sm font-medium mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-fire"></i>
+                    ราศียอดนิยม
+                </h3>
+                <div id="popular-zodiac" class="space-y-2 text-sm"></div>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-8">
+            <!-- ส่วนแสดงผลเนื้อหาจากไฟล์ภายนอก -->
+            <div id="external-view" class="hidden w-full h-full relative">
+                <div class="mb-5">
+                    <button onclick="loadExternalPage('dashboard')" class="text-yellow-400 hover:text-white transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> กลับไปที่แดชบอร์ดหลัก
+                    </button>
+                </div>
+
+                <!-- Loading Spinner จางๆ -->
+                <div id="frame-loader" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-sm z-10 rounded-3xl" style="top: 60px;">
+                    <div class="flex flex-col items-center gap-4">
+                        <i class="fa-solid fa-circle-notch fa-spin text-5xl text-yellow-400/30"></i>
+                        <span class="text-yellow-400/40 text-sm tracking-widest font-light">กำลังสื่อสารกับดวงดาว...</span>
+                    </div>
+                </div>
+
+                <iframe id="content-frame" class="w-full border-0 rounded-3xl bg-white shadow-2xl transition-opacity duration-500"></iframe>
+            </div>
+
+            <!-- เนื้อหาแดชบอร์ดเดิม -->
+            <div id="dashboard-view">
+            <div id="main-header" class="mb-10 text-center md:text-left">
+                <div class="header-sub">✦ สยามโหรามงคล ✦</div>
+                <h2 class="hero-title">ดาวกำหนดชะตา</h2>
+            <div class="header-date" id="today-date"></div>
+            </div>
+
+        <!-- Row 1: Moon + Lucky -->
+        <div class="grid-2">
+
+            <!-- Moon Card -->
+            <div class="card shadow-xl">
+                <div class="card-label">ดวงจันทร์วันนี้</div>
+                <div class="moon-flex">
+                    <span class="moon-icon" id="moon-emoji">🌕</span>
+                    <div>
+                        <div class="moon-title">จันทร์เต็มดวง</div>
+                        <div class="moon-sub">พลังงานสูงสุด — เวลาแห่งการปลดปล่อย</div>
+                    </div>
+                </div>
+                <div class="moon-tip">🌟 คืนนี้เหมาะสำหรับการทำสมาธิและตั้งความปรารถนา</div>
+            </div>
+
+            <!-- Lucky Card -->
+            <div class="card shadow-xl">
+                <div class="card-label">โชคชะตาวันนี้</div>
+                <div class="grid-2x2">
+                    <div class="lucky-item">
+                        <div class="lucky-sub">เลขนำโชค</div>
+                        <div id="lucky-nums"></div>
+                    </div>
+                    <div class="lucky-item">
+                        <div class="lucky-sub">สีมงคล</div>
+                        <div id="lucky-colors"></div>
+                    </div>
+                    <div class="lucky-item">
+                        <div class="lucky-sub">ทิศมงคล</div>
+                        <div class="lucky-val">🧭 ตะวันออกเฉียงเหนือ</div>
+                    </div>
+                    <div class="lucky-item">
+                        <div class="lucky-sub">ช่วงเวลาดี</div>
+                        <div class="lucky-val">🕐 09:00 – 12:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zodiac Selector -->
+        <div class="card shadow-xl mb-5">
+            <div class="card-label">เลือกราศีของคุณ</div>
+            <div class="grid-6" id="zodiac-grid"></div>
+        </div>
+
+        <!-- Sign + Reading -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+
+            <!-- Sign Profile -->
+            <div class="card shadow-xl text-center">
+                <span class="sign-symbol" id="sign-symbol">♌</span>
+                <span class="sign-name" id="sign-name">สิงห์</span>
+                <span class="sign-en" id="sign-en">Leo</span>
+                <span class="sign-badge" id="sign-date">📅 23 ก.ค. – 22 ส.ค.</span>
+                <div class="sign-element text-sm"><span class="text-slate-400">ธาตุ: </span><span id="sign-element" style="color:#FFA947">ไฟ</span>
+                </div>
+                <div class="bars" id="stat-bars"></div>
+            </div>
+
+            <!-- Horoscope Reading -->
+            <div class="card shadow-xl lg:col-span-2">
+                <div class="card-label">ดูดวงประจำวัน</div>
+                <div class="cat-tabs" id="cat-tabs"></div>
+                <div class="reading-box">
+                    <div class="reading-placeholder" id="reading-placeholder">
+                        <div class="crystal">🔮</div>
+                        <p>กดปุ่มเพื่อเปิดเผยชะตากรรม</p>
+                    </div>
+                    <div class="reading-text" id="reading-text" style="display:none;"></div>
+                    <div class="shimmer"></div>
+                </div>
+                <button class="read-btn" id="read-btn">🔮 เปิดดูดวง</button>
+            </div>
+        </div>
+
+        <!-- Planets -->
+        <div class="card shadow-xl">
+            <div class="card-label">ตำแหน่งดาวเคราะห์</div>
+            <div class="planets-grid" id="planets-grid"></div>
+        </div>
+            </div> <!-- ปิด dashboard-view -->
+
+        <footer class="dash-footer">✦ ดวงดาวกำหนดทิศทาง แต่เจตจำนงของคุณคือพลังที่แท้จริง ✦</footer>
+        </main>
+    </div>
+
+    <script>
+        const ZODIAC_SIGNS = [
+            { name: "เมษ", en: "Aries", symbol: "♈", element: "ไฟ", date: "21 มี.ค. – 19 เม.ย.", color: "#FF6B6B" },
+            { name: "พฤษภ", en: "Taurus", symbol: "♉", element: "ดิน", date: "20 เม.ย. – 20 พ.ค.", color: "#A8D8A8" },
+            { name: "เมถุน", en: "Gemini", symbol: "♊", element: "ลม", date: "21 พ.ค. – 20 มิ.ย.", color: "#FFD93D" },
+            { name: "กรกฎ", en: "Cancer", symbol: "♋", element: "น้ำ", date: "21 มิ.ย. – 22 ก.ค.", color: "#6BCFFF" },
+            { name: "สิงห์", en: "Leo", symbol: "♌", element: "ไฟ", date: "23 ก.ค. – 22 ส.ค.", color: "#FFA947" },
+            { name: "กันย์", en: "Virgo", symbol: "♍", element: "ดิน", date: "23 ส.ค. – 22 ก.ย.", color: "#B8E0B8" },
+            { name: "ตุลย์", en: "Libra", symbol: "♎", element: "ลม", date: "23 ก.ย. – 22 ต.ค.", color: "#FFB7D5" },
+            { name: "พิจิก", en: "Scorpio", symbol: "♏", element: "น้ำ", date: "23 ต.ค. – 21 พ.ย.", color: "#9B72CF" },
+            { name: "ธนู", en: "Sagittarius", symbol: "♐", element: "ไฟ", date: "22 พ.ย. – 21 ธ.ค.", color: "#FF8C69" },
+            { name: "มกร", en: "Capricorn", symbol: "♑", element: "ดิน", date: "22 ธ.ค. – 19 ม.ค.", color: "#8BA7C7" },
+            { name: "กุมภ์", en: "Aquarius", symbol: "♒", element: "ลม", date: "20 ม.ค. – 18 ก.พ.", color: "#7EC8C8" },
+            { name: "มีน", en: "Pisces", symbol: "♓", element: "น้ำ", date: "19 ก.พ. – 20 มี.ค.", color: "#A0C4FF" },
+        ];
+
+        const HOROSCOPE_DATA = {
+            "ความรัก": [
+                "ดาวศุกร์ส่งแสงมาหาคุณ ความสัมพันธ์จะก้าวหน้า",
+                "ระวังความเข้าใจผิดกับคนรัก ควรพูดคุยตรงๆ",
+                "โอกาสพบรักใหม่กำลังมาถึง เปิดใจรับ",
+                "ความรักมั่นคง แต่ควรให้เวลากันมากขึ้น",
+                "วันนี้ความรักสดใส หัวใจพร้อมรับสิ่งดีๆ",
+            ],
+            "การงาน": [
+                "โปรเจกต์ที่รอคอยจะได้รับการอนุมัติ",
+                "ระวังคู่แข่งที่ซ่อนเร้น ทำงานด้วยความรอบคอบ",
+                "ความสำเร็จใกล้เข้ามาแล้ว อดทนอีกนิด",
+                "หัวหน้าจะมองเห็นความสามารถของคุณ",
+                "วันดีสำหรับการเจรจาและประชุมสำคัญ",
+            ],
+            "การเงิน": [
+                "โชคลาภจากทิศตะวันออก ระวังการลงทุนเสี่ยง",
+                "รายได้พิเศษกำลังมา แต่ควรออมไว้บ้าง",
+                "ระวังรายจ่ายที่ไม่จำเป็น วางแผนการเงินดีๆ",
+                "ดาวพฤหัสส่งดวงดี การเงินคล่องตัว",
+                "หลีกเลี่ยงการพนันและการเสี่ยงโชคทุกรูปแบบ",
+            ],
+            "สุขภาพ": [
+                "พักผ่อนให้เพียงพอ ร่างกายต้องการการฟื้นฟู",
+                "ออกกำลังกายเบาๆ จะช่วยให้จิตใจสดชื่น",
+                "ระวังโรคภัยที่มาจากอากาศ ดูแลตัวเองด้วย",
+                "พลังงานสูง วันดีสำหรับกิจกรรมกลางแจ้ง",
+                "สุขภาพแข็งแรง แต่ควรตรวจสุขภาพประจำปี",
+            ],
+        };
+
+        const CAT_ICONS = { "ความรัก": "💝", "การงาน": "⚡", "การเงิน": "💰", "สุขภาพ": "🌿" };
+
+        const PLANETS = [
+            { icon: "☀️", label: "อาทิตย์", pos: "สิงห์", meaning: "อัตตา พลังชีวิต" },
+            { icon: "🌙", label: "จันทร์", pos: "กรกฎ", meaning: "อารมณ์ จิตใต้สำนึก" },
+            { icon: "☿", label: "พุธ", pos: "เมถุน", meaning: "การสื่อสาร ความคิด" },
+            { icon: "♀", label: "ศุกร์", pos: "ตุลย์", meaning: "ความรัก ความงาม" },
+            { icon: "♂", label: "อังคาร", pos: "เมษ", meaning: "พลังงาน ความกล้า" },
+            { icon: "♃", label: "พฤหัส", pos: "ธนู", meaning: "โชคลาภ การขยาย" },
+        ];
+
+        const sdMeanings = {
+            base4: {
+                1: "กำลังอาทิตย์: เด่นด้านเกียรติยศ ผู้นำ ได้ทำงานใหญ่ มีความเชื่อมั่นสูง",
+                2: "กำลังจันทร์: เด่นด้านเมตตามหานิยม เสน่ห์ดึงดูดใจ และงานบริการ",
+                3: "กำลังอังคาร: เด่นด้านความกล้าหาญ การบุกเบิก คล่องแคล่วว่องไว",
+                4: "กำลังพุธ: เด่นด้านการค้าขาย เจรจาสื่อสาร และสติปัญญาไหวพริบดี",
+                5: "กำลังพฤหัสบดี: เด่นด้านความรู้ คุณธรรม ผู้ใหญ่อุปถัมภ์ และการศึกษา",
+                6: "กำลังศุกร์: เด่นด้านความรัก การเงิน ความบันเทิงรื่นรมย์ในชีวิต",
+                7: "กำลังเสาร์: เด่นด้านความหนักแน่น อดทน แบกภาระรับผิดชอบสูง",
+                8: "กำลังราหู: เด่นด้านการพลิกแพลง กล้าได้กล้าเสีย ทันเล่ห์เหลี่ยมคน",
+                9: "กำลังเกตุ: เด่นด้านสิ่งศักดิ์สิทธิ์คุ้มครอง แคล้วคลาด และมีสัมผัสวิเศษ",
+                10: "กำลังพระเคราะห์รวมสูง: มีเกียรติยศใหญ่และเกณฑ์ชะตามั่นคงในต่างแดน",
+                11: "กำลังมหาโชค: หยิบจับสิ่งใดมักได้รับโอกาสที่ดีและมีความสำเร็จฟลุ๊คๆ เสมอ",
+                12: "กำลังราชาโชค: วาสนาดี ได้ลาภจากชนชั้นสูงหรือคนรอบข้างเคารพนับถือ",
+                13: "กำลังมหาอุตม์: พลังอำนาจแข็งแกร่ง มีความมุ่งมั่นทลายทุกอุปสรรคจนรุ่งเรือง",
+                14: "กำลังจักรพรรดิ: มีความมั่นคงมั่งคั่ง เป็นเสาหลักให้ผู้คนพึ่งพาบารมี",
+                15: "กำลังกำลังพระเคราะห์ยอดเยี่ยม: เกณฑ์ชะตาเปี่ยมพลังความสุขและความรุ่งโรจน์รอบตัว",
+                16: "กำลังตบะบารมีสูง: มีสง่าราศี ผู้คนยำเกรงคอยเกื้อหนุนและมีอำนาจในการตัดสินใจ",
+                17: "กำลังมหาจักร: ชีวิตพลิกผันจากลำบากสู่ยิ่งใหญ่ ความราบรื่นมาจากการสู้ไม่ถอย",
+                18: "กำลังราชาบารมี: มีชื่อเสียงได้รับการยกย่องสูงสุดในสายวิชาชีพ",
+                19: "กำลังดาวเกตุหนุน: ปาฏิหาริย์แห่งชีวิต มีโชคลาภพิเศษและแคล้วคลาดจากภัย",
+                20: "กำลังพลังรวมสูงสุดพิเศษ: วาสนาความมั่งคั่งและปัญญาสูงระดับตำนานสี่ทิศ",
+                21: "กำลังมหาเศรษฐี: พลังแห่งทรัพย์สมบัติเปี่ยมล้น ดึงดูดความร่ำรวยและผลกำไร"
+            }
+        };
+
+        const STATS = [["พลัง", 78], ["ปัญญา", 65], ["โชค", 88], ["ความรัก", 72]];
+        const LUCKY_NUMS = ["3", "7", "21"];
+        const LUCKY_COLORS = [{ n: "ทอง", c: "#e8c97a" }, { n: "ม่วง", c: "#b060ff" }, { n: "ขาว", c: "#e0e0f0" }];
+
+        // ดึงข้อมูลชื่อสมาชิกจาก LocalStorage
+        const userName = localStorage.getItem('thaiHoroUserName') || "ผู้มาเยือน";
+        const heroTitle = document.querySelector('.hero-title');
+        if (heroTitle) heroTitle.innerHTML = `สวัสดีครับ คุณ${userName}`;
+
+        // อัปเดตตัวอักษรย่อใน Avatar
+        const avatarEl = document.getElementById('user-avatar');
+        if (avatarEl && userName !== "ผู้มาเยือน") {
+            avatarEl.textContent = userName.charAt(0);
+        }
+
+        // ── ฟังก์ชันโหลดหน้าภายนอก ──
+        function loadExternalPage(url, el, sectionId) {
+            const dashView = document.getElementById('dashboard-view');
+            const externalView = document.getElementById('external-view');
+            const iframe = document.getElementById('content-frame');
+            const loader = document.getElementById('frame-loader');
+            const navLinks = document.querySelectorAll('.nav-link-item');
+
+            // จัดการสีของ Sidebar เมนู
+            navLinks.forEach(link => {
+                link.classList.remove('bg-slate-800', 'text-yellow-400');
+                link.classList.add('text-slate-300');
+            });
+
+            // บันทึก Section เป้าหมายไว้ที่ iframe เพื่อเรียกใช้ตอนโหลดเสร็จ
+            iframe.dataset.targetSection = sectionId || "";
+
+            if (url === 'dashboard') {
+                dashView.classList.remove('hidden');
+                externalView.classList.add('hidden');
+                iframe.src = 'about:blank';
+                iframe.dataset.targetSection = "";
+                loader.classList.add('hidden');
+                
+                // คืนค่าสีปุ่ม Dashboard
+                document.getElementById('nav-dash').classList.add('bg-slate-800', 'text-yellow-400');
+                document.getElementById('nav-dash').classList.remove('text-slate-300');
+                
+                // เลื่อนขึ้นบนสุด
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                dashView.classList.add('hidden');
+                externalView.classList.remove('hidden');
+                
+                // แสดง Loader และซ่อน iframe ไว้ชั่วคราว
+                loader.classList.remove('hidden');
+                iframe.classList.add('opacity-0');
+                iframe.src = url;
+
+                // ตั้งค่าสีปุ่มที่คลิก
+                if (el) {
+                    el.classList.add('bg-slate-800', 'text-yellow-400');
+                    el.classList.remove('text-slate-300');
+                }
+                
+                // เลื่อนขึ้นบนสุด
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // จัดการเมื่อ iframe โหลดเนื้อหาเสร็จสิ้น
+        document.getElementById('content-frame').addEventListener('load', function() {
+            document.getElementById('frame-loader').classList.add('hidden');
+            this.classList.remove('opacity-0');
+
+            // ถ้ามีการกำหนด Section เป้าหมาย และใน iframe มีฟังก์ชัน navigateTo ให้สั่งทำงาน
+            const target = this.dataset.targetSection;
+            if (target && this.contentWindow && typeof this.contentWindow.navigateTo === 'function') {
+                this.contentWindow.navigateTo(target);
+                // ล้างค่าหลังจากใช้งานเสร็จเพื่อป้องกันการทำงานซ้ำ
+                this.dataset.targetSection = "";
+            }
+        });
+
+        // ── State ──
+        let selectedSign = 4;
+        let activeCategory = "ความรัก";
+
+        // ── Search Logic ──
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.trim();
+                if (!term) return;
+                
+                const foundIndex = ZODIAC_SIGNS.findIndex(z => z.name.includes(term) || z.en.toLowerCase().includes(term.toLowerCase()));
+                if (foundIndex !== -1) {
+                    selectedSign = foundIndex;
+                    document.getElementById("reading-placeholder").style.display = "none";
+                    document.getElementById("reading-text").style.display = "none";
+                    renderZodiacGrid();
+                    renderSignProfile();
+                    updateReadBtn();
+                }
+            });
+        }
+
+        // ── Star canvas ──
+        (function initStars() {
+            const canvas = document.getElementById("star-canvas");
+            const ctx = canvas.getContext("2d");
+            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener("resize", resize);
+            const stars = Array.from({ length: 150 }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 1.5 + 0.3,
+                a: Math.random() * Math.PI * 2,
+                speed: Math.random() * 0.005 + 0.002,
+            }));
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                stars.forEach(s => {
+                    s.a += s.speed;
+                    const alpha = 0.3 + 0.7 * Math.abs(Math.sin(s.a));
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,240,200,${alpha})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+
+        // ── Date ──
+        document.getElementById("today-date").textContent =
+            new Date().toLocaleDateString("th-TH", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+        // ── Header animate in ──
+        setTimeout(() => document.getElementById("main-header").classList.add("visible"), 100);
+
+        // ── Lucky numbers ──
+        const numsEl = document.getElementById("lucky-nums");
+        LUCKY_NUMS.forEach(n => {
+            const s = document.createElement("span");
+            s.className = "num-circle"; s.textContent = n;
+            numsEl.appendChild(s);
+        });
+
+        // ── Lucky colors ──
+        const colorsEl = document.getElementById("lucky-colors");
+        LUCKY_COLORS.forEach(({ n, c }) => {
+            const s = document.createElement("span");
+            s.className = "color-badge";
+            s.style.cssText = `background:${c}20;border:1px solid ${c}60;color:${c}`;
+            s.textContent = n;
+            colorsEl.appendChild(s);
+        });
+
+        // ── Zodiac grid ──
+        function renderZodiacGrid() {
+            const grid = document.getElementById("zodiac-grid");
+            grid.innerHTML = "";
+            ZODIAC_SIGNS.forEach((z, i) => {
+                const btn = document.createElement("button");
+                btn.className = "zodiac-btn" + (i === selectedSign ? " active" : "");
+                btn.style.cssText = i === selectedSign
+                    ? `background:linear-gradient(135deg,${z.color}30,${z.color}15);border:1px solid ${z.color}80;`
+                    : "";
+                btn.innerHTML = `<span class="zsymbol" style="filter:brightness(${i === selectedSign ? 1.3 : 0.7})">${z.symbol}</span><span class="zname" style="color:${i === selectedSign ? z.color : '#7060a0'}">${z.name}</span>`;
+                btn.addEventListener("click", () => {
+                    selectedSign = i;
+                    document.getElementById("reading-placeholder").style.display = "flex";
+                    document.getElementById("reading-text").style.display = "none";
+                    renderZodiacGrid();
+                    renderSignProfile();
+                    updateReadBtn();
+                });
+                grid.appendChild(btn);
+            });
+        }
+
+        // ── Sign profile ──
+        function renderSignProfile() {
+            const z = ZODIAC_SIGNS[selectedSign];
+            document.getElementById("sign-symbol").textContent = z.symbol;
+            document.getElementById("sign-symbol").style.filter = `drop-shadow(0 0 20px ${z.color}80)`;
+            document.getElementById("sign-name").textContent = z.name;
+            document.getElementById("sign-name").style.color = z.color;
+            document.getElementById("sign-en").textContent = z.en;
+            document.getElementById("sign-date").textContent = "📅 " + z.date;
+            document.getElementById("sign-element").textContent = z.element;
+            document.getElementById("sign-element").style.color = z.color;
+
+            const barsEl = document.getElementById("stat-bars");
+            
+            // สร้างคะแนนแบบสุ่มตามวัน (Seed ด้วยวันที่ + index ราศี) เพื่อให้ดูขยับเขยื้อน
+            const daySeed = new Date().getDate();
+            const signSeed = selectedSign;
+            
+            let barsHTML = "";
+            STATS.forEach(([label, baseVal], idx) => {
+                // คำนวณค่าแกว่ง +/- 10%
+                const variance = ((daySeed + signSeed + idx) % 21) - 10;
+                const val = Math.min(100, Math.max(20, baseVal + variance));
+                
+                barsHTML += `
+                    <div class="bar-row">
+                        <div class="bar-label-row"><span>${label}</span><span>${val}%</span></div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:${val}%;background:linear-gradient(90deg,${z.color}80,${z.color})"></div>
+                        </div>
+                    </div>`;
+            });
+            barsEl.innerHTML = barsHTML;
+        }
+
+        // ── Category tabs ──
+        function renderCatTabs() {
+            const tabs = document.getElementById("cat-tabs");
+            tabs.innerHTML = "";
+            Object.keys(HOROSCOPE_DATA).forEach(cat => {
+                const btn = document.createElement("button");
+                btn.className = "cat-btn" + (cat === activeCategory ? " active" : "");
+                btn.textContent = `${CAT_ICONS[cat]} ${cat}`;
+                btn.addEventListener("click", () => {
+                    activeCategory = cat;
+                    document.getElementById("reading-placeholder").style.display = "flex";
+                    document.getElementById("reading-text").style.display = "none";
+                    renderCatTabs();
+                    updateReadBtn();
+                });
+                tabs.appendChild(btn);
+            });
+        }
+
+        function updateReadBtn() {
+            const z = ZODIAC_SIGNS[selectedSign];
+            document.getElementById("read-btn").textContent = `🔮 เปิดดูดวง${z.name} — ${activeCategory}`;
+        }
+
+        // ── Read button ──
+        document.getElementById("read-btn").addEventListener("click", () => {
+            // ดึงความหมายจาก sdMeanings.base4
+            // ใช้ selectedSign เป็นส่วนหนึ่งของ Random เพื่อให้แต่ละราศีได้คำทำนายไม่เหมือนกันในทันที
+            const meaningsKeys = Object.keys(sdMeanings.base4);
+            const dayOfMonth = new Date().getDate();
+            const catIndex = Object.keys(HOROSCOPE_DATA).indexOf(activeCategory);
+            // สูตรสุ่มแบบกึ่งคงที่ตามวันและราศี
+            const luckyIdx = (dayOfMonth + selectedSign + catIndex) % meaningsKeys.length;
+            const meaningKey = meaningsKeys[luckyIdx];
+            const randomBase4Meaning = sdMeanings.base4[meaningKey] || "✨ พลังของดาวพยักษ์ส่งสัญญาณดีๆ มาหาคุณ";
+
+            const placeholder = document.getElementById("reading-placeholder");
+            const readingText = document.getElementById("reading-text");
+            placeholder.style.display = "none";
+            readingText.style.display = "block";
+            
+            // ผสมคำทำนายหมวดหมู่กับความหมายจาก sdMeanings.base4
+            const readings = HOROSCOPE_DATA[activeCategory] || [];
+            const categoryReading = readings.length > 0 ? readings[0] : "✨ ดาวกำหนดชะตาส่งแสงสว่าง";
+            readingText.textContent = `✨ ${categoryReading} ${randomBase4Meaning}`;
+        });
+
+        // ── Planets ──
+        function renderPlanets() {
+            const grid = document.getElementById("planets-grid");
+            let planetsHTML = "";
+            PLANETS.forEach(p => {
+                planetsHTML += `
+      <div class="planet-card">
+        <div class="planet-icon">${p.icon}</div>
+        <div>
+          <div class="planet-name">${p.label}</div>
+          <div class="planet-pos">ใน${p.pos}</div>
+          <div class="planet-meaning">${p.meaning}</div>
+        </div>
+      </div>`;
+            });
+            grid.innerHTML = planetsHTML;
+        }
+
+        // ── Popular Zodiac (คำนวณความนิยมแบบสุ่มตามวัน) ──
+        const ZODIAC_POPULARITY = [
+            { sign: "สิงห์", popularity: 92 },
+            { sign: "กันย์", popularity: 85 },
+            { sign: "ตุลย์", popularity: 88 },
+            { sign: "พิจิก", popularity: 79 },
+            { sign: "ธนู", popularity: 82 },
+            { sign: "มกร", popularity: 76 },
+            { sign: "กุมภ์", popularity: 81 },
+            { sign: "มีน", popularity: 84 },
+            { sign: "เมษ", popularity: 78 },
+            { sign: "พฤษภ", popularity: 73 },
+            { sign: "เมถุน", popularity: 75 },
+            { sign: "กรกฎ", popularity: 80 }
+        ];
+
+        function renderPopularZodiac() {
+            const container = document.getElementById('popular-zodiac');
+            container.innerHTML = "";
+            
+            // เรียงตามความนิยมและเลือก Top 5
+            const topZodiacs = ZODIAC_POPULARITY
+                .sort((a, b) => b.popularity - a.popularity)
+                .slice(0, 5);
+            
+            topZodiacs.forEach(({ sign, popularity }) => {
+                const zodiacObj = ZODIAC_SIGNS.find(z => z.name === sign);
+                const progressColor = zodiacObj ? zodiacObj.color : "#94a3b8";
+                
+                const item = document.createElement("div");
+                item.className = "flex items-center justify-between gap-3 bg-slate-800/30 hover:bg-slate-800/60 p-2 rounded-lg cursor-pointer transition";
+                item.style.borderLeft = `3px solid ${progressColor}`;
+                
+                item.innerHTML = `
+                    <span class="text-slate-300 font-medium text-sm">${sign}</span>
+                    <div class="flex items-center gap-2 flex-1">
+                        <div class="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width:${popularity}%;background:${progressColor}"></div>
+                        </div>
+                        <span class="text-emerald-400 text-xs font-semibold w-8 text-right">${popularity}%</span>
+                    </div>
+                `;
+                
+                // ให้สามารถคลิกเพื่อเลือกราศีได้
+                item.addEventListener("click", () => {
+                    const foundIndex = ZODIAC_SIGNS.findIndex(z => z.name === sign);
+                    if (foundIndex !== -1) {
+                        selectedSign = foundIndex;
+                        document.getElementById("reading-placeholder").style.display = "none";
+                        document.getElementById("reading-text").style.display = "none";
+                        renderZodiacGrid();
+                        renderSignProfile();
+                        updateReadBtn();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+                
+                container.appendChild(item);
+            });
+        }
+
+        // ── Render Sidebar User Info (จากการคำนวนอิสระ) ──
+        function renderSidebarUserInfo() {
+            const container = document.getElementById('sidebar-user-info');
+            if (!container) return;
+
+            // ตรวจสอบว่า SidebarCalculations มีหรือไม่
+            if (typeof SidebarCalculations === 'undefined') {
+                console.warn('⚠️ SidebarCalculations ยังไม่โหลด');
+                container.innerHTML = '<div class="text-yellow-200 text-xs">กำลังโหลดข้อมูล...</div>';
+                // ลองใหม่หลังจาก 500ms
+                setTimeout(renderSidebarUserInfo, 500);
+                return;
+            }
+
+            const summary = SidebarCalculations.getUserSummary();
+            
+            let html = '';
+
+            // ชื่อและเลขชื่อ
+            if (summary.name && summary.name !== 'ผู้มาเยือน') {
+                html += `
+                    <div class="bg-slate-800/40 p-2 rounded-lg">
+                        <div class="text-slate-400 mb-1">👤 ชื่อคุณ</div>
+                        <div class="text-white font-semibold">${summary.name}</div>
+                        <div class="text-yellow-400/70 text-xs mt-1">เลขชื่อ: ${summary.nameNumber}</div>
+                    </div>
+                `;
+            }
+
+            // ราศี
+            if (summary.zodiac) {
+                html += `
+                    <div class="bg-slate-800/40 p-2 rounded-lg" style="border-left: 3px solid ${summary.zodiacColor}">
+                        <div class="text-slate-400 mb-1">${summary.zodiacIcon} ราศี</div>
+                        <div class="text-white font-semibold">${summary.zodiac}</div>
+                        <div class="text-yellow-400/70 text-xs mt-1">ธาตุ: ${summary.zodiacElement}</div>
+                    </div>
+                `;
+            }
+
+            // Life Path Number
+            if (summary.lifePath) {
+                html += `
+                    <div class="bg-slate-800/40 p-2 rounded-lg">
+                        <div class="text-slate-400 mb-1">🔢 หลักชีวิต</div>
+                        <div class="text-white font-semibold">${summary.lifePath}</div>
+                        <div class="text-yellow-400/70 text-xs mt-1">${summary.lifePathMeaning}</div>
+                    </div>
+                `;
+            }
+
+            // เลขนำโชค
+            if (summary.luckyNumbers && summary.luckyNumbers.length > 0) {
+                const numStr = summary.luckyNumbers.join(', ');
+                html += `
+                    <div class="bg-slate-800/40 p-2 rounded-lg">
+                        <div class="text-slate-400 mb-1">🎰 เลขนำโชค</div>
+                        <div class="text-emerald-400 font-semibold">${numStr}</div>
+                    </div>
+                `;
+            }
+
+            // สีมงคล
+            if (summary.luckyColors && summary.luckyColors.length > 0) {
+                const colorStr = summary.luckyColors.join(', ');
+                html += `
+                    <div class="bg-slate-800/40 p-2 rounded-lg">
+                        <div class="text-slate-400 mb-1">🎨 สีมงคล</div>
+                        <div class="text-amber-400 font-semibold">${colorStr}</div>
+                    </div>
+                `;
+            }
+
+            // ทำนายประจำวัน
+            if (summary.dailyFortune) {
+                html += `
+                    <div class="bg-slate-800/40 p-2 rounded-lg border-l-2 border-yellow-400/50">
+                        <div class="text-slate-400 mb-1">✨ ทำนายวันนี้</div>
+                        <div class="text-yellow-200/90 text-xs leading-relaxed">${summary.dailyFortune}</div>
+                    </div>
+                `;
+            }
+
+            if (html === '') {
+                html = '<div class="text-slate-400 text-xs p-2">กรุณาบันทึกข้อมูลวันเกิด เพื่อเห็นข้อมูลของคุณ</div>';
+            }
+
+            container.innerHTML = html;
+            console.log('✅ Sidebar info rendered', summary);
+        }
+
+        // ── Init ──
+        renderZodiacGrid();
+        renderSignProfile();
+        renderCatTabs();
+        renderPlanets();
+        renderPopularZodiac();
+        updateReadBtn();
+        
+        // เรียก renderSidebarUserInfo หลังจาก DOM พร้อมแล้ว
+        setTimeout(() => {
+            renderSidebarUserInfo();
+        }, 100);
+    </script>
+    <script src="sidebarCalculations.js"></script>
+    <script src="auth.js"></script>
+    
+    <!-- Role-Based Access Control for Member Registration in Dashboard -->
+    <script>
+        /**
+         * ปรับปรุง loadExternalPage เพื่อเพิ่มการตรวจสอบสิทธิ์ admin
+         */
+        const originalLoadExternalPage = window.loadExternalPage;
+        window.loadExternalPage = function(page, element, section) {
+            // ตรวจสอบถ้ากำลังเข้าถึง historySection ของ index.html
+            if (page === 'index.html' && section === 'historySection' && !isAdmin()) {
+                alert('⛔ เฉพาะผู้ดูแลระบบเท่านั้นที่สามารถเข้าถึงทะเบียนสมาชิกได้');
+                return false;
+            }
+            
+            // ถ้าเป็น admin หรือ page/section อื่น ให้ดำเนินการต่อ
+            if (originalLoadExternalPage) {
+                return originalLoadExternalPage.call(this, page, element, section);
+            }
+        };
+
+        /**
+         * ซ่อนลิงค์ทะเบียนสมาชิก สำหรับ non-admin users
+         */
+        function updateDashboardMemberRegistrationVisibility() {
+            // ค้นหาลิงค์ทะเบียนสมาชิกผ่าน text content
+            const navLinks = document.querySelectorAll('a.nav-link-item');
+            navLinks.forEach(link => {
+                const span = link.querySelector('span:last-child');
+                if (span && span.textContent.includes('ทะเบียนสมาชิก')) {
+                    if (!isAdmin()) {
+                        link.style.display = 'none';
+                    } else {
+                        link.style.display = '';
+                    }
+                }
+            });
+        }
+
+        // เรียกใช้ฟังก์ชันเมื่อ DOM พร้อมแล้ว
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                updateDashboardMemberRegistrationVisibility();
+            }, 500);
+        });
+
+        // ตรวจสอบการเปลี่ยนแปลง auth session ทุก 5 วินาที
+        setInterval(() => {
+            updateDashboardMemberRegistrationVisibility();
+        }, 5000);
+    </script>
+</body>
+
+</html>

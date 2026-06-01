@@ -631,12 +631,21 @@ function showtaksatable(){
             <div class="card-body text-center">
                 <div id="taksaInput" class="py-4">
                     <h4>ระบุข้อมูลเพื่อผูกดวงทักษา</h4>
-                    <div class="btn-group btn-group-toggle mt-3 mb-3" data-toggle="buttons">
-                        <label class="btn btn-outline-gold active text-white">
-                            <input type="radio" name="gender" value="male" checked> ชาย (เวียนขวา)
-                        </label>
-                        <label class="btn btn-outline-gold text-white">
-                            <input type="radio" name="gender" value="female"> หญิง (เวียนซ้าย)
+
+                <div class="form-group mb-3">
+                    <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
+                    <select class="form-control bg-black text-black border-gold member-selector-shared"
+                        onchange="autoFillMemberData(this.value);calculateAndShowTaksa()"> >
+                        <option value="">-- เลือกสมาชิก --</option>
+                    </select>
+                </div>
+
+                    <div class="form-group mt-2 mx-auto" style="max-width: 300px;">
+                        <label class="text-white-50">วันเกิดของคุณ</label>
+                            <select id="taksagender" class="form-control bg-dark text-white border-gold" style="height: 55px;"> 
+                                <option value="male"> ชาย (เวียนขวา)</option>
+                                <option value="female"> หญิง (เวียนซ้าย)</option>
+                            </select>
                         </label>
                     </div>
                     <div class="form-group mt-2 mx-auto" style="max-width: 300px;">
@@ -648,9 +657,9 @@ function showtaksatable(){
                             <option value="2">วันอังคาร</option>
                             <option value="3">วันพุธ (กลางวัน)</option>
                             <option value="7">วันพุธ (กลางคืน/ราหู)</option>
-                            <option value="5">วันพฤหัสบดี</option>
-                            <option value="6">วันศุกร์</option>
-                            <option value="4">วันเสาร์</option>
+                            <option value="4">วันพฤหัสบดี</option>
+                            <option value="5">วันศุกร์</option>
+                            <option value="6">วันเสาร์</option>
                         </select>
                     </div>
                     <div class="form-group mt-2 mx-auto" style="max-width: 300px;">

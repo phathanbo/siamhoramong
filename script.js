@@ -1,5 +1,20 @@
 "use strict";
 
+// ✅ ฟังก์ชันดึง username จาก auth session (ไม่ซ้ำกัน)
+function getCurrentUsername() {
+    try {
+        const session = localStorage.getItem('siamhora_auth_session');
+        if (session) {
+            const data = JSON.parse(session);
+            // 👤 ใช้ username (unique identifier) ไม่ใช่ displayName
+            return data.username || null;
+        }
+    } catch (e) {
+        console.warn('⚠️ ไม่สามารถดึง username จาก session:', e);
+    }
+    return localStorage.getItem('thaiHoroUserName') || null;
+}
+
 let previousPage = 'mainContent';
 
 
@@ -415,11 +430,79 @@ function downloadImageFromProfile() {
 /**
  * ฟังก์ชันนำทางหลัก - รองรับปุ่มย้อนกลับ และจัดการสถานะหน้าจอ
  */
+
+// ตารางเชื่อมโยง pageId กับ title
+const PAGE_TITLES = {
+    'mainContent': '🔮 สยามโหรามงคล - หน้าหลัก',
+    'mainpage': '🔮 สยามโหรามงคล - ห้องพยากรณ์',
+    'historySection': '📜 ประวัติสมาชิก - สยามโหรามงคล',
+    'profilePage': '👤 โปรไฟล์สมาชิก - สยามโหรามงคล',
+    'knowledgePage': '📚 คลังความรู้ - สยามโหรามงคล',
+    'ascendantPage': '🌟 คำนวณลัคนา - สยามโหรามงคล',
+    'auspiciousPage': '📅 ปฏิทินฤกษ์มงคล - สยามโหรามงคล',
+    'sevenDigitsPage': '🔢 เลข 7 ตัว ฐาน 9 - สยามโหรามงคล',
+    'taksaPage': '📊 ทักษา - สยามโหรามงคล',
+    'yarmPage': '🕐 ยามอัฏฐกาล - สยามโหรามงคล',
+    'chatraPage': '🏛️ ฉัตร 3 ชั้น - สยามโหรามงคล',
+    'weeklyColorSection': '🎨 สีมงคลประจำวัน - สยามโหรามงคล',
+    'planetRelationPage': '🪐 คู่มิตร-ศัตรู - สยามโหรามงคล',
+    'numerologyPage': '🔤 เบอร์มงคล - สยามโหรามงคล',
+    'dreamPage': '💭 ทำนายฝัน - สยามโหรามงคล',
+    'nameAnalysisPage': '✍️ วิเคราะห์ชื่อ - สยามโหรามงคล',
+    'lottoPage': '🎰 เลขเด็ด - สยามโหรามงคล',
+    'elementManualPage': '🌊 องค์ประกอบธาตุ - สยามโหรามงคล',
+    'compatibilityPage': '💑 วิเคราะห์ดวงสมพงษ์ - สยามโหรามงคล',
+    'mahathaksaPage': '🕉️ มหาทักษาพยากรณ์ - สยามโหรามงคล',
+    'chatninePage': '🏯 ฉัตร 9 ชั้น - สยามโหรามงคล',
+    'marriage-compatibility': '👰 หาคู่รักหรือคู่สมรส - สยามโหรามงคล',
+    'patient-prognosis': '⚕️ วิธีพยากรณ์ตัดอายุคนป่วย - สยามโหรามงคล',
+    'soulmate-direction': '💕 ดูที่อยู่เนื้อคู่ - สยามโหรามงคล',
+    'birthfortune': '🍀 โชคกำเนิด - สยามโหรามงคล',
+    'auspicious-day': '☀️ ตารางฤกษ์มงคล - สยามโหรามงคล',
+    'ubakong-yarm': '🧭 ยามอุบากอง - สยามโหรามงคล',
+    'lunarSection': '🌙 จันทรคติ - สยามโหรามงคล',
+    'lifeGraphPage': '📈 กราฟชีวิตพยากรณ์ - สยามโหรามงคล',
+    'lifeExtensionPage': '⏳ ต่อชะตาชีวิต - สยามโหรามงคล',
+    'zodiacdetailsection': '🐉 ดูดวงตามปีนักษัตร - สยามโหรามงคล',
+    'daily-horoscope': '📖 ตรวจดวงประจำวัน - สยามโหรามงคล',
+    'sompong-wealth': '💰 สมพงศ์มหาสมบัติ - สยามโหรามงคล',
+    'climate-section': '🌍 ลัทธิพิรุณศาสตร์ - สยามโหรามงคล',
+    'thaksaninesection': '⚡ ทักษา 9 - สยามโหรามงคล',
+    'horoscopeseven': '7️⃣ ตารางพยากรณ์เลข 7 - สยามโหรามงคล',
+    'kaliyokepage': '⏰ กาลโยค - สยามโหรามงคล',
+    'reuxpage': '✨ การให้ฤกษ์ - สยามโหรามงคล',
+    'package': '📦 Package - สยามโหรามงคล',
+    'promchartsection': '🎡 วงล้อพยากรณ์ - สยามโหรามงคล',
+    'TaksaSattalek': '🧿 ทักษา 7 - สยามโหรามงคล'
+};
+
+function getProfileByMemberId(memberId) {
+    try {
+        const history = JSON.parse(localStorage.getItem('horo_history')) || [];
+        const profile = history.find(m => m.memberId === memberId);
+        
+        if (profile) {
+            console.log("✅ พบสมาชิก:", profile.name);
+            return profile;
+        } else {
+            console.warn("⚠️ ไม่พบสมาชิก ID:", memberId);
+        }
+    } catch (e) {
+        console.error('Error:', e);
+    }
+    return null;
+}
+
 function navigateTo(pageId, addHistory = true) {
     console.log("🚀 กำลังนำทางไปที่หน้า:", pageId);
 
     // 1. หาหน้าเป้าหมายใน HTML
-    const targetPage = document.getElementById(pageId);
+    let targetPage = document.getElementById(pageId);
+    if (targetPage && !targetPage.classList.contains('main-section')) {
+        // If the ID points to an inner element (like the inner div), use its parent section
+        const parentSection = targetPage.closest('.main-section');
+        if (parentSection) targetPage = parentSection;
+    }
     if (!targetPage) {
         console.error(`❌ หาหน้า ID "${pageId}" ไม่เจอใน HTML!`);
         // ถ้าหาไม่เจอ ให้เด้งกลับหน้าหลักกันหน้าขาว
@@ -454,6 +537,11 @@ function navigateTo(pageId, addHistory = true) {
     targetPage.classList.add('active');
     targetPage.style.display = 'block'; // บังคับแสดงผล
 
+    // 4.5 เปลี่ยนชื่อแท็บ
+    if (PAGE_TITLES[pageId]) {
+        document.title = PAGE_TITLES[pageId];
+    }
+
     // 5. บันทึกประวัติลง Browser (เพื่อให้กดย้อนกลับที่มือถือได้)
     if (addHistory) {
         history.pushState({ pageId: pageId }, "", "#" + pageId);
@@ -475,6 +563,11 @@ function navigateTo(pageId, addHistory = true) {
         }, 50);
     }
 
+    // If navigating to showdaylife, ensure its initializer runs
+    if (pageId === 'showdaylife' && typeof showdaylife === 'function') {
+        try { showdaylife(); } catch (e) { console.error('showdaylife init error', e); }
+    }
+
     // 8. โหลดข้อมูลผู้ใช้มาเติม (ถ้ามีระบบ Profile)
     if (typeof UserProfile !== 'undefined') UserProfile.load();
 }
@@ -486,29 +579,50 @@ function goBackCustom() {
 
 // ส่วนที่ทำให้ F5 แล้วอยู่ที่เดิม (ใส่ไว้ใน DOMContentLoaded)
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. ส่วนจัดการการเปลี่ยนหน้า (F5 แล้วอยู่ที่เดิม)
-    const lastPage = localStorage.getItem('currentPage');
-    if (lastPage && document.getElementById(lastPage)) {
-        navigateTo(lastPage);
-        
-        // เช็คหน้าพิเศษที่ต้องวาดตารางใหม่
-        if (lastPage === 'auspiciousPage' && typeof renderAuspiciousCalendar === 'function') {
-            renderAuspiciousCalendar();
+    // ➤ Delay restoration to allow auth and admin checks to complete first
+    setTimeout(() => {
+        // 1. ส่วนจัดการการเปลี่ยนหน้า (F5 แล้วอยู่ที่เดิม)
+        const lastPage = localStorage.getItem('currentPage');
+        // Exclude temporary/calculation pages from being restored on refresh
+        const tempPages = ['lifeGraphPage', 'nameAnalysisPage', 'profilePage'];
+
+        if (lastPage && document.getElementById(lastPage) && !tempPages.includes(lastPage)) {
+            navigateTo(lastPage);
+
+            // เช็คหน้าพิเศษที่ต้องวาดตารางใหม่
+            if (lastPage === 'auspiciousPage' && typeof renderAuspiciousCalendar === 'function') {
+                renderAuspiciousCalendar();
+            }
+            if (lastPage === 'planetRelationPage' && typeof renderTablerelation === 'function') {
+                renderTablerelation();
+            }
+        } else {
+            navigateTo('mainContent');
         }
-        if (lastPage === 'planetRelationPage' && typeof renderTablerelation === 'function') {
-            renderTablerelation();
-        }
-    } else {
-        navigateTo('mainContent'); 
-    }
+    }, 100); // ➤ Wait 100ms for auth checks
 
     // 2. ส่วนจัดการวันเกิด (จุดนี้แหละที่เคยพัง)
     const birthField = document.getElementById('birthdate');
     if (birthField) {
-        // ดึงค่าที่เคยบันทึกไว้มาใส่ในช่องทันที
-        const savedDate = localStorage.getItem('userBirthdate');
-        if (savedDate && savedDate !== "undefined") {
-            birthField.value = savedDate;
+        // ✅ โหลด Single Profile ของ User ก่อน (ถ้ามี)
+        let userBirthdateValue = null;
+
+        if (typeof SingleProfileManager !== 'undefined' && SingleProfileManager) {
+            const profile = SingleProfileManager.load();
+            if (profile) {
+                console.log('📋 โหลด Single Profile ของ User:', profile.name);
+                userBirthdateValue = profile.birthdate;
+            }
+        }
+
+        // ถ้าไม่มี single profile ให้ใช้ userBirthdate ตามเดิม
+        if (!userBirthdateValue) {
+            userBirthdateValue = localStorage.getItem('userBirthdate');
+        }
+
+        if (userBirthdateValue && userBirthdateValue !== "undefined") {
+            birthField.value = userBirthdateValue;
+            console.log('📅 โหลดวันเกิด:', userBirthdateValue);
         }
 
         // ตั้งค่าให้บันทึกทุกครั้งที่มีการเปลี่ยนวันที่
@@ -610,3 +724,31 @@ window.onpopstate = function(event) {
     console.log("Navigation Change to:", pageId);
     navigateTo(pageId, false); // ส่ง false เพื่อไม่ให้เกิดการบันทึกประวัติซ้ำซ้อน
 };
+
+// แปลงวันที่ไทย dd/mm/พ.ศ. → Date Object
+function parseThaiDate(dateStr) {
+    if (!dateStr) return null;
+
+    // ถ้าเป็น format yyyy-mm-dd ให้ใช้ตรงๆ
+    if (dateStr.includes('-')) {
+        return new Date(dateStr);
+    }
+
+    const parts = dateStr.split('/');
+    if (parts.length !== 3) return new Date(dateStr);
+
+    let day = parseInt(parts[0]);
+    let month = parseInt(parts[1]) - 1;
+    let year = parseInt(parts[2]);
+
+    // แปลง พ.ศ. → ค.ศ.
+    if (year > 2400) {
+        year -= 543;
+    }
+
+    return new Date(year, month, day);
+}
+
+window.getProfileByMemberId = getProfileByMemberId;
+window.parseThaiDate = parseThaiDate;
+

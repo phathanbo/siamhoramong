@@ -3,19 +3,557 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="สยามโหรามงคล - เว็บไซต์ดูดวงชะตา พยากรณ์ตามตำราโบราณ ทำนายดวงชะตารายปี ปีนักษัตร ยามอัฏฐกาล ฉัตร ๙ ชั้น มหาทักษา และอีกมากมาย">
-    <title>สยามโหรามงคล</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes, maximum-scale=5, minimum-scale=1">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="สยามโหรามงคล">
+    <meta name="description"
+        content="สยามโหรามงคล - เว็บดูดวงตามหลักโหราศาสตร์ไทยที่แม่นยำ พยากรณ์ตามตำราโบราณ ทำนายดวงชะตารายปี ปีนักษัตร ยามอัฏฐกาล ฉัตร ๙ ชั้น มหาทักษา และอีกมากมาย">
+    <title>สยามโหรามงคล - ดูดวงโหราศาสตร์ไทยแม่นยำ</title>
+
+    <!-- ===== MANIFEST (สำหรับ PWA) ===== -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/1995/1995434.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1995/1995434.png">
+
+    <!-- ===== DNS PREFETCH (เพิ่มความเร็ว) ===== -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://stackpath.bootstrapcdn.com">
+    <link rel="dns-prefetch" href="https://code.jquery.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+    <!-- ===== PRECONNECT (เชื่อมต่อเร็ว) ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://stackpath.bootstrapcdn.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- ===== PRELOAD (โหลดทรัพยากรที่สำคัญก่อน) ===== -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" as="style">
+    <link rel="preload" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" as="style">
+    <link rel="preload" href="style.css" as="style">
+
+    <!-- ===== PREFETCH (โหลดทรัพยากรที่อาจใช้ต่อไป) ===== -->
+    <link rel="prefetch" href="https://code.jquery.com/jquery-3.5.1.min.js">
+    <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- ===== GOOGLE ANALYTICS ===== -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-DH8VVHWKQ5'); // แทนที่ G-XXXXXXXXXX ด้วย ID ของคุณ
+    </script>
 </head>
 
 <body>
+    <!-- =====================================================
+         🔐 AUTH OVERLAY - ระบบล็อกอิน (สร้างโดย auth.js)
+         ===================================================== -->
+    <div id="authOverlay" style="
+        display: flex;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: 99999;
+        background: linear-gradient(135deg, #0d0d0d 0%, #1a0f00 40%, #0d1a0f 100%);
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.4s ease;
+        overflow: auto;
+    ">
+        <!-- พื้นหลัง Particle (CSS Animation) -->
+        <div class="auth-particles" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+        </div>
+
+        <!-- กล่อง Login -->
+        <div style="
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            margin: 20px;
+            z-index: 1;
+        ">
+            <!-- Logo Header -->
+            <div style="text-align:center; margin-bottom: 28px;">
+                <div style="
+                    font-size: 72px;
+                    line-height: 1;
+                    margin-bottom: 12px;
+                    filter: drop-shadow(0 0 20px rgba(212,175,55,0.6));
+                ">🔮</div>
+                <h1 style="
+                    color: #d4af37;
+                    font-size: 1.8rem;
+                    font-weight: 700;
+                    margin: 0 0 4px 0;
+                    text-shadow: 0 0 20px rgba(212,175,55,0.5);
+                ">สยามโหรามงคล</h1>
+                <p style="color: #888; font-size: 0.9rem; margin: 0;">ระบบพยากรณ์โหราศาสตร์ไทย</p>
+            </div>
+
+            <!-- Form Card -->
+            <div style="
+                background: rgba(20,15,5,0.9);
+                border: 1px solid rgba(212,175,55,0.35);
+                border-radius: 20px;
+                padding: 36px 32px;
+                backdrop-filter: blur(20px);
+                box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08);
+            " id="authFormBox">
+
+                <!-- ✨ Tab Navigation (Login/Register) ✨ -->
+                <div style="
+                    display: flex;
+                    gap: 10px;
+                    margin-bottom: 24px;
+                    border-bottom: 2px solid rgba(212,175,55,0.2);
+                ">
+                    <button type="button" id="loginTab" onclick="switchToLogin()" style="
+                        flex: 1;
+                        padding: 12px;
+                        background: none;
+                        border: none;
+                        color: #d4af37;
+                        cursor: pointer;
+                        font-size: 0.95rem;
+                        font-weight: 600;
+                        transition: all 0.3s ease;
+                        border-bottom: 3px solid #d4af37;
+                        margin-bottom: -2px;
+                    ">
+                        <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+                    </button>
+                    <button type="button" id="registerTab" onclick="switchToRegister()" style="
+                        flex: 1;
+                        padding: 12px;
+                        background: none;
+                        border: none;
+                        color: rgba(212,175,55,0.5);
+                        cursor: pointer;
+                        font-size: 0.95rem;
+                        font-weight: 600;
+                        transition: all 0.3s ease;
+                        border-bottom: 3px solid transparent;
+                        margin-bottom: -2px;
+                    ">
+                        <i class="fas fa-user-plus"></i> สมัครสมาชิก
+                    </button>
+                </div>
+
+                <!-- ===== LOGIN FORM ===== -->
+                <form id="authLoginForm">
+                <h3 style="
+                    text-align: center;
+                    color: #d4af37;
+                    margin-bottom: 24px;
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    letter-spacing: 1px;
+                ">
+                    <i class="fas fa-lock" style="margin-right: 8px; opacity: 0.8;"></i>
+                    เข้าสู่ระบบ
+                </h3>
+
+                <!-- Username -->
+                <div style="margin-bottom: 16px;">
+                    <label for="authUsername" style="
+                        display: block;
+                        color: #aaa;
+                        font-size: 0.82rem;
+                        margin-bottom: 6px;
+                        letter-spacing: 0.5px;
+                    ">ชื่อผู้ใช้งาน</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-user" style="
+                            position: absolute;
+                            left: 14px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            color: #d4af37;
+                            opacity: 0.7;
+                            font-size: 0.9rem;
+                        "></i>
+                        <input
+                            type="text"
+                            id="authUsername"
+                            placeholder="กรอกชื่อผู้ใช้"
+                            autocomplete="username"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px 12px 40px;
+                                background: rgba(255,255,255,0.05);
+                                border: 1px solid rgba(212,175,55,0.3);
+                                border-radius: 10px;
+                                color: #fff;
+                                font-size: 0.95rem;
+                                outline: none;
+                                transition: border-color 0.2s;
+                                box-sizing: border-box;
+                            "
+                            onfocus="this.style.borderColor='rgba(212,175,55,0.8)'"
+                            onblur="this.style.borderColor='rgba(212,175,55,0.3)'"
+                        />
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div style="margin-bottom: 20px;">
+                    <label for="authPassword" style="
+                        display: block;
+                        color: #aaa;
+                        font-size: 0.82rem;
+                        margin-bottom: 6px;
+                        letter-spacing: 0.5px;
+                    ">รหัสผ่าน</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-key" style="
+                            position: absolute;
+                            left: 14px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            color: #d4af37;
+                            opacity: 0.7;
+                            font-size: 0.9rem;
+                        "></i>
+                        <input
+                            type="password"
+                            id="authPassword"
+                            placeholder="กรอกรหัสผ่าน"
+                            autocomplete="current-password"
+                            style="
+                                width: 100%;
+                                padding: 12px 44px 12px 40px;
+                                background: rgba(255,255,255,0.05);
+                                border: 1px solid rgba(212,175,55,0.3);
+                                border-radius: 10px;
+                                color: #fff;
+                                font-size: 0.95rem;
+                                outline: none;
+                                transition: border-color 0.2s;
+                                box-sizing: border-box;
+                            "
+                            onfocus="this.style.borderColor='rgba(212,175,55,0.8)'"
+                            onblur="this.style.borderColor='rgba(212,175,55,0.3)'"
+                        />
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            onclick="const p=document.getElementById('authPassword'); const i=document.getElementById('togglePwIcon'); if(p.type==='password'){p.type='text';i.className='fas fa-eye-slash';}else{p.type='password';i.className='fas fa-eye';}"
+                            style="
+                                position: absolute;
+                                right: 12px;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                background: none;
+                                border: none;
+                                color: #888;
+                                cursor: pointer;
+                                padding: 4px;
+                            ">
+                            <i id="togglePwIcon" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="authError" style="
+                    display: none;
+                    background: rgba(220,53,69,0.15);
+                    border: 1px solid rgba(220,53,69,0.4);
+                    color: #ff6b6b;
+                    border-radius: 8px;
+                    padding: 10px 14px;
+                    font-size: 0.85rem;
+                    margin-bottom: 16px;
+                    text-align: center;
+                "></div>
+
+                <!-- Submit Button -->
+                <button
+                    id="authSubmitBtn"
+                    onclick="doLogin()"
+                    style="
+                        width: 100%;
+                        padding: 13px;
+                        background: linear-gradient(135deg, #d4af37, #b8960c);
+                        border: none;
+                        border-radius: 10px;
+                        color: #000;
+                        font-size: 1rem;
+                        font-weight: 700;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        letter-spacing: 0.5px;
+                        box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+                    "
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(212,175,55,0.45)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(212,175,55,0.3)';"
+                >
+                    <span id="authSpinner" style="display:none;" class="spinner-border spinner-border-sm mr-2"></span>
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    <span id="authBtnText">เข้าสู่ระบบ</span>
+                </button>
+
+                <!-- Footer hint -->
+                <p style="
+                    text-align: center;
+                    color: #555;
+                    font-size: 0.75rem;
+                    margin-top: 20px;
+                    margin-bottom: 0;
+                ">🛡️ ระบบนี้สงวนไว้สำหรับผู้ได้รับอนุญาตเท่านั้น</p>
+                </form>
+
+                <!-- ===== REGISTER FORM ===== -->
+                <form id="authRegisterForm" style="display: none;">
+                <h3 style="
+                    text-align: center;
+                    color: #d4af37;
+                    margin-bottom: 24px;
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    letter-spacing: 1px;
+                ">
+                    <i class="fas fa-user-plus" style="margin-right: 8px; opacity: 0.8;"></i>
+                    สมัครสมาชิก
+                </h3>
+
+                <!-- Display Name -->
+                <div style="margin-bottom: 16px;">
+                    <label for="authRegDisplayName" style="
+                        display: block;
+                        color: #aaa;
+                        font-size: 0.82rem;
+                        margin-bottom: 6px;
+                        letter-spacing: 0.5px;
+                    ">ชื่อแสดงผล</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-id-card" style="
+                            position: absolute;
+                            left: 14px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            color: #d4af37;
+                            opacity: 0.7;
+                            font-size: 0.9rem;
+                        "></i>
+                        <input
+                            type="text"
+                            id="authRegDisplayName"
+                            placeholder="เช่น สมชาย สิทธิมั่น"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px 12px 40px;
+                                background: rgba(255,255,255,0.05);
+                                border: 1px solid rgba(212,175,55,0.3);
+                                border-radius: 10px;
+                                color: #fff;
+                                font-size: 0.95rem;
+                                outline: none;
+                                transition: border-color 0.2s;
+                                box-sizing: border-box;
+                            "
+                            onfocus="this.style.borderColor='rgba(212,175,55,0.8)'"
+                            onblur="this.style.borderColor='rgba(212,175,55,0.3)'"
+                        />
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div style="margin-bottom: 16px;">
+                    <label for="authRegUsername" style="
+                        display: block;
+                        color: #aaa;
+                        font-size: 0.82rem;
+                        margin-bottom: 6px;
+                        letter-spacing: 0.5px;
+                    ">ชื่อผู้ใช้</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-user" style="
+                            position: absolute;
+                            left: 14px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            color: #d4af37;
+                            opacity: 0.7;
+                            font-size: 0.9rem;
+                        "></i>
+                        <input
+                            type="text"
+                            id="authRegUsername"
+                            placeholder="3-20 ตัวอักษร (a-z, 0-9, _)"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px 12px 40px;
+                                background: rgba(255,255,255,0.05);
+                                border: 1px solid rgba(212,175,55,0.3);
+                                border-radius: 10px;
+                                color: #fff;
+                                font-size: 0.95rem;
+                                outline: none;
+                                transition: border-color 0.2s;
+                                box-sizing: border-box;
+                            "
+                            onfocus="this.style.borderColor='rgba(212,175,55,0.8)'"
+                            onblur="this.style.borderColor='rgba(212,175,55,0.3)'"
+                        />
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div style="margin-bottom: 16px;">
+                    <label for="authRegPassword" style="
+                        display: block;
+                        color: #aaa;
+                        font-size: 0.82rem;
+                        margin-bottom: 6px;
+                        letter-spacing: 0.5px;
+                    ">รหัสผ่าน</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-key" style="
+                            position: absolute;
+                            left: 14px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            color: #d4af37;
+                            opacity: 0.7;
+                            font-size: 0.9rem;
+                        "></i>
+                        <input
+                            type="password"
+                            id="authRegPassword"
+                            placeholder="อย่างน้อย 6 ตัวอักษร"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px 12px 40px;
+                                background: rgba(255,255,255,0.05);
+                                border: 1px solid rgba(212,175,55,0.3);
+                                border-radius: 10px;
+                                color: #fff;
+                                font-size: 0.95rem;
+                                outline: none;
+                                transition: border-color 0.2s;
+                                box-sizing: border-box;
+                            "
+                            onfocus="this.style.borderColor='rgba(212,175,55,0.8)'"
+                            onblur="this.style.borderColor='rgba(212,175,55,0.3)'"
+                        />
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div style="margin-bottom: 20px;">
+                    <label for="authRegPasswordConfirm" style="
+                        display: block;
+                        color: #aaa;
+                        font-size: 0.82rem;
+                        margin-bottom: 6px;
+                        letter-spacing: 0.5px;
+                    ">ยืนยันรหัสผ่าน</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-lock" style="
+                            position: absolute;
+                            left: 14px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            color: #d4af37;
+                            opacity: 0.7;
+                            font-size: 0.9rem;
+                        "></i>
+                        <input
+                            type="password"
+                            id="authRegPasswordConfirm"
+                            placeholder="ยืนยันรหัสผ่านอีกครั้ง"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px 12px 40px;
+                                background: rgba(255,255,255,0.05);
+                                border: 1px solid rgba(212,175,55,0.3);
+                                border-radius: 10px;
+                                color: #fff;
+                                font-size: 0.95rem;
+                                outline: none;
+                                transition: border-color 0.2s;
+                                box-sizing: border-box;
+                            "
+                            onfocus="this.style.borderColor='rgba(212,175,55,0.8)'"
+                            onblur="this.style.borderColor='rgba(212,175,55,0.3)'"
+                        />
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="authError" style="
+                    display: none;
+                    background: rgba(220,53,69,0.15);
+                    border: 1px solid rgba(220,53,69,0.4);
+                    color: #ff6b6b;
+                    border-radius: 8px;
+                    padding: 10px 14px;
+                    font-size: 0.85rem;
+                    margin-bottom: 16px;
+                    text-align: center;
+                    white-space: pre-wrap;
+                    word-wrap: break-word;
+                "></div>
+
+                <!-- Submit Button -->
+                <button
+                    type="button"
+                    id="authRegisterBtn"
+                    onclick="doRegister()"
+                    style="
+                        width: 100%;
+                        padding: 13px;
+                        background: linear-gradient(135deg, #d4af37, #b8960c);
+                        border: none;
+                        border-radius: 10px;
+                        color: #000;
+                        font-size: 1rem;
+                        font-weight: 700;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        letter-spacing: 0.5px;
+                        box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+                    "
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(212,175,55,0.45)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(212,175,55,0.3)';"
+                >
+                    <span id="authRegisterSpinner" style="display:none;" class="spinner-border spinner-border-sm mr-2"></span>
+                    <i class="fas fa-user-plus mr-2"></i>
+                    <span id="authRegisterBtnText">สมัครสมาชิก</span>
+                </button>
+
+                <!-- Footer hint -->
+                <p style="
+                    text-align: center;
+                    color: #555;
+                    font-size: 0.75rem;
+                    margin-top: 20px;
+                    margin-bottom: 0;
+                ">✨ สมัครสมาชิกเพื่อเข้าถึงฟีเจอร์ทั้งหมด</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+ 
     <header class="bg-dark text-white py-3">
         <div class="container d-flex justify-content-between align-items-center">
-            <h1 onclick="navigateTo('mainContent')" style="cursor: pointer;">🔮 สยามโหรามงคล</h1>
+            <p onclick="navigateTo('mainContent')" style="cursor: pointer; color: #FFFFFF; font-size: 2rem;">🔮 สยามโหรามงคล</p>
             <nav>
                 <ul class="nav">
                     <li class="nav-item d-flex align-items-center ml-3">
@@ -27,11 +565,6 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#mainContent" onclick="goBack()">
-                            <i class="fas fa-home mr-2"></i> หน้าหลัก
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link text-white" href="#mainpage" onclick="navigateTo('mainpage')">
                             <i class="fas fa-place-of-worship mr-2"></i> ห้องพยากรณ์
                         </a>
@@ -41,103 +574,39 @@
                             <i class="fas fa-book-open mr-2"></i> ความรู้พื้นฐาน
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#historySection" onclick="navigateTo('historySection')">
+                    <li class="nav-item" id="memberRegNav">
+                        <a class="nav-link text-white" href="#historySection" onclick="checkAdminAccessAndNavigate('historySection', event)">
                             <i class="fas fa-user-clock mr-2"></i> ทะเบียนสมาชิก
                         </a>
                     </li>
+                    <li class="nav-item" id="taksasattalekNav">
+                        <a class="nav-link text-white" href="taksasattalek.html">
+                            <i class="fas fa-gem mr-2"></i> มหาทักษาสัตตเลข
+                        </a>
+                    </li>
+
                 </ul>
             </nav>
         </div>
         <div id="dailyColorHeader" class="container"></div> <!-- colors.js -->
+
+        <div id="authUserBadge" class="container"></div> <!-- auth.js -->
     </header>
 
-    <!--<main id="mainContent" class="main-section" style="display: none;">
-        <div id="auth-section" class="container mt-4">
-                <div id="logged-out-view" class="card p-4 shadow-sm">
-                    <h3 class="text-center">🔮 เข้าสู่ระบบสมาชิก</h3>
-                    <div id="login-form">
-                        <input type="email" id="auth-email" class="form-control mb-2" placeholder="อีเมล">
-                        <input type="password" id="auth-pass" class="form-control mb-2" placeholder="รหัสผ่าน">
-                        <button class="btn btn-primary btn-block" onclick="memberApp.login()">เข้าสู่ระบบ</button>
-                        <p class="text-center mt-2">
-                            <small>ยังไม่มีบัญชี? <a href="javascript:void(0)" onclick="memberApp.toggleForm(true)">สมัครสมาชิก</a></small>
-                        </p>
-                    </div>
+    
+    
 
-                    <div id="register-form" class="d-none">
-                        <input type="text" id="reg-name" class="form-control mb-2" placeholder="ชื่อ-นามสกุล">
-                        <input type="email" id="reg-email" class="form-control mb-2" placeholder="อีเมล">
-                        <input type="password" id="reg-pass" class="form-control mb-2" placeholder="ตั้งรหัสผ่าน">
-                        <label><small>เลือกแพ็กเกจสมาชิก:</small></label>
-                        <select id="reg-package" class="form-control mb-2">
-                            <option value="ทดลองใช้">ทดลองใช้</option>
-                            <option value="ธรรมดา">ธรรมดา</option>
-                            <option value="ทองแดง">ทองแดง</option>
-                            <option value="เงิน">เงิน</option>
-                            <option value="ทองคำ">ทองคำ</option>
-                            <option value="วิมาน">วิมาน (VIP)</option>
-                        </select>
-                        <button class="btn btn-success btn-block" onclick="memberApp.register()">ยืนยันการสมัคร</button>
-                        <p class="text-center mt-2">
-                            <small>มีบัญชีแล้ว? <a href="javascript:void(0)" onclick="memberApp.toggleForm(false)">กลับไปล็อกอิน</a></small>
-                        </p>
-                    </div>
-                </div>
-                <div id="logged-in-view" class="card p-4 shadow-sm d-none" style="border-left: 5px solid #d4af37;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4 class="mb-0">สวัสดีคุณ <span id="display-user-name" class="text-gold"></span></h4>
-                            <span id="display-package" class="badge badge-warning">ระดับ: -</span>
-                        </div>
-                        <button class="btn btn-outline-danger btn-sm" onclick="memberApp.logout()">ออกจากระบบ</button>
-                    </div>
-                </div>
-            </div>
-    </main> -->
-
-
-    <!-- 1.หน้าหลัก กรอกชื่อสมัคร ไฟล์ membermanager.js -->
-    <div id="mainContent" class="main-section">
-        <span id="userGreeting" class="text-center font-weight-bold mb-4 d-block" style="font-size: 50px;">✨
-            ยินดีต้อนรับท่านเจ้าชะตา ✨</span>
-        <section id="form" class="card shadow-sm mb-4">
-            <div class="card-body">
-                <h2 class="text-center mb-4">กรอกข้อมูลเพื่อทำนายดวง</h2>
-                <div class="form-group">
-                    <label>ชื่อผู้รับคำทำนาย:</label>
-                    <input type="text" class="form-control" id="targetName" placeholder="กรุณากรอกชื่อ" required>
-                </div>
-                <div class="form-group">
-                    <label>นามสกุล:</label>
-                    <input type="text" class="form-control" id="targetLastName" placeholder="กรุณากรอกนามสกุล" required>
-                </div>
-                <div class="form-group">
-                    <label for="birthdate">วันเกิด (ปี ค.ศ.):</label>
-                    <input type="text" class="form-control" id="birthdate" placeholder="วว/ดด/ปปปป" required
-                        autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label for="birthMonththai">เดือนเกิด(ไทย):</label>
-                    <input type="number" class="form-control" id="birthMonththai" max="12" min="1" placeholder="1-12"
-                        required>
-                </div>
-                <div class="form-group">
-                    <label for="birthtime">เวลาเกิด:</label>
-                    <input type="time" class="form-control" id="birthtime" required>
-                </div>
-                <div class="form-group">
-                    <button type="button" class="btn btn-gold btn-block" onclick="calculateEsh()">ดูดวงชะตา</button>
-                </div>
-            </div>
-        </section>
-    </div>
+    <!-- 1.หน้าหลัก กรอกชื่อสมัคร ไฟล์ mainContent.js -->
+    <section id="mainContent" class="main-section">
+        <title>หน้าหลัก</title>
+        <div id="mainContentpage"></div>
+    </section>
 
 
     <!-- 2.หน้าประวัติ ไฟล์ membermanager.js-->
     <section id="historySection" class="main-section" style="display: none;">
         <div class="card-body">
-            <h4 class="card-title text-center mb-4">📜 ประวัติสมาชิก</h4>
+            <h4 style="text-align: center;" >📜 ประวัติสมาชิก</h4>
             <input type="text" id="searchInput" class="form-control mb-3" placeholder="🔍 ค้นหาชื่อหรือรหัส..."
                 onkeyup="searchHistory()">
             <div class="table-responsive">
@@ -148,7 +617,6 @@
                             <th>ชื่อ</th>
                             <th>นามสกุล</th>
                             <th>วันเกิด</th>
-                            <th>เดือนเกิด(ไทย)</th>
                             <th>นักษัตร</th>
                             <th>ยาม</th>
                             <th>จัดการ</th>
@@ -170,28 +638,29 @@
                     <div class="card-body text-center">
                         <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="100"
                             class="rounded-circle mb-3">
-                        <h1 id="profullname" class="card-title">-</h1>
+                        <h3 id="profullname">-</h3>
                         <hr>
                         <div class="text-left">
                             <p><strong>รหัสสมาชิก:</strong> <span id="profId">-</span></p>
                             <p><strong>วันเกิด:</strong> <span id="profBirth">-</span></p>
                             <p><strong>เวลาเกิด:</strong> <span id="profTime">-</span></p>
                             <p><strong>ปีนักษัตร:</strong> <span id="profZodiac">-</span></p>
-                            <p><strong>ยามที่:</strong> <span id="profYam">-</span></p>                            
+                            <p><strong>ยามที่:</strong> <span id="profYam">-</span></p>
                         </div>
-                            <p>ตรวจดวงประจำวันเกิด <strong onclick= "navigateTo('daily-horoscope')" style="cursor: pointer;">คลิก</strong> </p>
+                        <p>ตรวจดวงประจำวันเกิด <strong onclick="navigateTo('daily-horoscope')"
+                                style="cursor: pointer;">คลิก</strong> </p>
                     </div>
                 </div>
                 <div id="personalFortuneArea" class="mt-4"></div>
                 <button type="button" class="btn btn-outline-primary btn-block mt-2" onclick="calculateLifeGraph()">✨
                     กราฟชีวิตพยากรณ์</button>
                 <button type="button" class="btn btn-outline-gold btn-block mt-2"
-                    onclick="navigateTo('nameAnalysisPage'); analyzeName();">🔮 วิเคราะห์ชื่อสมาชิกทันที</button>
+                    onclick="navigateTo('nameAnalysisPage'); analyzeName(window.currentMemberId);">🔮 วิเคราะห์ชื่อสมาชิกทันที</button>
                 <button type="button" class="btn btn-outline-warning btn-block mt-2"
-                    onclick="navigateTo('mahathaksaPage'); calculateThaksa(false);"><i
+                    onclick="calculatemahataksa()"><i
                         class="fas fa-dharmachakra mr-2"></i> มหาทักษาพยากรณ์</button>
                 <button class="btn btn-secondary btn-block mb-3" onclick="goBack()">🔙 กลับหน้าหลัก</button>
-                <button class="btn btn-secondary btn-block mb-3" onclick="navigateTo('historySection')">🔙
+                <button class="btn btn-secondary btn-block mb-3" id="memberRegBtn" onclick="checkAdminAccessAndNavigate('historySection', event)">🔙
                     ทะเบียนสมาชิก</button>
                 <button class="btn btn-outline-secondary btn-block mt-4 border-0" onclick="navigateTo('mainpage')">
                     <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
@@ -287,7 +756,7 @@
     <!-- 18.ความรู้-->
     <section id="knowledgePage" class="main-section" style="display: none;">
         <div class="card-body">
-            <h4 class="card-title text-center mb-4">📚 คลังความรู้มหาโหรา</h4>
+            <h1 style="text-align: center; color: goldenrod;">📚 คลังความรู้มหาโหรา</h1>
             <input type="text" id="knowledgeSearchInput" class="form-control mb-3"
                 placeholder="🔍 ค้นหาหัวข้อตำรา หรือเคล็ดวิชา..." onkeyup="searchKnowledge()">
             <div class="d-flex flex-wrap justify-content-center mb-4" id="knowledgeCategoryFilter">
@@ -382,7 +851,7 @@
                     <label class="text-white-50 small d-block">ระบุวันเดือนปีเกิดเพื่อคำนวณอายุย่าง
                         (วัน/เดือน/ค.ศ.)</label>
                     <input type="date" id="birthDate" class="form-control bg-black text-gold border-gold mx-auto"
-                        style="max-width: 250px;" onchange="calculateThaksa(false)">
+                        style="max-width: 250px;" onchange="calculateThaksa(true)">
 
                     <div id="displayAgeYang" class="mt-2 badge badge-warning p-2 px-3"
                         style="font-size: 1.1rem; color: #000;">
@@ -423,13 +892,12 @@
 
     <!-- 23.คำนวณลัคนาพยากรณ์ ไฟล์ ascendant.js-->
     <section id="ascendantPage" class="main-section" style="display: none;">
-            <div id="showascPage"></div>
+        <div id="showascPage"></div>
     </section>
-
 
     <!-- 24.ฉัตร 9 ชั้น ไฟล์ chatnine.js-->
     <section id="chatninePage" class="main-section" style="display: none;">
-            <div id="showchatraninePage"></div>
+        <div id="showchatraninePage"></div>
     </section>
 
     <!-- 25.หาคู่รักหรือคู่สมรส ไฟล์ ElementMatch.js -->
@@ -565,22 +1033,29 @@
 
 
 
-    <section id="birth-fortune" class="main-section" style="display: none;">
+    <section id="birthfortune" class="main-section" style="display: none;">
         <div class="compatibility-container">
             <h2 class="section-title">คำนวณโชคกำเนิด (พยากรณ์อาชีพ)</h2>
             <p class="section-subtitle">วิเคราะห์อาชีพที่ถูกโฉลกตามวันเดือนปีเกิดและจุลศักราช</p>
+            <div class="form-group mb-3">
+                    <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
+                    <select class="form-control bg-black text-black border-gold member-selector-shared"
+                        onchange="autoFillMemberData(this.value);calculateBirthFortune()"> >
+                        <option value="">-- เลือกสมาชิก --</option>
+                    </select>
+            </div>
 
             <div class="selection-grid">
                 <div class="input-box">
                     <label>วันเกิด (๑-๗)</label>
                     <select id="fortuneDay" class="form-control">
-                        <option value="1">วันอาทิตย์ (๑)</option>
-                        <option value="2">วันจันทร์ (๒)</option>
-                        <option value="3">วันอังคาร (๓)</option>
-                        <option value="4">วันพุธ (๔)</option>
-                        <option value="5">วันพฤหัสบดี (๕)</option>
-                        <option value="6">วันศุกร์ (๖)</option>
-                        <option value="7">วันเสาร์ (๗)</option>
+                        <option value="0">วันอาทิตย์ (๑)</option>
+                        <option value="1">วันจันทร์ (๒)</option>
+                        <option value="2">วันอังคาร (๓)</option>
+                        <option value="3">วันพุธ (๔)</option>
+                        <option value="4">วันพฤหัสบดี (๕)</option>
+                        <option value="5">วันศุกร์ (๖)</option>
+                        <option value="6">วันเสาร์ (๗)</option>
                     </select>
                 </div>
                 <div class="input-box">
@@ -591,18 +1066,18 @@
                 <div class="input-box">
                     <label>ปีเกิด (ลำดับนักษัตร ๑-๑๒)</label>
                     <select id="fortuneYear" class="form-control">
-                        <option value="1">ปีชวด (๑)</option>
-                        <option value="2">ปีฉลู (๒)</option>
-                        <option value="3">ปีขาล (๓)</option>
-                        <option value="4">ปีเถาะ (๔)</option>
-                        <option value="5">ปีมะโรง (๕)</option>
-                        <option value="6">ปีมะเส็ง (๖)</option>
-                        <option value="7">ปีมะเมีย (๗)</option>
-                        <option value="8">ปีมะแม (๘)</option>
-                        <option value="9">ปีวอก (๙)</option>
-                        <option value="10">ปีระกา (๑๐)</option>
-                        <option value="11">ปีจอ (๑๑)</option>
-                        <option value="12">ปีกุน (๑๒)</option>
+                        <option value="0">ปีชวด (๑)</option>
+                        <option value="1">ปีฉลู (๒)</option>
+                        <option value="2">ปีขาล (๓)</option>
+                        <option value="3">ปีเถาะ (๔)</option>
+                        <option value="4">ปีมะโรง (๕)</option>
+                        <option value="5">ปีมะเส็ง (๖)</option>
+                        <option value="6">ปีมะเมีย (๗)</option>
+                        <option value="7">ปีมะแม (๘)</option>
+                        <option value="8">ปีวอก (๙)</option>
+                        <option value="9">ปีระกา (๑๐)</option>
+                        <option value="10">ปีจอ (๑๑)</option>
+                        <option value="11">ปีกุน (๑๒)</option>
                     </select>
                 </div>
                 <div class="input-box">
@@ -794,16 +1269,7 @@
                 </button>
             </div>
         </div>
-
-
     </section>
-
-    <section id="exportdata" class="main-section" style="display: none;">
-        <div class="container text-center py-5">
-            <h1 class="text-gold mb-4">ส่งออกข้อมูลดวงชะตา</h1>
-        </div>
-    </section>
-
 
     <section id="package" class="main-section" style="display: none;">
         <div class="container">
@@ -847,6 +1313,13 @@
         <div class="container">
             <h2 class="title">ทำนายดวงชะตาตามอายุ (ตำราพรหมชาติ)</h2>
             <div class="calc-box">
+            <div class="form-group mb-3">
+                    <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
+                    <select class="form-control bg-black text-black border-gold member-selector-shared"
+                        onchange="autoFillMemberData(this.value);calculateFortune()"> >
+                        <option value="">-- เลือกสมาชิก --</option>
+                    </select>
+            </div>
                 <div class="input-group">
                     <label>ระบุเพศ:</label>
                     <select id="userGender">
@@ -937,7 +1410,6 @@
                 </svg>
             </div>
         </div>
-
         <div class="row mt-4">
             <div class="col-6">
                 <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
@@ -950,9 +1422,6 @@
                 </button>
             </div>
         </div>
-
-
-
     </section>
 
 
@@ -989,7 +1458,7 @@
                             <select id="dynamicMonth" class="form-select" onchange="calculateDynamicFortune()"></select>
                         </div>
                         <div class="form-col">
-                            <label>  เลือกวันเกิด:</label>
+                            <label> เลือกวันเกิด:</label>
                             <select id="dynamicDay" class="form-select" onchange="calculateDynamicFortune()">
                                 <option value="0">วันอาทิตย์</option>
                                 <option value="1">วันจันทร์</option>
@@ -1003,12 +1472,10 @@
                     </div>
                     <button onclick="calculateDynamicFortune()" class="btn-primary-gold">เปิดตำราทำนาย</button>
                 </div>
-
                 <div id="dynamicResultArea" class="prediction-grid" style="display:none;">
                 </div>
             </div>
         </div>
-
         <div class="row mt-4">
             <div class="col-6">
                 <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
@@ -1107,7 +1574,6 @@
                             <i class="fas fa-calculator"></i> เกณฑ์คำนวณเศษ (ความยั่งยืน)
                         </h5>
                         <div id="remainder-text" class="wiki-text mb-0 fw-bold text-primary"></div>
-
                     </div>
                 </div>
             </div>
@@ -1136,32 +1602,38 @@
         <div id="showclimatepage"></div>
     </section>
 
-     <!-- เกณฑ์พิรุณศาสตร์และชะตาโลก ไฟล์ thaksanine.js -->
+    <!-- เกณฑ์พิรุณศาสตร์และชะตาโลก ไฟล์ thaksanine.js -->
     <section id="thaksaninesection" class="main-section" style="display: none;">
         <div id="showthaksaninepage"></div>
     </section>
 
-
     <!-- ไฟล์ horoscopeseven.js-->
-    <section id="horoscope-seven" class="main-section" style="display:none;">
+    <section id="horoscopeseven" class="main-section" style="display:none;">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-dark text-white p-3">
                         <h4 class="mb-0"><i class="bi bi-pentagon-fill me-2"></i>ตารางพยากรณ์เลข ๗ ตัว</h4>
-                    </div>
+                            <div class="form-group mb-3">
+                                    <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
+                                    <select class="form-control bg-black text-black border-gold member-selector-shared"
+                                        onchange="autoFillMemberData(this.value);calculateHoroscope()"> >
+                                        <option value="">-- เลือกสมาชิก --</option>
+                                    </select>
+                            </div>
+                    </div>                    
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-3">
-                            <label>วันเกิด</label>
+                                <label>วันเกิด</label>
                                 <select id="input-day" class="form-select border-primary">
-                                    <option value="1">วันอาทิตย์</option>
-                                    <option value="2">วันจันทร์</option>
-                                    <option value="3">วันอังคาร</option>
-                                    <option value="4">วันพุธ</option>
-                                    <option value="5">วันพฤหัสบดี</option>
-                                    <option value="6">วันศุกร์</option>
-                                    <option value="7">วันเสาร์</option>
+                                    <option value="0">วันอาทิตย์</option>
+                                    <option value="1">วันจันทร์</option>
+                                    <option value="2">วันอังคาร</option>
+                                    <option value="3">วันพุธ</option>
+                                    <option value="4">วันพฤหัสบดี</option>
+                                    <option value="5">วันศุกร์</option>
+                                    <option value="6">วันเสาร์</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -1184,21 +1656,20 @@
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">ปีนักษัตร</label>
                                 <select id="input-zodiac" class="form-select border-primary">
-                                    <option value="1">ปีชวด</option>
-                                    <option value="2">ปีฉลู</option>
-                                    <option value="3">ปีขาล</option>
-                                    <option value="4">ปีเถาะ</option>
-                                    <option value="5">ปีมะโรง</option>
-                                    <option value="6">ปีมะเส็ง</option>
-                                    <option value="7">ปีมะเมีย</option>
-                                    <option value="8">ปีมะแม</option>
-                                    <option value="9">ปีวอก</option>
-                                    <option value="10">ปีระกา</option>
-                                    <option value="11">ปีจอ</option>
-                                    <option value="12">ปีกุน</option>
+                                    <option value="0">ปีชวด</option>
+                                    <option value="1">ปีฉลู</option>
+                                    <option value="2">ปีขาล</option>
+                                    <option value="3">ปีเถาะ</option>
+                                    <option value="4">ปีมะโรง</option>
+                                    <option value="5">ปีมะเส็ง</option>
+                                    <option value="6">ปีมะเมีย</option>
+                                    <option value="7">ปีมะแม</option>
+                                    <option value="8">ปีวอก</option>
+                                    <option value="9">ปีระกา</option>
+                                    <option value="10">ปีจอ</option>
+                                    <option value="11">ปีกุน</option>
                                 </select>
                             </div>
-                            
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">
                                     เวลาเกิด <span class="text-muted">(สำหรับคำนวณยาม)</span>
@@ -1212,14 +1683,12 @@
                                     placeholder="เช่น 20" min="1">
                             </div>
                             <div class="col-12 text-center mt-3">
-                            
                                 <button type="button" class="btn btn-primary px-5 shadow-sm"
                                     onclick="calculateHoroscope()">
                                     <i class="bi bi-magic me-2"></i>คำนวณดวงชะตา
                                 </button>
                             </div>
                         </div>
-
                         <div id="result-area" class="container">
                             <div class="text-center">
                                 <p>กรุณากรอกข้อมูลเพื่อคำนวณดวงชะตา</p>
@@ -1228,7 +1697,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="row mt-4">
                 <div class="col-6">
                     <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
@@ -1241,29 +1709,23 @@
                     </button>
                 </div>
             </div>
-
-
-
         </div>
     </section>
 
 
     <section id="kaliyokepage" class="main-section" style="display: none;">
         <div class="container text-center">
-            <h1>🔮 เครื่องคำนวณกาลโยค</h1>
-            <p>คำนวณตามคัมภีร์กาลโยค (ฉบับมาตรฐาน)</p>
+            <h1 style="color:white">🔮 เครื่องคำนวณกาลโยค 🔮</h1>
+            <p style="color:white">คำนวณตามคัมภีร์กาลโยค (ฉบับมาตรฐาน)</p>
         </div>
-
         <div class="input-group">
             <label for="yearkarayokInput">ระบุปี พ.ศ.: </label>
             <input type="number" id="yearkarayokInput" value="2569" min="1182">
         </div>
         <div style="text-align: center;"><span id="kaliyokeError" class="text-danger"
                 style="margin-left: 10px;">หากยังไม่ถึงวันสงกรานต์ กาลโยคจะต้องไปดูปีก่อนหน้า</span></div><br>
-
         <div id="kaliyoke-resultArea" class="result-grid">
         </div>
-
         <div class="row mt-4">
             <div class="col-6">
                 <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
@@ -1276,8 +1738,6 @@
                 </button>
             </div>
         </div>
-
-
     </section>
 
 
@@ -1409,23 +1869,538 @@
                 </footer>
     </section>
 
-    
+
 
 
 
 
     <section id="mainpage" class="main-section" style="display: none;">
+        <h1 style="text-align: center; color: goldenrod;" >ห้องพยากรณ์</h1>
         <div class="container text-center py-5">
-            <h1 class="text-gold mb-4">ห้องพยากรณ์</h1>
-            <div class="row" id="menuGrid"></div>
+            <div class="row" id="menuGrid"></div>            
         </div>
     </section>
 
-         <!-- เกณฑ์พิรุณศาสตร์และชะตาโลก ไฟล์ TaksaSattalek.js -->
+    <!-- เกณฑ์พิรุณศาสตร์และชะตาโลก ไฟล์ TaksaSattalek.js -->
     <section id="TaksaSattalek" class="main-section" style="display: none;">
         <div id="showTaksaSattalekpage"></div>
     </section>
 
+
+     <!-- ไฟล์ showdaylife.js -->
+     <section id="showdaylife" class="main-section" style="display: none;">
+        <div id="showdaylifepage"></div>
+    </section>
+
+    <!-- ปฏิทินฮวงจุ้ยรายเดือน ไฟล์ fengshui.js -->
+    <section id="fengshuiCalendar" class="main-section" style="display: none;">
+        <div class="container mt-4">
+            <div class="card bg-dark border-gold p-4 shadow-lg">
+                <h2 class="text-gold mb-4 text-center">
+                    <i class="fas fa-compass mr-2"></i>ปฏิทินฮวงจุ้ยรายเดือน
+                </h2>
+                <p class="text-white text-center mb-4">ดูทิศมงคล/ไม่มงคล และวันสำคัญของเดือนนี้</p>
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-4">
+                        <label class="text-gold">เลือกเดือน:</label>
+                        <select id="fengshuiMonth" class="form-control bg-dark text-gold border-gold" onchange="displayFengShuiCalendar()">
+                            <option value="">-- เลือกเดือน --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="text-gold">เลือกปี (ค.ศ.):</label>
+                        <input type="number" id="fengshuiYear" class="form-control bg-dark text-gold border-gold"
+                               value="2026" min="2000" max="2100" onchange="displayFengShuiCalendar()">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="text-gold">&nbsp;</label>
+                        <button class="btn btn-gold btn-block" onclick="displayFengShuiCalendar()">
+                            <i class="fas fa-search mr-2"></i>ดูปฏิทิน
+                        </button>
+                    </div>
+                </div>
+
+                <!-- แสดงผลลัพธ์ -->
+                <div id="fengshuiResult" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-dark border-gold">
+                                <div class="card-body">
+                                    <h5 class="text-gold mb-3">
+                                        <i class="fas fa-map-marker-alt mr-2"></i>ทิศมงคลเดือนนี้
+                                    </h5>
+                                    <div id="luckyDirection" class="text-white"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-dark border-gold">
+                                <div class="card-body">
+                                    <h5 class="text-gold mb-3">
+                                        <i class="fas fa-ban mr-2"></i>ทิศไม่มงคล
+                                    </h5>
+                                    <div id="unluckyDirection" class="text-white"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-calendar-alt mr-2"></i>วันสำคัญ/วันข้อห้าม
+                            </h5>
+                            <div id="importantDays" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-lightbulb mr-2"></i>คำแนะนำ
+                            </h5>
+                            <div id="fengshuiTips" class="text-white"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ปุ่มนำทาง -->
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                            <i class="fas fa-home"></i> กลับหน้าหลัก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- พยากรณ์ธุรกิจ/การเงิน ไฟล์ business-fortune.js -->
+    <section id="businessFortune" class="main-section" style="display: none;">
+        <div class="container mt-4">
+            <div class="card bg-dark border-gold p-4 shadow-lg">
+                <h2 class="text-gold mb-4 text-center">
+                    <i class="fas fa-chart-line mr-2"></i>พยากรณ์ธุรกิจ/การเงิน
+                </h2>
+                <p class="text-white text-center mb-4">วิเคราะห์ปีที่ดีสำหรับธุรกิจและการลงทุน</p>
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6">
+                        <label class="text-gold">เลือกปีนักษัตรของคุณ:</label>
+                        <select id="businessZodiac" class="form-control bg-dark text-gold border-gold" onchange="displayBusinessFortune()">
+                            <option value="">-- เลือกปีนักษัตร --</option>
+                            <option value="rat">ปีชวด (หนู)</option>
+                            <option value="ox">ปีฉลู (วัว)</option>
+                            <option value="tiger">ปีขาล (เสือ)</option>
+                            <option value="rabbit">ปีเถาะ (กระต่าย)</option>
+                            <option value="dragon">ปีมะโรง (มังกร)</option>
+                            <option value="snake">ปีมะเส็ง (งู)</option>
+                            <option value="horse">ปีมะเมีย (ม้า)</option>
+                            <option value="goat">ปีมะแม (แพะ)</option>
+                            <option value="monkey">ปีวอก (ลิง)</option>
+                            <option value="rooster">ปีระกา (ไก่)</option>
+                            <option value="dog">ปีจอ (สุนัข)</option>
+                            <option value="pig">ปีกุน (หมู)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-gold">เลือกปี (ค.ศ.):</label>
+                        <input type="number" id="businessYear" class="form-control bg-dark text-gold border-gold"
+                               value="2026" min="2000" max="2100" onchange="displayBusinessFortune()">
+                    </div>
+                </div>
+
+                <div class="text-center mb-4">
+                    <button class="btn btn-gold btn-lg" onclick="displayBusinessFortune()">
+                        <i class="fas fa-search mr-2"></i>วิเคราะห์ดวงธุรกิจ
+                    </button>
+                </div>
+
+                <!-- แสดงผลลัพธ์ -->
+                <div id="businessResult" style="display: none;">
+                    <!-- ข้อมูลพื้นฐาน -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card bg-dark border-gold">
+                                <div class="card-body text-center">
+                                    <h5 class="text-gold mb-2"><i class="fas fa-yin-yang mr-2"></i>ปีนักษัตร</h5>
+                                    <div id="zodiacDisplay" class="text-white" style="font-size: 1.3rem; font-weight: bold;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-dark border-gold">
+                                <div class="card-body text-center">
+                                    <h5 class="text-gold mb-2"><i class="fas fa-palette mr-2"></i>สีมงคล</h5>
+                                    <div id="luckyColor" class="text-white" style="font-size: 1.3rem; font-weight: bold;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-dark border-gold">
+                                <div class="card-body text-center">
+                                    <h5 class="text-gold mb-2"><i class="fas fa-fire-alt mr-2"></i>ธาตุ</h5>
+                                    <div id="elementDisplay" class="text-white" style="font-size: 1.3rem; font-weight: bold;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ดวงธุรกิจ -->
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-briefcase mr-2"></i>ดวงธุรกิจปีนี้
+                            </h5>
+                            <div id="businessLuck" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <!-- การลงทุน -->
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-piggy-bank mr-2"></i>การเงิน/การลงทุน
+                            </h5>
+                            <div id="financialLuck" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <!-- อาชีพเหมาะสม -->
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-user-tie mr-2"></i>อาชีพที่เหมาะสม
+                            </h5>
+                            <div id="suitableCareer" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <!-- คำแนะนำ -->
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-lightbulb mr-2"></i>คำแนะนำทั่วไป
+                            </h5>
+                            <div id="businessTips" class="text-white"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ปุ่มนำทาง -->
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                            <i class="fas fa-home"></i> กลับหน้าหลัก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- วันเปิดร้าน/ลงหลัก ไฟล์ auspicious-opening.js -->
+    <section id="auspiciousOpening" class="main-section" style="display: none;">
+        <div class="container mt-4">
+            <div class="card bg-dark border-gold p-4 shadow-lg">
+                <h2 class="text-gold mb-4 text-center">
+                    <i class="fas fa-store mr-2"></i>คำนวณวันเปิดร้าน/ลงหลัก
+                </h2>
+                <p class="text-white text-center mb-4">หาวันที่เหมาะสมสำหรับเปิดธุรกิจ ลงหลัก สร้างสรรค์</p>
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6">
+                        <label class="text-gold">เลือกประเภทธุรกิจ:</label>
+                        <select id="businessType" class="form-control bg-dark text-gold border-gold" onchange="findAuspiciousOpeningDays()">
+                            <option value="">-- เลือกประเภท --</option>
+                            <option value="shop">🏪 ร้านค้า/ศูนย์การค้า</option>
+                            <option value="restaurant">🍽️ ร้านอาหาร/คาเฟ่</option>
+                            <option value="hotel">🏨 โรงแรม/ที่พัก</option>
+                            <option value="office">🏢 สำนักงาน/บริษัท</option>
+                            <option value="clinic">⚕️ คลินิก/โรงพยาบาล</option>
+                            <option value="school">📚 สถาบันการศึกษา</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-gold">เลือกเดือน/ปี ที่ต้องการ:</label>
+                        <input type="month" id="openingMonth" class="form-control bg-dark text-gold border-gold" onchange="findAuspiciousOpeningDays()">
+                    </div>
+                </div>
+
+                <div class="text-center mb-4">
+                    <button class="btn btn-gold btn-lg" onclick="findAuspiciousOpeningDays()">
+                        <i class="fas fa-search mr-2"></i>หาวันที่มงคล
+                    </button>
+                </div>
+
+                <!-- แสดงผลลัพธ์ -->
+                <div id="openingResult" style="display: none;">
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-calendar-check mr-2"></i>วันที่เหมาะสมในเดือนนี้
+                            </h5>
+                            <div id="auspiciousDays" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-clock mr-2"></i>เวลาที่เหมาะสม
+                            </h5>
+                            <div id="auspiciousTime" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-compass mr-2"></i>ทิศที่เหมาะสม
+                            </h5>
+                            <div id="auspiciousDirection" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-lightbulb mr-2"></i>คำแนะนำ
+                            </h5>
+                            <div id="openingTips" class="text-white"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ปุ่มนำทาง -->
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                            <i class="fas fa-home"></i> กลับหน้าหลัก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- วันประกอบพิธี (แต่งงาน/เลี้ยง/บวช) ไฟล์ ceremony-date.js -->
+    <section id="ceremonyDate" class="main-section" style="display: none;">
+        <div class="container mt-4">
+            <div class="card bg-dark border-gold p-4 shadow-lg">
+                <h2 class="text-gold mb-4 text-center">
+                    <i class="fas fa-ring mr-2"></i>กำหนดวันประกอบพิธี
+                </h2>
+                <p class="text-white text-center mb-4">หาวันที่เหมาะสมสำหรับแต่งงาน เลี้ยง บวช หมั้น ฯลฯ</p>
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6">
+                        <label class="text-gold">เลือกประเภทพิธี:</label>
+                        <select id="ceremonyType" class="form-control bg-dark text-gold border-gold" onchange="findCeremonyDate()">
+                            <option value="">-- เลือกประเภท --</option>
+                            <option value="wedding">💍 แต่งงาน</option>
+                            <option value="engagement">💎 หมั้น</option>
+                            <option value="party">🎉 เลี้ยง</option>
+                            <option value="ordination">🙏 บวช</option>
+                            <option value="housewarming">🏠 ไหว้บ้าน</option>
+                            <option value="opening">🏪 เปิดร้าน</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-gold">เลือกเดือน/ปี ที่ต้องการ:</label>
+                        <input type="month" id="ceremonyMonth" class="form-control bg-dark text-gold border-gold" onchange="findCeremonyDate()">
+                    </div>
+                </div>
+
+                <div class="text-center mb-4">
+                    <button class="btn btn-gold btn-lg" onclick="findCeremonyDate()">
+                        <i class="fas fa-search mr-2"></i>หาวันประกอบพิธี
+                    </button>
+                </div>
+
+                <!-- แสดงผลลัพธ์ -->
+                <div id="ceremonyResult" style="display: none;">
+                    <div class="alert alert-info mb-4" style="background: rgba(212, 175, 55, 0.1); border-left: 4px solid #d4af37;">
+                        <h5 id="ceremonyTitle" class="text-gold mb-2"></h5>
+                        <p id="ceremonyDescription" class="text-white mb-0"></p>
+                    </div>
+
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-calendar-check mr-2"></i>วันที่เหมาะสม
+                            </h5>
+                            <div id="ceremonyGoodDays" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-ban mr-2"></i>วันที่ต้องหลีกเลี่ยง
+                            </h5>
+                            <div id="ceremonyBadDays" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-clock mr-2"></i>เวลาที่เหมาะสม
+                            </h5>
+                            <div id="ceremonyTime" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-lightbulb mr-2"></i>คำแนะนำและข้อปฏิบัติ
+                            </h5>
+                            <div id="ceremonyAdvice" class="text-white"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ปุ่มนำทาง -->
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                            <i class="fas fa-home"></i> กลับหน้าหลัก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- โหราศาสตร์ไทย (ดูดวงตามดาวเกิด) ไฟล์ thai-astrology.js -->
+    <section id="thaiAstrology" class="main-section" style="display: none;">
+        <div class="container mt-4">
+            <div class="card bg-dark border-gold p-4 shadow-lg">
+                <h2 class="text-gold mb-4 text-center">
+                    <i class="fas fa-stars mr-2"></i>โหราศาสตร์ไทย - ดูดวงตามดาวเกิด
+                </h2>
+                <p class="text-white text-center mb-4">วิเคราะห์ดาว 9 ดวง และตำแหน่งในบ้าน 12 บ้าน</p>
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6">
+                        <label class="text-gold">วันเกิด (ค.ศ. ยุคธรรมชาติ):</label>
+                        <input type="date" id="astrologyBirthDate" class="form-control bg-dark text-gold border-gold" onchange="calculateThaiAstrology()">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-gold">เวลาเกิด (ถ้ารู้):</label>
+                        <input type="time" id="astrologyBirthTime" class="form-control bg-dark text-gold border-gold">
+                    </div>
+                </div>
+
+                <div class="text-center mb-4">
+                    <button class="btn btn-gold btn-lg" onclick="calculateThaiAstrology()">
+                        <i class="fas fa-search mr-2"></i>วิเคราะห์ดาว 9 ดวง
+                    </button>
+                </div>
+
+                <!-- แสดงผลลัพธ์ -->
+                <div id="astrologyResult" style="display: none;">
+                    <!-- ดาวเกิด -->
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-sun mr-2"></i>ดาวเกิดหลัก (ดวงหลัก)
+                            </h5>
+                            <div id="mainPlanet" class="text-white" style="font-size: 1.2rem; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- ดาว 9 ดวง -->
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-star mr-2"></i>ดาว 9 ดวง
+                            </h5>
+                            <div id="nineStars" class="row"></div>
+                        </div>
+                    </div>
+
+                    <!-- บ้าน 12 บ้าน -->
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-home mr-2"></i>บ้าน 12 บ้าน
+                            </h5>
+                            <div id="twelveHouses" class="row"></div>
+                        </div>
+                    </div>
+
+                    <!-- ลักษณะบุคคล -->
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-user mr-2"></i>ลักษณะบุคคล
+                            </h5>
+                            <div id="personalCharacter" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <!-- คำทำนาย -->
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-scroll mr-2"></i>คำทำนายชะตากรรม
+                            </h5>
+                            <div id="prediction" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <!-- ค่ายธาตุ -->
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-fire-alt mr-2"></i>ค่ายธาตุและปีมงคล
+                            </h5>
+                            <div id="elementFortune" class="text-white"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ปุ่มนำทาง -->
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                            <i class="fas fa-home"></i> กลับหน้าหลัก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <footer class="bg-dark text-white py-3 mt-5">
         <div class="container text-center">
@@ -1443,12 +2418,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script type="module" src="membermanager.js"></script>
+    <script src="auth-enhanced-firebase-fixed.js"></script>
+    <script src="mainContent.js"></script>
     <script src="dayBirthData.js"></script>
     <script src="element.js"></script>
     <script src="namesdb.js"></script>
+    <script src="namesdb-female-addon.js"></script>
+    <script src="namesdb-special-addon.js"></script>
+    <script src="namesdb-extended.js"></script>
     <script src="chatraPage.js"></script>
     <script src="lifeExtension.js"></script>
-    <script src="nameAnalysis.js"></script>
     <script src="relation.js"></script>
     <script src="lucky.js"></script>
     <script src="numerology.js"></script>
@@ -1464,8 +2444,6 @@
     <script src="yarmPage.js"></script>
     <script src="personalFortune.js"></script>
     <script src="dailyHighlights.js"></script>
-    <script type="module" src="mahataksa.js"></script>
-    <script src="lifeGraph.js"></script>
     <script src="chatnine.js"></script>
     <script src="knowledge-data.js"></script>
     <script src="knowledge.js"></script>
@@ -1487,11 +2465,186 @@
     <script src="fortuneWealthData.js"></script>
     <script src="Climate.js"></script>
     <script src="horoscopeseven.js"></script>
-    <script src="kaliyoke.js"></script>
+    <script src="Kaliyoke.js"></script>
     <script src="elementmanual.js"></script>
     <script src="thaksanine.js"></script>
     <script src="TaksaSattalek.js"></script>
-    <script type="module" src="membermanager.js"></script>
+    <script src="showdaylife.js"></script>
+    <script type="module" src="thai-astrology.js"></script>
+    <script src="fengshui.js"></script>
+    <script src="business-fortune.js"></script>
+    <script src="auspicious-opening.js"></script>
+    <script src="ceremony-date.js"></script>
+    <script type="module" src="mahataksa.js"></script>
+    <script src="nameAnalysis.js"></script>
+    <script src="lifeGraph.js"></script>
+
+
+
+
+    <!-- Tab Switching for Login/Register Form -->
+    <script>
+        /**
+         * สลับไปฟอร์ม Login
+         */
+        function switchToLogin() {
+            const loginForm = document.getElementById('authLoginForm');
+            const registerForm = document.getElementById('authRegisterForm');
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            
+            if (loginForm) loginForm.style.display = 'block';
+            if (registerForm) registerForm.style.display = 'none';
+            
+            if (loginTab) {
+                loginTab.style.color = '#d4af37';
+                loginTab.style.borderBottomColor = '#d4af37';
+            }
+            if (registerTab) {
+                registerTab.style.color = 'rgba(212,175,55,0.5)';
+                registerTab.style.borderBottomColor = 'transparent';
+            }
+            
+            // ล้าง error message
+            const errorEl = document.getElementById('authError');
+            if (errorEl) {
+                errorEl.style.display = 'none';
+                errorEl.textContent = '';
+            }
+        }
+
+        /**
+         * สลับไปฟอร์ม Register
+         */
+        function switchToRegister() {
+            const loginForm = document.getElementById('authLoginForm');
+            const registerForm = document.getElementById('authRegisterForm');
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            
+            if (loginForm) loginForm.style.display = 'none';
+            if (registerForm) registerForm.style.display = 'block';
+            
+            if (loginTab) {
+                loginTab.style.color = 'rgba(212,175,55,0.5)';
+                loginTab.style.borderBottomColor = 'transparent';
+            }
+            if (registerTab) {
+                registerTab.style.color = '#d4af37';
+                registerTab.style.borderBottomColor = '#d4af37';
+            }
+            
+            // ล้าง error message
+            const errorEl = document.getElementById('authError');
+            if (errorEl) {
+                errorEl.style.display = 'none';
+                errorEl.textContent = '';
+            }
+        }
+    </script>
+
+    <!-- Role-Based Access Control for Member Registration -->
+    <script>
+        /**
+         * ตรวจสอบสิทธิ์ admin ก่อนนำทาง
+         * @param {string} sectionId - ID ของ section ที่ต้องการเข้าถึง
+         * @param {Event} event - Event object
+         */
+        function checkAdminAccessAndNavigate(sectionId, event) {
+            event.preventDefault();
+            
+            // ✨ ตรวจสอบว่า isAdmin มี
+            if (typeof isAdmin !== 'function') {
+                alert('⚠️ ระบบล็อกอินยังไม่พร้อม กรุณารีเฟรช');
+                return false;
+            }
+            
+            if (!isAdmin()) {
+                alert('⛔ เฉพาะผู้ดูแลระบบเท่านั้นที่สามารถเข้าถึงทะเบียนสมาชิกได้');
+                return false;
+            }
+            
+            // ถ้าเป็น admin ให้นำทางไปยัง section
+            navigateTo(sectionId);
+            return false;
+        }
+
+        /**
+         * ซ่อนหรือแสดงลิงค์ทะเบียนสมาชิก ตามสิทธิ์ user
+         */
+        function updateMemberRegistrationVisibility() {
+            // ✨ ตรวจสอบว่า isAdmin มี
+            if (typeof isAdmin !== 'function') {
+                console.warn('⚠️ isAdmin not ready yet');
+                return;
+            }
+            
+            const memberRegNav = document.getElementById('memberRegNav');
+            const memberRegBtn = document.getElementById('memberRegBtn');
+            const taksasattalekNav = document.getElementById('taksasattalekNav');
+            
+            if (!isAdmin()) {
+                // ซ่อนลิงค์และปุ่มสำหรับ non-admin users
+                if (memberRegNav) memberRegNav.style.display = 'none';
+                if (memberRegBtn) memberRegBtn.style.display = 'none';
+                if (taksasattalekNav) taksasattalekNav.style.display = 'none';
+            } else {
+                // แสดงลิงค์และปุ่มสำหรับ admin users
+                if (memberRegNav) memberRegNav.style.display = 'block';
+                if (memberRegBtn) memberRegBtn.style.display = 'block';
+                if (taksasattalekNav) taksasattalekNav.style.display = 'block';
+            }
+        }
+
+        /**
+         * ป้องกัน non-admin users จากการเข้าถึง historySection
+         */
+        function protectAdminSections() {
+            // ✨ ตรวจสอบว่า isAdmin มี
+            if (typeof isAdmin !== 'function') {
+                console.warn('⚠️ isAdmin not ready yet');
+                return;
+            }
+            
+            const historySection = document.getElementById('historySection');
+            
+            // ✨ บันทึกฟังก์ชันเดิมเฉพาะครั้งแรก (ป้องกันการลบเมื่อเรียกหลายครั้ง)
+            if (!window.__originalNavigateTo) {
+                window.__originalNavigateTo = window.navigateTo;
+            }
+            
+            // Override navigateTo เพื่อเพิ่มการตรวจสอบ
+            window.navigateTo = function(sectionId) {
+                // ตรวจสอบถ้ากำลังเข้าถึง historySection
+                if (sectionId === 'historySection' && !isAdmin()) {
+                    alert('⛔ เฉพาะผู้ดูแลระบบเท่านั้นที่สามารถเข้าถึงทะเบียนสมาชิกได้');
+                    return;
+                }
+                
+                // ถ้าเป็น admin หรือ section อื่น ให้ดำเนินการต่อ
+                window.__originalNavigateTo.call(this, sectionId);
+            };
+            
+            // ซ่อน historySection สำหรับ non-admin users
+            if (historySection && !isAdmin()) {
+                historySection.style.display = 'none';
+            }
+        }
+
+        // เรียกใช้ฟังก์ชันเมื่อมี session ที่ถูกต้อง
+        document.addEventListener('DOMContentLoaded', function() {
+            // ➤ Wait for page restoration (100ms) + extra buffer
+            setTimeout(() => {
+                updateMemberRegistrationVisibility();
+                protectAdminSections();
+            }, 250);
+        });
+
+        // ตรวจสอบการเปลี่ยนแปลง auth session ทุก 5 วินาที
+        setInterval(() => {
+            updateMemberRegistrationVisibility();
+        }, 5000);
+    </script>
 
 
 
@@ -1500,8 +2653,8 @@
 
 
     <script>
-        const year = new Date().getFullYear() + 543;
-        document.getElementById("yearTH").innerText = year;
+        const year = new Date().getFullYear();
+        document.getElementById("yearTH").innerText = year+543;
     </script>
 
     <script>
@@ -1605,6 +2758,35 @@
         </div>
     </div>
 
+    <!-- ===== ปุ่มกลับไปบนสุด 
+    <button id="backToTopBtn" class="back-to-top" onclick="scrollToTop()" title="กลับไปบนสุด">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // ปุ่มกลับไปบนสุด
+        const backToTopBtn = document.getElementById('backToTopBtn');
+
+        // แสดง/ซ่อนปุ่มเมื่อ scroll
+        window.addEventListener('scroll', function() {
+            if (document.documentElement.scrollTop > 300 || document.body.scrollTop > 300) {
+                backToTopBtn.style.display = 'block';
+            } else {
+                backToTopBtn.style.display = 'none';
+            }
+        });
+
+        // ฟังก์ชันเลื่อนไปบนสุด
+        function scrollToTop() {
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+        }
+    </script>
+    ===== -->
+
+    <!-- 🌟 Thai Astrology Data & Calculator -->
+    <script src="thai-astrology-data.js"></script>
+    <script src="thai-astrology-calculator.js"></script>
 
 </body>
 

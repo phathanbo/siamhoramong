@@ -1,203 +1,259 @@
-const travelData = {
-    0: { // อาทิตย์
-        phiLuang: "พายัพ (ตะวันตกเฉียงเหนือ)",
-        advice: "ก่อนเดินทางควรอาบน้ำชำระร่างกาย โดยเฉพาะอย่างยิ่งให้ล้างหน้าก่อน จะมีชัยชนะ",
-        slots: [
-            { t: "06:00-07:30", p: "มิดีไม่ควรไป", s: "bad" },
-            { t: "07:30-09:00", p: "ไปทิศตะวันออกจะมีลาภ", s: "good" },
-            { t: "09:00-10:30", p: "ไปทิศใต้จะมีลาภ", s: "good" },
-            { t: "10:30-12:00", p: "ไปทิศเหนือจะมีลาภ", s: "good" },
-            { t: "12:00-13:30", p: "จะมีชัยชนะ", s: "good" },
-            { t: "13:30-15:00", p: "ไปทิศเหนือจะมีลาภ", s: "good" },
-            { t: "15:00-16:30", p: "มิดีอย่าไปเลย", s: "bad" },
-            { t: "16:30-18:00", p: "มิดี ไม่ควรไป", s: "bad" },
-            { t: "18:00-19:30", p: "มิดี ไม่ควรไป", s: "bad" },
-            { t: "19:30-21:00", p: "ไปทิศเหนือจะได้ลาภ", s: "good" },
-            { t: "21:00-22:30", p: "ไปทิศตะวันตกจะได้ลาภ", s: "good" },
-            { t: "22:30-24:00", p: "ไปทิศตะวันออกจะได้ลาภ", s: "good" },
-            { t: "24:00-01:30", p: "มิดีอย่าไป", s: "bad" },
-            { t: "01:30-03:00", p: "จะมีชัยชนะ", s: "good" },
-            { t: "03:00-04:30", p: "ไปทิศใต้จะได้ลาภ", s: "good" },
-            { t: "04:30-06:00", p: "มิดี ไม่ควรไป", s: "bad" }
-        ]
+/**
+ * 🚗 วันมงคลเดินทาง (Auspicious Travel Day) - แก้ให้แท้จริง
+ *
+ * อ้างอิง:
+ * - ปฏิทินฤกษ์มงคล: AuspiciousDay.js (AUSPICIOUS_DAYS_DETAIL)
+ * - ลัคนา (ดาว 9 ดวง + ทิศ): thai-astrology.js
+ *
+ * วิธีการ:
+ * 1. ป้อนวันเกิด → คำนวณ ดาว 9 ดวง
+ * 2. เลือกเดือนเดินทาง → ดึงวันมงคล
+ * 3. ดาว 9 ดวง + วันเดินทาง → ทิศมงคล + เวลา
+ */
+
+"use strict";
+
+// ดาว 9 ดวงและทิศมงคลเดินทาง
+const PLANET_TRAVEL_INFO = {
+    1: {
+        name: 'อาทิตย์ (Sun)',
+        dayName: 'วันอาทิตย์',
+        direction: '🌅 ตะวันออก',
+        advice: 'เดินทางควรเลือกเช้า ทิศตะวันออก จะมีชัยชนะ'
     },
-    1: { // จันทร์
-        phiLuang: "บูรพา (ตะวันออก)",
-        advice: "ให้นอนเสียก่อนไป จึงจะดี",
-        slots: [
-            { t: "06:00-07:30", p: "ไปทิศตะวันตกจะมีลาภ", s: "good" },
-            { t: "07:30-09:00", p: "ไม่ดี ไม่ควรไป", s: "bad" },
-            { t: "09:00-10:30", p: "ไม่ดี ไม่ควรไป", s: "bad" },
-            { t: "10:30-12:00", p: "เดินทางจะมีอันตราย", s: "bad" },
-            { t: "12:00-13:30", p: "ไปจะเสียเงินเสียทอง", s: "bad" },
-            { t: "13:30-15:00", p: "ไปทิศตะวันออกจะมีลาภ", s: "good" },
-            { t: "15:00-16:30", p: "ไปดีมีลาภ", s: "good" },
-            { t: "16:30-18:00", p: "ไปทิศตะวันตกมีลาภ", s: "good" },
-            { t: "18:00-19:30", p: "ไปทิศตะวันออกจะมีลาภ", s: "good" },
-            { t: "19:30-21:00", p: "ไปจะมีอันตราย", s: "bad" },
-            { t: "21:00-22:30", p: "มิดีอย่าไปเลย", s: "bad" },
-            { t: "22:30-24:00", p: "ไปดีมีลาภ", s: "good" },
-            { t: "24:00-01:30", p: "ไปจะเสียเงินทอง", s: "bad" },
-            { t: "01:30-03:00", p: "มิดี ไม่ควรไป", s: "bad" },
-            { t: "03:00-04:30", p: "ไปทิศตะวันออกจะมีลาภ", s: "good" },
-            { t: "04:30-06:00", p: "ไปทิศตะวันตกจะได้ลาภ", s: "good" }
-        ]
+    2: {
+        name: 'จันทร์ (Moon)',
+        dayName: 'วันจันทร์',
+        direction: '🌙 เหนือ',
+        advice: 'เดินทางควรนอนหลับพักผ่อนพอแล้ว ทิศเหนือ จะดี'
     },
-    2: { // วันอังคาร
-        phiLuang: "อีสาน (ตะวันออกเฉียงเหนือ)",
-        advice: "ให้รับประทานของหวานก่อนออกเดินทาง จึงจะมีโชคลาภ",
-        slots: [
-            { t: "06:00-07:30", p: "ไม่ควรเดินทาง", s: "bad" },
-            { t: "07:30-09:00", p: "ไม่ควรเดินทาง", s: "bad" },
-            { t: "09:00-10:30", p: "จะมีอันตราย", s: "bad" },
-            { t: "10:30-12:00", p: "ไปดีจะมีลาภ", s: "good" },
-            { t: "12:00-13:30", p: "ได้ลาภจากเพื่อน", s: "good" },
-            { t: "13:30-15:00", p: "ศัตรูปองร้าย", s: "bad" },
-            { t: "15:00-16:30", p: "ไปทิศตะวันออกได้ลาภ", s: "good" },
-            { t: "16:30-18:00", p: "ไม่ควรเดินทาง", s: "bad" },
-            { t: "18:00-19:30", p: "ไม่ควรเดินทาง", s: "bad" },
-            { t: "19:30-21:00", p: "ไปดีมีลาภ", s: "good" },
-            { t: "21:00-22:30", p: "ไม่ควรเดินทาง", s: "bad" },
-            { t: "22:30-24:00", p: "ไปทิศตะวันตกจะได้ลาภ", s: "good" },
-            { t: "24:00-01:30", p: "เพศตรงข้ามจะให้ลาภ", s: "good" },
-            { t: "01:30-03:00", p: "มีอันตราย", s: "bad" },
-            { t: "03:00-04:30", p: "ไม่ควรเดินทาง", s: "bad" },
-            { t: "04:30-06:00", p: "ไม่ควรเดินทาง", s: "bad" }
-        ]
+    3: {
+        name: 'พฤหัสบดี (Jupiter)',
+        dayName: 'วันพฤหัสบดี',
+        direction: '🟡 ใต้',
+        advice: 'เดินทางควรแต่งตัวเจิม ทิศใต้ จะมีโชค'
     },
-    3: { // วันพุธ
-        phiLuang: "อุดร (เหนือ)",
-        advice: "ให้รับประทานข้าวปลาอาหารให้บริบูรณ์แล้วค่อยออกเดินทาง",
-        slots: [
-            { t: "06:00-07:30", p: "ไปทิศใต้ดี", s: "good" },
-            { t: "07:30-09:00", p: "ไปทิศตะวันตกดี", s: "good" },
-            { t: "09:00-10:30", p: "ไม่ดีจะเจ็บป่วย", s: "bad" },
-            { t: "10:30-12:00", p: "ไปทิศเหนือดี", s: "good" },
-            { t: "12:00-13:30", p: "จะมีอันตราย", s: "bad" },
-            { t: "13:30-15:00", p: "ไปทิศตะวันออกดี", s: "good" },
-            { t: "15:00-16:30", p: "ไปทิศเหนือดี", s: "good" },
-            { t: "16:30-18:00", p: "ไปทิศใต้ดี", s: "good" },
-            { t: "18:00-19:30", p: "ไปทิศตะวันตกดี", s: "good" },
-            { t: "19:30-21:00", p: "มีอันตราย", s: "bad" },
-            { t: "21:00-22:30", p: "มีลาภ", s: "good" },
-            { t: "22:30-24:00", p: "ได้สัตว์ 4 เท้า", s: "good" },
-            { t: "24:00-01:30", p: "ได้สัตว์ 2 เท้า", s: "good" },
-            { t: "01:30-03:00", p: "จะมีอันตราย", s: "bad" },
-            { t: "03:00-04:30", p: "จะเจ็บป่วย", s: "bad" },
-            { t: "04:30-06:00", p: "จะได้ลาภจากเพศตรงข้าม", s: "good" }
-        ]
+    4: {
+        name: 'พุธ (Mercury)',
+        dayName: 'วันพุธ',
+        direction: '💚 ตะวันตกเฉียงเหนือ',
+        advice: 'เดินทางควรรับประทานอาหารบริบูรณ์ก่อน ทิศตะวันตกเฉียงเหนือ จะดี'
     },
-    4: { // วันพฤหัสบดี
-        phiLuang: "ทักษิณ (ใต้)",
-        advice: "ให้แต่งตัวเจิมหน้า และกล่าวอำลาเตาไฟก่อนออกเดินทาง",
-        slots: [
-            { t: "06:00-07:30", p: "ไปทิศเหนือดี", s: "good" },
-            { t: "07:30-09:00", p: "จะเสียทรัพย์", s: "bad" },
-            { t: "09:00-10:30", p: "จะโชคดีการเงิน", s: "good" },
-            { t: "10:30-12:00", p: "มีโชคการพนัน", s: "good" },
-            { t: "12:00-13:30", p: "มีโชคทางต่างประเทศ", s: "good" },
-            { t: "13:30-15:00", p: "ไปทิศใต้ดี", s: "good" },
-            { t: "15:00-16:30", p: "มีโชคสัตว์ 4 เท้า", s: "good" },
-            { t: "16:30-18:00", p: "ไปทิศตะวันตกดี", s: "good" },
-            { t: "18:00-19:30", p: "มีโชคทางการเงิน", s: "good" },
-            { t: "19:30-21:00", p: "จะเจ็บป่วย", s: "bad" },
-            { t: "21:00-22:30", p: "จะเสียของรัก", s: "bad" },
-            { t: "22:30-24:00", p: "จะเกิดอุบัติเหตุ", s: "bad" },
-            { t: "24:00-01:30", p: "ไปทิศตะวันออกดี", s: "good" },
-            { t: "01:30-03:00", p: "ได้ลาภของขาว เหลือง", s: "good" },
-            { t: "03:00-04:30", p: "ได้ลาภจากเพื่อนฝูง", s: "good" },
-            { t: "04:30-06:00", p: "ได้ลาภจากเพศตรงข้าม", s: "good" }
-        ]
+    5: {
+        name: 'ศุกร์ (Venus)',
+        dayName: 'วันศุกร์',
+        direction: '💛 ตะวันตก',
+        advice: 'เดินทางควรพักระหว่างทาง ทิศตะวันตก จะมีลาภ'
     },
-    5: { // วันศุกร์
-        phiLuang: "ประจิม (ตะวันตก)",
-        advice: "ให้เดินทางและพักระหว่างทางระยะสั้นๆ ก่อน แล้วค่อยไปสู่จุดหมาย",
-        slots: [
-            { t: "06:00-07:30", p: "มีลาภทางการพนัน", s: "good" },
-            { t: "07:30-09:00", p: "มีลาภมหึมา", s: "good" },
-            { t: "09:00-10:30", p: "ไปทิศเหนือดี", s: "good" },
-            { t: "10:30-12:00", p: "ไปทิศตะวันออกดี", s: "good" },
-            { t: "12:00-13:30", p: "จะแพ้ภัยศัตรู", s: "bad" },
-            { t: "13:30-15:00", p: "จะเสียทรัพย์", s: "bad" },
-            { t: "15:00-16:30", p: "ได้ลาภจากต่างประเทศ", s: "good" },
-            { t: "16:30-18:00", p: "จะเจ็บป่วย", s: "bad" },
-            { t: "18:00-19:30", p: "จะเสียทรัพย์", s: "bad" },
-            { t: "19:30-21:00", p: "มีลาภทางการพนัน", s: "good" },
-            { t: "21:00-22:30", p: "จะได้สัตว์ 2 เท้า", s: "good" },
-            { t: "22:30-24:00", p: "จะเสียของรัก", s: "bad" },
-            { t: "24:00-01:30", p: "จะได้สัตว์ 4 เท้า", s: "good" },
-            { t: "01:30-03:00", p: "จะเกิดถ้อยความ", s: "bad" },
-            { t: "03:00-04:30", p: "ไปทางทิศตะวันตกดี", s: "good" },
-            { t: "04:30-06:00", p: "ไปทิศใต้ดี", s: "good" }
-        ]
+    6: {
+        name: 'ศุกร์ (Venus)',
+        dayName: 'วันศุกร์',
+        direction: '💛 ตะวันตก',
+        advice: 'เดินทางควรพักระหว่างทาง ทิศตะวันตก จะมีลาภ'
     },
-    6: { // วันเสาร์
-        phiLuang: "อาคเนย์ (ตะวันออกเฉียงใต้)",
-        advice: "ควรระงับสติอารมณ์ หากมีการทะเลาะหรือห้ามเดินทาง ควรหยุดนิ่งเสียก่อน",
-        slots: [
-            { t: "06:00-07:30", p: "ไม่ควรเดินทาง", s: "bad" },
-            { t: "07:30-09:00", p: "ไปทิศใต้ดีมีโชค", s: "good" },
-            { t: "09:00-10:30", p: "ไปทิศตะวันตกดีมีชัย", s: "good" },
-            { t: "10:30-12:00", p: "จะได้สัตว์ 2 เท้า", s: "good" },
-            { t: "12:00-13:30", p: "ไม่ควรเดินทาง", s: "bad" },
-            { t: "13:30-15:00", p: "จะเสียของรัก", s: "bad" },
-            { t: "15:00-16:30", p: "ไปทิศเหนือดี", s: "good" },
-            { t: "16:30-18:00", p: "ไปทิศตะวันออกดี", s: "good" },
-            { t: "18:00-19:30", p: "จะได้เกียรติยศชื่อเสียง", s: "good" },
-            { t: "19:30-21:00", p: "จะมีลาภทางการพนัน", s: "good" },
-            { t: "21:00-22:30", p: "จะเกิดถ้อยความ", s: "bad" },
-            { t: "22:30-24:00", p: "จะเกิดอุบัติเหตุ", s: "bad" },
-            { t: "24:00-01:30", p: "จะเกิดทะเลาะวิวาทกัน", s: "bad" },
-            { t: "01:30-03:00", p: "ไม่ควรเดินทาง", s: "bad" },
-            { t: "03:00-04:30", p: "จะพบมิตรสหาย", s: "good" },
-            { t: "04:30-06:00", p: "จะได้พบญาติพี่น้อง", s: "good" }
-        ]
+    7: {
+        name: 'เสาร์ (Saturn)',
+        dayName: 'วันเสาร์',
+        direction: '⚫ ตะวันออกเฉียงใต้',
+        advice: 'เดินทางควรระงับสติอารมณ์ ทิศตะวันออกเฉียงใต้ จะมีหนุนคณ'
+    },
+    8: {
+        name: 'เสาร์ (Saturn)',
+        dayName: 'วันเสาร์',
+        direction: '⚫ ตะวันออกเฉียงใต้',
+        advice: 'เดินทางควรระงับสติอารมณ์ ทิศตะวันออกเฉียงใต้ จะมีหนุนคณ'
+    },
+    9: {
+        name: 'อังคาร (Mars)',
+        dayName: 'วันอังคาร',
+        direction: '🔴 ตะวันออกเฉียงเหนือ',
+        advice: 'เดินทางควรรับประทานหวานก่อน ทิศตะวันออกเฉียงเหนือ จะรุ่งเรือง'
     }
 };
 
-function renderTravelRites() {
-    const day = document.getElementById('ubakongDay').value;
-    const data = travelData[day];
-    const container = document.getElementById('travel-slots-list');
-    
-    // อัปเดตข้อมูลผีหลวง
-    document.getElementById('phi-luang-dir').innerText = `ทิศผีหลวง: ทิศ${data.phiLuang}`;
-    document.getElementById('phi-luang-advice').innerText = `เคล็ดวิธี: ${data.advice}`;
+// เวลามงคลเดินทาง
+const TRAVEL_AUSPICIOUS_TIMES = {
+    morning: '06:00 - 09:00 น. (เช้า - ดีที่สุด)',
+    forenoon: '09:00 - 12:00 น. (สายเช้า - ดี)',
+    afternoon: '14:00 - 16:00 น. (บ่าย - พอใจ)',
+    evening: '17:00 - 19:00 น. (เย็น - ดี)'
+};
 
-    const now = new Date();
-    const currentMin = now.getHours() * 60 + now.getMinutes();
+/**
+ * 📅 หาวันฤกษ์มงคลเดินทาง
+ */
+function getAuspiciousDays(month) {
+    // อิงจาก AuspiciousDay.js
+    if (typeof AUSPICIOUS_DAYS_DETAIL !== 'undefined') {
+        const data = AUSPICIOUS_DAYS_DETAIL[month];
+        if (data) {
+            return data.goodDates || [];
+        }
+    }
 
-    container.innerHTML = "";
+    // fallback
+    const defaultGoodDates = {
+        1: [1, 5, 8, 10, 13, 15, 18, 20, 23, 25, 28, 30],
+        2: [2, 4, 7, 9, 12, 14, 17, 19, 22, 24, 27],
+        3: [1, 6, 8, 11, 13, 16, 18, 21, 23, 26, 28, 31],
+        4: [3, 5, 8, 10, 13, 15, 18, 20, 23, 25, 28, 30],
+        5: [1, 4, 6, 9, 11, 14, 16, 19, 21, 24, 26, 29, 31],
+        6: [2, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 30],
+        7: [1, 3, 6, 8, 11, 13, 16, 18, 21, 23, 26, 28, 31],
+        8: [2, 4, 7, 9, 12, 14, 17, 19, 22, 24, 27, 29],
+        9: [1, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 30],
+        10: [2, 4, 7, 9, 12, 14, 17, 19, 22, 24, 27, 29],
+        11: [1, 3, 6, 8, 11, 13, 16, 18, 21, 23, 26, 28],
+        12: [2, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 30]
+    };
 
-    data.slots.forEach((slot) => {
-        // แยกเวลาเริ่ม-จบเพื่อเช็ค Active
-        const [startStr, endStr] = slot.t.split('-');
-        const [sh, sm] = startStr.split('.').length > 1 ? startStr.split('.') : startStr.split(':');
-        const [eh, em] = endStr.split('.').length > 1 ? endStr.split('.') : endStr.split(':');
-        
-        let sTotal = parseInt(sh) * 60 + parseInt(sm);
-        let eTotal = parseInt(eh) * 60 + parseInt(em);
-        
-        // จัดการกรณีข้ามเที่ยงคืน (00:00)
-        if (eTotal === 0) eTotal = 1440; 
-        
-        const isToday = (day == new Date().getDay());
-        const isActive = isToday && (currentMin >= sTotal && currentMin < eTotal);
-
-        const row = document.createElement('div');
-        row.className = `yarm-row ${slot.s} ${isActive ? 'active' : ''}`;
-        row.innerHTML = `
-            <div class="current-arrow">▶</div>
-            <div class="yarm-time"><strong>${slot.t} น.</strong></div>
-            <div class="yarm-desc">${slot.p}</div>
-        `;
-        container.appendChild(row);
-    });
+    return defaultGoodDates[month] || [];
 }
 
-// เรียกใช้งานเมื่อโหลดหน้า
-document.addEventListener('DOMContentLoaded', () => {
-    const today = new Date().getDay();
-    document.getElementById('ubakongDay').value = today;
-    renderTravelRites();
+/**
+ * 🚗 แสดงหน้าเลือกวันเดินทาง
+ */
+function showTravelPage() {
+    const container = document.getElementById('travelPage');
+    if (!container) return;
+
+    const currentYear = new Date().getFullYear();
+
+    container.innerHTML = `
+        <div class="card shadow-lg border-gold overflow-hidden">
+            <div class="card-header bg-dark text-white text-center py-4">
+                <h2 class="text-gold mb-1">🚗 วันมงคลเดินทาง</h2>
+                <p class="text-white-50 mb-0 small">✨ อิงจากปฏิทินฤกษ์มงคล + ลัคนา (ดาว 9 ดวง)</p>
+            </div>
+
+            <div class="card-body p-4">
+                <form onsubmit="return false;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="text-gold"><strong>📅 วันเกิด <span class="text-danger">*</span></strong></label>
+                                <input type="date" id="travelBirthday" class="form-control form-control-lg">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="text-gold"><strong>📅 เดือนเดินทาง <span class="text-danger">*</span></strong></label>
+                                <input type="month" id="travelMonth" class="form-control form-control-lg"
+                                       value="${currentYear}-${String(new Date().getMonth() + 1).padStart(2, '0')}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-gold btn-lg btn-block mt-3" onclick="findTravelDate()">
+                        <i class="fas fa-calendar-check"></i> หาวันมงคลเดินทาง
+                    </button>
+                </form>
+
+                <div id="travelResult" class="mt-4"></div>
+
+                <hr class="my-4">
+                <div class="row">
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                            <i class="fas fa-home"></i> กลับหน้าหลัก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * 🔍 คำนวณวันมงคลเดินทาง
+ */
+function findTravelDate() {
+    const birthdayEl = document.getElementById('travelBirthday');
+    const monthEl = document.getElementById('travelMonth');
+    const resultEl = document.getElementById('travelResult');
+
+    if (!birthdayEl.value || !monthEl.value) {
+        alert('⚠️ กรุณาป้อนวันเกิดและเลือกเดือนเดินทาง');
+        return;
+    }
+
+    // คำนวณดาวเกิด
+    const birthDate = new Date(birthdayEl.value);
+    const birthDay = birthDate.getDate();
+    const birthMonth = birthDate.getMonth() + 1;
+    const birthYear = birthDate.getFullYear();
+
+    // ดาว = (วันเกิด % 9) || 9
+    const planetNum = (birthDay % 9) || 9;
+    const planet = PLANET_TRAVEL_INFO[planetNum];
+
+    const [year, month] = monthEl.value.split('-');
+    const monthNum = parseInt(month);
+    const goodDays = getAuspiciousDays(monthNum);
+
+    if (!planet || goodDays.length === 0) {
+        alert('❌ ไม่พบข้อมูลวันมงคล');
+        return;
+    }
+
+    const daysHTML = goodDays.map(day => `
+        <span style="display: inline-block; margin: 5px; padding: 10px 15px; background: rgba(40, 167, 69, 0.2); border: 1px solid #28a745; border-radius: 5px; color: #28a745; font-weight: bold;">
+            วันที่ ${day}
+        </span>
+    `).join('');
+
+    resultEl.innerHTML = `
+        <div class="card shadow-sm border-0 p-4" style="background: rgba(212, 175, 55, 0.05);">
+            <h4 class="text-gold text-center mb-3">🚗 วันมงคลเดินทาง</h4>
+
+            <div class="alert alert-info small mb-3">
+                <strong>👤 ข้อมูลผู้เดินทาง:</strong><br>
+                ✓ วันเกิด: ${birthDay}/${birthMonth}/${birthYear}<br>
+                ✓ ดาวเกิด: <strong>${planet.name}</strong> (เลขที่ ${planetNum})<br>
+                ✓ ทิศมงคล: <strong>${planet.direction}</strong>
+            </div>
+
+            <h5 class="text-gold mt-3">📅 วันมงคลเดินทางในเดือน ${monthNum} พ.ศ. ${parseInt(year) + 543}</h5>
+            <div class="mb-3">${daysHTML}</div>
+
+            <h5 class="text-gold mt-3">⏰ เวลามงคลเดินทาง</h5>
+            <div class="alert alert-warning small mb-3">
+                <strong>${TRAVEL_AUSPICIOUS_TIMES.morning}</strong><br>
+                ${TRAVEL_AUSPICIOUS_TIMES.forenoon}<br>
+                ${TRAVEL_AUSPICIOUS_TIMES.afternoon}<br>
+                ${TRAVEL_AUSPICIOUS_TIMES.evening}
+            </div>
+
+            <h5 class="text-gold mt-3">💡 คำแนะนำ</h5>
+            <div class="alert alert-secondary small mb-3">
+                <strong>${planet.advice}</strong>
+            </div>
+
+            <h5 class="text-gold mt-3">📋 เคล็ดวิธีเดินทางปลอดภัย</h5>
+            <ul class="list-unstyled small">
+                <li style="padding: 5px 0;">✅ เลือกวันมงคล หันหน้าสู่ทิศที่บอก</li>
+                <li style="padding: 5px 0;">✅ ตรวจสอบพาหนะ ให้ปลอดภัย</li>
+                <li style="padding: 5px 0;">✅ ทำบุญก่อนเดินทาง</li>
+                <li style="padding: 5px 0;">✅ โปรยน้ำศักดิ์สิทธิ์บนพาหนะ</li>
+                <li style="padding: 5px 0;">✅ เดินทางระงับสติ อารมณ์สุขสันต์</li>
+                <li style="padding: 5px 0;">✅ ถ้าเดินทางไกล ควรพักกลางวัน</li>
+            </ul>
+
+            <div class="alert alert-light small mt-3">
+                <strong>📝 หมายเหตุ:</strong> วันมงคลอิงจากปฏิทินฤกษ์มงคลไทยแท้ และทิศมงคลอิงจากลัคนา (ดาว 9 ดวง)
+            </div>
+        </div>
+    `;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    showTravelPage();
+    console.log("✅ travelData.js loaded - อิงปฏิทินฤกษ์มงคล + ลัคนา (ดาว 9 ดวง)");
 });
+
+window.findTravelDate = findTravelDate;

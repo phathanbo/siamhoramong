@@ -1,10 +1,23 @@
 "use strict";
 
-/**
- * nameAnalysis.js
- * ระบบวิเคราะห์ชื่อ-นามสกุล (สยามโหรามงคล)
- * โดย ประธานโบ้
- */
+// ที่ต้นไฟล์ nameAnalysis.js
+
+function getProfileData() {
+    try {
+        const history = JSON.parse(localStorage.getItem('horo_history')) || [];
+        if (history.length > 0) {
+            const data = history[0];
+            console.log("📊 โปรไฟล์:", data);
+            return data;
+        }
+    } catch (e) {
+        console.error('Error getting profile:', e);
+    }
+    return null;
+}
+ 
+
+
 
 const NameAnalysis = {
     // 1. ตารางค่าตัวเลขศาสตร์ไทย (มาตรฐานแม่นยำ)
@@ -234,9 +247,9 @@ const TaksaMeanings = {
 
 
 function showname() {
-    const contianer = document.getElementById('shownamepage')
-    if (contianer) {
-        contianer.style.display = 'block';
+    const container = document.getElementById('shownamepage')
+    if (container) {
+        container.style.display = 'block';
     }
 
     const html = `
@@ -293,7 +306,7 @@ function showname() {
 
     
     `;
-    contianer.innerHTML = html;
+    container.innerHTML = html;
 }
 
 document.addEventListener("DOMContentLoaded", () =>{
@@ -379,63 +392,88 @@ function getLuckyChars(dayIdx, target) {
  * ฟังก์ชันหลักในการวิเคราะห์ชื่อ
  * ดึงข้อมูลสมาชิกอัตโนมัติ และตรวจเช็คกาลกิณีตามวันเกิด
  */
-function analyzeName() {
-    // 1. ดึง Element มาเช็คก่อนว่ามีตัวตนจริงไหม
+function analyzeName(passedMemberId) {
     const firstNameEl = document.getElementById('firstName');
     const lastNameEl = document.getElementById('lastName');
     const daySelectEl = document.getElementById('birthDaynumSelect');
 
     if (!firstNameEl || !lastNameEl || !daySelectEl) {
-        console.error("หา Element ไม่เจอ! เช็ค ID ใน HTML ด่วนครับ");
+        console.error("หา Element ไม่เจอ!");
         return;
     }
 
     let fname = firstNameEl.value.trim();
     let lname = lastNameEl.value.trim();
-    let selectedDay = daySelectEl.value; 
+    let selectedDay = daySelectEl.value;
 
-    // 2. ถ้าชื่อว่าง ให้ดึงจากระบบสมาชิก
-    if (!fname) {
-        const savedName = localStorage.getItem('thaiHoroUserName');
-        if (savedName) {
-            let name = savedName.trim();
-            let lastname = savedName.trim();
-            fname = name.split(' ')[0] || "";
-            lname = lastname.split(' ')[1] || "";
+    // 🆕 ดึง memberId
+    let memberId = passedMemberId;
+    if (!memberId) {
+        memberId = typeof window !== 'undefined' ? window.currentMemberId : null;
+    }
+    
+    console.log("📍 analyzeName() memberId:", memberId);  // ← debug
+
+    // ดึงข้อมูลจาก memberId
+    if (memberId && (!fname || !lname || selectedDay === "")) {
+        const profileData = getProfileByMemberId(memberId);
+        console.log("📊 analyzeName() profileData:", profileData);  // ← debug
+        
+        if (profileData) {
+            fname = profileData.name || '';
+            lname = profileData.lastName || '';
+
             firstNameEl.value = fname;
             lastNameEl.value = lname;
+            
+            if (selectedDay === "" && profileData.birthdate) {
+                const birthDate = parseThaiDate(profileData.birthdate);
+                if (birthDate) {
+                    selectedDay = birthDate.getDay().toString();
+                }
+            }
+            
+
+            if (selectedDay) daySelectEl.value = selectedDay;
+            
+            console.log("✅ ดึงจากโปรไฟล์:", fname, lname, "วัน:", selectedDay);
+            console.log("✅ Clear & Set ชื่อ:", fname, lname);
+
         }
     }
 
-    // 3. ป้องกันกดวิเคราะห์โดยไม่มีชื่อ
     if (!fname) {
-        return Swal.fire({ icon: 'info', title: 'กรุณากรอกชื่อ', confirmButtonColor: '#d4af37' });
+        return Swal.fire({
+            icon: 'info',
+            title: 'กรุณากรอกชื่อ',
+            confirmButtonColor: '#d4af37'
+        });
     }
 
-    // 4. แก้ปัญหา "วันอาทิตย์ตลอดกาล"
     let finalDayIdx = null;
 
-    // เช็คว่า selectedDay มีค่า และไม่ใช่ค่าว่าง
     if (selectedDay !== "") {
-        finalDayIdx = parseInt(selectedDay); 
-        console.log("เลือกจากหน้าจอเป็นเลข:", finalDayIdx); // เช็คใน Console (F12)
+            finalDayIdx = parseInt(selectedDay);
     } else {
-        const birthdate = localStorage.getItem('thaiHoroUserBirthdate');
-        if (birthdate) {
-            finalDayIdx = new Date(birthdate).getDay();
-            console.log("ดึงจากระบบสมาชิกเป็นเลข:", finalDayIdx);
+        if (memberId) {
+            const profileData = getProfileByMemberId(memberId);
+            if (profileData && profileData.birthdate) {
+                const birthDate = parseThaiDate(profileData.birthdate);
+                if (birthDate) {
+                    finalDayIdx = birthDate.getDay();
+                }
+            }
         }
     }
-
-    // 5. คำนวณ (ใช้ชื่อที่ได้จากข้อ 2 และวันที่จากข้อ 4)
+    
     const kalakiniList = getKalakiniInName(fname, finalDayIdx);
     const sumF = NameAnalysis.calculate(fname);
     const sumL = NameAnalysis.calculate(lname);
     const sumTotal = sumF + sumL;
 
-    // 6. แสดงผลลัพธ์
     renderNameUI(fname, lname, sumF, sumL, sumTotal, finalDayIdx, kalakiniList);
 }
+
 
 function showLuckyChars(target, dayIdx) {
     if (dayIdx === null) {
@@ -721,14 +759,12 @@ async function exportNameAnalysis() {
     
     if (!fname) return Swal.fire('Error', 'ไม่พบชื่อที่จะบันทึกครับ', 'error');
 
-    // --- ส่วนที่เพิ่มเข้ามาเพื่อให้รูปภาพรู้ข้อมูลวันเกิด ---
-    const birthdate = localStorage.getItem('thaiHoroUserBirthdate');
+    const daySelectEl = document.getElementById('birthDaynumSelect');
     let dayIdx = null;
-    if (birthdate) {
-        dayIdx = new Date(birthdate).getDay();
+    if (daySelectEl && daySelectEl.value !== '') {
+        dayIdx = parseInt(daySelectEl.value);
     }
     const kalakiniList = getKalakiniInName(fname, dayIdx);
-    // --------------------------------------------------
 
     const sumF = NameAnalysis.calculate(fname);
     const sumL = NameAnalysis.calculate(lname);
@@ -866,3 +902,7 @@ async function exportNameAnalysis() {
         Swal.fire('Error', 'บันทึกไม่สำเร็จ: ' + err.message, 'error');
     }
 }
+
+// Export global
+window.getProfileData = getProfileData;
+window.analyzeName = analyzeName;

@@ -394,33 +394,12 @@ async function loadMembersToThaksa() {
 document.addEventListener('DOMContentLoaded', () => {
     // เรียกโหลดสมาชิกทันทีที่เปิดหน้า
     loadMembersToThaksa();
-
-    const memberSelect = document.getElementById('memberSelect');
-    if (memberSelect) {
-        memberSelect.addEventListener('change', function (e) {
-            const rawDate = e.target.value;
-            if (rawDate) {
-                const bDateInput = document.getElementById('birthDate');
-                if (bDateInput) {
-                    const formattedDate = formatToInputDate(rawDate);
-                    bDateInput.value = formattedDate;
-
-                    // เรียกฟังก์ชันคำนวณหลักของประธาน (ตรวจสอบชื่อให้ตรงกับในไฟล์เดิม)
-                    if (typeof window.updateThaksaUI === 'function') {
-                        window.updateThaksaUI();
-                    } else if (typeof updateThaksaUI === 'function') {
-                        updateThaksaUI();
-                    }
-                }
-            }
-        });
-    }
 });
 
 document.getElementById('memberSelect').addEventListener('change', function (e) {
     const rawDate = e.target.value;
     if (rawDate) {
-        const bDateInput = document.getElementById('birthDate');
+        const bDateInput = document.getElementById('birthdate');
         if (bDateInput) {
             // 1. แปลงฟอร์แมตวันที่
             const formattedDate = formatToInputDate(rawDate);
@@ -516,17 +495,17 @@ function getSawoeiContent(currentPlanet) {
 
 /**
  * ฟังก์ชันคำนวณอายุย่างและระบุตัวเลขดาวเสวยอายุ
- * @param {string} birthDateStr - วันเกิดรูปแบบ "YYYY-MM-DD"
+ * @param {string} birthdateStr - วันเกิดรูปแบบ "YYYY-MM-DD"
  * @returns {Object} - อายุเต็ม, อายุย่าง, และดาวที่เสวยอายุขณะนั้น
  */
-function calculateThaksaAge(birthDateStr) {
-    const birthDate = new Date(birthDateStr);
+function calculateThaksaAge(birthdateStr) {
+    const birthdate = new Date(birthdateStr);
     const today = new Date(); // วันที่ปัจจุบัน
 
     // 1. คำนวณอายุเต็ม (ปี)
-    let ageFull = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    let ageFull = today.getFullYear() - birthdate.getFullYear();
+    const m = today.getMonth() - birthdate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthdate.getDate())) {
         ageFull--;
     }
 
@@ -576,17 +555,17 @@ function calculateThaksaAge(birthDateStr) {
 
 /**
  * ฟังก์ชันหาดาวเสวยและดาวแทรกแบบละเอียดรายวัน
- * @param {string} birthDateStr - วันเกิด (YYYY-MM-DD)
+ * @param {string} birthdateStr - วันเกิด (YYYY-MM-DD)
  * @param {string} targetDateStr - วันที่ต้องการดูดวง (ถ้าไม่ใส่จะใช้ปัจจุบัน)
  */
-function findSubPeriodByDate(birthDateStr, targetDateStr = null) {
-    const birthDate = new Date(birthDateStr);
+function findSubPeriodByDate(birthdateStr, targetDateStr = null) {
+    const birthdate = new Date(birthdateStr);
     const targetDate = targetDateStr ? new Date(targetDateStr) : new Date();
 
     // 1. คำนวณหาจำนวนวันที่ใช้ชีวิตมาทั้งหมด (1 ปีโหร = 360 วัน)
     // ใช้เกณฑ์มหาทักษา: อายุเต็ม + 1 = อายุย่าง
     // เราจะหา "วันสะสม" ในรอบ 108 ปี (38,880 วัน)
-    const diffTime = targetDate - birthDate;
+    const diffTime = targetDate - birthdate;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
     // หาตำแหน่งวันในรอบ 108 ปี
@@ -663,25 +642,25 @@ function showBirthDestiny(startDayIndex) {
 
     return `
         <div class="mt-4 p-3">
-            <h4 class="text-gold"><i class="fas fa-star mr-2"></i>พื้นดวงชะตาภูมิกำเนิด  <i class="fas fa-star mr-2"></i></h4> 
-            <p class="text-gold" style="font-size: 50px; font-weight: bold;"><span style="color:${angel.bg}">วัน${destiny.day}</span></p>
-            <div class="badge ${angel.type === 'บาปเคราะห์' ? 'badge-danger' : 'badge-success'} mb-2"> ฝ่าย${angel.type}</div></p>
-            <p class="text-gold">ทรง ${angel.vehicle} เป็นพาหนะ มีกำลังดาว ${angel.power} ${angel.animal} ${angel.desc} ${angel.location}</p>
-            <p class="text-white" style="line-height: 1.6;">${destiny.text}</p>
-            <p class="text-white"> สีมงคล: ${angel.luckyColor} สีไม่มงคล: ${angel.unluckyColor}</p>
+            <h4 class="text-gold"><i class="fas fa-star mr-2"></i>พื้นดวงชะตาภูมิกำเนิด <i class="fas fa-star mr-2"></i></h4> 
+            <span class="text-gold" style="font-size: 50px; font-weight: bold;"><span style="color:${angel.bg}">วัน${destiny.day}</span></span><br>
+            <div class="badge ${angel.type === 'บาปเคราะห์' ? 'badge-danger' : 'badge-success'} mb-2"> ฝ่าย${angel.type}</div><br>
+            <span class="text-gold">ทรง ${angel.vehicle} เป็นพาหนะ มีกำลังดาว ${angel.power} ${angel.animal} ${angel.desc} ${angel.location}</p>
+            <span class="text-gold" style="line-height: 1.6;">${destiny.text}</p>
+            <span class="text-gold"> สีมงคล: ${angel.luckyColor} สีไม่มงคล: ${angel.unluckyColor}</p>
         </div>
     `;
 }
 
-window.calculateThaksa = function(isManualChange = false) {
-    // ... โค้ดคำนวณข้างในเหมือนเดิมทุกอย่าง ...
-    console.log("⚡ กำลังคำนวณมหาทักษา...");
+window.calculateThaksa = function (isManualChange = false) {
     const daySelect = document.getElementById('birthDaySelecttaksa');
-    const bDateInput = document.getElementById('birthDate');
+    const bDateInput = document.getElementById('birthdate');
     const display = document.getElementById('thaksaDisplay');
     const ageLabel = document.getElementById('displayAgeYang');
     const detail = document.getElementById('thaksaDetail');
     const resultBox = document.getElementById('thaksaResult');
+
+
 
     if (!daySelect || !display) return;
 
@@ -752,13 +731,12 @@ window.calculateThaksa = function(isManualChange = false) {
     const enemy = PLANET_RELATIONS.enemies[planetNum];
     const somphon = PLANET_RELATIONS.somphon[planetNum];
     const elementPair = ELEMENT_PAIRS[planetNum];
+    const birthDay = document.getElementById('birthdate').value;
 
-
-
-    const result = findSubPeriodByDate("1995-03-02");
+    const result = findSubPeriodByDate(birthDay);
 
     // 1. เรียกใช้ฟังก์ชันคำนวณอายุที่สร้างไว้ก่อนหน้า
-    const userStatus = calculateThaksaAge("1995-03-02");
+    const userStatus = calculateThaksaAge(birthDay);
 
     // 2. สร้างที่เก็บข้อมูลรวม (รวบรวมตัวแปรที่เราสร้างไว้ ๑-๖)
     const ALL_SAWOEI_DATA = {
@@ -818,10 +796,10 @@ window.calculateThaksa = function(isManualChange = false) {
                 </div>
         <div class="text-center mb-4 p-3 border-gold" style="background: rgba(0,0,0,0.5); border-radius: 15px;">
             <h4 class="text-gold">ปีนี้อายุย่าง ${ageYang || '--'} ปี</h4>
-            <p class="text-warning">เทวดาเสวยอายุ ${angel.name} <span class="small text-gold">( ${angel.desc} )</span></p>
-            <p class="small text-gold"><i class="fas fa-shield-alt"></i> มีดาวคู่ต้านทานภัยปีนี้: <b>${resister}</b></p>
-            <p class="text-gold mb-0"><b>คำทำนาย:</b> ${angel.prediction}</p>
-            <p class="small text-white-50"><i class="fas fa-magic"></i> <b>เคล็ดลับ:</b> ${angel.shrine}</p>
+            <span class="text-warning">เทวดาเสวยอายุ ${angel.name} <span class="small text-gold">( ${angel.desc} )</span></span><br>
+            <span class="small text-gold"><i class="fas fa-shield-alt"></i> มีดาวคู่ต้านทานภัยปีนี้: <b>${resister}</b></span><br>
+            <span class="text-gold mb-0"><b>คำทำนาย:</b> ${angel.prediction}</span><br>
+            <span class="small text-white-50"><i class="fas fa-magic"></i> <b>เคล็ดลับ:</b> ${angel.shrine}</span>
         </div>
     </div>
         `;
@@ -983,7 +961,7 @@ window.calculateThaksa = function(isManualChange = false) {
 // ผูก Event ทั้งหมด
 document.addEventListener('DOMContentLoaded', () => {
     const daySelect = document.getElementById('birthDaySelecttaksa');
-    const bDateInput = document.getElementById('birthDate');
+    const bDateInput = document.getElementById('birthdate');
 
     // ถ้าเปลี่ยนวันเกิดในทักษา (Dropdown)
     if (daySelect) {
@@ -1027,4 +1005,65 @@ window.saveCard = function (cardId) {
         console.error("Save image failed:", err);
         alert("ไม่สามารถบันทึกรูปภาพได้ในขณะนี้");
     });
+};
+
+// ✅ ฟังก์ชันแปลงวันเกิด
+function parseBirthdate(input) {
+    if (!input) return null;
+
+    // รูปแบบ: dd/mm/yyyy หรือ yyyy-mm-dd
+    if (input.includes('/')) {
+        const parts = input.split('/');
+        if (parts.length === 3) {
+            const day = parseInt(parts[0]);
+            const month = parseInt(parts[1]);
+            let year = parseInt(parts[2]);
+            if (year > 2400) year -= 543; // แปลง BE ≈ AD
+            return new Date(year, month - 1, day);
+        }
+    } else if (input.includes('-')) {
+        return new Date(input);
+    }
+    return null;
+}
+
+window.calculatemahataksa = function () {
+    // 1️⃣ ดึงจากฟอร์ม
+    let input = document.getElementById('birthdate')?.value;
+
+    // 2️⃣ ถ้าไม่มี → ดึงจาก localStorage
+    if (!input) {
+        const localData = localStorage.getItem('horo_history');
+        if (localData) {
+            try {
+                const parsed = JSON.parse(localData);
+                // ✅ แก้: เข้า Array [0]
+                input = parsed[0]?.birthdate || parsed[0]?.birthDate;
+            } catch(e) {
+                console.error('Parse error:', e);
+            }
+        }
+    }
+
+    // 3️⃣ Fallback → โปรไฟล์
+    if (!input) {
+        input = document.getElementById('profBirth')?.innerText;
+    }
+
+    // ตรวจสอบ
+    const birthDate = parseBirthdate(input);
+    if (!birthDate) {
+        alert("🔮 กรุณากรอกวันเกิด หรือเลือกสมาชิกก่อนคำนวณมหาทักษา");
+        return;
+    }
+
+    // บันทึก
+    localStorage.setItem('userBirthdate', birthDate.toISOString().split('T')[0]);
+
+    // คำนวณ + Navigate
+    calculateThaksa();
+
+    if (typeof navigateTo === "function") {
+        navigateTo('mahathaksaPage');
+    }
 };

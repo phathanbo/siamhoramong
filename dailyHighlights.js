@@ -207,6 +207,20 @@ function showtabledaily() {
 
 document.addEventListener("DOMContentLoaded", () => {
     showDailytable();
+
+    // หาปีปัจจุบัน
+    const now = new Date();
+    const currentYear = now.getFullYear() + 543;
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    
+    // เซ็ตค่าเริ่มต้นใน Input
+    const picker = document.getElementById("highlightDatePicker");
+    if (picker) {
+        picker.value = `${currentYear}-${month}-${day}`;
+    }
+
+    generateDailyMap();
 });
 
 

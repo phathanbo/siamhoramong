@@ -228,7 +228,11 @@ function compatitable() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Initialize compatibility page UI
     compatitable();
+    // Ensure compatibility result is cleared
+    const resultDiv = document.getElementById('compatResult');
+    if (resultDiv) resultDiv.innerHTML = '';
 });
 
 // =====================
@@ -248,16 +252,3 @@ function quickAnalyze() {
         processCompatibility();
     }, 300);
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const inputEl = document.getElementById('compatipage');
-
-    if (!inputEl) return;
-
-    processCompatibility();
-
-    inputEl.addEventListener('input', debouncedDisplay);
-    inputEl.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') processCompatibility();
-    });
-});

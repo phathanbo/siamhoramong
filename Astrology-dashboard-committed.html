@@ -859,13 +859,57 @@
       <div id="weekly-detail" style="margin-top:0.75rem;display:none;"></div>
     </div>
 
-
+    <!-- Tarot Card -->
+    <div class="card" style="background:#120c2a; box-shadow:0 4px 30px rgba(200,100,255,0.12); margin-bottom:1.25rem;">
+      <div class="card-label">ไพ่ทาโรต์ประจำวัน</div>
+      <div style="display:flex; align-items:center; gap:1.5rem; margin-top:0.75rem; flex-wrap:wrap;">
+        <div id="tarot-card" style="width:80px;height:130px;border-radius:0.75rem;border:1px solid rgba(200,150,255,0.3);background:linear-gradient(135deg,#1a0835,#2a1050);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.6s;transform-style:preserve-3d;flex-shrink:0;" onclick="drawTarot()">
+          <div style="font-size:2rem;">🂠</div>
+          <div style="font-size:0.6rem;color:#7050a0;margin-top:0.3rem;font-family:'Sarabun',sans-serif;">แตะเพื่อเปิด</div>
+        </div>
+        <div style="flex:1;min-width:180px;">
+          <div id="tarot-name" style="font-size:1.1rem;color:#e8c97a;margin-bottom:0.4rem;font-family:'Sarabun',sans-serif;">— ยังไม่ได้จั่วไพ่ —</div>
+          <div id="tarot-meaning" style="font-size:0.82rem;color:#a080c0;line-height:1.7;font-family:'Sarabun',sans-serif;"></div>
+          <div id="tarot-advice" style="margin-top:0.5rem;font-size:0.78rem;color:#c8a060;font-style:italic;font-family:'Sarabun',sans-serif;"></div>
+        </div>
+      </div>
+    </div>
 
     <footer class="dash-footer">✦ ดวงดาวกำหนดทิศทาง แต่เจตจำนงของคุณคือพลังที่แท้จริง ✦</footer>
   </div>
 
   <script>
     /* (script content omitted in this committed copy for brevity) */
+    
+    document.getElementById("today-date").textContent =
+      new Date().toLocaleDateString("th-TH", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
+
+    const TAROT_CARDS = [
+      { name:"🌟 The Star — ดาว",        meaning:"ความหวัง แรงบันดาลใจ และการฟื้นฟูจิตใจ",           advice:"วันนี้เชื่อในตัวเองและเปิดใจรับพลังบวก" },
+      { name:"☀️ The Sun — ดวงอาทิตย์",  meaning:"ความสำเร็จ ความสุข และพลังงานสดใส",               advice:"ทุกอย่างจะออกมาดี เดินหน้าด้วยความมั่นใจ" },
+      { name:"🌙 The Moon — ดวงจันทร์",  meaning:"ความลึกลับ ภาพลวงตา และจิตใต้สำนึก",             advice:"ระวังความเข้าใจผิด ใช้สัญชาตญาณนำทาง" },
+      { name:"⚡ The Tower — หอคอย",     meaning:"การเปลี่ยนแปลงกะทันหัน ความวุ่นวาย",             advice:"รับมือกับสิ่งที่คาดไม่ถึงด้วยใจสงบ" },
+      { name:"⚖️ Justice — ความยุติธรรม",meaning:"ความสมดุล ความยุติธรรม และผลกรรม",               advice:"ทำในสิ่งที่ถูกต้อง ผลลัพธ์จะสะท้อนกลับมา" },
+      { name:"🌍 The World — โลก",       meaning:"ความสำเร็จสมบูรณ์ การสิ้นสุดรอบหนึ่ง",           advice:"คุณใกล้ถึงเป้าหมายแล้ว อีกนิดเดียว" },
+      { name:"🔥 Strength — พละกำลัง",   meaning:"ความกล้าหาญ ความอดทน และพลังภายใน",             advice:"ใช้ความอ่อนโยนควบคู่กับความแข็งแกร่ง" },
+      { name:"🧘 The Hermit — ฤๅษี",     meaning:"การใคร่ครวญ ความสงบ และปัญญาภายใน",             advice:"หาเวลาอยู่คนเดียวเพื่อค้นหาคำตอบ" },
+      { name:"🎡 Wheel of Fortune — วงล้อ",meaning:"โชคชะตา วัฏจักร และโอกาสใหม่",               advice:"โชคกำลังหมุน พร้อมรับการเปลี่ยนแปลง" },
+      { name:"💀 Death — มรณะ",          meaning:"การเปลี่ยนแปลง การสิ้นสุด และการเริ่มต้นใหม่",   advice:"ปล่อยวางสิ่งเก่า เพื่อให้สิ่งใหม่เข้ามา" },
+    ];
+
+    function drawTarot() {
+      const card = TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)];
+      const cardEl = document.getElementById("tarot-card");
+      cardEl.style.transform = "rotateY(180deg)";
+      cardEl.innerHTML = `<div style="font-size:1.8rem;transform:rotateY(180deg)">${card.name.split(' ')[0]}</div>`;
+      cardEl.style.background = "linear-gradient(135deg,#2a1050,#3a1870)";
+      cardEl.style.borderColor = "rgba(230,180,255,0.5)";
+      setTimeout(() => {
+        document.getElementById("tarot-name").textContent = card.name;
+        document.getElementById("tarot-meaning").textContent = card.meaning;
+        document.getElementById("tarot-advice").textContent = "✦ " + card.advice;
+      }, 300);
+    }
   </script>
 </body>
 

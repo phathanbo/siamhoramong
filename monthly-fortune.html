@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พยากรณ์รายเดือน - สยามโหรามงคล</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b4e 100%);
+            color: #fff;
+            font-family: 'Prompt', sans-serif;
+            padding: 20px 0;
+        }
+        .month-selector {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .month-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .month-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .month-btn:hover {
+            background: rgba(255, 215, 0, 0.3);
+            border-color: #ffd700;
+            transform: translateY(-3px);
+        }
+        .month-btn.active {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a1a1a;
+            border-color: #ffd700;
+        }
+        .zodiac-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .zodiac-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        .zodiac-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        .zodiac-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .zodiac-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffd700;
+            margin-bottom: 12px;
+        }
+        .horoscope-item {
+            margin-bottom: 12px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #ffd700;
+            border-radius: 5px;
+        }
+        .horoscope-label {
+            font-weight: 600;
+            color: #ffed4e;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        .horoscope-text {
+            color: #e0e0e0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .lucky-numbers {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        .lucky-color-box {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            margin-right: 10px;
+            border: 2px solid #fff;
+            vertical-align: middle;
+        }
+        .color-label {
+            vertical-align: middle;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 16px;
+            color: #b0b0b0;
+        }
+        .current-month-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        @media (max-width: 768px) {
+            .month-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .zodiac-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <h1>🔮 พยากรณ์ดวงรายเดือน 🔮</h1>
+        <p class="subtitle">ดูดวงเคราะห์ห้องประจำเดือนสำหรับแต่ละราศี</p>
+
+        <div class="month-selector">
+            <div class="current-month-display">
+                เดือน: <span id="selectedMonthDisplay">มกราคม</span>
+            </div>
+            <div class="month-buttons" id="monthButtons"></div>
+        </div>
+
+        <div class="zodiac-grid" id="zodiacGrid"></div>
+    </div>
+
+    <script src="monthlyFortune.js"></script>
+    <script>
+        const monthNames = {
+            '1': 'มกราคม', '2': 'กุมภาพันธ์', '3': 'มีนาคม', '4': 'เมษายน',
+            '5': 'พฤษภาคม', '6': 'มิถุนายน', '7': 'กรรมฐาน', '8': 'สิงหาคม',
+            '9': 'กันยายน', '10': 'ตุลาคม', '11': 'พฤศจิกายน', '12': 'ธันวาคม'
+        };
+
+        const colorMap = {
+            'แดง': '#ff0000', 'เขียว': '#00aa00', 'ทอง': '#ffd700',
+            'น้ำเงิน': '#0066ff', 'ม่วง': '#8b00ff', 'เหลือง': '#ffdd00',
+            'ชมพู': '#ff69b4', 'ขาว': '#ffffff', 'แดงต่อ': '#cc0000'
+        };
+
+        let currentMonth = '1';
+
+        function initializeMonthButtons() {
+            const container = document.getElementById('monthButtons');
+            for (let i = 1; i <= 12; i++) {
+                const btn = document.createElement('button');
+                btn.className = `month-btn ${i === 1 ? 'active' : ''}`;
+                btn.textContent = monthNames[i];
+                btn.onclick = () => selectMonth(i);
+                container.appendChild(btn);
+            }
+        }
+
+        function selectMonth(monthNum) {
+            currentMonth = String(monthNum);
+            document.getElementById('selectedMonthDisplay').textContent = monthNames[currentMonth];
+
+            document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            displayZodiacForecasts(currentMonth);
+        }
+
+        function displayZodiacForecasts(month) {
+            const forecasts = getAllMonthlyHoroscopes(month);
+            const grid = document.getElementById('zodiacGrid');
+            grid.innerHTML = '';
+
+            const zodiacs = ['ชวด', 'ฉลู', 'ขาล', 'เถาะ', 'มะโรง', 'มะเส็ง',
+                            'มะเมีย', 'มะแม', 'วอก', 'ระกา', 'จอ', 'กุน'];
+
+            zodiacs.forEach((zodiac, index) => {
+                const forecast = forecasts[zodiac];
+                const card = createZodiacCard(zodiac, forecast);
+                grid.appendChild(card);
+            });
+        }
+
+        function createZodiacCard(zodiacName, forecast) {
+            const card = document.createElement('div');
+            card.className = 'zodiac-card';
+
+            const zodiacIcon = getZodiacIcon(zodiacName);
+
+            let html = `
+                <div class="zodiac-header">
+                    <span>${zodiacIcon}</span>
+                    <span>${zodiacName}</span>
+                </div>
+            `;
+
+            html += `
+                <div class="horoscope-item">
+                    <div class="horoscope-label">📈 รวม</div>
+                    <div class="horoscope-text">${forecast.overall}</div>
+                </div>
+                <div class="horoscope-item">
+                    <div class="horoscope-label">💰 การเงิน</div>
+                    <div class="horoscope-text">${forecast.finance}</div>
+                </div>
+                <div class="horoscope-item">
+                    <div class="horoscope-label">💕 ความรัก</div>
+                    <div class="horoscope-text">${forecast.love}</div>
+                </div>
+                <div class="horoscope-item">
+                    <div class="horoscope-label">💼 การทำงาน</div>
+                    <div class="horoscope-text">${forecast.work}</div>
+                </div>
+                <div class="horoscope-item lucky-numbers">
+                    <div class="horoscope-label">🎰 เลขเด็ด</div>
+                    <div class="horoscope-text">${forecast.lucky}</div>
+                </div>
+                <div class="horoscope-item" style="margin-bottom: 0;">
+                    <div class="horoscope-label">🌈 สีเด็ด</div>
+                    <div class="horoscope-text">
+                        <span class="lucky-color-box" style="background-color: ${colorMap[forecast.color] || '#999'}"></span>
+                        <span class="color-label">${forecast.color}</span>
+                    </div>
+                </div>
+            `;
+
+            card.innerHTML = html;
+            return card;
+        }
+
+        function getZodiacIcon(zodiacName) {
+            const icons = {
+                'ชวด': '🐭', 'ฉลู': '🐂', 'ขาล': '🐅', 'เถาะ': '🐰',
+                'มะโรง': '🐉', 'มะเส็ง': '🐍', 'มะเมีย': '🐴', 'มะแม': '🐐',
+                'วอก': '🐵', 'ระกา': '🐓', 'จอ': '🐕', 'กุน': '🐷'
+            };
+            return icons[zodiacName] || '⭐';
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeMonthButtons();
+            displayZodiacForecasts('1');
+        });
+    </script>
+</body>
+</html>

@@ -1,5 +1,11 @@
 "use strict";
 
+const siteSeo = {
+    title: "สยามโหรามงคล - ดูดวงโหราศาสตร์ไทยแม่นยำ",
+    description: "สยามโหรามงคล - เว็บดูดวงตามหลักโหราศาสตร์ไทยที่แม่นยำ พยากรณ์ตามตำราโบราณ ทำนายดวงชะตารายปี ปีนักษัตร ยามอัฏฐกาล ฉัตร ๙ ชั้น มหาทักษา และอีกมากมาย",
+    packageTitle: "ดูดวงตามหลักโหราศาสตร์ไทยที่แม่นยำ"
+};
+
 // 1. ข้อมูลระดับของ Package และราคา
 const packages = [
     { name: "ทดลองใช้", m: 30, y: 300 },
@@ -8,7 +14,7 @@ const packages = [
     { name: "เงิน", m: 150, y: 1500 },
     { name: "ทองคำ", m: 300, y: 3000 },
     { name: "ทองคำขาว", m: 600, y: 6000 },
-    { name: "ใข่มุก", m: 900, y: 9000 },
+    { name: "ไข่มุก", m: 900, y: 9000 },
     { name: "ทับทิม", m: 1200, y: 12000 },
     { name: "ไพฑูรย์", m: 1500, y: 15000 },
     { name: "มรกต", m: 3000, y: 30000 },
@@ -17,7 +23,7 @@ const packages = [
     { name: "มงกุฎเพชร", m: 18000, y: 180000 },
     { name: "ไตรมงกุฎ", m: 27000, y: 270000 },
     { name: "เพชรยอดมงกุฎ", m: 36000, y: 360000 },
-    { name: "วิมาน", m: "ติดต่อ", y: "ติดต่อ" } 
+    { name: "วิมาน", m: "ติดต่อ", y: "ติดต่อ" }
 ];
 
 // 2. รายการบริการทั้งหมด 42 รายการ
@@ -32,7 +38,19 @@ const services = [
     "37. บูชาเทวดาและสะเดาะเคราะห์", "38. แก้เรื่องอุบาทว์", "39. ตรวจดูนรลักษณ์", "40. ตรวจลายมือ", "41. ผูกดวงพิชัยสงคราม", "42. สร้างพระประจำวัน"
 ];
 
+function applySiteSeo() {
+    document.title = siteSeo.title;
+
+    const descriptionMeta = document.querySelector('meta[name="description"]');
+    if (descriptionMeta) {
+        descriptionMeta.setAttribute('content', siteSeo.description);
+    }
+}
+
 function buildTable() {
+    applySiteSeo();
+
+    const title = document.querySelector('#package .title');
     const head = document.getElementById('headerRow');
     const body = document.getElementById('serviceBody');
     const mRow = document.querySelector('.row-m');
@@ -40,6 +58,10 @@ function buildTable() {
 
     // ตรวจสอบว่า Element ครบถ้วนก่อนทำงาน
     if (!head || !body || !mRow || !yRow) return;
+
+    if (title) {
+        title.textContent = siteSeo.packageTitle;
+    }
 
     // ล้างข้อมูลเก่า (เผื่อมีการเรียกใช้ซ้ำ)
     head.innerHTML = '<th class="sticky-col">รายการพยากรณ์</th>';
@@ -51,10 +73,10 @@ function buildTable() {
         const th = document.createElement('th');
         th.textContent = pkg.name;
         head.appendChild(th);
-        
+
         // แถวราคามรายเดือน
         const tdM = document.createElement('td');
-        tdM.className = "price-cell";
+        tdM.className = 'price-cell';
         tdM.textContent = typeof pkg.m === 'number' ? pkg.m.toLocaleString() : pkg.m;
         mRow.appendChild(tdM);
 

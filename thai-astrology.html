@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 โหราศาสตร์ไทยแท้ - Thai Astrology</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="astro-header text-center py-5">
+            <h1 class="text-gold mb-2">🌟 โหราศาสตร์ไทยแท้</h1>
+            <p class="text-white-50 small">Thai Traditional Astrology - อิงจากลัคนา ดาว 9 ดวง ธาตุ 5 ประการ</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Input Section -->
+            <div class="col-lg-4">
+                <div class="card shadow-lg border-gold">
+                    <div class="card-header bg-gold text-dark">
+                        <h5 class="mb-0">📋 ข้อมูลคุณ</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="astrologyForm">
+                            <div class="form-group mb-3">
+                                <label class="text-gold"><strong>📅 วันเกิด</strong></label>
+                                <input type="date" id="birthDate" class="form-control" required>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="text-gold"><strong>👤 เพศ</strong></label>
+                                <select id="gender" class="form-control">
+                                    <option value="male">🧑 ชาย</option>
+                                    <option value="female">👩 หญิง</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="text-gold"><strong>⏰ เวลาเกิด (optional)</strong></label>
+                                <input type="time" id="birthTime" class="form-control">
+                            </div>
+
+                            <button type="button" class="btn btn-gold btn-block btn-lg" onclick="calculateAstrology()">
+                                <i class="fas fa-star"></i> วิเคราะห์ลัคนา
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Section -->
+            <div class="col-lg-8" id="resultSection" style="display: none;">
+                <!-- Tab Navigation -->
+                <ul class="nav nav-tabs mb-3 border-0" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active text-gold" data-toggle="tab" href="#tabBasic">ข้อมูลพื้นฐาน</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-gold" data-toggle="tab" href="#tabFortune">พยากรณ์</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-gold" data-toggle="tab" href="#tabLucky">มงคล</a>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Tab 1: ข้อมูลพื้นฐาน -->
+                    <div id="tabBasic" class="tab-pane fade show active">
+                        <div class="card shadow border-gold mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>🌍 ปีนักษัตร:</strong> <span id="zodiacInfo" class="text-gold"></span></p>
+                                        <p><strong>♈ ราศี:</strong> <span id="rassiInfo"></span></p>
+                                        <p><strong>🌀 ธาตุประจำปี:</strong> <span id="elementInfo" class="text-gold"></span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>⭐ ดาวเกิด:</strong> <span id="planetInfo" class="text-gold"></span></p>
+                                        <p><strong>🏠 บ้านหลัก:</strong> <span id="houseInfo"></span></p>
+                                        <p><strong>🧭 ทิศมงคล:</strong> <span id="directionInfo" class="text-gold"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card shadow border-gold">
+                            <div class="card-header bg-gold text-dark">
+                                <h6 class="mb-0">ลักษณะบุคลิกตามลัคนา</h6>
+                            </div>
+                            <div class="card-body">
+                                <p id="characterInfo"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: พยากรณ์ -->
+                    <div id="tabFortune" class="tab-pane fade">
+                        <div class="card shadow border-gold mb-3">
+                            <div class="card-header bg-gold text-dark">
+                                <h6 class="mb-0">📊 พยากรณ์ด้านต่างๆ</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-gold">❤️ ความรัก/สัมพันธ์</h6>
+                                        <p id="loveInfo" class="small"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-gold">💼 อาชีพ/การงาน</h6>
+                                        <p id="careerInfo" class="small"></p>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-gold">💰 การเงิน/รายได้</h6>
+                                        <p id="financeInfo" class="small"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-gold">🏥 สุขภาพ</h6>
+                                        <p id="healthInfo" class="small"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: มงคล -->
+                    <div id="tabLucky" class="tab-pane fade">
+                        <div class="card shadow border-gold mb-3">
+                            <div class="card-header bg-gold text-dark">
+                                <h6 class="mb-0">✨ สิ่งมงคล</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>🔢 เลขมงคล:</strong> <span id="luckyNumbers" class="text-gold"></span></p>
+                                        <p><strong>🎨 สีมงคล:</strong> <span id="luckyColor" class="text-gold"></span></p>
+                                        <p><strong>💎 หินมงคล:</strong> <span id="luckyGem"></span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>📿 ทิศมงคล:</strong> <span id="luckyDirection" class="text-gold"></span></p>
+                                        <p><strong>🚫 สีต้องหลีกเลี่ยง:</strong> <span id="avoidColor" class="text-danger"></span></p>
+                                        <p><strong>⚠️ เลขต้องหลีกเลี่ยง:</strong> <span id="avoidNumbers" class="text-danger"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info small">
+                            <strong>💡 คำแนะนำ:</strong> การใช้สีและเลขมงคลสามารถเพิ่มพลังงานบวก ให้สวมใส่สีมงคล ใช้เลขมงคล ในเหตุการณ์สำคัญ
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-5 pb-5">
+            <p class="text-white-50 small">
+                🌟 ระบบนี้อิงจากหลักโหราศาสตร์ไทยแท้ สำหรับการศึกษาและความเข้าใจตนเอง<br>
+                ควรปรึกษานักดูดวงมืออาชีพสำหรับการวิเคราะห์เชิงลึก
+            </p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="thai-astrology-data.js"></script>
+    <script src="thai-astrology-calculator.js"></script>
+</body>
+</html>

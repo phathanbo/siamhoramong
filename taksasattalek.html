@@ -464,13 +464,13 @@
 <body>
 
     <div id="mahataksasattalek" class="container">
+    <a class="nav-link text-white" href="index.html" style="cursor: pointer;">กลับหน้า 🔮 สยามโหรามงคล</a>
+
 
         <h1>📜 คัมภีร์มหาทักษาสัตตเลข</h1>
 
         <div class="form-grid">
-
             <div class="input-box">
-
                 <label>วันเกิด</label>
 
                 <select id="birthDay" onchange="processDestiny()">
@@ -626,7 +626,7 @@
 
         <!-- Premium Export Button -->
         <div style="text-align: center; margin: 25px 0;">
-            <button id="btnExport" class="btn-export" onclick="exportToImage()">
+            <button id="btnExport" class="btn-export" onclick="promptExportOptions()">
                 <i class="fa-solid fa-camera"></i> บันทึกภาพผังดวงและคำทำนาย (PNG Image)
             </button>
         </div>
@@ -1372,10 +1372,41 @@
             }
         }
 
-        function exportToImage() {
-            const element = document.getElementById('captureArea');
-            if (!element) return Swal.fire('Error', 'ไม่พบพื้นที่บันทึกภาพ', 'error');
-            
+        function promptExportOptions() {
+            const isHoraryMode = document.getElementById('reportArea').innerHTML.trim() === '' && document.getElementById('topReportArea').innerHTML.trim() !== '';
+
+            let optionsHtml = `
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                    <button id="exportTable" class="swal2-confirm swal2-styled" style="background-color: #7b3f00;">ผังดวง 21 ภูมิ</button>
+                    <button id="exportTopReports" class="swal2-confirm swal2-styled" style="background-color: #7b3f00;">${isHoraryMode ? 'คำทำนายยามอัฏฐกาล' : 'คำทำนายสรุป (วาสนา, ปีจร, เดือนจร, ความรัก, การงาน)'}</button>
+                    <button id="exportAll" class="swal2-confirm swal2-styled" style="background-color: #7b3f00;">${isHoraryMode ? 'ผังดวง + คำทำนายยาม' : 'ผังดวง + คำทำนายสรุป'}</button>
+                </div>
+            `;
+
+            Swal.fire({
+                title: 'เลือกส่วนที่ต้องการบันทึก',
+                html: optionsHtml,
+                showCancelButton: true,
+                showConfirmButton: false,
+                cancelButtonText: 'ยกเลิก',
+                didOpen: () => {
+                    document.getElementById('exportTable').addEventListener('click', () => {
+                        Swal.close();
+                        performExport('table');
+                    });
+                    document.getElementById('exportTopReports').addEventListener('click', () => {
+                        Swal.close();
+                        performExport('topReports');
+                    });
+                    document.getElementById('exportAll').addEventListener('click', () => {
+                        Swal.close();
+                        performExport('all');
+                    });
+                }
+            });
+        }
+
+        function performExport(exportType) {
             Swal.fire({
                 title: 'กำลังเตรียมบันทึกรูปภาพ...',
                 text: 'กรุณารอสักครู่ ระบบกำลังจัดทำไฟล์ PNG พรีเมียมให้คุณ',
@@ -1384,10 +1415,78 @@
                     Swal.showLoading();
                 }
             });
+
+            const exportWrapper = document.createElement('div');
+            exportWrapper.id = 'socialMediaExportWrapper';
+
+            // Header
+            const header = document.createElement('div');
+            header.id = 'socialMediaExportHeader';
+            header.innerHTML = `
+                <h1>📜 คัมภีร์มหาทักษาสัตตเลข</h1>
+                <p>โดย สยามโหรามงคล</p>
+            `;
+            exportWrapper.appendChild(header);
+
+            // Content
+            const contentContainer = document.createElement('div');
+            contentContainer.style.display = 'flex';
+            contentContainer.style.flexDirection = 'column';
+            contentContainer.style.gap = '20px'; // Gap between main sections
+
+            const isHoraryMode = document.getElementById('reportArea').innerHTML.trim() === '' && document.getElementById('topReportArea').innerHTML.trim() !== '';
+
+            if (exportType === 'table') {
+                const tableArea = document.getElementById('tableArea');
+                if (tableArea) contentContainer.appendChild(tableArea.cloneNode(true));
+            } else if (exportType === 'topReports') {
+                const topReportArea = document.getElementById('topReportArea');
+                if (topReportArea) {
+                    Array.from(topReportArea.children).forEach(child => {
+                        contentContainer.appendChild(child.cloneNode(true));
+                    });
+                }
+            } else if (exportType === 'all') {
+                const tableArea = document.getElementById('tableArea');
+                if (tableArea) contentContainer.appendChild(tableArea.cloneNode(true));
+
+                const topReportArea = document.getElementById('topReportArea');
+                if (topReportArea) {
+                    Array.from(topReportArea.children).forEach(child => {
+                        contentContainer.appendChild(child.cloneNode(true));
+                    });
+                }
+
+                if (!isHoraryMode) { // Only include reportArea if not in horary mode
+                    const reportArea = document.getElementById('reportArea');
+                    if (reportArea) {
+                        Array.from(reportArea.children).forEach(child => {
+                            contentContainer.appendChild(child.cloneNode(true));
+                        });
+                    }
+                }
+            }
+            exportWrapper.appendChild(contentContainer);
+
+            // Footer
+            const footer = document.createElement('div');
+            footer.id = 'socialMediaExportFooter';
+            footer.innerHTML = `
+                <p>Generated by Siam Horamongkol | ${new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            `;
+            exportWrapper.appendChild(footer);
+
+            document.body.appendChild(exportWrapper);
             
             setTimeout(() => {
-                html2canvas(element, { 
-                    scale: 2, 
+                // คำนวณ Scale เพื่อให้ด้านที่ยาวที่สุดไม่เกิน 1280px
+                const width = exportWrapper.offsetWidth;
+                const height = exportWrapper.offsetHeight;
+                const maxDim = 1280;
+                const calculatedScale = Math.min(maxDim / width, maxDim / height);
+
+                html2canvas(exportWrapper, { 
+                    scale: calculatedScale, 
                     useCORS: true,
                     backgroundColor: "#ffffff",
                     scrollX: 0,
@@ -1395,12 +1494,17 @@
                 }).then(canvas => {
                     const link = document.createElement('a');
                     link.download = 'ดวงชะตามหาสัตตเลข_สยามโหรามงคล.png';
-                    link.href = canvas.toDataURL('image/png');
+                    link.href = canvas.toDataURL('image/png', 1.0); // 1.0 for max quality
                     link.click();
                     Swal.close();
+                    document.body.removeChild(exportWrapper); // ลบ Element ชั่วคราวออก
                 }).catch(err => {
                     console.error("html2canvas error:", err);
+                    // Fallback if the wrapper is not found or other issues
                     Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้เนื่องจากข้อจำกัดของเบราว์เซอร์', 'error');
+                    if (document.getElementById('socialMediaExportWrapper')) {
+                        document.body.removeChild(exportWrapper);
+                    }
                 });
             }, 500);
         }
@@ -1981,17 +2085,11 @@
         /* =========================================================
            MODULO
         ========================================================= */
-
         function thaiModulo(n, mod = 7) {
-
+            if (n === 0) return mod;
             let r = n % mod;
-
-            if (r <= 0) {
-                r += mod;
-            }
-
+            if (r <= 0) r += mod;
             return r;
-
         }
 
         /* =========================================================

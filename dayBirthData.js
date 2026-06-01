@@ -26,7 +26,7 @@ const DIRECTION_LABELS = {
 // แก้ไข: thursday.meta และ friday.meta ใช้นามสัตว์ที่ถูกต้องตามตำรา
 // ---------------------------------------------------------------------------
 const dayBirthData = {
-    sunday: {
+    1: {
         name:      "วันอาทิตย์",
         meta:      "นามครุฑ ",
         character: "จิตใจเป็นกุศลยิ่งใหญ่ ทำคุณคนมักไม่ค่อยขึ้นเหมือนรดน้ำบนต้นไม้เหี่ยว เชื่อคนง่ายจนบางครั้งต้องลำบากภายหลัง",
@@ -45,7 +45,7 @@ const dayBirthData = {
             west:      "ทิศส่งเสริมยศถาบรรดาศักดิ์"
         }
     },
-    monday: {
+    2: {
         name:      "วันจันทร์",
         meta:      "นามพยัคฆ์ (เสือ)",
         character: "มีวาทศิลป์ดี แต่ปากร้ายทำให้คนมักเป็นศัตรู โกรธง่ายหายเร็ว เก็บเงินไม่อยู่มักเรี่ยราดร่อยหรอ",
@@ -64,7 +64,7 @@ const dayBirthData = {
             northwest:  "ทิศสำหรับครัวไฟ"
         }
     },
-    tuesday: {
+    3: {
         name:      "วันอังคาร",
         meta:      "นามสีหราช (สิงโต) ",
         character: "ใจแข็ง มั่นคงในตัวเอง ชอบอาสา มักมีไฝปานที่ใบหน้า พึ่งพาญาติพี่น้องไม่ได้ ต้องสร้างตัวด้วยตัวเองเท่านั้น",
@@ -83,7 +83,7 @@ const dayBirthData = {
             south:     "ทิศมงคลที่ช่วยให้พ้นโพยภัย"
         }
     },
-    wednesday: {
+    4: {
         name:      "วันพุธ",
         meta:      "นามสุนัข ",
         character: "รอบรู้ในสรรพการ ขยันขันแข็ง พูดจาอาจหาญไม่กลัวใคร มักต้องไปได้ดีในถิ่นอื่นที่ไม่ใช่บ้านเกิด",
@@ -102,7 +102,7 @@ const dayBirthData = {
             northwest:  "ที่อยู่บริวารและสัตว์เลี้ยง"
         }
     },
-    thursday: {
+    5: {
         name:      "วันพฤหัสบดี",
         meta:      "นามมฤคราช (กวาง) ",
         character: "ปัญญาสูง รักการศึกษาเชี่ยวชาญการเขียนและโวหาร โมโหดุแต่จิตใจดี เป็นที่รักของคนทั่วไป",
@@ -120,7 +120,7 @@ const dayBirthData = {
             southeast:  "ทิศสำหรับครัวไฟ"
         }
     },
-    friday: {
+    6: {
         name:      "วันศุกร์",
         meta:      "นามอุสุภราช (วัว)",
         character: "จิตใจมักทะเยอทะยาน มีวาทศิลป์ดีแต่บางครั้งปากร้าย โกรธง่ายหายเร็ว หาเงินเก่งแต่ใช้เก่ง",
@@ -139,7 +139,7 @@ const dayBirthData = {
             southwest:  "ทิศสำหรับครัวไฟ"
         }
     },
-    saturday: {
+    7: {
         name:      "วันเสาร์",
         meta:      "นามนาคา (พญานาค)",
         character: "จิตใจดุร้ายโกรธหนัก รักพวกพ้องแบบนักเลง มีกามราคีสูง มักมีรอยแผลตามตัว ชีวิตมีอุปสรรคแต่จะรวยตอนท้าย",
@@ -248,49 +248,49 @@ const buddha = {
 // ข้อมูลรายละเอียดวันเกิด (จิตใจ ร่างกาย ธาตุ อาชีพ)
 // ---------------------------------------------------------------------------
 const detailDayBirthData = {
-    sunday: {
+    1: {
         name: "วันอาทิตย์",
         mind: "ความคิด ความมีใจสูง เกียรติยศ ความเด่น อำนาจ ใจเร็ว ใจร้อน ชอบอิสระ ไฟฟ้า ชอบตัดสินใจเร็ว รูปพรรณขาวแดงสันทัด หน้ากลม",
         body: "เป็นส่วนสำคัญของชีวิต หัวใจความเป็นอยู่แห่งหลอดโลหิตแดง ความโยกย้ายเพราะใจเร็ว สมาธิคือจากความสงบ จากโกรธมาเป็นที่ตั้งแห่งธรรม",
         element: "ทองคำ",
         employment: "คนในสำนักรัฐบาล คนขายเพชรพลอย ช่างทอง ช่างกะไหล่ หรือทำงานเกี่ยวกับทอง ช่างไฟฟ้า"
     },
-    monday: {
+    2: {
         name: "วันจันทร์",
         mind: "ความสวยงามเป็นเสน่ห์ ใจเย็นเปลี่ยนแปลงง่าย มาตุคาม ทางน้ำ เกี่ยวกับแม่เหล็กคือความดึงดูด หนาว ชื้น มีผล รูปพรรณสันทัด ขาวนวล เป็นนางพระยา",
         body: "เป็นส่วนของร่างกาย คือนม กระเพาะอาหาร น้ำเหลือง และความไม่เที่ยงธรรม",
         element: "เงิน",
         employment: "เจ้าหน้าที่ฝ่ายหญิง ผู้พยาบาล แพทย์ผดุงครรภ์ นักท่องเที่ยว กลาสี ชาวประมง ผู้ขนส่ง"
     },
-    tuesday: {
+    3: {
         name: "วันอังคาร",
         mind: "รูปพรรณสันทัด ค่อนข้างเล็กเกร็ง ผมหยิก หน้ากระดูก ดำแดง นักรบ การกบฏการขโมย ไฟ ความกล้าหาญ อกอาจเปี่ยมด้วยอำนาจ ว่องไวใจกล้า การแกล้งติเตียน เป็นพาล ความบ้าคลั่ง เป็นศัตรู ชอบอิจฉา ดื้อดึง แสนงอน ทิฐิมานะ",
         body: "หมายถึงหน้าผาก จมูก เอ็น กล้ามเนื้อ",
         element: "เหล็ก",
         employment: "ทหาร นักเลงโต แพทย์ผ่าตัด เพชฌฆาต แพทย์ถอนฟัน ผู้ชำนาญการช่างเหล็ก ทำปืน ช่างตัดผม คนครัว คนฆ่าสัตว์"
     },
-    wednesday: {
+    4: {
         name: "วันพุธ",
         mind: "รูปพรรณขาวท่วม ขาวเหลือง ความคิด ความเปลี่ยนแปลง อ่อนหวาน อ่อนโยน ใจน้อยปลุกใจง่าย กลัวง่าย ชอบทำธุระการในบ้านมาก ระวังรักษาดี การดนตรี ความชื้นแฉะ มีผลปานกลาง",
         body: "หมายถึงเส้นประสาท ไส้ พุง ความเป็นอยู่แห่งประสาทอ่อนทั่วไป",
         element: "ปรอท",
         employment: "คนฉลาดในวิชาหนังสือ นักปาฐก นักประพันธ์ เลขานุการ สมุหบัญชี อาจารย์ นายทะเบียน ล่ามเสมียน คนนำส่งข้าวสาร ช่างพิมพ์ คนขายหนังสือ คนส่งของ"
     },
-    thursday: {
+    5: {
         name: "วันพฤหัสบดี",
         mind: "รูปพรรณค่อนข้างขาวสูง มีทั้งอ้วนและผอม หน้าผากกว้างเถิก ผมอ่อนบาง ความฉลาด ศีลธรรม ความสำเร็จ ความเป็นใหญ่ ความสัตย์ วิชาความรู้ อาจารย์ หรือผู้ใหญ่ กฎหมาย นักปราชญ์ โชค ความทำนุบำรุง ใจอารีกว้างขวาง ปกครอง กรุณาเผื่อแผ่",
         body: "หมายถึงโคนขา ต้นขา หูขวา เท้า ความเป็นอยู่แห่งความปกครองของใจ ปัญญาความรู้",
         element: "สังกะสี",
         employment: "สมณพราหมณาจารย์ สมาชิกสภาแห่งชาติ ผู้พิพากษา ที่ปรึกษา ครู อาจารย์ ผู้ดำเนินตามพระเจ้า ผู้สอนศาสนา โหราจารย์ สมาชิกวิทยาลัย ทนายความ แพทย์ทางยา คนทำงานธนาคาร"
     },
-    friday: {
+    6: {
         name: "วันศุกร์",
         mind: "รูปสูงโปร่ง เนื้อสองสีค่อนข้างขาว ไม่ผอม หน้ายาว ใบหน้าสวย หน้ารูปไข่ เท้าเล็ก เป็นขุนคลัง การเงิน ความสมหมาย ความเรียบร้อย ความมีเสน่ห์ เยือกเย็นรู้เล่ห์เหลี่ยม ใจดีมีกรุณา ความยินดี ความสวยงาม ความรัก กามารมณ์ ความบันเทิงใจ ดนตรี เครื่องสำอาง ช่างศิลป์",
         body: "มีผลแสดงถึงหลอดอากาศ มดลูก รังไข่ กระเพาะลำไส้ คาง แก้ม ความเป็นอยู่ให้เกิดพันธุ์ เส้นโลหิตดำทั่วไป",
         element: "ทองแดง",
         employment: "ขุนคลัง นาฏศาสตร์และการบันเทิง นักดนตรี นักร้อง นักแต่งบทกลอน นักตบแต่งร่างกาย ช่างแห่งศิลป์ที่สวยงามทุกชนิด พ่อค้าเครื่องประดับกาย เครื่องสำอาง คนทำและขายอาหาร"
     },
-    saturday: {
+    7: {
         name: "วันเสาร์",
         mind: "รูปร่างแข็งแรง ร่างใหญ่แต่ไม่อ้วนผิวคำ วิตกวิจารณ์ เป็นทุกข์ เสียใจ ตกจากตำแหน่ง ความชักช้า ลึกลับ เหตุร้ายอาจถึงตาย ศัตรูในที่ซุ่มซ่อนเป็นใหญ่กว่า โรคร้าย ป่วยเรื้อรัง ความกระเหม็ดกระแหม่ ขยัน คงที่ไม่ผันแปร แรงกล้าในทางทุกข์",
         body: "แสดงถึงกระดูก ตับไต หูซ้าย น่องเข่า ความเป็นอยู่ที่ถ่ายออกจากต่อมทั่วไป ทุกขัง ที่ตั้งแห่งทุกข์",
@@ -401,13 +401,13 @@ const THAKSA_PROPHESY = {
 // สีประจำวัน
 // ---------------------------------------------------------------------------
 const DAY_COLORS = {
-    sunday:    "#e74c3c",
-    monday:    "#f1c40f",
-    tuesday:   "#e84393",
-    wednesday: "#27ae60",
-    thursday:  "#e67e22",
-    friday:    "#2980b9",
-    saturday:  "#6c5ce7"
+    1:    "#e74c3c",
+    2:    "#f1c40f",
+    3:    "#e84393",
+    4:    "#27ae60",
+    5:    "#e67e22",
+    6:    "#2980b9",
+    7:    "#241c61af"
 };
 
 
@@ -420,27 +420,28 @@ function showdaybirth(){
     const html = `
     <div class="container">
             <h2 class="text-center mb-4">ทำนายลักษณะตามวันเกิด</h2>
+    
             <div class="day-selector d-flex justify-content-center flex-wrap gap-2 mb-4" style="gap: 10px;">
-                <button class="btn-day"
-                    onclick="showDayInfo('sunday', event); showPlanet(1); showPlanetaryData(1); showBuddha(1); showDetailDay('sunday'); showThaksaDay(1);"
+                <button class="btn-day id="btn-day-1""
+                    onclick="showDayInfo(1, event); showPlanet(1); showPlanetaryData(1); showBuddha(1); showDetailDay(1); showThaksaDay(1);"
                     style="--day-color: #FF0000;">อา.</button>
-                <button class="btn-day"
-                    onclick="showDayInfo('monday', event); showPlanet(2); showPlanetaryData(2); showBuddha(2); showDetailDay('monday'); showThaksaDay(2);"
+                <button class="btn-day id="btn-day-2""
+                    onclick="showDayInfo(2, event); showPlanet(2); showPlanetaryData(2); showBuddha(2); showDetailDay(2); showThaksaDay(2);"
                     style="--day-color: #FFD700;">จ.</button>
-                <button class="btn-day"
-                    onclick="showDayInfo('tuesday', event); showPlanet(3); showPlanetaryData(3); showBuddha(3); showDetailDay('tuesday'); showThaksaDay(3);"
+                <button class="btn-day id="btn-day-3""
+                    onclick="showDayInfo(3, event); showPlanet(3); showPlanetaryData(3); showBuddha(3); showDetailDay(3); showThaksaDay(3);"
                     style="--day-color: #FFC0CB;">อ.</button>
-                <button class="btn-day"
-                    onclick="showDayInfo('wednesday', event); showPlanet(4); showPlanetaryData(4); showBuddha(4); showDetailDay('wednesday'); showThaksaDay(4);"
+                <button class="btn-day id="btn-day-4""
+                    onclick="showDayInfo(4, event); showPlanet(4); showPlanetaryData(4); showBuddha(4); showDetailDay(4); showThaksaDay(4);"
                     style="--day-color: #008000;">พ.</button>
-                <button class="btn-day"
-                    onclick="showDayInfo('thursday', event); showPlanet(5); showPlanetaryData(5); showBuddha(5); showDetailDay('thursday'); showThaksaDay(5);"
+                <button class="btn-day id="btn-day-5""
+                    onclick="showDayInfo(5, event); showPlanet(5); showPlanetaryData(5); showBuddha(5); showDetailDay(5); showThaksaDay(5);"
                     style="--day-color: #FFA500;">พฤ.</button>
-                <button class="btn-day"
-                    onclick="showDayInfo('friday', event); showPlanet(6); showPlanetaryData(6); showBuddha(6); showDetailDay('friday'); showThaksaDay(6);"
+                <button class="btn-day id="btn-day-6""
+                    onclick="showDayInfo(6, event); showPlanet(6); showPlanetaryData(6); showBuddha(6); showDetailDay(6); showThaksaDay(6);"
                     style="--day-color: #87CEEB;">ศ.</button>
-                <button class="btn-day"
-                    onclick="showDayInfo('saturday', event); showPlanet(7); showPlanetaryData(7); showBuddha(7); showDetailDay('saturday'); showThaksaDay(7);"
+                <button class="btn-day id="btn-day-7""
+                    onclick="showDayInfo(7, event); showPlanet(7); showPlanetaryData(7); showBuddha(7); showDetailDay(7); showThaksaDay(7);"
                     style="--day-color: #800080;">ส.</button>
             </div>
             <div id="prediction-card" class="prediction-card shadow-sm d-none">
@@ -517,8 +518,8 @@ function setElHTML(id, html) {
 // แสดงข้อมูลวันเกิดหลัก
 // แก้ไข: รับ event เป็น parameter / แสดงชื่อทิศภาษาไทยแทน key
 // ---------------------------------------------------------------------------
-function showDayInfo(dayKey, event) {
-const data = dayBirthData[dayKey];
+function showDayInfo(num, event) {
+const data = dayBirthData[num];
 if (!data) return;
 
 // แสดงการ์ด
@@ -532,7 +533,7 @@ setEl("display-character", data.character);
 
 // สี header
 const bg = document.getElementById("card-name-bg");
-if (bg) bg.style.backgroundColor = DAY_COLORS[dayKey] || "#888";
+if (bg) bg.style.backgroundColor = DAY_COLORS[num] || "#888";
 
 // milestones
 if (data.milestones) {
@@ -571,11 +572,11 @@ const num = parseInt(btn.dataset.num);
     btn.classList.add("active");
 
     // call functions
-    showDayInfo(day);
+    showDayInfo(num, e);
     showPlanet(planetNum);
     showPlanetaryData(planetNum);
     showBuddha(planetNum);
-    showDetailDay(day);
+    showDetailDay(num);
     showThaksaDay(num);
 });
 });
@@ -635,8 +636,8 @@ function showBuddha(planetNum) {
 // ---------------------------------------------------------------------------
 // แสดงรายละเอียดวันเกิด (แก้ไข: ชื่อฟังก์ชัน + null-check ครบ)
 // ---------------------------------------------------------------------------
-function showDetailDay(dayKey) {
-    const data = detailDayBirthData[dayKey];
+function showDetailDay(num) {
+    const data = detailDayBirthData[num];
     if (!data) {
         setElHTML("detailday", "ไม่พบข้อมูลรายละเอียดวันเกิด");
         return;

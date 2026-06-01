@@ -1,8 +1,32 @@
-// NOTE: starPower, posNamesFull, mahaBotNames, mahaBotMeanings, thaksaNames, thaksaOrder,
-// sdMeanings, linkage, globalRows are declared globally in TaksaSattalek.js / sevenDigits context.
-// Shared variables are defined once in the shared scope to avoid duplicate declaration errors.
+"use strict";
+// Shared matrix for the 7-digit bases (4 rows). Declared here to
+// avoid ReferenceError when assigning inside functions (module/strict mode).
+let globalRows = [];
+// ทักษาจรลำดับ (สำหรับคำนวณดาวศรี/กาลกิณี)
+const thaksaOrder = [1, 2, 3, 4, 7, 5, 8, 6];
+const thaksaNames = ["บริวาร", "อายุ", "เดช", "ศรี", "มูละ", "อุตสาหะ", "มนตรี", "กาลกิณี"];
 
-// sevenDigits-specific constants only:
+// ชื่อภพเต็มสำหรับแต่ละฐาน (แถว: วัน, เดือน, ปี)
+const posNamesFull = [
+    ["อัตตา", "หินะ", "ธนัง", "ปิตา", "มาตา", "โภคา", "มัชฌิมา"],
+    ["ตะนุ", "กดุมพะ", "สหัชชะ", "พันธุ", "ปุตตะ", "อริ", "ปัตตนิ"],
+    ["มรณะ", "สุภะ", "กัมมะ", "ลาภะ", "พยายะ", "ทาสี", "ทาสา"]
+];
+
+// มหาโบท (ใช้โดย getMahaBot)
+const mahaBotNames = ["สิทธิโชค", "มหาชัย", "ราชา", "มัชฌิมา", "อุบาทว์", "โลกาวินาศ", "เจดีย์"];
+const mahaBotMeanings = {
+    "สิทธิโชค": "ความสำเร็จ โชคลาภ ได้ผลประโยชน์สมใจนึก ทำกิจการใดมักจะราบรื่นรุ่งเรือง",
+    "มหาชัย": "มีชัยชนะเหนือกิเลสหรือคู่แข่ง ได้รับเกียรติยศชื่อเสียงอันโดดเด่นในสายงาน",
+    "ราชา": "วาสนาสูงส่ง ได้รับการเกื้อหนุนจากผู้ใหญ่หรือผู้มีอำนาจ ทำสิ่งใดมักโดดเด่นมีสง่าราศี",
+    "มัชฌิมา": "ชีวิตดำเนินไปอย่างเรียบง่าย ปานกลาง ไม่เด่นดังมากนักแต่มีความสงบมั่นคงดี",
+    "อุบาทว์": "ระวังเคราะห์กรรม อุปสรรค สิ่งขัดขวางไม่คาดคิด หรือโรคภัยแฝงเร้นเข้ามาเบียดเบียน",
+    "โลกาวินาศ": "ระวังการสูญเสีย ความล้มเหลว หรือการเปลี่ยนแปลงครั้งใหญ่ที่ไม่ได้เตรียมใจ",
+    "เจดีย์": "มีความศักดิ์สิทธิ์ ความคิดใฝ่คุณธรรม หรือมีสัมผัสพิเศษ มักพบความสุขทางจิตใจอย่างลึกซึ้ง"
+};
+
+// Compatibility alias: some modules expect `sdMeanings` (without underscore)
+// (will be assigned after `sd_Meanings` is defined below)
 
 const base4ColumnMeanings = [
     "ฐานสรุป อัตตา", 
@@ -43,6 +67,9 @@ const sd_Meanings = {
         enemies: { 1: "3", 2: "5", 3: "1", 4: "8", 5: "2", 6: "7", 7: "6", 8: "4" }
     }
 };
+
+// Alias for modules that expect `sdMeanings`
+const sdMeanings = sd_Meanings;
 
 const sd_Linkage = {
     "อัตตา-หินะ": "มักทำเรื่องเสื่อมเสียให้ตัวเอง หรือมีจุดบกพร่องที่ต้องแก้ไขตลอดชีวิต",
@@ -323,12 +350,12 @@ const starTheme = {
 
 
 function showseven(){
-    const contianer = document.getElementById("sevenPage");
-    if(!contianer) return;
-    contianer.classList.remove("hidden");
+    const container = document.getElementById("sevenPage");
+    if(!container) return;
+    container.classList.remove("hidden");
 
     const html = `
-    <div class="card shadow-lg border-gold bg-dark text-white">
+    <div class="card bg-black border-gold mb-4">
             <div class="card-header bg-dark border-gold text-center py-4">
                 <h2 class="text-gold mb-1">🔢 เลข 7 ตัว 4 ฐาน</h2>
                 <span class="text-white-50 mb-0">พยากรณ์ดวงชะตาพื้นฐานและเหตุการณ์จรตามตำราพรหมชาติ</span>
@@ -338,53 +365,60 @@ function showseven(){
                     <i class="fas fa-dice-d6 fa-4x text-gold mb-4"></i>
                     <div class="row justify-content-center">
                         <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                    <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
+                    <select class="form-control bg-black text-black border-gold member-selector-shared"
+                        onchange="autoFillMemberData(this.value);calculateSevenDigits()">
+                        <option value="">-- เลือกสมาชิก --</option>
+                    </select>
+            </div>
                             <div class="form-group text-left">
                                 <label class="text-gold-50">วันเกิด (อาทิตย์ - เสาร์)</label>
                                 <select id="sdDay" class="form-control bg-dark text-white border-gold"
                                     style="height: auto;">
-                                    <option value="1">วันอาทิตย์</option>
-                                    <option value="2">วันจันทร์</option>
-                                    <option value="3">วันอังคาร</option>
-                                    <option value="4">วันพุธ</option>
-                                    <option value="5">วันพฤหัสบดี</option>
-                                    <option value="6">วันศุกร์</option>
-                                    <option value="7">วันเสาร์</option>
+                                    <option value="0">วันอาทิตย์</option>
+                                    <option value="1">วันจันทร์</option>
+                                    <option value="2">วันอังคาร</option>
+                                    <option value="3">วันพุธ</option>
+                                    <option value="4">วันพฤหัสบดี</option>
+                                    <option value="5">วันศุกร์</option>
+                                    <option value="6">วันเสาร์</option>
                                 </select>
                             </div>
                             <div class="form-group text-left">
                                 <label class="text-gold-50">เดือนเกิด (ไทย: เดือน 5 - เดือน 4)</label>
                                 <select id="sdMonth" class="form-control bg-dark text-white border-gold"
                                     style="height: auto;">
-                                    <option value="5">เดือน 5 (เมษายน)</option>
-                                    <option value="6">เดือน 6 (พฤษภาคม)</option>
-                                    <option value="7">เดือน 7 (มิถุนายน)</option>
-                                    <option value="8">เดือน 8 (กรกฎาคม)</option>
-                                    <option value="9">เดือน 9 (สิงหาคม)</option>
-                                    <option value="10">เดือน 10 (กันยายน)</option>
-                                    <option value="11">เดือน 11 (ตุลาคม)</option>
-                                    <option value="12">เดือน 12 (พฤศจิกายน)</option>
-                                    <option value="1">เดือน 1 (ธันวาคม)</option>
-                                    <option value="2">เดือน 2 (มกราคม)</option>
-                                    <option value="3">เดือน 3 (กุมภาพันธ์)</option>
-                                    <option value="4">เดือน 4 (มีนาคม)</option>
+                                    <option value="5">เดือน 5 </option>
+                                    <option value="6">เดือน 6 </option>
+                                    <option value="7">เดือน 7 </option>
+                                    <option value="8">เดือน 8 </option>
+                                    <option value="9">เดือน 9 </option>
+                                    <option value="10">เดือน 10 </option>
+                                    <option value="11">เดือน 11 </option>
+                                    <option value="12">เดือน 12 </option>
+                                    <option value="1">เดือน 1 </option>
+                                    <option value="2">เดือน 2 </option>
+                                    <option value="3">เดือน 3 </option>
+                                    <option value="4">เดือน 4 </option>
                                 </select>
                             </div>
                             <div class="form-group text-left">
                                 <label class="text-gold-50">ปีนักษัตร</label>
                                 <select id="sdYear" class="form-control bg-dark text-white border-gold "
                                     style="height: auto;">
-                                    <option value="1">ปีชวด</option>
-                                    <option value="2">ปีฉลู</option>
-                                    <option value="3">ปีขาล</option>
-                                    <option value="4">ปีเถาะ</option>
-                                    <option value="5">ปีมะโรง</option>
-                                    <option value="6">ปีมะเส็ง</option>
-                                    <option value="7">ปีมะเมีย</option>
-                                    <option value="8">ปีมะแม</option>
-                                    <option value="9">ปีวอก</option>
-                                    <option value="10">ปีระกา</option>
-                                    <option value="11">ปีจอ</option>
-                                    <option value="12">ปีกุน</option>
+                                    <option value="0">ปีชวด</option>
+                                    <option value="1">ปีฉลู</option>
+                                    <option value="2">ปีขาล</option>
+                                    <option value="3">ปีเถาะ</option>
+                                    <option value="4">ปีมะโรง</option>
+                                    <option value="5">ปีมะเส็ง</option>
+                                    <option value="6">ปีมะเมีย</option>
+                                    <option value="7">ปีมะแม</option>
+                                    <option value="8">ปีวอก</option>
+                                    <option value="9">ปีระกา</option>
+                                    <option value="10">ปีจอ</option>
+                                    <option value="11">ปีกุน</option>
                                 </select>
                             </div>
                             <div class="form-group text-left">
@@ -432,7 +466,7 @@ function showseven(){
             </div>
         </div>    
     `;
-    contianer.innerHTML = html;
+    container.innerHTML = html;
 }
 
 document.addEventListener("DOMContentLoaded", () =>{
@@ -928,6 +962,7 @@ function getLuckyNumbersFromBase(bases){
 
 
 function calculateSevenDigits() {
+    try {
     // 1. ดึงค่าจาก Input
     const day = parseInt(document.getElementById('sdDay').value);
     const month = parseInt(document.getElementById('sdMonth').value);
@@ -942,14 +977,14 @@ function calculateSevenDigits() {
     // 2. คำนวณเลข 7 ตัว 4 ฐาน (เก็บลง globalRows เพื่อให้ฟังก์ชันอื่นใช้ต่อได้)
     globalRows = [[], [], [], []];
     for (let i = 0; i < 7; i++) {
-        // ฐานที่ 1 (วัน), 2 (เดือน), 3 (ปี)
-        globalRows[0].push(((day + i - 1) % 7) + 1);
-        globalRows[1].push(((month + i - 1) % 7) + 1);
-        globalRows[2].push(((year + i - 1) % 7) + 1);
+        // ฐานที่ 1 (วัน), 2 (เดือน), 3 (ปี) - ปรับปรุงสูตรป้องกันค่า 0
+        globalRows[0].push(((day - 1 + i) % 7) + 2);
+        globalRows[1].push(((month - 1 + i) % 7) + 1);
+        globalRows[2].push((( (year % 7) + i) % 7) + 1);
     }
     // ฐานที่ 4 (ฐานบวก/ฐานกำลัง)
     for (let i = 0; i < 7; i++) {
-        globalRows[3].push(mod9(globalRows[0][i] + globalRows[1][i] + globalRows[2][i]));
+        globalRows[3].push(globalRows[0][i] + globalRows[1][i] + globalRows[2][i]);
     }
 
     // 3. เตรียมข้อมูลพื้นฐาน
@@ -1068,7 +1103,10 @@ function calculateSevenDigits() {
         // เลื่อนหน้าจอไปที่ผลลัพธ์ (Smooth Scroll)
         resultContainer.scrollIntoView({ behavior: 'smooth' });
     }
-}
+}   catch (error) {
+    console.error("calculateSevenDigits Error:", error);
+    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถคำนวณดวงชะตาได้ กรุณาตรวจสอบข้อมูล', 'error');
+} }
 
 
 
@@ -1096,7 +1134,7 @@ function analyzeLifeStages(rows) {
     // วัยต้น (แถวที่ 1: 0-25 ปี)
     const earlyNum = rows[0][0]; // อัตตา
     const earlyHome = rows[0][5]; // โภคา
-    stages.push(`👶 <b>ช่วงปฐมวัย (0-25 ปี) :</b> พื้นฐานดวงเริ่มต้นจากตำแหน่ง ${posNamesFull[0][0]} เลข ${earlyNum} ส่งผลให้เป็นคนที่มี${starPower[earlyNum]} และชีวิตในวัยเด็กมักผูกพันกับ${posNamesFull[0][5]} (ที่อยู่อาศัย/ทรัพย์สิน)`);
+    stages.push(`👶 <b>ช่วงปฐมวัย (0-25 ปี) :</b> พื้นฐานดวงเริ่มต้นจากตำแหน่ง ${posNamesFull[0][0]} เลข ${earlyNum} ส่งผลให้เป็นคนที่มี${sdMeanings.base4[earlyNum] || "กำลังดาวพื้นฐาน"} และชีวิตในวัยเด็กมักผูกพันกับ${posNamesFull[0][5]} (ที่อยู่อาศัย/ทรัพย์สิน)`);
 
     // วัยกลาง (แถวที่ 2: 26-50 ปี)
     const midWork = rows[1][2]; // สหัชชะ
@@ -1125,8 +1163,7 @@ function getThaksaTransit(birthDayNum, age) {
 }
 
 function renderSummary(row4, mahaBotResult) {
-    // ดึงจุดเด่นจากฐานที่ 4 (row4 = mod9 sum, ∈ {1..9} เสมอ)
-    // key 10-21 ใน base4 ไม่มีทางถูกเรียกจากฐาน 4 จริง → ใช้ key 1-9 เท่านั้น
+    // ดึงจุดเด่นจากฐานที่ 4 (row4 = ผลรวมดิบ 3-21)
     const highlights = row4.map((num, idx) => {
         const meaning = sdMeanings.base4[num];
         if (num >= 7) return `<span class="badge badge-success mr-1 mb-1">เสาที่ ${idx+1}: ${meaning ? meaning.split(':')[0] : 'กำลังดี'}</span>`;
@@ -1166,26 +1203,32 @@ function showCellDetail(cleanTitle, num, houseMeaning, isBase4) {
     try {
         // 1. กำหนด Theme สีและไอคอนตามดวงดาว
         const starTheme = {
-            1: { name: "อาทิตย์", color: "#FFD700", bg: "#FFF9E6", icon: "fa-sun" },
-            2: { name: "จันทร์", color: "#C0C0C0", bg: "#F8F8F8", icon: "fa-moon" },
-            3: { name: "อังคาร", color: "#FF4500", bg: "#FFE9E6", icon: "fa-fire" },
-            4: { name: "พุธ", color: "#2E8B57", bg: "#E6F4EA", icon: "fa-comment-dots" },
-            5: { name: "พฤหัสบดี", color: "#DAA520", bg: "#FFF5E6", icon: "fa-graduation-cap" },
-            6: { name: "ศุกร์", color: "#4682B4", bg: "#E6F2FA", icon: "fa-heart" },
-            7: { name: "เสาร์", color: "#4B0082", bg: "#F0E6FA", icon: "fa-mountain" },
-            8: { name: "ราหู", color: "#2F4F4F", bg: "#E6EBEB", icon: "fa-mask" },
-            9: { name: "เกตุ", color: "#8B4513", bg: "#F5EEE6", icon: "fa-om" }
+            0: { name: "อาทิตย์", color: "#FFD700", bg: "#FFF9E6", icon: "fa-sun" },
+            1: { name: "จันทร์", color: "#C0C0C0", bg: "#F8F8F8", icon: "fa-moon" },
+            2: { name: "อังคาร", color: "#FF4500", bg: "#FFE9E6", icon: "fa-fire" },
+            3: { name: "พุธ", color: "#2E8B57", bg: "#E6F4EA", icon: "fa-comment-dots" },
+            4: { name: "พฤหัสบดี", color: "#DAA520", bg: "#FFF5E6", icon: "fa-graduation-cap" },
+            5: { name: "ศุกร์", color: "#4682B4", bg: "#E6F2FA", icon: "fa-heart" },
+            6: { name: "เสาร์", color: "#4B0082", bg: "#F0E6FA", icon: "fa-mountain" },
+            7: { name: "ราหู", color: "#2F4F4F", bg: "#E6EBEB", icon: "fa-mask" },
+            8: { name: "เกตุ", color: "#8B4513", bg: "#F5EEE6", icon: "fa-om" }
         };
+        
+        // แผนผังแปลงกำลังกลับไปหาดาวหลัก (แก้ปัญหา 11, 10, 12...)
+        const planetMap = { 10: 7, 11: 1, 12: 8, 13: 1, 14: 5, 15: 2, 16: 9, 17: 4, 18: 1, 19: 5, 20: 7, 21: 6 };
+        const baseNumForTheme = planetMap[num] || (num > 9 ? num % 10 : num);
 
-        const theme = starTheme[num] || { name: "", color: "#d4af37", bg: "#fff", icon: "fa-star" };
+        const theme = starTheme[baseNumForTheme] || { name: "", color: "#d4af37", bg: "#fff", icon: "fa-star" };
 
         // 2. เตรียมข้อมูลพื้นฐาน
         const normalize = (str) => str.replace(/<br>|\s*\(.*?\)/g, "").trim();
         const currentHouse = normalize(cleanTitle);
         
+        const starBaseMeanings = { 0:"อาทิตย์ (ยศ)", 1:"จันทร์ (รูปร่าง)", 2:"อังคาร (กล้า)", 3:"พุธ (เจรจา)", 4:"พฤหัส (ปัญญา)", 5:"ศุกร์ (กิเลส)", 6:"เสาร์ (โทษทุกข์)" };
+
         const starDescription = isBase4 
             ? (sdMeanings.base4[num] || "กำลังพระเคราะห์ปกติ") 
-            : (window.starPower ? starPower[num] : "ความหมายดาวมาตรฐาน");
+            : (starBaseMeanings[num] || "ความหมายดาวมาตรฐาน");
 
         // 3. ตรวจสอบทักษาจร (ศรี/กาลกิณี)
         const daySelect = document.getElementById('sdDay');
@@ -1226,7 +1269,7 @@ function showCellDetail(cleanTitle, num, houseMeaning, isBase4) {
             let detailTexts = uniqueHouses.map(h => {
                 let key1 = `${currentHouse}-${h}`;
                 let key2 = `${h}-${currentHouse}`;
-                let meaning = (typeof linkage !== 'undefined') ? (linkage[key1] || linkage[key2]) : null;
+                let meaning = (typeof sd_Linkage !== 'undefined') ? (sd_Linkage[key1] || sd_Linkage[key2]) : null;
                 return meaning ? `<li class="mb-2 border-bottom pb-1"><i class="fas fa-link text-gold mr-2"></i><b>${h}:</b> ${meaning}</li>` : "";
             }).join('');
 
@@ -1278,9 +1321,9 @@ function showCellDetail(cleanTitle, num, houseMeaning, isBase4) {
             customClass: { popup: 'border-gold', confirmButton: 'rounded-pill px-4' }
         });
 
-    } catch (err) {
-        console.error("showCellDetail Error:", err);
-    }
+} catch (error) {
+    console.error("showCellDetail Error:", error);
+    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถแสดงรายละเอียดได้', 'error');
 }
 
 
@@ -1320,4 +1363,4 @@ document.addEventListener('keypress', function (e) {
             activeElement.blur(); 
         }
     }
-});
+})};

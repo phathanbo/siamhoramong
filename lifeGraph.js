@@ -1,10 +1,5 @@
 "use strict";
 
-// เพิ่มบรรทัดนี้ไว้บนสุดของไฟล์ lifeGraph.js
-if (typeof isViewingHistory === 'undefined') {
-    var isViewingHistory = false;
-}
-
 const LIFE_GRAPH_LABELS = [
     "วาสนา", "ทรัพย์", "เพื่อน", "ญาติ", "บุตร", "บริวาร",
     "ศัตรู", "คู่ครอง", "โรคภัย", "ความสุข", "การงาน", "ลาภยศ"
@@ -98,41 +93,53 @@ function renderMonthlyFortune(points) {
 }
 
 
-
-
-
-function calculateLifeGraph() {
-    let input =
-        document.getElementById('birthdate')?.value ||
-        localStorage.getItem('userBirthdate') ||
-        document.getElementById('profBirth')?.innerText;
+function calculateLifeGraph(passedMemberId) {
+    let input = null;
+    
+    // 1️⃣ ลองดึงจาก currentMemberId ก่อน
+    if (currentMemberId) {
+        const profileData = getProfileByMemberId(currentMemberId);
+        if (profileData && profileData.birthdate) {
+            input = profileData.birthdate;
+            console.log("✅ ดึงจากโปรไฟล์:", input);
+        }
+    }
+    
+    // 2️⃣ ถ้าไม่มี → ดึงจาก form
+    if (!input) {
+        input = document.getElementById('birthdate')?.value;
+    }
+    
+    // 3️⃣ ถ้ายังไม่มี → ดึงจากโปรไฟล์ที่แสดง
+    if (!input) {
+        input = document.getElementById('profBirth')?.innerText;
+    }
 
     const birthDate = parseBirthdate(input);
-
     if (!birthDate) {
         alert("🔮 กรุณากรอกวันเกิดให้ถูกต้อง");
         return;
     }
 
-    // save normalized
     localStorage.setItem('userBirthdate', birthDate.toISOString().split('T')[0]);
-
+ 
     const d = birthDate.getDay() + 1;
     const m = birthDate.getMonth() + 1;
     const y = (birthDate.getFullYear() % 12) + 1;
-
+ 
     const points = Array.from({ length: 12 }, (_, i) => {
         let val = (d + m + y + i) % 7;
         return val === 0 ? 7 : val;
     });
-
+ 
     renderLifeGraph(points);
     renderLifeGraphTable(points);
-
+ 
     if (typeof navigateTo === "function") {
         navigateTo('lifeGraphPage');
-    }
-}
+    }  // ✅ ปิดที่นี่
+}  // ✅ ปิด function
+
 
 function getLifeGraphAdvice(label, score) {
     const adviceMap = {
@@ -314,7 +321,7 @@ function renderLifeGraph(points) {
 
 function renderLifeGraphTable(points) {
     const resultDiv = document.getElementById('lifeGraphResult');
-    const birthInput = document.getElementById('birthdate').value || localStorage.getItem('userBirthdate');
+    const birthInput = document.getElementById('birthdate')?.value || localStorage.getItem('userBirthdate');
     const monthlyFortuneHtml = renderMonthlyFortune(points);
 
     if (!birthInput) return;
@@ -484,23 +491,12 @@ function renderLifeGraphTable(points) {
 
     html += '</div>';
     resultDiv.innerHTML = html;
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedDate = localStorage.getItem('userBirthdate');
-        if (savedDate) {
-            const input = document.getElementById('birthdate');
-            if (input) {
-                input.value = savedDate;
-                setTimeout(() => calculateLifeGraph(), 500); // ดีเลย์นิดนึงเพื่อให้หน้าโหลดเสร็จ
-            }
-        }
-    });
 }
 
 
 function showlifeGraph() {
-    const contianer = document.getElementById('showlifeGraphPage');
-    if (!contianer) return;
+    const container = document.getElementById('showlifeGraphPage');
+    if (!container) return;
 
     const html = `
             <div class="card shadow-lg border-gold bg-dark text-white">
@@ -534,12 +530,24 @@ function showlifeGraph() {
             </div>
         </div>
     `;
-    contianer.innerHTML = html;
+    container.innerHTML = html;
 
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     showlifeGraph();
+    const savedDate = localStorage.getItem('userBirthdate');
+    if (savedDate) {
+        const input = document.getElementById('birthdate');
+        if (input) {
+            input.value = savedDate;
+            // Only auto-calculate if lifeGraphPage is actually visible
+            const lifeGraphPage = document.getElementById('lifeGraphPage');
+            if (lifeGraphPage && lifeGraphPage.style.display !== 'none') {
+                setTimeout(() => calculateLifeGraph(), 500);
+            }
+        }
+    }
 });
 
 
