@@ -283,31 +283,31 @@ const ENHANCEMENT_METHODS = {
 // ระดับลึก: ความขัดแย้งปีนักษัตร (authentic zodiac conflicts)
 const ZODIAC_CONFLICTS = {
     "ไม้": {
-        wood_animals: ["หนู", "เสือ", "กระต่าย"],
+        animals: ["หนู", "เสือ", "กระต่าย"],
         conflict_with: ["วัว", "ลิง"],
         reason: "โลหะขัดไม้ ดินสลายไม้",
         impact: "อาจมีปัญหาด้านการงาน ความสัมพันธ์"
     },
     "ไฟ": {
-        fire_animals: ["งู", "ม้า"],
+        animals: ["งู", "ม้า"],
         conflict_with: ["หนู", "หมู"],
         reason: "น้ำดับไฟ เกิดความขัดแย้ง",
         impact: "ต้องระวังการสูญเสีย ความหวังแตกหัก"
     },
     "ดิน": {
-        earth_animals: ["วัว", "มังกร", "แพะ", "สุนัข"],
+        animals: ["วัว", "มังกร", "แพะ", "สุนัข"],
         conflict_with: ["เสือ", "กระต่าย"],
         reason: "ไม้ลำเลียงดิน ความไม่มั่นคง",
         impact: "อาจมีปัญหาเงิน บ้านเรือน"
     },
     "โลหะ": {
-        metal_animals: ["ลิง", "ไก่"],
+        animals: ["ลิง", "ไก่"],
         conflict_with: ["งู", "ม้า"],
         reason: "ไฟหลอมโลหะ ความแตกแยก",
         impact: "ต้องระวังการหลงผิด ความเสื่อม"
     },
     "น้ำ": {
-        water_animals: ["หนู", "หมู"],
+        animals: ["หนู", "หมู"],
         conflict_with: ["มังกร", "แพะ"],
         reason: "ดินกั้นน้ำ ความติดขัด",
         impact: "อาจมีปัญหาการเดินทาง การทำงาน"
@@ -858,7 +858,7 @@ function displayFengShuiCalendar() {
                             </h5>
                             <div style="padding: 10px;">
                                 <p class="small mb-2"><strong>🐉 ปีนักษัตรของเดือน:</strong></p>
-                                <p class="small font-weight-bold mb-2">${conflictData.wood_animals.join(', ')}</p>
+                                <p class="small font-weight-bold mb-2">${conflictData.animals.join(', ')}</p>
                                 <p class="small mb-2"><strong>❌ ขัดแย้งกับ:</strong></p>
                                 <p class="small font-weight-bold mb-2">${conflictData.conflict_with.join(', ')}</p>
                                 <p class="small mb-2"><strong>เหตุผล:</strong> ${conflictData.reason}</p>
