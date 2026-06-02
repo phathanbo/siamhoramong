@@ -185,11 +185,17 @@ function saveSession(user) {
         loginAt: new Date().toISOString()
     };
     localStorage.setItem(AUTH_CONFIG.storageKey, JSON.stringify(session));
+    // 🔐 สำหรับระบบการยินยอม (PDPA Consent)
+    localStorage.setItem('userId', user.username);
     return session;
 }
 
 function clearSession() {
     localStorage.removeItem(AUTH_CONFIG.storageKey);
+    // 🔐 ลบข้อมูลการยินยอม PDPA
+    localStorage.removeItem('userId');
+    localStorage.removeItem('pdpaConsent');
+    localStorage.removeItem('pdpaConsentDate');
 }
 
 // ===================================================
@@ -401,6 +407,10 @@ async function doLogin() {
             setTimeout(() => {
                 hideLoginOverlay();
                 updateUserBadge(session);
+                // 🔐 ตรวจสอบการยินยอม PDPA
+                if (typeof checkConsentStatus === 'function') {
+                    checkConsentStatus();
+                }
             }, 1200);
 
         } else {
