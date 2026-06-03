@@ -216,6 +216,57 @@ function downloadHoroscopeImage(elementId, filename = 'horoscope.png') {
     });
 }
 
+/**
+ * 📱 Share ไปยัง Facebook
+ *
+ * @param {string} url - URL ที่ต้อง share (default: current page)
+ * @param {string} title - ชื่อเรื่อง (optional)
+ */
+function shareToFacebook(url = null, title = null) {
+    const shareUrl = url || window.location.href;
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+
+    // เปิด Facebook share dialog
+    window.open(facebookShareUrl, 'facebook-share-dialog', 'width=626,height=436');
+}
+
+/**
+ * 📱 Share ไปยัง Twitter (X)
+ *
+ * @param {string} text - ข้อความ
+ * @param {string} url - URL (optional)
+ */
+function shareToTwitter(text, url = null) {
+    const shareUrl = url || window.location.href;
+    const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`;
+
+    window.open(twitterShareUrl, 'twitter-share-dialog', 'width=626,height=436');
+}
+
+/**
+ * 📧 Share ไปยัง Email
+ *
+ * @param {string} subject - หัวเรื่อง
+ * @param {string} body - เนื้อหา
+ */
+function shareViaEmail(subject, body) {
+    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+}
+
+/**
+ * 📋 Share ไปยัง WhatsApp
+ *
+ * @param {string} text - ข้อความ
+ * @param {string} url - URL (optional)
+ */
+function shareToWhatsApp(text, url = null) {
+    const message = url ? `${text}\n${url}` : text;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappUrl, 'whatsapp-share-dialog', 'width=626,height=436');
+}
+
 // Export
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
@@ -227,6 +278,11 @@ if (typeof module !== 'undefined' && module.exports) {
         copyToClipboard,
         buildQueryString,
         isMobileDevice,
-        showNotification
+        showNotification,
+        downloadHoroscopeImage,
+        shareToFacebook,
+        shareToTwitter,
+        shareViaEmail,
+        shareToWhatsApp
     };
 }
