@@ -246,7 +246,11 @@ function generateLuckyNumbers() {
     const birthdayEl = document.getElementById("lottoBirthday");
     const userNameEl = document.getElementById("lottoUserName") || { value: "" };
 
-
+    // ตรวจสอบว่า element มีอยู่
+    if (!birthdayEl) {
+        console.warn('❌ Element #lottoBirthday ไม่พบ');
+        return;
+    }
 
     // แยก date input
     const birthDate = new Date(birthdayEl.value);
