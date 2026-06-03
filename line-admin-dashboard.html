@@ -1,0 +1,457 @@
+<!-- 📊 LINE Bot Admin Dashboard -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แดชบอร์ด LINE Bot - สยามโหรามงคล</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            font-family: 'Prompt', sans-serif;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #d4af37;
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background: rgba(212, 175, 55, 0.1) !important;
+            border-bottom: 2px solid #d4af37;
+        }
+        .btn-gold {
+            background: #d4af37;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        .btn-gold:hover {
+            background: #e6c547;
+            color: #1a1a1a;
+        }
+        .text-gold { color: #d4af37; }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border-left: 4px solid #d4af37;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #d4af37;
+        }
+        .table { color: #e0e0e0; }
+        .table thead th {
+            border-color: #d4af37;
+            color: #d4af37;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(212, 175, 55, 0.05);
+        }
+        .badge-gold { background: #d4af37; color: #1a1a1a; }
+        .badge-success { background: #28a745; }
+        .badge-danger { background: #dc3545; }
+        .zodiac-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+        .zodiac-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid #d4af37;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4 mb-5">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h1 class="text-gold mb-2">
+                    <i class="fas fa-dashboard"></i> แดชบอร์ด LINE Bot
+                </h1>
+                <p class="text-white-50">ติดตามสถิติสมาชิกและการส่งพยากรณ์</p>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <h6 class="text-gold">สมาชิกทั้งหมด</h6>
+                        <div class="stat-number" id="totalSubscribers">0</div>
+                        <small class="text-white-50">ที่ Active</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <h6 class="text-gold">ส่งเรียบร้อย (วันนี้)</h6>
+                        <div class="stat-number" id="sentToday">0</div>
+                        <small class="text-white-50">ข้อความ</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <h6 class="text-gold">ส่งประจำวัน</h6>
+                        <div class="stat-number" id="dailyCount">0</div>
+                        <small class="text-white-50">คน</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <h6 class="text-gold">อัตราข้อผิดพลาด</h6>
+                        <div class="stat-number" id="errorRate">0%</div>
+                        <small class="text-white-50">Error</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="text-gold mb-0">
+                            <i class="fas fa-chart-pie"></i> การแจกแจงตามราศี
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="zodiacChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="text-gold mb-0">
+                            <i class="fas fa-chart-bar"></i> ความถี่ส่ง
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="frequencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zodiac Distribution -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="text-gold mb-0">
+                    <i class="fas fa-users"></i> ประชากรตามราศี
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="zodiac-list" id="zodiacDistribution">
+                    <!-- แสดงข้อมูลจาก API -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Logs -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="text-gold mb-0">
+                    <i class="fas fa-history"></i> ประวัติการส่ง (10 ล่าสุด)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>เวลา</th>
+                                <th>การกระทำ</th>
+                                <th>User ID</th>
+                                <th>รายละเอียด</th>
+                                <th>สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTable">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">
+                                    <i class="fas fa-spinner fa-spin"></i> กำลังโหลด...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="text-gold mb-0">
+                    <i class="fas fa-cogs"></i> การจัดการ
+                </h5>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-gold mr-2" onclick="sendTestMessage()">
+                    <i class="fas fa-send"></i> ส่งข้อความทดสอบ
+                </button>
+                <button class="btn btn-outline-secondary mr-2" onclick="refreshData()">
+                    <i class="fas fa-sync"></i> รีเฟรช
+                </button>
+                <button class="btn btn-outline-secondary" onclick="downloadReport()">
+                    <i class="fas fa-download"></i> ดาวน์โหลดรายงาน
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-white-50 mb-4">
+            <small>
+                อัปเดตล่าสุด: <span id="lastUpdate">-</span> |
+                <a href="https://developers.line.biz/" target="_blank" class="text-gold">LINE Developer</a>
+            </small>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="config.js"></script>
+    <script>
+        // ⚙️ อ่านค่า configuration
+        const API_URL = CONFIG?.GOOGLE_APPS_SCRIPT?.DEPLOYMENT_URL || "YOUR_GOOGLE_APPS_SCRIPT_URL";
+
+        // ⚠️ ตรวจสอบ config
+        if (!CONFIG || !CONFIG.GOOGLE_APPS_SCRIPT?.DEPLOYMENT_URL) {
+            console.warn('❌ config.js ยังไม่ได้ตั้งค่า กรุณาสร้างไฟล์ config.js จาก config-template.js');
+        }
+
+        // 📊 ข้อมูลจำลอง (แทนที่ด้วยข้อมูลจริงจาก Google Sheets)
+        const mockData = {
+            totalSubscribers: 247,
+            sentToday: 189,
+            dailyCount: 189,
+            errorRate: 2.4,
+            zodiacDistribution: {
+                1: 22, 2: 19, 3: 25, 4: 18, 5: 21, 6: 17,
+                7: 20, 8: 23, 9: 19, 10: 18, 11: 24, 12: 21
+            },
+            frequencyDistribution: {
+                daily: 189,
+                weekly: 38,
+                monthly: 20
+            },
+            recentLogs: [
+                { time: '2024-06-03 07:15', action: 'SENT', userId: 'U12345...', details: 'Zodiac: 1', status: 'SUCCESS' },
+                { time: '2024-06-03 07:14', action: 'SENT', userId: 'U12346...', details: 'Zodiac: 2', status: 'SUCCESS' },
+                { time: '2024-06-03 07:13', action: 'SENT', userId: 'U12347...', details: 'Zodiac: 3', status: 'SUCCESS' },
+                { time: '2024-06-03 07:12', action: 'ERROR', userId: 'U12348...', details: 'Network timeout', status: 'FAILED' },
+                { time: '2024-06-02 07:11', action: 'SENT', userId: 'U12349...', details: 'Zodiac: 4', status: 'SUCCESS' }
+            ]
+        };
+
+        const zodiacNames = [
+            'เมษ', 'พฤษภา', 'เมถุน', 'กรกฎ', 'สิงห์', 'กันย์',
+            'ตุลย์', 'แมง', 'ธนู', 'มังกร', 'กุมภ์', 'มีน'
+        ];
+
+        // 🎯 โหลดข้อมูล
+        function loadDashboard() {
+            // สถิติ
+            document.getElementById('totalSubscribers').textContent = mockData.totalSubscribers;
+            document.getElementById('sentToday').textContent = mockData.sentToday;
+            document.getElementById('dailyCount').textContent = mockData.dailyCount;
+            document.getElementById('errorRate').textContent = mockData.errorRate + '%';
+
+            // ประเภทราศี
+            displayZodiacDistribution();
+
+            // กราฟ
+            drawZodiacChart();
+            drawFrequencyChart();
+
+            // Logs
+            displayLogs();
+
+            // อัปเดตเวลา
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('th-TH');
+        }
+
+        // 📊 แสดงการแจกแจงราศี
+        function displayZodiacDistribution() {
+            const container = document.getElementById('zodiacDistribution');
+            const zodiacEmojis = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+
+            let html = '';
+            for (let i = 0; i < 12; i++) {
+                const count = mockData.zodiacDistribution[i + 1];
+                html += `
+                    <div class="zodiac-item">
+                        <div style="font-size: 1.5rem; margin-bottom: 5px;">${zodiacEmojis[i]}</div>
+                        <div class="text-gold" style="font-weight: bold;">${count}</div>
+                        <small>${zodiacNames[i]}</small>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // 📈 กราฟราศี
+        let zodiacChart;
+        function drawZodiacChart() {
+            const ctx = document.getElementById('zodiacChart').getContext('2d');
+            const colors = Array(12).fill('#d4af37').map((c, i) => {
+                const hues = [0, 30, 60, 120, 180, 240];
+                return `hsl(${hues[i % 6]}, 100%, 40%)`;
+            });
+
+            zodiacChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: zodiacNames,
+                    datasets: [{
+                        data: Object.values(mockData.zodiacDistribution),
+                        backgroundColor: colors,
+                        borderColor: '#1a1a1a',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    legend: {
+                        labels: { fontColor: '#e0e0e0', font: { size: 11 } }
+                    }
+                }
+            });
+        }
+
+        // 📈 กราฟความถี่
+        let frequencyChart;
+        function drawFrequencyChart() {
+            const ctx = document.getElementById('frequencyChart').getContext('2d');
+
+            frequencyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['ทุกวัน', 'สัปดาห์ละครั้ง', 'เดือนละครั้ง'],
+                    datasets: [{
+                        label: 'จำนวนสมาชิก',
+                        data: [
+                            mockData.frequencyDistribution.daily,
+                            mockData.frequencyDistribution.weekly,
+                            mockData.frequencyDistribution.monthly
+                        ],
+                        backgroundColor: ['#d4af37', '#28a745', '#007bff'],
+                        borderColor: ['#d4af37', '#28a745', '#007bff'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        yAxes: [{
+                            ticks: { fontColor: '#e0e0e0', beginAtZero: true },
+                            gridLines: { color: 'rgba(212, 175, 55, 0.1)' }
+                        }]
+                    },
+                    legend: {
+                        labels: { fontColor: '#e0e0e0' }
+                    }
+                }
+            });
+        }
+
+        // 📝 แสดง Logs
+        function displayLogs() {
+            const tbody = document.getElementById('logsTable');
+            let html = '';
+
+            mockData.recentLogs.forEach(log => {
+                const statusBadge = log.status === 'SUCCESS'
+                    ? '<span class="badge badge-success">✓ สำเร็จ</span>'
+                    : '<span class="badge badge-danger">✗ ล้มเหลว</span>';
+
+                html += `
+                    <tr>
+                        <td>${log.time}</td>
+                        <td><strong>${log.action}</strong></td>
+                        <td><code>${log.userId}</code></td>
+                        <td>${log.details}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // 🔄 รีเฟรช
+        function refreshData() {
+            document.body.style.opacity = '0.7';
+            setTimeout(() => {
+                loadDashboard();
+                document.body.style.opacity = '1';
+                alert('✅ รีเฟรชข้อมูลสำเร็จ');
+            }, 1000);
+        }
+
+        // 📧 ส่งข้อความทดสอบ
+        function sendTestMessage() {
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'sendTestMessage',
+                    userId: 'YOUR_TEST_USER_ID'
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ ส่งข้อความทดสอบสำเร็จ');
+                } else {
+                    alert('❌ เกิดข้อผิดพลาด: ' + data.message);
+                }
+            })
+            .catch(err => alert('❌ ' + err.message));
+        }
+
+        // 📥 ดาวน์โหลดรายงาน
+        function downloadReport() {
+            const csv = 'Date,Total Subscribers,Sent Today,Daily Count,Error Rate\n' +
+                new Date().toLocaleDateString() + ',' +
+                mockData.totalSubscribers + ',' +
+                mockData.sentToday + ',' +
+                mockData.dailyCount + ',' +
+                mockData.errorRate + '%';
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `line-bot-report-${new Date().getTime()}.csv`;
+            a.click();
+        }
+
+        // 🎬 เริ่มต้น
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+
+        // 🔄 รีเฟรชอัตโนมัติทุก 30 วินาที
+        setInterval(refreshData, 30000);
+    </script>
+</body>
+</html>

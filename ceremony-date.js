@@ -99,35 +99,6 @@ const CEREMONY_DATA = {
 /**
  * 📅 หาวันฤกษ์มงคลจากปฏิทิน
  */
-function getAuspiciousDays(month) {
-    // อิงจาก AuspiciousDay.js - AUSPICIOUS_DAYS_DETAIL
-    // ถ้า AuspiciousDay.js ได้โหลด ให้ใช้ข้อมูลจากนั้น
-    if (typeof AUSPICIOUS_DAYS_DETAIL !== 'undefined') {
-        const data = AUSPICIOUS_DAYS_DETAIL[month];
-        if (data) {
-            return data.goodDates || [];
-        }
-    }
-
-    // fallback: วันมงคลตัวแทนหากไม่มี
-    const defaultGoodDates = {
-        1: [1, 5, 8, 10, 13, 15, 18, 20, 23, 25, 28, 30],
-        2: [2, 4, 7, 9, 12, 14, 17, 19, 22, 24, 27],
-        3: [1, 6, 8, 11, 13, 16, 18, 21, 23, 26, 28, 31],
-        4: [3, 5, 8, 10, 13, 15, 18, 20, 23, 25, 28, 30],
-        5: [1, 4, 6, 9, 11, 14, 16, 19, 21, 24, 26, 29, 31],
-        6: [2, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 30],
-        7: [1, 3, 6, 8, 11, 13, 16, 18, 21, 23, 26, 28, 31],
-        8: [2, 4, 7, 9, 12, 14, 17, 19, 22, 24, 27, 29],
-        9: [1, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 30],
-        10: [2, 4, 7, 9, 12, 14, 17, 19, 22, 24, 27, 29],
-        11: [1, 3, 6, 8, 11, 13, 16, 18, 21, 23, 26, 28],
-        12: [2, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 30]
-    };
-
-    return defaultGoodDates[month] || [];
-}
-
 /**
  * 🎊 แสดงหน้าเลือกวันพิธี
  */
@@ -255,6 +226,9 @@ function findCeremonyDate() {
             </div>
         </div>
     `;
+
+    // แสดงผลลัพธ์
+    resultEl.style.display = 'block';
 }
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -206,7 +206,6 @@ function calculatePirun() {
 
 document.addEventListener("DOMContentLoaded", () => {
     showClimate();
-    console.log("✅ Climate.js loaded - อิงพิรุณศาสตร์ (authentic Thai astrology)");
 });
 
 window.calculatePirun = calculatePirun;

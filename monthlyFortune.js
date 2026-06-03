@@ -271,7 +271,6 @@ function analyzeMonthlyFortune() {
 
 document.addEventListener("DOMContentLoaded", () => {
     showMonthlyFortunePage();
-    console.log("✅ monthlyFortune.js loaded - อิงลัคนา + ธาตุ 5 + บ้าน 11 (authentic Thai astrology)");
 });
 
 window.analyzeMonthlyFortune = analyzeMonthlyFortune;

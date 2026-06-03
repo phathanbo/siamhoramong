@@ -160,7 +160,7 @@ const ELEMENTS_DATA = {
 };
 
 // ========== 12 ปีนักษัตร + ธาตุ ==========
-const ZODIAC_DATA = {
+const ZODIAC_ANIMAL_DATA = {
     0: { animal: "หนู", name: "ปีชวด", element: "น้ำ", elementObj: ELEMENTS_DATA[4], years: [1900, 1912, 1924, 1936, 1948, 1960, 1972, 1984, 1996, 2008, 2020] },
     1: { animal: "วัว", name: "ปีฉลู", element: "ดิน", elementObj: ELEMENTS_DATA[2], years: [1901, 1913, 1925, 1937, 1949, 1961, 1973, 1985, 1997, 2009, 2021] },
     2: { animal: "เสือ", name: "ปีขาล", element: "ไม้", elementObj: ELEMENTS_DATA[0], years: [1902, 1914, 1926, 1938, 1950, 1962, 1974, 1986, 1998, 2010, 2022] },
@@ -200,7 +200,7 @@ function getPlanetByBirthDay(birthDay) {
 function getZodiacByYear(year) {
     const yearAD = year > 2400 ? year - 543 : year;
     const zodiacIndex = (yearAD - 1900) % 12;
-    return { index: zodiacIndex, data: ZODIAC_DATA[zodiacIndex] };
+    return { index: zodiacIndex, data: ZODIAC_ANIMAL_DATA[zodiacIndex] };
 }
 
 function getElementByYear(year) {
@@ -226,4 +226,3 @@ window.ThaiAstrologyData = {
     getHouseByMonthAndDay
 };
 
-console.log("✅ thai-astrology-data.js loaded");

@@ -257,7 +257,6 @@ function interpretDream() {
 
 document.addEventListener("DOMContentLoaded", () => {
     showDreamPage();
-    console.log("✅ dreamInterpretation.js loaded - อิงตำราพรหมชาติ (authentic Thai astrology)");
 });
 
 window.interpretDream = interpretDream;

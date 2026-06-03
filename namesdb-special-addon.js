@@ -58,4 +58,3 @@ const SpecialNames = {
 
 // Export
 window.SpecialNames = SpecialNames;
-console.log('✅ namesdb-special-addon.js loaded - ชื่อพิเศษเพิ่มเติม');

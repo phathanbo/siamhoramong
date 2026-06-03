@@ -104,4 +104,3 @@ const FemaleNames = {
 
 // Export
 window.FemaleNames = FemaleNames;
-console.log('✅ namesdb-female-addon.js loaded - ชื่อหญิงเพิ่มเติม');

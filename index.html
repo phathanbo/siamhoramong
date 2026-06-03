@@ -709,6 +709,104 @@
 
     <!-- 9.หอฮวงจุ้ย ไฟล์ fengshui.js -->
     <section id="fengShuiPage" class="main-section" style="display: none;">
+        <div class="container mt-4">
+            <div class="card bg-dark border-gold p-4 shadow-lg">
+                <h2 class="text-gold mb-4 text-center">
+                    <i class="fas fa-compass mr-2"></i>ปฏิทินฮวงจุ้ยรายเดือน
+                </h2>
+                <p class="text-white text-center mb-4">ดูทิศมงคล/ไม่มงคล และวันสำคัญของเดือนนี้</p>
+
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-4">
+                        <label class="text-gold">เลือกเดือน:</label>
+                        <select id="fengshuiMonth" class="form-control bg-dark text-gold border-gold" onchange="displayFengShuiCalendar()">
+                            <option value="">-- เลือกเดือน --</option>
+                            <option value="1">มกราคม</option>
+                            <option value="2">กุมภาพันธ์</option>
+                            <option value="3">มีนาคม</option>
+                            <option value="4">เมษายน</option>
+                            <option value="5">พฤษภาคม</option>
+                            <option value="6">มิถุนายน</option>
+                            <option value="7">กรกฎาคม</option>
+                            <option value="8">สิงหาคม</option>
+                            <option value="9">กันยายน</option>
+                            <option value="10">ตุลาคม</option>
+                            <option value="11">พฤศจิกายน</option>
+                            <option value="12">ธันวาคม</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="text-gold">เลือกปี (ค.ศ.):</label>
+                        <input type="number" id="fengshuiYear" class="form-control bg-dark text-gold border-gold"
+                               value="2026" min="2000" max="2100" onchange="displayFengShuiCalendar()">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="text-gold">&nbsp;</label>
+                        <button class="btn btn-gold btn-block" onclick="displayFengShuiCalendar()">
+                            <i class="fas fa-search mr-2"></i>ดูปฏิทิน
+                        </button>
+                    </div>
+                </div>
+
+                <!-- แสดงผลลัพธ์ -->
+                <div id="fengshuiResult" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-dark border-gold">
+                                <div class="card-body">
+                                    <h5 class="text-gold mb-3">
+                                        <i class="fas fa-map-marker-alt mr-2"></i>ทิศมงคลเดือนนี้
+                                    </h5>
+                                    <div id="luckyDirection" class="text-white"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-dark border-gold">
+                                <div class="card-body">
+                                    <h5 class="text-gold mb-3">
+                                        <i class="fas fa-ban mr-2"></i>ทิศไม่มงคล
+                                    </h5>
+                                    <div id="unluckyDirection" class="text-white"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-gold mb-4">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-calendar-alt mr-2"></i>วันสำคัญ/วันข้อห้าม
+                            </h5>
+                            <div id="importantDays" class="text-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-gold">
+                        <div class="card-body">
+                            <h5 class="text-gold mb-3">
+                                <i class="fas fa-lightbulb mr-2"></i>คำแนะนำ
+                            </h5>
+                            <div id="fengshuiTips" class="text-white"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ปุ่มนำทาง -->
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                            <i class="fas fa-home"></i> กลับหน้าหลัก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- 10.หอคำนวณเลขมงคล ไฟล์ lotto.js-->
@@ -1897,94 +1995,6 @@
     </section>
 
     <!-- ปฏิทินฮวงจุ้ยรายเดือน ไฟล์ fengshui.js -->
-    <section id="fengshuiCalendar" class="main-section" style="display: none;">
-        <div class="container mt-4">
-            <div class="card bg-dark border-gold p-4 shadow-lg">
-                <h2 class="text-gold mb-4 text-center">
-                    <i class="fas fa-compass mr-2"></i>ปฏิทินฮวงจุ้ยรายเดือน
-                </h2>
-                <p class="text-white text-center mb-4">ดูทิศมงคล/ไม่มงคล และวันสำคัญของเดือนนี้</p>
-
-                <div class="row justify-content-center mb-4">
-                    <div class="col-md-4">
-                        <label class="text-gold">เลือกเดือน:</label>
-                        <select id="fengshuiMonth" class="form-control bg-dark text-gold border-gold" onchange="displayFengShuiCalendar()">
-                            <option value="">-- เลือกเดือน --</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="text-gold">เลือกปี (ค.ศ.):</label>
-                        <input type="number" id="fengshuiYear" class="form-control bg-dark text-gold border-gold"
-                               value="2026" min="2000" max="2100" onchange="displayFengShuiCalendar()">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="text-gold">&nbsp;</label>
-                        <button class="btn btn-gold btn-block" onclick="displayFengShuiCalendar()">
-                            <i class="fas fa-search mr-2"></i>ดูปฏิทิน
-                        </button>
-                    </div>
-                </div>
-
-                <!-- แสดงผลลัพธ์ -->
-                <div id="fengshuiResult" style="display: none;">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="card bg-dark border-gold">
-                                <div class="card-body">
-                                    <h5 class="text-gold mb-3">
-                                        <i class="fas fa-map-marker-alt mr-2"></i>ทิศมงคลเดือนนี้
-                                    </h5>
-                                    <div id="luckyDirection" class="text-white"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card bg-dark border-gold">
-                                <div class="card-body">
-                                    <h5 class="text-gold mb-3">
-                                        <i class="fas fa-ban mr-2"></i>ทิศไม่มงคล
-                                    </h5>
-                                    <div id="unluckyDirection" class="text-white"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card bg-dark border-gold mb-4">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-calendar-alt mr-2"></i>วันสำคัญ/วันข้อห้าม
-                            </h5>
-                            <div id="importantDays" class="text-white"></div>
-                        </div>
-                    </div>
-
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-lightbulb mr-2"></i>คำแนะนำ
-                            </h5>
-                            <div id="fengshuiTips" class="text-white"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ปุ่มนำทาง -->
-                <div class="row mt-4">
-                    <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
-                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
-                        </button>
-                    </div>
-                    <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
-                            <i class="fas fa-home"></i> กลับหน้าหลัก
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- พยากรณ์ธุรกิจ/การเงิน ไฟล์ business-fortune.js -->
     <section id="businessFortune" class="main-section" style="display: none;">
@@ -2113,6 +2123,10 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- พยากรณ์ดวงตามราศี ไฟล์ zodiac-fortune.js -->
+    <section id="zodiacFortunePage" class="main-section" style="display: none;">
     </section>
 
     <!-- วันเปิดร้าน/ลงหลัก ไฟล์ auspicious-opening.js -->
@@ -2444,6 +2458,8 @@
     <script src="dailyTaboo.js"></script>
     <script src="dreamInterpretation.js"></script>
     <script src="sevenDigits.js"></script>
+    <!-- 📅 Utility: วันมงคล (share ระหว่าง modules) -->
+    <script src="utils-auspicious.js"></script>
     <script src="AuspiciousDays.js"></script>
     <script src="script.js"></script>
     <script src="yarmPage.js"></script>
@@ -2478,6 +2494,7 @@
     <script type="module" src="thai-astrology.js"></script>
     <script src="fengshui.js"></script>
     <script src="business-fortune.js"></script>
+    <script src="zodiac-fortune.js"></script>
     <script src="auspicious-opening.js"></script>
     <script src="ceremony-date.js"></script>
     <script type="module" src="mahataksa.js"></script>

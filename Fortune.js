@@ -223,7 +223,6 @@ function calculateFortune() {
 
 document.addEventListener("DOMContentLoaded", () => {
     showFortunePage();
-    console.log("✅ Fortune.js loaded - อิงลัคนา บ้าน 11 (authentic Thai astrology)");
 });
 
 window.calculateFortune = calculateFortune;

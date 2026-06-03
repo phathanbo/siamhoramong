@@ -243,5 +243,4 @@ function validateInput(input) {
 
 document.addEventListener("DOMContentLoaded", () => {
     Numbertable();
-    console.log("✅ numerology.js loaded - อิงลัคนา + ดาว 9 ดวง + ธาตุ 5 (authentic Thai astrology)");
 });

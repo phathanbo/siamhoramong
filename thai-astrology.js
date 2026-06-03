@@ -479,7 +479,6 @@ function calculateThaiAstrology() {
     document.getElementById('elementFortune').innerHTML = elementHTML;
 
     resultDiv.style.display = 'block';
-    console.log(`✅ วิเคราะห์โหราศาสตร์ไทย: ${mainPlanet.thai} (${mainPlanet.meaning}) เกิดวัน ${date.toLocaleDateString('th-TH')}`);
 }
 
 // ========================================
@@ -491,10 +490,3 @@ window.HOUSES = HOUSES;
 window.NAKSHATRAS = NAKSHATRAS;
 window.PLANET_RELATIONSHIPS = PLANET_RELATIONSHIPS;
 
-console.log('✅ thai-astrology.js loaded successfully');
-console.log('📊 ข้อมูลโหราศาสตร์ไทยที่ปรับปรุงแล้ว:');
-console.log('   - ดาว 9 ดวง ✓');
-console.log('   - บ้าน 12 บ้าน ✓');
-console.log('   - Nakshatra 27 ดาว ✓');
-console.log('   - ความสัมพันธ์ดาว ✓');
-console.log('   - ธาตุ 5 ประการ ✓');

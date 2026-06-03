@@ -349,5 +349,4 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    console.log("✅ colors.js loaded - โหราศาสตร์ไทยแท้ (ดาว + ธาตุ)");
 });

@@ -18,4 +18,3 @@ const ZODIAC_SIGNS = [
 
 // ... (omitted the rest for brevity, we will parse incrementally if needed)
 
-console.log('extracted file placeholder');

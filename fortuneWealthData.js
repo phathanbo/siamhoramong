@@ -263,7 +263,6 @@ function analyzeWealth() {
 
 document.addEventListener("DOMContentLoaded", () => {
     showWealthDataPage();
-    console.log("✅ fortuneWealthData.js loaded - อิงลัคนา + ธาตุ 5 (authentic Thai astrology)");
 });
 
 window.analyzeWealth = analyzeWealth;

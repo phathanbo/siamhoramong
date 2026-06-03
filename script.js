@@ -515,14 +515,6 @@ function navigateTo(pageId, addHistory = true) {
         initKnowledgeTable();
     }
 
-    // 2.5 จัดการหน้า Feng Shui (วิเคราะห์ฮวงจุ้ย)
-    if (pageId === 'fengShuiPage') {
-        setTimeout(() => {
-            if (typeof showFengShuiPage === 'function') {
-                showFengShuiPage();
-            }
-        }, 50);
-    }
 
     if (pageId === 'auspiciousPage') {
     setTimeout(() => {
@@ -531,6 +523,58 @@ function navigateTo(pageId, addHistory = true) {
         }
     }, 50); // หน่วงเวลา 0.05 วินาที
 }
+
+    // ตั้งค่าเดือนปัจจุบันและประเภทธุรกิจให้อัติโนมัติในหน้าเปิดร้าน
+    if (pageId === 'auspiciousOpening') {
+        setTimeout(() => {
+            const businessTypeSelect = document.getElementById('businessType');
+            const openingMonthInput = document.getElementById('openingMonth');
+
+            // ตั้งค่าเดือนปัจจุบัน
+            if (openingMonthInput) {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                openingMonthInput.value = `${year}-${month}`;
+            }
+
+            // ตั้งค่าประเภทธุรกิจเป็นร้านค้าโดยค่าเริ่มต้น
+            if (businessTypeSelect) {
+                businessTypeSelect.value = 'shop';
+            }
+
+            // เรียกใช้ฟังก์ชันค้นหาโดยอัติโนมัติ
+            if (typeof findAuspiciousOpeningDays === 'function') {
+                findAuspiciousOpeningDays();
+            }
+        }, 100);
+    }
+
+    // ตั้งค่าเดือนปัจจุบันและประเภทพิธีให้อัติโนมัติในหน้าการกำหนดวันประกอบพิธี
+    if (pageId === 'ceremonyDate') {
+        setTimeout(() => {
+            const ceremonyTypeSelect = document.getElementById('ceremonyType');
+            const ceremonyMonthInput = document.getElementById('ceremonyMonth');
+
+            // ตั้งค่าเดือนปัจจุบัน
+            if (ceremonyMonthInput) {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                ceremonyMonthInput.value = `${year}-${month}`;
+            }
+
+            // ตั้งค่าประเภทพิธีเป็นแต่งงานโดยค่าเริ่มต้น
+            if (ceremonyTypeSelect) {
+                ceremonyTypeSelect.value = 'wedding';
+            }
+
+            // เรียกใช้ฟังก์ชันค้นหาโดยอัติโนมัติ
+            if (typeof findCeremonyDate === 'function') {
+                findCeremonyDate();
+            }
+        }, 100);
+    }
 
 
     // 3. สั่งซ่อนทุกหน้าที่มีคลาส .main-section

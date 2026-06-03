@@ -60,7 +60,7 @@ const AUSPICIOUS_PLANTS = {
         description: "ดอกไม้ขาวสัญลักษณ์ความบริสุทธิ์ เข้มแข็ง"
     },
     "น้ำ": {
-        plants: ["ต้นมะปรางต้นรูปปลา", "ไร้มะนาว", "ต้นหญ้าลมหายใจ"],
+        plants: ["ต้นไม้น้ำ", "พลูด่าง", "บัวอเมซอน"], // แก้ไขคำแปลที่อ่านไม่เข้าใจเดิม
         description: "พืชปรับตัวได้ สัญลักษณ์ความยืดหยุ่น"
     }
 };
@@ -132,11 +132,11 @@ const BODY_PARTS_TO_CARE = {
     "ไม้": {
         organs: ["ตับ", "ตา", "เอ็น", "โลหิต"],
         symptoms: "อาจเจ็บท้อง ปัญหาด้านตา หรืออารมณ์ไม่สดชื่น",
-        care: "ดื่มน้ำเปลี่ยวให้มากพอ ออกกำลังกายสม่ำเสมอ หลีกเลี่ยงความเครียด"
+        care: "ดื่มน้ำเปล่าให้มากพอ ออกกำลังกายสม่ำเสมอ หลีกเลี่ยงความเครียด" // แก้ไข "น้ำเปลี่ยว" -> "น้ำเปล่า"
     },
     "ไฟ": {
         organs: ["หัวใจ", "ลิ้น", "ลำไส้เล็ก", "เลือด"],
-        symptoms: "อาจมีปัญหาหัวใจ นอนไม่หลับ หรือปากหำหามอาหาร",
+        symptoms: "อาจมีปัญหาหัวใจ นอนไม่หลับ หรือปากขมทานอาหารไม่อร่อย", // แก้ไขคำหยาบ/พิมพ์ผิดเดิม
         care: "นอนให้พอ เสริมวิตามิน ลดความร้อนโกรธ ดื่มน้ำเย็น"
     },
     "ดิน": {
@@ -150,7 +150,7 @@ const BODY_PARTS_TO_CARE = {
         care: "หลีกเลี่ยงมลภาวะ ดูแลผิวหนัง หายใจเชื่อมั่น"
     },
     "น้ำ": {
-        organs: ["ไต", "膀胱", "หู", "กระดูก"],
+        organs: ["ไต", "กระเพาะปัสสาวะ", "หู", "กระดูก"], // แก้ไขภาษาจีน 膀胱 -> กระเพาะปัสสาวะ
         symptoms: "อาจเมื่อยล้า ปัญหาการได้ยิน หรือเบื่อ",
         care: "นอนให้เพียงพอ หลีกเลี่ยงเย็นจัด อุ่นร่างกายดี"
     }
@@ -229,7 +229,7 @@ const MONTHLY_PLANETS = {
         caution: "ระวัง: ความเหนื่อยล้า การทะเลาะวิวาท"
     },
     "ดิน": {
-        planet: "ม้าม (Saturn)",
+        planet: "ดาวเสาร์ (Saturn)", // แก้ไขความหมายจาก "ม้าม" -> "ดาวเสาร์"
         symbol: "♄",
         impact: "เสถียร มั่นคง โครงสร้าง",
         activities: "ดีสำหรับ: ก่อสร้าง ซ่อมแซม การสะสม",
@@ -323,6 +323,7 @@ function showFengShuiPage() {
 
     const currentYear = new Date().getFullYear();
 
+    // เพิ่มฟิลด์เลือก เดือน และ ปี พ.ศ. เข้ามาในโครงสร้าง เพื่อป้องกันตรรกะในปฏิทินพังเสียหายจาก DOM หาไม่เจอ
     container.innerHTML = `
         <div class="card shadow-lg border-gold overflow-hidden">
             <div class="card-header bg-dark text-white text-center py-4">
@@ -358,9 +359,52 @@ function showFengShuiPage() {
                     </div>
 
                     <button type="button" class="btn btn-gold btn-lg btn-block mt-3" onclick="analyzeFengShui()">
-                        <i class="fas fa-compass"></i> วิเคราะห์ฮวงจุ้ย
+                        <i class="fas fa-compass"></i> วิเคราะห์ฮวงจุ้ยจากวันเกิด
+                    </button>
+                    
+                    <hr class="my-4 border-gold-30">
+                    <h4 class="text-gold mb-3 text-center">📅 ตรวจสอบปฏิทินฮวงจุ้ยรายเดือน</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="text-gold"><strong>🌙 เลือกเดือน</strong></label>
+                                <select id="fengshuiMonth" class="form-control form-control-lg">
+                                    <option value="">-- เลือกเดือน --</option>
+                                    <option value="1">มกราคม</option>
+                                    <option value="2">กุมภาพันธ์</option>
+                                    <option value="3">มีนาคม</option>
+                                    <option value="4">เมษายน</option>
+                                    <option value="5">พฤษภาคม</option>
+                                    <option value="6">มิถุนายน</option>
+                                    <option value="7">กรกฎาคม</option>
+                                    <option value="8">สิงหาคม</option>
+                                    <option value="9">กันยายน</option>
+                                    <option value="10">ตุลาคม</option>
+                                    <option value="11">พฤศจิกายน</option>
+                                    <option value="12">ธันวาคม</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="text-gold"><strong>☀️ เลือกปี ค.ศ.</strong></label>
+                                <input type="number" id="fengshuiYear" class="form-control" value="${currentYear}">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-outline-gold btn-block" onclick="displayFengShuiCalendar()">
+                        <i class="fas fa-calendar-alt"></i> ดูปฏิทินฤกษ์มงคลของเดือน
                     </button>
                 </form>
+
+                <div class="row mt-3">
+                    <div class="col-md-6" id="luckyDirection"></div>
+                    <div class="col-md-6" id="unluckyDirection"></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6" id="importantDays"></div>
+                    <div class="col-md-6" id="fengshuiTips"></div>
+                </div>
 
                 <div id="fengshuiResult" class="mt-4"></div>
 
@@ -401,8 +445,9 @@ function analyzeFengShui() {
     const birthYear = birthDate.getFullYear();
     const sittingDir = sittingDirEl.value;
 
-    // 1️⃣ คำนวณธาตุ 5 (จากปี)
-    const buddhayear = birthYear - 543;
+    // 1️⃣ คำนวณธาตุ 5 (จากปีเกิด พ.ศ.)
+    // บั๊กแก้ไขแล้ว: ต้องเปลี่ยนจาก - 543 เป็น + 543 เพื่อให้แปลง ค.ศ. เป็น พ.ศ. ได้อย่างถูกต้อง
+    const buddhayear = birthYear + 543; 
     const elementIndex = buddhayear % 5;
     const element = ELEMENT_FENGSHUI[elementIndex];
 
@@ -423,15 +468,16 @@ function analyzeFengShui() {
     const thaiDays = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
     const dayName = thaiDays[birthDate.getDay()];
 
+    // แก้ไขปัญหา UI ค้างบวกทับซ้ำๆ: ให้ล้างค่าเก่าทิ้งก่อนด้วยเครื่องหมายสลับมาใช้ = แทน += ในโครงหลัก
     resultEl.innerHTML = `
         <div class="card shadow-sm border-0 p-4" style="background: rgba(212, 175, 55, 0.05);">
             <h4 class="text-gold text-center mb-4">🏠 วิเคราะห์ฮวงจุ้ย</h4>
 
             <div class="alert alert-info small mb-4">
                 <strong>👤 ข้อมูลสำคัญ:</strong><br>
-                ✓ วันเกิด: ${birthDay}/${birthMonth}/${birthYear} (${dayName})<br>
-                ✓ ดาวเกิด: ${planet.name} (เลขที่ ${planetNum})<br>
-                ✓ ธาตุประจำปี: <strong>${element.name}</strong> (${element.symbol})
+                ✓ วันเกิด: ${birthDay}/${birthMonth}/${buddhayear} (วัน${dayName})<br>
+                ✓ ดาวเกิด: ดาว${planet.name} (เลขประจำดาว ${planetNum})<br>
+                ✓ ธาตุประจำปีเกิด: <strong>ธาตุ${element.name}</strong> (${element.symbol})
             </div>
 
             <div class="row">
@@ -442,7 +488,7 @@ function analyzeFengShui() {
                         </div>
                         <div class="card-body text-center">
                             <h3 class="text-gold mb-2">${luckyDir}</h3>
-                            <p class="small text-muted mb-2">ท่าทางที่เหมาะสำหรับ ${element.name}</p>
+                            <p class="small text-muted mb-2">ทิศทางทางฮวงจุ้ยที่เหมาะสำหรับคนธาตุ ${element.name}</p>
                             <div style="font-size: 2rem;">${element.symbol}</div>
                         </div>
                     </div>
@@ -454,8 +500,8 @@ function analyzeFengShui() {
                             <strong>🎨 สีมงคล</strong>
                         </div>
                         <div class="card-body text-center">
-                            <p class="mb-2"><strong>สีหลัก:</strong></p>
-                            <div style="padding: 15px; background: ${getColorCode(element.color)}; border-radius: 8px; color: #fff; font-weight: bold;">
+                            <p class="mb-2"><strong>สีหลักประจำธาตุ:</strong></p>
+                            <div style="padding: 15px; background: ${getColorCode(element.color)}; border-radius: 8px; color: ${element.color === 'ขาว' ? '#000' : '#fff'}; font-weight: bold;">
                                 ${element.color}
                             </div>
                         </div>
@@ -463,24 +509,24 @@ function analyzeFengShui() {
                 </div>
             </div>
 
-            <h5 class="text-gold mt-4">⚖️ ความสมดุลของธาตุ</h5>
+            <h5 class="text-gold mt-4">⚖️ ความสมดุลของธาตุประจำตัว</h5>
             <div class="alert alert-secondary small mb-4">
-                <strong>${element.name}</strong> ได้รับการสนับสนุนจาก <strong>${compat.support}</strong><br>
-                ปกครองด้วย <strong>${compat.suppress}</strong><br>
-                <strong style="color: #dc3545;">หลีกเลี่ยง:</strong> ธาตุ<strong>${compat.avoid}</strong>
+                <strong>ธาตุ${element.name}</strong> ได้รับการสนับสนุนจาก <strong>ธาตุ${compat.support}</strong><br>
+                ควบคุมเอาชนะ <strong>ธาตุ${compat.suppress}</strong><br>
+                <strong style="color: #dc3545;">หลีกเลี่ยง/แพ้ทาง:</strong> ธาตุ <strong>ธาตุ${compat.avoid}</strong>
             </div>
 
-            <h5 class="text-gold">💡 คำแนะนำฮวงจุ้ย</h5>
+            <h5 class="text-gold">💡 คำแนะนำฮวงจุ้ยประจำตัว</h5>
             <ul class="list-unstyled small">
-                <li style="padding: 5px 0;">✅ ทิศนั่ง (Sitting): หันหน้าไป <strong>${luckyDir}</strong></li>
-                <li style="padding: 5px 0;">✅ สีห้อง: ใช้สีหลัก <strong>${element.color}</strong> มากขึ้น</li>
-                <li style="padding: 5px 0;">✅ วัตถุมงคล: เลือกสิ่งของธาตุ <strong>${element.name}</strong> + <strong>${supportElement}</strong></li>
-                <li style="padding: 5px 0;">✅ หลีกเลี่ยง: วัตถุธาตุ <strong>${compat.avoid}</strong></li>
-                <li style="padding: 5px 0;">✅ ดาวเกิด: ${planet.name} → ทิศ ${planet.direction} เสริมโชค</li>
+                <li style="padding: 5px 0;">✅ ทิศตั้งโต๊ะ/ที่นั่ง (Sitting): ควรหันหน้าหรืออิงไปทางทิศ <strong>${luckyDir}</strong></li>
+                <li style="padding: 5px 0;">✅ สีห้อง/ตกแต่ง: ใช้โทนสีหลักกลุ่ม <strong>${element.color}</strong> มากขึ้น</li>
+                <li style="padding: 5px 0;">✅ วัตถุมงคลเสริมห้อง: เลือกสิ่งของที่เป็นสัญลักษณ์ของธาตุ <strong>${element.name}</strong> หรือธาตุสนับสนุนอย่าง <strong>${supportElement}</strong></li>
+                <li style="padding: 5px 0;">❌ สิ่งที่ควรเลี่ยง: หลีกเลี่ยงวัตถุของตกแต่งที่ตรงกับธาตุขัดแย้ง <strong>${compat.avoid}</strong></li>
+                <li style="padding: 5px 0;">✅ ทิศดาวเกิด: ดาวประจำตัวของคุณคือดาว ${planet.name} → เน้นทิศทาง ${planet.direction} เพื่อเสริมโชคทวีคูณ</li>
             </ul>
 
             <div class="alert alert-light small mt-4">
-                <strong>📝 หมายเหตุ:</strong> การวิเคราะห์นี้อิงจากธาตุ 5 ประการ (Wu Xing) และดาว 9 ดวง ควรประสานกับผู้เชี่ยวชาญฮวงจุ้ยสำหรับความแม่นยำสูงสุด
+                <strong>📝 หมายหมายเหตุ:</strong> การวิเคราะห์นี้อิงจากธาตุ 5 ประการ (Wu Xing) และเลขดาว 9 ดวงเบื้องต้น ควรประสานกับผู้เชี่ยวชาญฮวงจุ้ยเพื่อดูองศาประตูหน้าบ้านจริงประกอบเพื่อความแม่นยำสูงสุด
             </div>
         </div>
     `;
@@ -494,7 +540,7 @@ function getColorCode(colorName) {
         "เขียว": "#28a745",
         "แดง": "#dc3545",
         "เหลือง": "#ffc107",
-        "ขาว": "#f0f0f0",
+        "ขาว": "#f8f9fa",
         "ดำ/น้ำเงิน": "#001a4d"
     };
     return colorMap[colorName] || "#d4af37";
@@ -521,6 +567,9 @@ function displayFengShuiCalendar() {
         alert('⚠️ กรุณาเลือกเดือน');
         return;
     }
+
+    // ล้างค่าข้อมูลเก่าทั้งหมดในกล่องผลลัพธ์เพื่อป้องกันปัญหากดซ้ำแล้ว HTML ต่อกันยาวจนเละ
+    resultEl.innerHTML = '';
 
     // คำนวณธาตุประจำเดือน (fixed per month)
     const monthElements = {
@@ -563,7 +612,7 @@ function displayFengShuiCalendar() {
         "น้ำ": {
             important: "2, 9, 16, 23, 30",
             forbidden: "5, 12, 19, 26",
-            description: "วันไหล ปรับตัว - ดีสำหรับการเยี่ยมอื่นๆ"
+            description: "วันไหล ปรับตัว - ดีสำหรับการเยี่ยมเยียนและติดต่อเจรจา"
         }
     };
 
@@ -594,7 +643,7 @@ function displayFengShuiCalendar() {
             "❌ หลีกเลี่ยง: งานเกี่ยวกับไม้, การเก็บของ"
         ],
         "น้ำ": [
-            "✅ ดีสำหรับ: ท่องเที่ยว, ซ่อมแซมที่ฝา, การขนส่ง",
+            "✅ ดีสำหรับ: ท่องเที่ยว, ซ่อมแซมระบบน้ำ, การขนส่ง",
             "✅ สี: ดำ, น้ำเงิน",
             "✅ ตัวเลข: 1",
             "❌ หลีกเลี่ยง: งานเกี่ยวกับไฟ, การเก็บความร้อน"
@@ -625,323 +674,307 @@ function displayFengShuiCalendar() {
     const oppositeElementData = ELEMENT_FENGSHUI[Object.keys(ELEMENT_FENGSHUI).find(k => ELEMENT_FENGSHUI[k].name === oppositeElement)];
     const unluckyDir = oppositeElementData.luckyDirection;
 
-    // แสดงผลลัพธ์
+    // แสดงผลลัพธ์ย่อยในส่วนบน
     if (luckyDirEl) {
         luckyDirEl.innerHTML = `
-            <div style="padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; border-left: 4px solid #d4af37;">
-                <p class="mb-2"><strong>📍 เดือน:</strong> <span style="color: #d4af37; font-size: 18px;">${monthElementData.symbol} ${monthElement}</span></p>
-                <p class="mb-2"><strong>🧭 ทิศมงคล:</strong> <span style="color: #28a745; font-size: 18px; font-weight: bold;">${luckyDir}</span></p>
-                <p class="small mb-0"><strong>💡 คำแนะนำ:</strong> ตั้งเตียง โต๊ะทำงาน หรือประตูหลักโดยเข้ากับทิศ ${luckyDir}</p>
+            <div style="padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; border-left: 4px solid #d4af37; margin-bottom: 10px;">
+                <p class="mb-2"><strong>📍 พลังเด่นเดือนนี้:</strong> <span style="color: #d4af37; font-size: 18px;">${monthElementData.symbol} ธาตุ${monthElement}</span></p>
+                <p class="mb-2"><strong>🧭 ทิศมงคลประจำเป็นเดือน:</strong> <span style="color: #28a745; font-size: 18px; font-weight: bold;">ทิศ${luckyDir}</span></p>
+                <p class="small mb-0"><strong>💡 คำแนะนำฤกษ์:</strong> เหมาะแก่การตั้งหัวเตียง โต๊ะทำงาน หรือเปิดประตูต้อนรับพลังงานดีมาทางทิศ ${luckyDir}</p>
             </div>
         `;
     }
 
     if (unluckyDirEl) {
         unluckyDirEl.innerHTML = `
-            <div style="padding: 15px; background: rgba(220, 53, 69, 0.1); border-radius: 8px; border-left: 4px solid #dc3545;">
-                <p class="mb-2"><strong>📍 ธาตุตรงข้าม:</strong> <span style="color: #dc3545; font-size: 18px;">${oppositeElementData.symbol} ${oppositeElement}</span></p>
-                <p class="mb-2"><strong>🚫 ทิศหลีกเลี่ยง:</strong> <span style="color: #dc3545; font-size: 18px; font-weight: bold;">${unluckyDir}</span></p>
-                <p class="small mb-0"><strong>⚠️ คำแนะนำ:</strong> หลีกเลี่ยงการตั้งสิ่งสำคัญทางทิศ ${unluckyDir}</p>
+            <div style="padding: 15px; background: rgba(220, 53, 69, 0.1); border-radius: 8px; border-left: 4px solid #dc3545; margin-bottom: 10px;">
+                <p class="mb-2"><strong>📍 พลังงานปะทะขัดแย้ง:</strong> <span style="color: #dc3545; font-size: 18px;">${oppositeElementData.symbol} ธาตุ${oppositeElement}</span></p>
+                <p class="mb-2"><strong>🚫 ทิศควรหลีกเลี่ยงทุบเจาะ:</strong> <span style="color: #dc3545; font-size: 18px; font-weight: bold;">ทิศ${unluckyDir}</span></p>
+                <p class="small mb-0"><strong>⚠️ คำแนะนำ:</strong> หลีกเลี่ยงการต่อเติมหรือทำการกระทบกระเทือนศาล/สิ่งศักดิ์สิทธิ์ประจำทิศ ${unluckyDir}</p>
             </div>
         `;
     }
 
     if (importantDaysEl) {
         importantDaysEl.innerHTML = `
-            <div style="padding: 15px;">
-                <p class="mb-3"><strong>✅ วันมงคล:</strong></p>
-                <p style="font-size: 18px; color: #28a745; font-weight: bold; margin-bottom: 10px;">${importantDays.important}</p>
-                <p class="small mb-3">${importantDays.description}</p>
+            <div class="card bg-dark text-white p-3 mb-2" style="border: 1px solid rgba(212, 175, 55, 0.2)">
+                <p class="mb-1"><strong>✅ วันให้คุณมงคล:</strong></p>
+                <p style="font-size: 18px; color: #28a745; font-weight: bold; margin-bottom: 5px;">วันที่ ${importantDays.important}</p>
+                <p class="small mb-2 text-muted">${importantDays.description}</p>
 
-                <p class="mb-3"><strong>❌ วันข้อห้าม:</strong></p>
-                <p style="font-size: 18px; color: #dc3545; font-weight: bold;">${importantDays.forbidden}</p>
+                <p class="mb-1"><strong>❌ วันต้องห้ามทำการใหญ่:</strong></p>
+                <p style="font-size: 18px; color: #dc3545; font-weight: bold; margin-bottom: 0;">วันที่ ${importantDays.forbidden}</p>
             </div>
         `;
     }
 
     if (fengshuiTipsEl) {
         fengshuiTipsEl.innerHTML = `
-            <div style="padding: 15px;">
-                <ul class="list-unstyled">
-                    ${recommendations.map(rec => `<li style="padding: 8px 0; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">${rec}</li>`).join('')}
+            <div class="card bg-dark text-white p-3 mb-2" style="border: 1px solid rgba(212, 175, 55, 0.2)">
+                <ul class="list-unstyled mb-0 small">
+                    ${recommendations.map(rec => `<li style="padding: 4px 0; border-bottom: 1px solid rgba(212, 175, 55, 0.1);">${rec}</li>`).join('')}
                 </ul>
-                <p class="small mt-3 mb-0">
-                    <strong>💡 เดือนปัจจุบัน:</strong> ธาตุ${monthElement} (ปี${year}) + ธาตุปี${yearElementData.name}<br>
-                    <strong>🔄 ความสัมพันธ์:</strong> รักษา = ${ELEMENT_COMPATIBILITY[monthElement].support}, หวาดกลัว = ${ELEMENT_COMPATIBILITY[monthElement].suppress}
+                <p class="small mt-2 mb-0 text-muted" style="font-size: 11px;">
+                    <strong>🔄 สัมพันธ์:</strong> เกื้อหนุน = ธาตุ${ELEMENT_COMPATIBILITY[monthElement].support} | ทำลายหักล้าง = ธาตุ${ELEMENT_COMPATIBILITY[monthElement].suppress}
                 </p>
             </div>
         `;
     }
 
-    // เพิ่มส่วน โชคลาภ + สัตว์นักษัตร + พืช + รสชาติ
-    if (resultEl) {
-        // ดึงข้อมูลโชคลาภจากธาตุประจำเดือน
-        const fortuneData = MONTHLY_FORTUNE_LEVEL[monthElement] || MONTHLY_FORTUNE_LEVEL["ดิน"];
+    // เพิ่มส่วน โชคลาภ + สัตว์นักษัตร + พืช + รสชาติลงในส่วนผลลัพธ์ใหญ่
+    const fortuneData = MONTHLY_FORTUNE_LEVEL[monthElement] || MONTHLY_FORTUNE_LEVEL["ดิน"];
 
-        const easyLevelInfo = `
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-star mr-2"></i>โชคลาภเดือนนี้
-                            </h5>
-                            <div style="padding: 10px; text-align: center;">
-                                <p style="font-size: 24px; color: #d4af37; margin-bottom: 5px;">${fortuneData.fortune}</p>
-                                <p class="mb-2"><strong>${fortuneData.level}</strong></p>
-                                <p class="small">${fortuneData.text}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-dragon mr-2"></i>สัตว์นักษัตรที่โชค
-                            </h5>
-                            <div style="padding: 10px;">
-                                <p class="mb-2" style="font-size: 18px; color: #d4af37;">
-                                    ${ZODIAC_COMPATIBILITY[monthElement].animals.join(', ')}
-                                </p>
-                                <p class="small">${ZODIAC_COMPATIBILITY[monthElement].description}</p>
-                            </div>
+    let HTMLBuilder = `
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card bg-dark border-gold">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-star mr-2"></i>โชคลาภรวมประจำเดือน
+                        </h5>
+                        <div style="padding: 10px; text-align: center;">
+                            <p style="font-size: 24px; color: #d4af37; margin-bottom: 5px;">${fortuneData.fortune}</p>
+                            <p class="mb-2"><strong>ระดับ: ${fortuneData.level}</strong></p>
+                            <p class="small text-muted">${fortuneData.text}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-leaf mr-2"></i>พืชมงคล
-                            </h5>
-                            <div style="padding: 10px;">
-                                <p class="mb-2" style="color: #28a745;">
-                                    ${AUSPICIOUS_PLANTS[monthElement].plants.join(', ')}
-                                </p>
-                                <p class="small">${AUSPICIOUS_PLANTS[monthElement].description}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-utensils mr-2"></i>รสชาติมงคล
-                            </h5>
-                            <div style="padding: 10px;">
-                                <p class="mb-2" style="font-size: 18px; color: #d4af37;">
-                                    🍴 ${LUCKY_FOOD_FLAVORS[monthElement].flavor}
-                                </p>
-                                <p class="small mb-2">${LUCKY_FOOD_FLAVORS[monthElement].foods.join(', ')}</p>
-                                <p class="small">${LUCKY_FOOD_FLAVORS[monthElement].description}</p>
-                            </div>
+            <div class="col-md-6">
+                <div class="card bg-dark border-gold">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-dragon mr-2"></i>สัตว์นักษัตรที่รับโชคเดือนนี้
+                        </h5>
+                        <div style="padding: 10px;">
+                            <p class="mb-2" style="font-size: 18px; color: #d4af37;">
+                                ปี${ZODIAC_COMPATIBILITY[monthElement].animals.join(', ปี')}
+                            </p>
+                            <p class="small text-muted">${ZODIAC_COMPATIBILITY[monthElement].description}</p>
                         </div>
                     </div>
                 </div>
             </div>
-        `;
-        resultEl.innerHTML += easyLevelInfo;
-    }
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="card bg-dark border-gold">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-leaf mr-2"></i>พืชมงคลประจำเดือน
+                        </h5>
+                        <div style="padding: 10px;">
+                            <p class="mb-2" style="color: #28a745; font-weight: bold;">
+                                ${AUSPICIOUS_PLANTS[monthElement].plants.join(', ')}
+                            </p>
+                            <p class="small text-muted">${AUSPICIOUS_PLANTS[monthElement].description}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card bg-dark border-gold">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-utensils mr-2"></i>รสชาติอาหารเสริมพลัง
+                        </h5>
+                        <div style="padding: 10px;">
+                            <p class="mb-2" style="font-size: 18px; color: #d4af37;">
+                                🍴 รส${LUCKY_FOOD_FLAVORS[monthElement].flavor}
+                            </p>
+                            <p class="small mb-2 text-warning">ตัวอย่าง: ${LUCKY_FOOD_FLAVORS[monthElement].foods.join(', ')}</p>
+                            <p class="small text-muted">${LUCKY_FOOD_FLAVORS[monthElement].description}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 
     // เพิ่มส่วน สีมงคล + เลขมงคล + กิจกรรมห้าม
-    if (resultEl) {
-        const colorsAndNumbers = `
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-palette mr-2"></i>สีมงคล + เลขมงคล
-                            </h5>
-                            <div style="padding: 10px;">
-                                <p class="mb-2"><strong>🎨 สีมงคล:</strong></p>
-                                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                                    ${monthElementData.colors.map(c => `
-                                        <div style="width: 50px; height: 50px; border-radius: 8px; background: ${getColorCodeForName(c)}; border: 2px solid #d4af37; display: flex; align-items: center; justify-content: center;">
-                                            <span style="color: white; font-size: 12px; text-align: center;">${c}</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                <p class="mb-0"><strong>🔢 เลขมงคล:</strong></p>
-                                <p style="font-size: 20px; color: #d4af37; font-weight: bold; margin-top: 8px;">
-                                    ${monthElementData.numbers.join(', ')}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-ban mr-2"></i>กิจกรรมห้ามเดือนนี้
-                            </h5>
-                            <ul class="list-unstyled small">
-                                ${FORBIDDEN_ACTIVITIES[monthElement].map(activity => `
-                                    <li style="padding: 8px 0; border-bottom: 1px solid rgba(220, 53, 69, 0.3);">
-                                        ${activity}
-                                    </li>
+    HTMLBuilder += `
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="card bg-dark border-gold">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-palette mr-2"></i>สีและตัวเลขนำโชคประจำเป็นเดือน
+                        </h5>
+                        <div style="padding: 10px;">
+                            <p class="mb-2"><strong>🎨 กลุ่มสีนำโชค:</strong></p>
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                ${monthElementData.colors.map(c => `
+                                    <div style="width: 60px; height: 45px; border-radius: 6px; background: ${getColorCodeForName(c)}; border: 2px solid #d4af37; display: flex; align-items: center; justify-content: center;">
+                                        <span style="color: ${c === 'ขาว' || c === 'เงิน' || c === 'เหลือง' ? '#000' : '#fff'}; font-size: 11px; font-weight: bold; text-align: center;">${c}</span>
+                                    </div>
                                 `).join('')}
-                            </ul>
+                            </div>
+                            <p class="mb-0"><strong>🔢 ตัวเลขนำโชคประจำเดือน:</strong></p>
+                            <p style="font-size: 22px; color: #d4af37; font-weight: bold; margin-top: 5px; letter-spacing: 3px;">
+                                ${monthElementData.numbers.join(', ')}
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
-        `;
-        resultEl.innerHTML += colorsAndNumbers;
-    }
+
+            <div class="col-md-6">
+                <div class="card bg-dark border-gold">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-ban mr-2"></i>กิจกรรมห้ามเด็ดขาดในเดือนนี้
+                        </h5>
+                        <ul class="list-unstyled small mb-0">
+                            ${FORBIDDEN_ACTIVITIES[monthElement].map(activity => `
+                                <li style="padding: 6px 0; border-bottom: 1px solid rgba(220, 53, 69, 0.2); color: #ffb3b3;">
+                                    ${activity}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 
     // เพิ่มส่วน ดาวประจำเดือน + วิธีเสริมพลัง + ความขัดแย้ง (ระดับลึก จากธาตุประจำเดือน)
-    if (resultEl) {
-        const planetData = MONTHLY_PLANETS[monthElement] || MONTHLY_PLANETS["ดิน"];
-        const enhanceData = ENHANCEMENT_METHODS[monthElement] || ENHANCEMENT_METHODS["ดิน"];
-        const conflictData = ZODIAC_CONFLICTS[monthElement] || ZODIAC_CONFLICTS["ดิน"];
+    const planetData = MONTHLY_PLANETS[monthElement] || MONTHLY_PLANETS["ดิน"];
+    const enhanceData = ENHANCEMENT_METHODS[monthElement] || ENHANCEMENT_METHODS["ดิน"];
+    const conflictData = ZODIAC_CONFLICTS[monthElement] || ZODIAC_CONFLICTS["ดิน"];
 
-        const deepLevelInfo = `
-            <hr class="border-gold-30 my-4">
-            <h4 class="text-gold mb-3 text-center">🔥 ระดับลึก (Deep Insights)</h4>
+    HTMLBuilder += `
+        <hr class="border-gold-30 my-4">
+        <h4 class="text-gold mb-3 text-center">🔥 บทวิเคราะห์ระดับลึก (Deep Insights)</h4>
 
-            <div class="alert alert-info small mb-3">
-                <strong>📅 เดือนปัจจุบัน:</strong> ธาตุ${monthElement}
-                <br><strong>💡 สำหรับความเฉพาะเจาะจง:</strong> ใช้ "วิเคราะห์ฮวงจุ้ย" และป้อนวันเดือนปีเกิด
-            </div>
+        <div class="alert alert-warning small mb-3 text-center">
+            💡 ข้อมูลเหล่านี้ประเมินตามเกณฑ์ภาพรวมของเดือน ค.ศ. ${year} ทั่วไป แนะนำให้ใช้หัวข้อ <strong>"วิเคราะห์ฮวงจุ้ยจากวันเกิด"</strong> ด้านบนเพื่อความเจาะจงรายบุคคล
+        </div>
 
-            <div class="row mt-3">
-                <div class="col-md-4">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-star mr-2"></i>ดาวประจำเดือน
-                            </h5>
-                            <div style="padding: 10px;">
-                                <p class="mb-2" style="font-size: 20px; font-weight: bold;">
-                                    ${planetData.symbol} ${planetData.planet}
-                                </p>
-                                <p class="small mb-2"><strong>อิทธิพล:</strong> ${planetData.impact}</p>
-                                <p class="small mb-2"><strong>✅ ดี:</strong> ${planetData.activities}</p>
-                                <p class="small"><strong>⚠️ ระวัง:</strong> ${planetData.caution}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-magic mr-2"></i>วิธีเสริมพลัง
-                            </h5>
-                            <div style="padding: 10px;">
-                                <p class="small mb-2"><strong>🙏 พิธี:</strong></p>
-                                <ul class="small list-unstyled mb-2">
-                                    ${enhanceData.rituals.map(r => `<li>• ${r}</li>`).join('')}
-                                </ul>
-                                <p class="small mb-2"><strong>🏠 ฮวงจุ้ย:</strong></p>
-                                <ul class="small list-unstyled mb-2">
-                                    ${enhanceData.feng_shui.map(f => `<li>• ${f}</li>`).join('')}
-                                </ul>
-                                <p class="small"><strong>💝 บุญ:</strong> ${enhanceData.charity}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-warning mr-2"></i>ขัดแย้งปีอื่น
-                            </h5>
-                            <div style="padding: 10px;">
-                                <p class="small mb-2"><strong>🐉 ปีนักษัตร:</strong></p>
-                                <p class="small font-weight-bold mb-2">${conflictData.animals.join(', ')}</p>
-                                <p class="small mb-2"><strong>❌ ขัดแย้งกับ:</strong></p>
-                                <p class="small font-weight-bold mb-2">${conflictData.conflict_with.join(', ')}</p>
-                                <p class="small mb-2"><strong>เหตุผล:</strong> ${conflictData.reason}</p>
-                                <p class="small"><strong>ผลกระทบ:</strong> ${conflictData.impact}</p>
-                            </div>
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="card bg-dark border-gold h-100">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-star mr-2"></i>ดาวเคลื่อนประจำเดือน
+                        </h5>
+                        <div style="padding: 5px;">
+                            <p class="mb-2" style="font-size: 18px; font-weight: bold; color: #ffdf7e;">
+                                ${planetData.symbol} ${planetData.planet}
+                            </p>
+                            <p class="small mb-1"><strong>อิทธิพลหลัก:</strong> ${planetData.impact}</p>
+                            <p class="small mb-1 text-success"><strong>✅ กิจกรรมที่ส่งเสริม:</strong> ${planetData.activities}</p>
+                            <p class="small text-danger"><strong>⚠️ สิ่งที่ควรระวัง:</strong> ${planetData.caution}</p>
                         </div>
                     </div>
                 </div>
             </div>
-        `;
-        resultEl.innerHTML += deepLevelInfo;
-    }
+
+            <div class="col-md-4">
+                <div class="card bg-dark border-gold h-100">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-magic mr-2"></i>พิธีกรรมเสริมพลังทวีโชค
+                        </h5>
+                        <div style="padding: 5px;">
+                            <p class="small mb-1"><strong>🙏 การทำพิธี:</strong></p>
+                            <ul class="small list-unstyled mb-2 text-muted">
+                                ${enhanceData.rituals.map(r => `<li>• ${r}</li>`).join('')}
+                            </ul>
+                            <p class="small mb-1"><strong>🏠 การปรับทิศห้อง:</strong></p>
+                            <ul class="small list-unstyled mb-2 text-muted">
+                                ${enhanceData.feng_shui.map(f => `<li>• ${f}</li>`).join('')}
+                            </ul>
+                            <p class="small text-info"><strong>💝 ทานบารมี:</strong> ${enhanceData.charity}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card bg-dark border-gold h-100">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-warning mr-2"></i>ปีนักษัตรที่ปะทะขัดแย้ง
+                        </h5>
+                        <div style="padding: 5px;">
+                            <p class="small mb-1"><strong>🐉 กลุ่มสัตว์เดือนนี้:</strong> ${conflictData.animals.join(', ')}</p>
+                            <p class="small mb-1 text-danger"><strong>❌ ชง/ขัดแย้งรุนแรงกับปี:</strong> ${conflictData.conflict_with.join(', ')}</p>
+                            <p class="small mb-1 text-muted"><strong>สาเหตุตามหลักธาตุ:</strong> ${conflictData.reason}</p>
+                            <p class="small text-warning"><strong>ผลกระทบที่อาจเจอ:</strong> ${conflictData.impact}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 
     // เพิ่มส่วน ความเสี่ยง + วัตถุเสริม + ส่วนกาย (ระดับกลาง)
-    if (resultEl) {
-        // ดึงข้อมูลระดับกลางพร้อม fallback
-        const riskData = RISK_LEVEL[monthElement] || RISK_LEVEL["ดิน"];
-        const objectsData = AUSPICIOUS_OBJECTS[monthElement] || AUSPICIOUS_OBJECTS["ดิน"];
-        const bodyData = BODY_PARTS_TO_CARE[monthElement] || BODY_PARTS_TO_CARE["ดิน"];
+    const riskData = RISK_LEVEL[monthElement] || RISK_LEVEL["ดิน"];
+    const objectsData = AUSPICIOUS_OBJECTS[monthElement] || AUSPICIOUS_OBJECTS["ดิน"];
+    const bodyData = BODY_PARTS_TO_CARE[monthElement] || BODY_PARTS_TO_CARE["ดิน"];
 
-        const mediumLevelInfo = `
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-exclamation-triangle mr-2"></i>ความเสี่ยงเดือนนี้
-                            </h5>
-                            <div style="padding: 10px;">
-                                <p class="mb-2" style="font-size: 18px; font-weight: bold;">
-                                    ${riskData.level}
-                                </p>
-                                <p class="small mb-2">ระดับความเสี่ยง: <strong>${riskData.percentage}</strong></p>
-                                <p class="small">${riskData.text}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-box mr-2"></i>วัตถุเสริมมงคล
-                            </h5>
-                            <div style="padding: 10px;">
-                                <p class="small mb-2">${objectsData.objects.join(', ')}</p>
-                                <p class="small">${objectsData.description}</p>
-                            </div>
+    HTMLBuilder += `
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="card bg-dark border-gold">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>เกณฑ์ความเสี่ยงอุบัติภัย
+                        </h5>
+                        <div style="padding: 10px;">
+                            <p class="mb-1" style="font-size: 16px; font-weight: bold; color: #ffc107;">
+                                ${riskData.level}
+                            </p>
+                            <p class="small mb-1">อัตราส่วนความเสี่ยง: <strong>${riskData.percentage}</strong></p>
+                            <p class="small text-muted">${riskData.text}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-3 mb-3">
-                <div class="col-12">
-                    <div class="card bg-dark border-gold">
-                        <div class="card-body">
-                            <h5 class="text-gold mb-3">
-                                <i class="fas fa-heart mr-2"></i>ส่วนกายที่ต้องดูแล
-                            </h5>
-                            <div style="padding: 10px;">
-                                <p class="small mb-2"><strong>🫀 อวัยวะหลัก:</strong> ${bodyData.organs.join(', ')}</p>
-                                <p class="small mb-2"><strong>⚠️ อาการที่อาจเกิด:</strong> ${bodyData.symptoms}</p>
-                                <p class="small mb-0"><strong>💊 วิธีดูแล:</strong> ${bodyData.care}</p>
-                            </div>
+            <div class="col-md-6">
+                <div class="card bg-dark border-gold">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-box mr-2"></i>วัตถุมงคลที่ควรจัดตั้งเสริม
+                        </h5>
+                        <div style="padding: 10px;">
+                            <p class="small mb-2 text-success">วัตถุแนะนำ: ${objectsData.objects.join(', ')}</p>
+                            <p class="small text-muted">${objectsData.description}</p>
                         </div>
                     </div>
                 </div>
             </div>
-        `;
-        resultEl.innerHTML += mediumLevelInfo;
-    }
+        </div>
 
+        <div class="row mt-3 mb-3">
+            <div class="col-12">
+                <div class="card bg-dark border-gold">
+                    <div class="card-body">
+                        <h5 class="text-gold mb-3">
+                            <i class="fas fa-heart mr-2"></i>การดูแลรักษาสุขภาพธาตุเจ้าเรือน
+                        </h5>
+                        <div style="padding: 10px;">
+                            <p class="small mb-1"><strong>🫀 อวัยวะหลักที่ทำงานหนักช่วงนี้:</strong> ${bodyData.organs.join(', ')}</p>
+                            <p class="small mb-1 text-warning"><strong>⚠️ อาการสุ่มเสี่ยง:</strong> ${bodyData.symptoms}</p>
+                            <p class="small mb-0 text-success"><strong>💊 คำแนะนำการดูแลสุขภาพ:</strong> ${bodyData.care}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // อัปเดต HTML ทั้งก้อนลงในกล่องผลลัพธ์รอบเดียวในตอนท้ายสุด และแสดง Element
+    resultEl.innerHTML = HTMLBuilder;
     resultEl.style.display = 'block';
 }
 
 /**
- * 🎨 แปลงชื่อสี → รหัส RGB
+ * 🎨 แปลงชื่อสี → รหัส RGB เพื่อใช้ระบายสีพื้นหลัง Badge นำโชค
  */
 function getColorCodeForName(colorName) {
     const colorMap = {
@@ -951,7 +984,7 @@ function getColorCodeForName(colorName) {
         "ส้ม": "#fd7e14",
         "เหลือง": "#ffc107",
         "น้ำตาล": "#8b4513",
-        "ขาว": "#f0f0f0",
+        "ขาว": "#f8f9fa",
         "เงิน": "#c0c0c0",
         "ดำ": "#1a1a1a",
         "น้ำเงิน": "#001a4d"
@@ -959,25 +992,10 @@ function getColorCodeForName(colorName) {
     return colorMap[colorName] || "#d4af37";
 }
 
+// ผูกฟังก์ชันเข้ากับสภาวะแวดล้อมตอนหน้าจอโหลดสำเร็จ
 document.addEventListener("DOMContentLoaded", () => {
     showFengShuiPage();
-
-    // Populate month dropdown in Feng Shui calendar
-    const monthSelect = document.getElementById('fengshuiMonth');
-    if (monthSelect) {
-        const months = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-                       "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-        months.forEach((month, index) => {
-            if (index > 0) {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = month;
-                monthSelect.appendChild(option);
-            }
-        });
-    }
-
-    console.log("✅ fengshui.js loaded - อิงธาตุ 5 + ดาว 9 ดวง (authentic Feng Shui)");
+    console.log("✅ fengshui.js loaded - อิงธาตุ 5 + ดาว 9 ดวง (authentic Feng Shui) และแก้ไขข้อผิดพลาดแล้ว");
 });
 
 window.showFengShuiPage = showFengShuiPage;

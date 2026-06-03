@@ -731,7 +731,15 @@ window.calculateThaksa = function (isManualChange = false) {
     const enemy = PLANET_RELATIONS.enemies[planetNum];
     const somphon = PLANET_RELATIONS.somphon[planetNum];
     const elementPair = ELEMENT_PAIRS[planetNum];
-    const birthDay = document.getElementById('birthdate').value;
+    const birthdateEl = document.getElementById('birthdate');
+
+    if (!birthdateEl || !birthdateEl.value) {
+        console.error("❌ birthdate element or value not found");
+        alert;
+        return;
+    }
+
+    const birthDay = birthdateEl.value;
 
     const result = findSubPeriodByDate(birthDay);
 

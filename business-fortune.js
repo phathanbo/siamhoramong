@@ -515,7 +515,6 @@ function displayBusinessFortune() {
 
 document.addEventListener("DOMContentLoaded", () => {
     showBusinessFortune();
-    console.log("✅ business-fortune.js loaded - โหราศาสตร์ไทยแท้ (ดาว + บ้าน 10-11 + ธาตุ)");
 });
 
 window.calculateAndShowBusiness = calculateAndShowBusiness;

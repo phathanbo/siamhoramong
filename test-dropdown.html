@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Month Dropdown Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px; background: #1a1a1a; color: #fff; }
+        .test-section { margin: 20px 0; padding: 20px; background: #2a2a2a; border-radius: 8px; }
+        .test-result { margin-top: 20px; }
+        .pass { color: #28a745; }
+        .fail { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Month Dropdown Test</h1>
+
+        <div class="test-section">
+            <h3>Test 1: Element Exists and Has Correct Classes</h3>
+            <div id="test1" class="test-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test 2: Dropdown Interaction</h3>
+            <label for="fengshuiMonth"><strong>🌙 เลือกเดือน</strong></label>
+            <select id="fengshuiMonth" class="form-control form-control-lg"></select>
+            <div id="test2" class="test-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test 3: Visual Check</h3>
+            <div id="test3" class="test-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test 1: Check element exists and has correct classes
+        function test1() {
+            const element = document.getElementById('fengshuiMonth');
+            const result = document.getElementById('test1');
+
+            if (!element) {
+                result.innerHTML = '<p class="fail">❌ Element not found</p>';
+                return false;
+            }
+
+            const hasFormControl = element.classList.contains('form-control');
+            const hasFormControlLg = element.classList.contains('form-control-lg');
+            const classes = element.className;
+
+            if (hasFormControl && hasFormControlLg) {
+                result.innerHTML = `<p class="pass">✅ Element found with correct classes: "${classes}"</p>`;
+                return true;
+            } else {
+                result.innerHTML = `<p class="fail">❌ Missing classes. Current: "${classes}"</p>`;
+                return false;
+            }
+        }
+
+        // Test 2: Populate dropdown and check if it's interactive
+        function test2() {
+            const monthSelect = document.getElementById('fengshuiMonth');
+            const result = document.getElementById('test2');
+
+            if (!monthSelect) {
+                result.innerHTML = '<p class="fail">❌ Element not found for interaction test</p>';
+                return false;
+            }
+
+            // Populate months
+            monthSelect.innerHTML = '<option value="">-- เลือกเดือน --</option>';
+            const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+                           "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+
+            months.forEach((month, index) => {
+                const option = document.createElement('option');
+                option.value = index + 1;
+                option.textContent = month;
+                monthSelect.appendChild(option);
+            });
+
+            // Check if dropdown can receive focus
+            try {
+                monthSelect.focus();
+                const isFocused = document.activeElement === monthSelect;
+
+                if (isFocused) {
+                    result.innerHTML = `<p class="pass">✅ Dropdown successfully populated with ${months.length} months and can receive focus</p>
+                                       <p style="font-size: 12px; color: #aaa;">Currently selected: <strong>${monthSelect.value}</strong></p>`;
+
+                    // Try to change the value
+                    monthSelect.value = "5";
+                    if (monthSelect.value === "5") {
+                        result.innerHTML += '<p class="pass">✅ Dropdown value can be changed programmatically</p>';
+                    }
+
+                    return true;
+                } else {
+                    result.innerHTML = '<p class="fail">❌ Dropdown cannot receive focus</p>';
+                    return false;
+                }
+            } catch (e) {
+                result.innerHTML = `<p class="fail">❌ Error during interaction: ${e.message}</p>`;
+                return false;
+            }
+        }
+
+        // Test 3: Visual check - size and styling
+        function test3() {
+            const element = document.getElementById('fengshuiMonth');
+            const result = document.getElementById('test3');
+
+            if (!element) {
+                result.innerHTML = '<p class="fail">❌ Element not found</p>';
+                return false;
+            }
+
+            const rect = element.getBoundingClientRect();
+            const isVisible = rect.width > 0 && rect.height > 0;
+            const computedStyle = window.getComputedStyle(element);
+            const isDisabled = element.disabled;
+
+            let output = `<p class="pass">✅ Visual Properties:</p>
+                         <ul style="font-size: 12px; color: #aaa;">
+                             <li>Width: ${rect.width.toFixed(2)}px, Height: ${rect.height.toFixed(2)}px</li>
+                             <li>Is Visible: ${isVisible ? 'Yes' : 'No'}</li>
+                             <li>Is Disabled: ${isDisabled ? 'Yes (⚠️ PROBLEM)' : 'No'}</li>
+                             <li>Display: ${computedStyle.display}</li>
+                             <li>Cursor: ${computedStyle.cursor}</li>
+                             <li>Pointer Events: ${computedStyle.pointerEvents}</li>
+                         </ul>`;
+
+            if (!isVisible) {
+                output = `<p class="fail">❌ Element is not visible (width or height is 0)</p>`;
+                return false;
+            }
+
+            if (isDisabled) {
+                output = `<p class="fail">❌ Dropdown is disabled!</p>`;
+                return false;
+            }
+
+            result.innerHTML = output;
+            return true;
+        }
+
+        // Run all tests when page loads
+        window.addEventListener('load', function() {
+            console.log('Running dropdown tests...');
+
+            const test1Pass = test1();
+            const test2Pass = test2();
+            const test3Pass = test3();
+
+            const allPass = test1Pass && test2Pass && test3Pass;
+            const summary = document.createElement('div');
+            summary.className = 'test-section';
+            summary.innerHTML = `<h3>Summary</h3>
+                                <p class="${allPass ? 'pass' : 'fail'}">
+                                    ${allPass ? '✅ All tests PASSED!' : '❌ Some tests FAILED'}
+                                </p>`;
+            document.body.appendChild(summary);
+        });
+    </script>
+</body>
+</html>

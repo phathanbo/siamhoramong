@@ -1,0 +1,253 @@
+<!-- 🤖 LINE Subscription Page -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมัครสมาชิก LINE - สยามโหรามงคล</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: #e0e0e0; }
+        .card { background: rgba(255, 255, 255, 0.05); border: 2px solid #d4af37; }
+        .btn-gold { background: #d4af37; color: #1a1a1a; font-weight: 600; }
+        .btn-gold:hover { background: #e6c547; color: #1a1a1a; }
+        .text-gold { color: #d4af37; }
+        .line-green { color: #00b900; }
+        .checkbox-gold input[type="checkbox"] { accent-color: #d4af37; }
+        .icon-large { font-size: 3rem; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5 mb-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-dark text-center py-4">
+                <h2 class="text-gold mb-3">
+                    <i class="fab fa-line"></i> สมัครสมาชิก LINE
+                </h2>
+                <p class="text-white-50">รับพยากรณ์ดวงราศีทุกวันผ่าน LINE Bot</p>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Step 1: LINE Login -->
+                <div id="step1" class="mb-4">
+                    <h4 class="text-gold mb-3">
+                        <span class="badge badge-gold bg-gold text-dark">ขั้นตอนที่ 1</span> เชื่อมต่อ LINE
+                    </h4>
+                    <div class="text-center mb-4">
+                        <p class="mb-3">คลิกปุ่มด้านล่างเพื่อเชื่อมต่อบัญชี LINE ของคุณ</p>
+                        <button id="lineLoginBtn" class="btn btn-lg btn-success" style="background: #00b900; border: none;">
+                            <i class="fab fa-line"></i> เข้าสู่ระบบด้วย LINE
+                        </button>
+                    </div>
+                    <div id="loginStatus" class="alert alert-info" style="display: none;">
+                        ✅ เชื่อมต่อ LINE สำเร็จ - <span id="lineUserName"></span>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Step 2: Choose Zodiac & Frequency -->
+                <div id="step2" style="opacity: 0.5; pointer-events: none;">
+                    <h4 class="text-gold mb-3">
+                        <span class="badge badge-secondary">ขั้นตอนที่ 2</span> เลือกราศี
+                    </h4>
+
+                    <div class="form-group">
+                        <label class="text-gold"><strong>🔮 เลือกราศีของคุณ</strong></label>
+                        <select id="zodiacSelect" class="form-control form-control-lg">
+                            <option value="">-- เลือกราศี --</option>
+                            <option value="1">♈ เมษ (21 มีนาคม - 19 เมษายน)</option>
+                            <option value="2">♉ พฤษภา (20 เมษายน - 20 พฤษภาคม)</option>
+                            <option value="3">♊ เมถุน (21 พฤษภาคม - 20 มิถุนายน)</option>
+                            <option value="4">♋ กรกฎ (21 มิถุนายน - 22 กรกฎาคม)</option>
+                            <option value="5">♌ สิงห์ (23 กรกฎาคม - 22 สิงหาคม)</option>
+                            <option value="6">♍ กันย์ (23 สิงหาคม - 22 กันยายน)</option>
+                            <option value="7">♎ ตุลย์ (23 กันยายน - 22 ตุลาคม)</option>
+                            <option value="8">♏ แมง (23 ตุลาคม - 21 พฤศจิกายน)</option>
+                            <option value="9">♐ ธนู (22 พฤศจิกายน - 21 ธันวาคม)</option>
+                            <option value="10">♑ มังกร (22 ธันวาคม - 19 มกราคม)</option>
+                            <option value="11">♒ กุมภ์ (20 มกราคม - 18 กุมภาพันธ์)</option>
+                            <option value="12">♓ มีน (19 กุมภาพันธ์ - 20 มีนาคม)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-gold"><strong>📅 ความถี่ในการส่งพยากรณ์</strong></label>
+                        <div class="custom-control custom-radio mb-2">
+                            <input type="radio" id="freq1" name="frequency" class="custom-control-input" value="daily" checked>
+                            <label class="custom-control-label" for="freq1">
+                                <strong>ทุกวัน (Daily)</strong> - ทุกเช้า 7:00 น.
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio mb-2">
+                            <input type="radio" id="freq2" name="frequency" class="custom-control-input" value="weekly">
+                            <label class="custom-control-label" for="freq2">
+                                <strong>สัปดาห์ละครั้ง (Weekly)</strong> - วันจันทร์เช้า
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="freq3" name="frequency" class="custom-control-input" value="monthly">
+                            <label class="custom-control-label" for="freq3">
+                                <strong>เดือนละครั้ง (Monthly)</strong> - วันที่ 1 ของเดือน
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Step 3: Consent -->
+                <div id="step3" style="opacity: 0.5; pointer-events: none;">
+                    <h4 class="text-gold mb-3">
+                        <span class="badge badge-secondary">ขั้นตอนที่ 3</span> ยินยอมนโยบาย
+                    </h4>
+
+                    <div class="alert alert-light small p-3">
+                        <h6 class="mb-3"><strong>📋 เงื่อนไขการใช้บริการ</strong></h6>
+                        <ul class="mb-0" style="font-size: 0.9rem;">
+                            <li>เราจะเก็บรักษาข้อมูล LINE ID และราศีของคุณ</li>
+                            <li>ใช้เพื่อส่งพยากรณ์ตามความถี่ที่เลือก</li>
+                            <li>คุณสามารถยกเลิกสมาชิกได้ตลอดเวลา</li>
+                            <li>ไม่แชร์ข้อมูลกับบุคคลที่สาม</li>
+                        </ul>
+                    </div>
+
+                    <div class="checkbox-gold custom-control custom-checkbox mb-3">
+                        <input type="checkbox" id="consentCheck" class="custom-control-input">
+                        <label class="custom-control-label" for="consentCheck">
+                            ✅ ยินยอมให้ส่งพยากรณ์ตามความถี่ที่เลือก
+                        </label>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Buttons -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <button id="submitBtn" class="btn btn-gold btn-lg btn-block" disabled>
+                            <i class="fas fa-check-circle"></i> สมัครสมาชิก
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-secondary btn-lg btn-block" onclick="window.location.href='/'">
+                            <i class="fas fa-times"></i> ยกเลิก
+                        </button>
+                    </div>
+                </div>
+
+                <div id="successMsg" class="alert alert-success mt-3" style="display: none;">
+                    <i class="fas fa-check-circle"></i> <strong>สมัครสมาชิกสำเร็จ!</strong>
+                    <p class="mb-0 mt-2">คุณจะได้รับพยากรณ์ดวงผ่าน LINE Bot ตามความถี่ที่เลือก</p>
+                </div>
+
+                <div id="errorMsg" class="alert alert-danger mt-3" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i> <strong>เกิดข้อผิดพลาด:</strong>
+                    <p id="errorText" class="mb-0 mt-2"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="config.js"></script>
+    <script>
+        // ⚙️ อ่านค่า configuration
+        const LINE_CHANNEL_ID = CONFIG?.LINE?.CHANNEL_ID || "YOUR_LINE_CHANNEL_ID";
+        const APPS_SCRIPT_URL = CONFIG?.GOOGLE_APPS_SCRIPT?.DEPLOYMENT_URL || "YOUR_GOOGLE_APPS_SCRIPT_URL";
+        const REDIRECT_URI = window.location.origin + window.location.pathname + "?callback";
+        const STATE = Math.random().toString(36).substring(7);
+
+        let lineUserId = null;
+
+        // ⚠️ ตรวจสอบ config
+        if (!CONFIG || !CONFIG.LINE?.CHANNEL_ID) {
+            console.warn('❌ config.js ยังไม่ได้ตั้งค่า กรุณาสร้างไฟล์ config.js จาก config-template.js');
+        }
+
+        // ปุ่ม LINE Login
+        document.getElementById('lineLoginBtn').addEventListener('click', () => {
+            const authUrl = `https://web.line.biz/web/login/v2.1/oauth2.0/authorize?response_type=code&client_id=${LINE_CHANNEL_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&state=${STATE}&scope=openid%20profile`;
+            window.location.href = authUrl;
+        });
+
+        // ตรวจสอบ callback จาก LINE
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('callback') && params.has('code')) {
+            // ส่ง code ไปยัง Google Apps Script เพื่อแลก access token
+            const code = params.get('code');
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'verifyLineLogin', code: code })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    lineUserId = data.userId;
+                    document.getElementById('step1').style.opacity = '1';
+                    document.getElementById('step2').style.opacity = '1';
+                    document.getElementById('step2').style.pointerEvents = 'auto';
+                    document.getElementById('step3').style.opacity = '1';
+                    document.getElementById('step3').style.pointerEvents = 'auto';
+                    document.getElementById('loginStatus').style.display = 'block';
+                    document.getElementById('lineUserName').textContent = data.displayName || 'ผู้ใช้';
+                    document.getElementById('lineLoginBtn').disabled = true;
+                    document.getElementById('lineLoginBtn').textContent = '✅ เชื่อมต่อสำเร็จ';
+                }
+            })
+            .catch(err => showError('ไม่สามารถตรวจสอบ LINE: ' + err.message));
+        }
+
+        // อัปเดตปุ่ม Submit
+        const form = document.querySelector('form') || {};
+        document.getElementById('consentCheck').addEventListener('change', updateSubmitBtn);
+        document.getElementById('zodiacSelect').addEventListener('change', updateSubmitBtn);
+
+        function updateSubmitBtn() {
+            const hasZodiac = document.getElementById('zodiacSelect').value !== '';
+            const hasConsent = document.getElementById('consentCheck').checked;
+            const hasLineId = lineUserId !== null;
+            document.getElementById('submitBtn').disabled = !(hasZodiac && hasConsent && hasLineId);
+        }
+
+        // ส่งข้อมูล
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            const zodiac = document.getElementById('zodiacSelect').value;
+            const frequency = document.querySelector('input[name="frequency"]:checked').value;
+
+            try {
+                const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'subscribeZodiac',
+                        userId: lineUserId,
+                        zodiac: parseInt(zodiac),
+                        frequency: frequency
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('successMsg').style.display = 'block';
+                    document.getElementById('submitBtn').disabled = true;
+                    setTimeout(() => window.location.href = '/', 3000);
+                } else {
+                    showError(result.message || 'เกิดข้อผิดพลาด');
+                }
+            } catch (err) {
+                showError(err.message);
+            }
+        });
+
+        function showError(msg) {
+            document.getElementById('errorMsg').style.display = 'block';
+            document.getElementById('errorText').textContent = msg;
+        }
+    </script>
+</body>
+</html>

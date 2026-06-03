@@ -255,7 +255,6 @@ function analyzePersonalFortune() {
 
 document.addEventListener("DOMContentLoaded", () => {
     showPersonalFortunePage();
-    console.log("✅ personalFortune.js loaded - อิงลัคนา (ดาว 9 ดวง + บ้าน 12 บ้าน)");
 });
 
 window.analyzePersonalFortune = analyzePersonalFortune;

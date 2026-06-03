@@ -249,4 +249,3 @@ function calculateThaiAstrology() {
     }
 }
 
-console.log("✅ thai-astrology-calculator.js loaded");

@@ -214,7 +214,6 @@ function analyzeRelation() {
 
 document.addEventListener("DOMContentLoaded", () => {
     showRelationPage();
-    console.log("✅ relation.js loaded - อิงลัคนา บ้าน 7 (authentic Thai astrology)");
 });
 
 window.analyzeRelation = analyzeRelation;

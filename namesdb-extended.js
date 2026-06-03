@@ -120,4 +120,3 @@ const ExtendedNames = {
 
 // Export
 window.ExtendedNames = ExtendedNames;
-console.log('✅ namesdb-extended.js loaded - ชื่อเพิ่มเติม sum 1-99');
