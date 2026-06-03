@@ -134,10 +134,71 @@ function initZodiacTabs() {
     }
 }
 
+/**
+ * 📅 คำนวณพยากรณ์ตามเดือนและวันเกิด
+ */
+function calculateDynamicFortune() {
+    const monthSelect = document.getElementById('dynamicMonth');
+    const daySelect = document.getElementById('dynamicDay');
+    const resultArea = document.getElementById('dynamicResultArea');
+
+    if (!monthSelect || !daySelect || !resultArea) {
+        console.warn('❌ ไม่พบ elements สำหรับ zodiac fortune calculation');
+        return;
+    }
+
+    const month = parseInt(monthSelect.value);
+    const dayNum = parseInt(daySelect.value);
+
+    if (!month || dayNum === undefined) {
+        resultArea.style.display = 'none';
+        return;
+    }
+
+    // 📋 ชื่อวันเกิด
+    const dayNames = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+    const dayName = dayNames[dayNum];
+
+    // 📋 ชื่อเดือน (ไทย)
+    const monthNames = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+    const monthName = monthNames[month - 1];
+
+    // 🎯 พยากรณ์ตัวอย่าง (ควร reference จากข้อมูล ZODIAC DATA)
+    const predictions = {
+        '0_1': '📿 วันอาทิตย์ เดือนมกราคม: ผู้เกิดวันนี้มีภาวะผู้นำที่แท้จริง มีพลังแสดงออก',
+        '1_1': '📿 วันจันทร์ เดือนมกราคม: อารมณ์จะอ่อนไหว ควรดูแลจิตใจ',
+        '2_1': '📿 วันอังคาร เดือนมกราคม: มีพลังในการสื่อสารและการแสดงความคิดเห็น',
+        '3_1': '📿 วันพุธ เดือนมกราคม: เหมาะสำหรับการเรียนรู้และการศึกษาใหม่ ๆ',
+        '4_1': '📿 วันพฤหัสบดี เดือนมกราคม: พยากรณ์ดีเสริม โชคลาภในด้านการเงิน',
+        '5_1': '📿 วันศุกร์ เดือนมกราคม: มีเสน่ห์และความเป็นที่รัก สัมพันธ์ดี',
+        '6_1': '📿 วันเสาร์ เดือนมกราคม: ควรสนใจการพัฒนาตนเองและการออม'
+    };
+
+    const key = `${dayNum}_${month}`;
+    const prediction = predictions[key] || `📿 วัน${dayName} เดือน${monthName}: คุณมีพลังพิเศษในวันนี้`;
+
+    // 📝 แสดงผลลัพธ์
+    resultArea.innerHTML = `
+        <div class="prediction-card">
+            <h4 class="text-gold">🌟 พยากรณ์สำหรับวัน${dayName} เดือน${monthName}</h4>
+            <p class="prediction-text">${prediction}</p>
+            <div class="alert alert-info small mt-3">
+                <strong>💡 คำแนะนำ:</strong> พยากรณ์นี้อิงจากลักษณะของวันเกิดและเดือนเกิด
+                ควรใช้เป็นการสะท้อนตัวเอง มากกว่าการยึดติดอย่างแน่นอน
+            </div>
+        </div>
+    `;
+
+    resultArea.style.display = 'block';
+}
+
 // เรียก init เมื่อ DOM พร้อม
 document.addEventListener('DOMContentLoaded', initZodiacTabs);
 
 // Export
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { switchZodiac, ZODIAC_ANIMALS };
+    module.exports = { switchZodiac, calculateDynamicFortune, ZODIAC_ANIMALS };
 }
