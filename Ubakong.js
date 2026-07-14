@@ -78,7 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('ubakongDay').value = today;
     
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('current-date-display').innerText = "วันนี้: " + new Date().toLocaleDateString('th-TH', options);
+    let dateStr = "วันนี้: " + new Date().toLocaleDateString('th-TH', options);
+    if (typeof getThaiLunar === 'function') {
+        const lunar = getThaiLunar(new Date());
+        if (lunar && lunar.fullString) {
+            dateStr += ` (${lunar.fullString})`;
+        }
+    }
+    document.getElementById('current-date-display').innerText = dateStr;
     
     renderUbakongDay();
     // อัปเดตลูกศรทุก 1 นาที

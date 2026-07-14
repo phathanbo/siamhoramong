@@ -15,63 +15,69 @@
 "use strict";
 
 // ตารางสีตามดาว 9 ดวง
+// ตารางสีตามดาว 8 ดวง (อิงจากตำรามหาทักษาปกรณ์แท้)
 const PLANET_COLORS = {
-    1: { name: "อาทิตย์", color: "#FFD700", colorName: "ทอง", hex: "#FFD700" },      // อาทิตย์ = ทอง
-    2: { name: "จันทร์", color: "#FFFFFF", colorName: "ขาว", hex: "#FFFFFF" },      // จันทร์ = ขาว
-    3: { name: "พฤหัสบดี", color: "#FF8C00", colorName: "ส้ม", hex: "#FF8C00" },    // พฤหัสบดี = ส้ม
-    5: { name: "พุธ", color: "#32CD32", colorName: "เขียว", hex: "#32CD32" },      // พุธ = เขียว
-    6: { name: "ศุกร์", color: "#FF69B4", colorName: "ชมพู", hex: "#FF69B4" },     // ศุกร์ = ชมพู
-    8: { name: "เสาร์", color: "#4B0082", colorName: "ม่วง", hex: "#4B0082" },     // เสาร์ = ม่วง
-    9: { name: "อังคาร", color: "#FF0000", colorName: "แดง", hex: "#FF0000" }      // อังคาร = แดง
+    1: { name: "อาทิตย์", color: "#FFD700", colorName: "สีทอง/สีแดง/สีส้มแสด", hex: "#FFD700", textColor: "#000000" },      // อาทิตย์ = ทอง/แดง
+    2: { name: "จันทร์", color: "#FFFFFF", colorName: "สีขาว/สีเหลืองนวล/สีครีม", hex: "#FFFFFF", textColor: "#000000" },      // จันทร์ = ขาว
+    3: { name: "อังคาร", color: "#FF69B4", colorName: "สีชมพู/สีแดงกุหลาบ", hex: "#FF69B4", textColor: "#000000" },     // อังคาร = ชมพู (ตรงตามทักษาปกรณ์)
+    4: { name: "พุธ", color: "#32CD32", colorName: "สีเขียว/สีมรกต", hex: "#32CD32", textColor: "#000000" },          // พุธกลางวัน = เขียว (ตรงตามทักษาปกรณ์)
+    5: { name: "พฤหัสบดี", color: "#FF8C00", colorName: "สีส้มแสด/สีเหลืองทอง", hex: "#FF8C00", textColor: "#000000" },    // พฤหัสบดี = ส้ม (ตรงตามทักษาปกรณ์)
+    6: { name: "ศุกร์", color: "#1E90FF", colorName: "สีฟ้า/สีน้ำเงิน/สีขาวบริสุทธิ์", hex: "#1E90FF", textColor: "#FFFFFF" }, // ศุกร์ = ฟ้า/น้ำเงิน (ตรงตามทักษาปกรณ์)
+    7: { name: "เสาร์", color: "#4B0082", colorName: "สีม่วงเข้ม/สีดำ/สีกรมท่า", hex: "#4B0082", textColor: "#FFFFFF" },     // เสาร์ = ม่วง/ดำ (ตรงตามทักษาปกรณ์)
+    8: { name: "ราหู", color: "#708090", colorName: "สีเทาเข้ม/สีควันบุหรี่/สีเหลือบประกาย", hex: "#708090", textColor: "#FFFFFF" }      // พุธกลางคืน (ราหู) = เทาเข้ม (ตรงตามทักษาปกรณ์)
 };
 
-// ตารางสีตามธาตุ 5 ประการ
+// ตารางสีตามธาตุ 5 ประการ (อิงตามหลักธาตุปีนักษัตร)
 const ELEMENT_COLORS = {
-    "ไม้": { color: "#228B22", colorName: "เขียวเข้ม", hex: "#228B22" },            // ไม้ = เขียว
-    "ไฟ": { color: "#FF4500", colorName: "สีโอคร", hex: "#FF4500" },               // ไฟ = แดง/ส้ม
-    "ดิน": { color: "#DAA520", colorName: "ทองแดง", hex: "#DAA520" },             // ดิน = ทองแดง
-    "โลหะ": { color: "#C0C0C0", colorName: "เงิน", hex: "#C0C0C0" },               // โลหะ = เงิน/ขาว
-    "น้ำ": { color: "#1E90FF", colorName: "ฟ้า", hex: "#1E90FF" }                 // น้ำ = ฟ้า
+    "ไม้": { color: "#228B22", colorName: "สีเขียวเหนี่ยวทรัพย์", hex: "#228B22", textColor: "#FFFFFF" },            // ไม้ = เขียว
+    "ไฟ": { color: "#FF4500", colorName: "สีแดง/สีส้มสว่าง", hex: "#FF4500", textColor: "#FFFFFF" },               // ไฟ = แดง/ส้ม
+    "ดิน": { color: "#DAA520", colorName: "สีเหลืองทอง/สีน้ำตาลดิน", hex: "#DAA520", textColor: "#000000" },             // ดิน = ทองแดง/เหลือง
+    "โลหะ": { color: "#C0C0C0", colorName: "สีเงิน/สีขาว/สีทองคำ", hex: "#C0C0C0", textColor: "#000000" },               // โลหะ = เงิน/ขาว
+    "น้ำ": { color: "#1E90FF", colorName: "สีฟ้า/สีน้ำเงินลึก", hex: "#1E90FF", textColor: "#FFFFFF" }                 // น้ำ = ฟ้า/น้ำเงิน
 };
 
-// ตารางทิศตามดาว 9 ดวง
+// ตารางทิศตามดาว 8 ดวง (ทักษาปกรณ์แท้)
 const PLANET_DIRECTIONS = {
-    1: "ตะวันออก",      // อาทิตย์
-    2: "เหนือ",          // จันทร์
-    3: "อาคเนย์",        // พฤหัสบดี
-    5: "ใต้",            // พุธ
-    6: "ตะวันตก",        // ศุกร์
-    8: "เหนือตะวันตก",   // เสาร์
-    9: "ตะวันออกเฉียงใต้" // อังคาร
+    1: "อีสาน (ตะวันออกเฉียงเหนือ)",  // อาทิตย์ = อีสาน
+    2: "บูรพา (ตะวันออก)",            // จันทร์ = บูรพา
+    3: "อาคเนย์ (ตะวันออกเฉียงใต้)",  // อังคาร = อาคเนย์
+    4: "ทักษิณ (ใต้)",               // พุธ = ทักษิณ
+    5: "ประจิม (ตะวันตก)",            // พฤหัสบดี = ประจิม
+    6: "อุดร (เหนือ)",               // ศุกร์ = อุดร
+    7: "หรดี (ตะวันตกเฉียงใต้)",     // เสาร์ = หรดี
+    8: "พายัพ (ตะวันตกเฉียงเหนือ)"    // ราหู (พุธกลางคืน) = พายัพ
 };
 
 /**
  * 🎨 คำนวณสีมงคล จากลัคนา + ธาตุ
  *
  * วิธีการ:
- * 1. input: วันเกิด → หาดาวเกิด (ดาว 9)
- * 2. input: ปีเกิด → หาธาตุประจำปี
- * 3. สูตร: สีโชค = ธาตุของเรา + สีบารมี = ดาวเกิด + สีกาลกิณี = ธาตุตรงข้าม
+ * 1. input: วันเกิด → หาดาวเกิด (ดาวตามทักษา 8 ดวง)
+ * 2. input: ปีเกิด → หาธาตุประจำปี (ตามปีนักษัตร 12 ราศี)
+ * 3. สูตร: สีโชค = ธาตุของเรา + สีบารมี = ดาวเกิด + สีกาลกิณี = ธาตุขัดแย้ง
  */
 
-// แปลงวันเกิดเป็นดาว 9 ดวง
+// แปลงวันเกิดเป็นดาว (ทักษาปกรณ์แท้)
 const PLANET_BY_DAY = {
     "อาทิตย์": 1,
     "จันทร์": 2,
-    "อังคาร": 9,
-    "พุธ": 5,
-    "พฤหัสบดี": 3,
+    "อังคาร": 3,
+    "พุธ": 4,
+    "พุธกลางวัน": 4,
+    "พุธกลางคืน": 8,
+    "พฤหัสบดี": 5,
     "ศุกร์": 6,
-    "เสาร์": 8
+    "เสาร์": 7,
+    "ราหู": 8
 };
 
-// ธาตุตรงข้าม (หลีกเลี่ยง)
+// ธาตุตรงข้าม (กาลกิณี - เบญจธาตุพิฆาต)
 const OPPOSITE_ELEMENTS = {
-    "ไม้": "โลหะ",
-    "ไฟ": "น้ำ",
-    "ดิน": "ดิน",
-    "โลหะ": "ไม้",
-    "น้ำ": "ไฟ"
+    "ไม้": "โลหะ",  // โลหะตัดไม้
+    "ไฟ": "น้ำ",    // น้ำดับไฟ
+    "ดิน": "ไม้",   // ไม้ชอนไชดิน
+    "โลหะ": "ไฟ",   // ไฟหลอมโลหะ
+    "น้ำ": "ดิน"    // ดินถมน้ำ
 };
 
 /**
@@ -82,32 +88,50 @@ function calculateLuckyColors(birthDay, birthYear) {
     const planetNum = PLANET_BY_DAY[birthDay] || 1;
     const planetInfo = PLANET_COLORS[planetNum] || PLANET_COLORS[1];
 
-    // 2. ธาตุจากปี
+    // 2. ธาตุจากปี (คำนวณจากราศีปีนักษัตร 12 ราศี)
     let elementType = "ดิน"; // default
     if (birthYear) {
-        const year2k = (birthYear - 2000) % 5;
-        const elements = ["โลหะ", "น้ำ", "ไม้", "ไฟ", "ดิน"];
-        elementType = elements[year2k] || "ดิน";
+        const yearAD = typeof toCE === 'function' ? toCE(birthYear) : (birthYear > 2400 ? birthYear - 543 : birthYear);
+        const zodiacIndex = ((yearAD - 4) % 12 + 12) % 12; // สูตรมาตรฐาน: ชวด = CE 4, ชวด = index 0
+        const ZODIAC_ELEMENTS = {
+            0: "น้ำ",  // ชวด (หนู)
+            1: "ดิน",  // ฉลู (วัว)
+            2: "ไม้",  // ขาล (เสือ)
+            3: "ไม้",  // เถาะ (กระต่าย)
+            4: "ดิน",  // มะโรง (มังกร)
+            5: "ไฟ",   // มะเส็ง (งู)
+            6: "ไฟ",   // มะเมีย (ม้า)
+            7: "ดิน",  // มะแม (แพะ)
+            8: "โลหะ", // วอก (ลิง)
+            9: "โลหะ", // ระกา (ไก่)
+            10: "ดิน", // จอ (สุนัข)
+            11: "น้ำ"  // กุน (หมู)
+        };
+        const idx = zodiacIndex >= 0 ? zodiacIndex : (zodiacIndex + 12) % 12;
+        elementType = ZODIAC_ELEMENTS[idx] || "ดิน";
     }
-    const elementInfo = ELEMENT_COLORS[elementType];
-    const oppositeElement = OPPOSITE_ELEMENTS[elementType];
-    const oppositeInfo = ELEMENT_COLORS[oppositeElement];
+    const elementInfo = ELEMENT_COLORS[elementType] || ELEMENT_COLORS["ดิน"];
+    const oppositeElement = OPPOSITE_ELEMENTS[elementType] || "โลหะ";
+    const oppositeInfo = ELEMENT_COLORS[oppositeElement] || ELEMENT_COLORS["โลหะ"];
 
     // 3. ทิศจากดาวเกิด
-    const direction = PLANET_DIRECTIONS[planetNum] || "ตะวันออก";
+    const direction = PLANET_DIRECTIONS[planetNum] || "อีสาน (ตะวันออกเฉียงเหนือ)";
 
     return {
         planetNum,
         planetName: planetInfo.name,
         wealthColor: elementInfo.colorName,      // สีโชคลาภ = ธาตุของเรา
         wealthHex: elementInfo.hex,
+        wealthTextColor: elementInfo.textColor || "#000000",
         powerColor: planetInfo.colorName,        // สีบารมี = ดาวเกิด
         powerHex: planetInfo.hex,
-        forbiddenColor: oppositeInfo.colorName,  // สีกาลกิณี = ธาตุตรงข้าม
+        powerTextColor: planetInfo.textColor || "#000000",
+        forbiddenColor: oppositeInfo.colorName,  // สีกาลกิณี = ธาตุขัดแย้ง
         forbiddenHex: oppositeInfo.hex,
+        forbiddenTextColor: oppositeInfo.textColor || "#FFFFFF",
         direction,
         elementType,
-        explanation: `ดาว${planetInfo.name}(${planetNum}) + ธาตุ${elementType} = สีโชค${elementInfo.colorName}, สีบารมี${planetInfo.colorName}, หลีกเลี่ยงสี${oppositeInfo.colorName}`
+        explanation: `ดาว${planetInfo.name} (เลข ${planetNum}) + ธาตุปีเกิด${elementType} = สีโชคลาภคือ${elementInfo.colorName}, สีส่งเสริมบารมีคือ${planetInfo.colorName}, ส่วนสีกาลกิณีที่ควรหลีกเลี่ยงคือ${oppositeInfo.colorName}`
     };
 }
 
@@ -144,7 +168,7 @@ function renderDailyColors() {
     const currentYear = nowInTH.getFullYear() + 543;
 
     headerDiv.innerHTML = `
-    <div class="card shadow-sm border-0 mb-3" style="background: linear-gradient(90deg, #1a1a1a, ${colors.powerHex}); color: white;">
+    <div class="card shadow-sm border-0 mb-3" style="background: linear-gradient(90deg, #fffafaff, ${colors.powerHex}); color: white;">
         <div class="card-body p-3">
             <div class="row align-items-center">
                 <div class="col-md-6">
@@ -158,22 +182,22 @@ function renderDailyColors() {
                 <div class="col-md-6">
                     <div class="row text-center">
                         <div class="col-4">
-                            <div style="background: ${colors.wealthHex}; width: 60px; height: 60px; margin: 0 auto; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center;">
-                                <strong style="color: #000; font-size: 10px;">โชค</strong>
+                            <div style="background: ${colors.wealthHex}; width: 60px; height: 60px; margin: 0 auto; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+                                <strong style="color: ${colors.wealthTextColor}; font-size: 11px; text-shadow: ${colors.wealthTextColor === '#FFFFFF' ? '1px 1px 2px #000' : 'none'};">โชคลาภ</strong>
                             </div>
-                            <small class="text-warning mt-1 d-block">สี${colors.wealthColor}</small>
+                            <small class="text-warning mt-1 d-block font-weight-bold">${colors.wealthColor}</small>
                         </div>
                         <div class="col-4">
-                            <div style="background: ${colors.powerHex}; width: 60px; height: 60px; margin: 0 auto; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center;">
-                                <strong style="color: #fff; font-size: 10px;">บารมี</strong>
+                            <div style="background: ${colors.powerHex}; width: 60px; height: 60px; margin: 0 auto; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+                                <strong style="color: ${colors.powerTextColor}; font-size: 11px; text-shadow: ${colors.powerTextColor === '#FFFFFF' ? '1px 1px 2px #000' : 'none'};">บารมี</strong>
                             </div>
-                            <small class="text-warning mt-1 d-block">สี${colors.powerColor}</small>
+                            <small class="text-warning mt-1 d-block font-weight-bold">${colors.powerColor}</small>
                         </div>
                         <div class="col-4">
-                            <div style="background: ${colors.forbiddenHex}; width: 60px; height: 60px; margin: 0 auto; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center;">
-                                <strong style="color: #fff; font-size: 9px;">กาลกิณี</strong>
+                            <div style="background: ${colors.forbiddenHex}; width: 60px; height: 60px; margin: 0 auto; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+                                <strong style="color: ${colors.forbiddenTextColor}; font-size: 10px; text-shadow: ${colors.forbiddenTextColor === '#FFFFFF' ? '1px 1px 2px #000' : 'none'};">กาลกิณี</strong>
                             </div>
-                            <small class="text-warning mt-1 d-block">สี${colors.forbiddenColor}</small>
+                            <small class="text-warning mt-1 d-block font-weight-bold">${colors.forbiddenColor}</small>
                         </div>
                     </div>
                 </div>
@@ -181,51 +205,72 @@ function renderDailyColors() {
         </div>
     </div>
     `;
+    showWeeklyTable();
 }
 
 /**
  * 📊 แสดงตารางสี 7 วัน + 5 ธาตุ
+ * อธิบาย: สีโชค = ธาตุปี, สีบารมี = ดาวจากวัน, สีห้าม = ตรงข้ามของธาตุปี
+ * (ธาตุตรงข้าม = ธาตุของปี ไม่ใช่ธาตุของวัน)
  */
 function showWeeklyTable(){
     const tableWrapper = document.getElementById("weeklyTableWrapper");
     const tableBody = document.getElementById("weeklyTableBody");
     if(!tableWrapper || !tableBody) return;
 
-    const days = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+    const days = ["อาทิตย์","จันทร์","อังคาร","พุธ","พุธกลางคืน","พฤหัสบดี","ศุกร์","เสาร์"];
     const birthYearEl = document.getElementById("colorBirthYear");
     const birthYear = birthYearEl ? parseInt(birthYearEl.value) || new Date().getFullYear() : new Date().getFullYear();
 
+    // คำนวณธาตุและสี forbidden ครั้งเดียว (เหมือนกันทุกวัน เพราะมาจากปีเกิดเดียวกัน)
+    let elementType = "ดิน";
+    if (birthYear) {
+        const yearAD = typeof toCE === 'function' ? toCE(birthYear) : (birthYear > 2400 ? birthYear - 543 : birthYear);
+        const zodiacIndex = ((yearAD - 4) % 12 + 12) % 12; // สูตรมาตรฐาน: ชวด = CE 4, ชวด = index 0
+        const ZODIAC_ELEMENTS = {
+            0: "น้ำ", 1: "ดิน", 2: "ไม้", 3: "ไม้", 4: "ดิน", 5: "ไฟ",
+            6: "ไฟ", 7: "ดิน", 8: "โลหะ", 9: "โลหะ", 10: "ดิน", 11: "น้ำ"
+        };
+        const idx = zodiacIndex >= 0 ? zodiacIndex : (zodiacIndex + 12) % 12;
+        elementType = ZODIAC_ELEMENTS[idx] || "ดิน";
+    }
+    const elementInfo = ELEMENT_COLORS[elementType] || ELEMENT_COLORS["ดิน"];
+    const oppositeElement = OPPOSITE_ELEMENTS[elementType] || "โลหะ";
+    const oppositeInfo = ELEMENT_COLORS[oppositeElement] || ELEMENT_COLORS["โลหะ"];
+
     let html = `
         <tr style="background-color: rgba(212,175,55,0.2); border-bottom: 2px solid #d4af37;">
-            <th class="text-gold" style="text-align: center; padding: 10px;">📅 วัน (ดาวเกิด)</th>
-            <th class="text-gold" style="text-align: center; padding: 10px;">💰 โชคลาภ (ธาตุปี)</th>
-            <th class="text-gold" style="text-align: center; padding: 10px;">👑 บารมี (ดาว)</th>
-            <th class="text-gold" style="text-align: center; padding: 10px;">🚫 กาลกิณี (ตรงข้าม)</th>
-            <th class="text-gold" style="text-align: center; padding: 10px;">🧭 ทิศมงคล</th>
+            <th class="text-gold" style="text-align: center; padding: 10px;">📅 วัน<br><small>(ดาวเกิด)</small></th>
+            <th class="text-gold" style="text-align: center; padding: 10px; background: ${elementInfo.hex}33;">💰 โชคลาภ<br><small style="color: #999;">(ธาตุปี = ${elementType})</small><br><span style="font-size: 12px; color: ${elementInfo.hex};">⚫ เหมือนทุกวัน</span></th>
+            <th class="text-gold" style="text-align: center; padding: 10px;">👑 บารมี<br><small style="color: #999;">(ดาวจากวัน)</small><br><span style="font-size: 12px;">⚫ เปลี่ยนตามวัน</span></th>
+            <th class="text-gold" style="text-align: center; padding: 10px; background: ${oppositeInfo.hex}33;">🚫 กาลกิณี<br><small style="color: #999;">(ธาตุ${oppositeElement})</small><br><span style="font-size: 12px; color: ${oppositeInfo.hex};">⚫ เหมือนทุกวัน</span></th>
+            <th class="text-gold" style="text-align: center; padding: 10px;">🧭 ทิศมงคล<br><small style="color: #999;">(จากดาว)</small></th>
         </tr>
     `;
 
     days.forEach(day => {
         const planetNum = PLANET_BY_DAY[day];
-        const colors = calculateLuckyColors(day, birthYear);
+        const planetInfo = PLANET_COLORS[planetNum] || PLANET_COLORS[1];
+        const elementInfo = ELEMENT_COLORS[elementType];
+        const direction = PLANET_DIRECTIONS[planetNum] || "ตะวันออก";
 
         const rowStyle = `border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px;`;
         html += `
         <tr style="${rowStyle}">
-            <td style="color: ${colors.powerHex}; font-weight:bold; font-size:15px; text-align: center;">
+            <td style="color: ${planetInfo.hex}; font-weight:bold; font-size:15px; text-align: center;">
                 วัน${day}
             </td>
-            <td style="background-color: ${colors.wealthHex}33; color: ${colors.wealthHex}; font-weight: bold; text-align: center;">
-                🟠 ${colors.wealthColor}
+            <td style="background-color: ${elementInfo.hex}33; color: ${elementInfo.hex}; font-weight: bold; text-align: center;">
+                💰 ${elementInfo.colorName}
             </td>
-            <td style="background-color: ${colors.powerHex}33; color: ${colors.powerHex}; font-weight: bold; text-align: center;">
-                🔴 ${colors.powerColor}
+            <td style="background-color: ${planetInfo.hex}33; color: ${planetInfo.hex}; font-weight: bold; text-align: center;">
+                👑 ${planetInfo.colorName}
             </td>
-            <td style="background-color: ${colors.forbiddenHex}33; color: ${colors.forbiddenHex}; font-weight: bold; text-align: center;">
-                ⛔ ${colors.forbiddenColor}
+            <td style="background-color: ${oppositeInfo.hex}33; color: ${oppositeInfo.hex}; font-weight: bold; text-align: center;">
+                ⛔ ${oppositeInfo.colorName}
             </td>
             <td style="text-align: center; color: #ffc107;">
-                ${colors.direction}
+                🧭 ${direction}
             </td>
         </tr>`;
     });
@@ -253,13 +298,14 @@ function colorTable(){
                             <label class="text-gold"><strong>📅 วันเกิด <span class="text-danger">*</span></strong></label>
                             <select id="colorBirthDay" class="form-control form-control-lg">
                                 <option value="">-- เลือกวันเกิด --</option>
-                                <option value="อาทิตย์">อาทิตย์ (ดาวอาทิตย์ = ทอง)</option>
-                                <option value="จันทร์">จันทร์ (ดาวจันทร์ = ขาว)</option>
-                                <option value="อังคาร">อังคาร (ดาวอังคาร = แดง)</option>
-                                <option value="พุธ">พุธ (ดาวพุธ = เขียว)</option>
-                                <option value="พฤหัสบดี">พฤหัสบดี (ดาวพฤหัสบดี = ส้ม)</option>
-                                <option value="ศุกร์">ศุกร์ (ดาวศุกร์ = ชมพู)</option>
-                                <option value="เสาร์">เสาร์ (ดาวเสาร์ = ม่วง)</option>
+                                <option value="อาทิตย์">อาทิตย์ (ดาวอาทิตย์ = สีทอง/แดง/ส้มแสด)</option>
+                                <option value="จันทร์">จันทร์ (ดาวจันทร์ = สีขาว/เหลืองนวล/ครีม)</option>
+                                <option value="อังคาร">อังคาร (ดาวอังคาร = สีชมพู/แดงกุหลาบ)</option>
+                                <option value="พุธ">พุธกลางวัน (ดาวพุธ = สีเขียวมรกต)</option>
+                                <option value="พุธกลางคืน">พุธกลางคืน (พระราหู = สีเทาเข้ม/เหลือบประกาย)</option>
+                                <option value="พฤหัสบดี">พฤหัสบดี (ดาวพฤหัสบดี = สีส้มแสด/เหลืองทอง)</option>
+                                <option value="ศุกร์">ศุกร์ (ดาวศุกร์ = สีฟ้า/น้ำเงิน/ขาวบริสุทธิ์)</option>
+                                <option value="เสาร์">เสาร์ (ดาวเสาร์ = สีม่วงเข้ม/ดำ/กรมท่า)</option>
                             </select>
                         </div>
                     </div>
@@ -279,8 +325,7 @@ function colorTable(){
             </form>
 
             <hr class="my-4">
-
-            <div id="dailyColorHeader"></div>
+            <div id="dailyColorHeader" class="container"></div>
 
             <div class="alert alert-info small mt-3">
                 <strong>💡 วิธีใช้:</strong><br>
@@ -327,26 +372,39 @@ function colorTable(){
     container.innerHTML = html;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    colorTable();
-    showWeeklyTable();
+if (typeof document !== 'undefined') {
+    document.addEventListener("DOMContentLoaded", () => {
+        colorTable();
+        showWeeklyTable();
 
-    // เมื่อเลือกวัน/ปี ให้อัปเดตสี
-    const birthDayEl = document.getElementById("colorBirthDay");
-    const birthYearEl = document.getElementById("colorBirthYear");
+        // เมื่อเลือกวัน/ปี ให้อัปเดตสี
+        const birthDayEl = document.getElementById("colorBirthDay");
+        const birthYearEl = document.getElementById("colorBirthYear");
 
-    if (birthDayEl) {
-        birthDayEl.addEventListener("change", () => {
-            renderDailyColors();
-            showWeeklyTable();
-        });
-    }
+        if (birthDayEl) {
+            birthDayEl.addEventListener("change", () => {
+                renderDailyColors();
+                showWeeklyTable();
+            });
+        }
 
-    if (birthYearEl) {
-        birthYearEl.addEventListener("change", () => {
-            renderDailyColors();
-            showWeeklyTable();
-        });
-    }
+        if (birthYearEl) {
+            birthYearEl.addEventListener("change", () => {
+                renderDailyColors();
+                showWeeklyTable();
+            });
+        }
+    });
+}
 
-});
+// Global exports for testing and module usage
+if (typeof window !== 'undefined') {
+    window.PLANET_COLORS = PLANET_COLORS;
+    window.ELEMENT_COLORS = ELEMENT_COLORS;
+    window.PLANET_BY_DAY = PLANET_BY_DAY;
+    window.OPPOSITE_ELEMENTS = OPPOSITE_ELEMENTS;
+    window.calculateLuckyColors = calculateLuckyColors;
+}
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { PLANET_COLORS, ELEMENT_COLORS, PLANET_BY_DAY, OPPOSITE_ELEMENTS, calculateLuckyColors };
+}

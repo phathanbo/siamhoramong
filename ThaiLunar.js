@@ -71,12 +71,12 @@ const THAI_ANCHORS = {
     2022: { date: new Date(2022, 3, 1),  zodiac: "ขาล",  isAthikamat: false, isAthikawan: false }, // 2565 (ปกติมาส ปกติวาร)
     2023: { date: new Date(2023, 2, 22), zodiac: "เถาะ", isAthikamat: true,  isAthikawan: false }, // 2566 (8 สองหน ปกติวาร)
     2024: { date: new Date(2024, 3, 9),  zodiac: "มะโรง", isAthikamat: false, isAthikawan: true  }, // 2567 (อธิกวาร - เดือน 7 มี 30 วัน)
-    2025: { date: new Date(2025, 2, 29), zodiac: "มะเส็ง", isAthikamat: true,  isAthikawan: false }, // 2568 (8 สองหน)
-    2026: { date: new Date(2026, 2, 16), zodiac: "มะเมีย", isAthikamat: false, isAthikawan: false },    
-    2027: { date: new Date(2027, 3, 7),  zodiac: "มะแม",  isAthikamat: false, isAthikawan: false },  // 2570
-    2028: { date: new Date(2028, 2, 26), zodiac: "วอก", isAthikamat: true },    // 2571 (อธิกมาส)
-    2029: { date: new Date(2029, 2, 15), zodiac: "ระกา", isAthikamat: false },  // 2572
-    2030: { date: new Date(2030, 3, 3),  zodiac: "จอ", isAthikamat: false },    // 2573
+    2025: { date: new Date(2025, 2, 29), zodiac: "มะเส็ง", isAthikamat: false, isAthikawan: false }, // 2568 (ปกติ)
+    2026: { date: new Date(2026, 2, 19), zodiac: "มะเมีย", isAthikamat: true,  isAthikawan: false }, // 2569 (8 สองหน)
+    2027: { date: new Date(2027, 3, 8),  zodiac: "มะแม",  isAthikamat: false, isAthikawan: false }, // 2570 (ปกติ)
+    2028: { date: new Date(2028, 2, 27), zodiac: "วอก",   isAthikamat: false, isAthikawan: true  }, // 2571 (อธิกวาร)
+    2029: { date: new Date(2029, 3, 15), zodiac: "ระกา",  isAthikamat: true,  isAthikawan: false }, // 2572 (8 สองหน)
+    2030: { date: new Date(2030, 3, 4),  zodiac: "จอ",    isAthikamat: false, isAthikawan: false }, // 2573 (ปกติ)
     2031: { date: new Date(2031, 2, 23), zodiac: "กุน", isAthikamat: true },    // 2574 (อธิกมาส)
     2032: { date: new Date(2032, 3, 10), zodiac: "ชวด", isAthikamat: false },  // 2575
     2033: { date: new Date(2033, 2, 30), zodiac: "ฉลู", isAthikamat: false },  // 2576
@@ -84,16 +84,16 @@ const THAI_ANCHORS = {
     2035: { date: new Date(2035, 3, 8),  zodiac: "เถาะ", isAthikamat: false },  // 2578
     2036: { date: new Date(2036, 2, 27), zodiac: "มะโรง", isAthikamat: false }, // 2579
     2037: { date: new Date(2037, 2, 16), zodiac: "มะเส็ง", isAthikamat: true },   // 2580 (อธิกมาส)
-    2038: { date: new Date(2038, 3, 5),  zodiac: "มะเมีย", isAthikamat: false }, // 2581
+    2038: { date: new Date(2038, 3, 4),  zodiac: "มะเมีย", isAthikamat: false }, // 2581
     2039: { date: new Date(2039, 2, 25), zodiac: "มะแม", isAthikamat: true },   // 2582 (อธิกมาส)
     2040: { date: new Date(2040, 3, 12), zodiac: "วอก", isAthikamat: false },  // 2583
     2041: { date: new Date(2041, 3, 1),  zodiac: "ระกา", isAthikamat: false }, // 2584
-    2042: { date: new Date(2042, 2, 21), zodiac: "จอ", isAthikamat: true },    // 2585 (อธิกมาส)
+    2042: { date: new Date(2042, 2, 22), zodiac: "จอ", isAthikamat: true },    // 2585 (อธิกมาส)
     2043: { date: new Date(2043, 3, 10), zodiac: "กุน", isAthikamat: false },  // 2586
     2044: { date: new Date(2044, 2, 30), zodiac: "ชวด", isAthikamat: false },  // 2587
     2045: { date: new Date(2045, 2, 19), zodiac: "ฉลู", isAthikamat: true },    // 2588 (อธิกมาส)
     2046: { date: new Date(2046, 3, 7),  zodiac: "ขาล", isAthikamat: false },  // 2589
-    2047: { date: new Date(2047, 2, 26), zodiac: "เถาะ", isAthikamat: false }, // 2590
+    2047: { date: new Date(2047, 2, 27), zodiac: "เถาะ", isAthikamat: false }, // 2590
     2048: { date: new Date(2048, 2, 15), zodiac: "มะโรง", isAthikamat: true },  // 2591 (อธิกมาส)
     2049: { date: new Date(2049, 3, 3),  zodiac: "มะเส็ง", isAthikamat: false }, // 2592
     2050: { date: new Date(2050, 2, 23), zodiac: "มะเมีย", isAthikamat: false }, // 2593
@@ -141,11 +141,23 @@ function getThaiLunar(dateInput) {
     }
 
     const anchor = THAI_ANCHORS[anchorYear];
-    
+
     // ตั้งเวลา 12:00:00 ให้เหมือนกับ d เพื่อให้ลบกันแล้วได้จำนวนวันเต็มๆ (ไม่มีเศษทศนิยมตกค้าง)
     const anchorTime = new Date(anchor.date.getTime());
     anchorTime.setHours(12, 0, 0, 0);
-    
+
+    // คำนวณประเภทปีจาก gap ระหว่าง anchor จริง แทนการพึ่ง flag ที่เก็บไว้ (ซึ่งอาจผิดได้)
+    let isAthikamat = !!anchor.isAthikamat;
+    let isAthikawan = !!anchor.isAthikawan;
+    const nextAnchorEntry = THAI_ANCHORS[anchorYear + 1];
+    if (nextAnchorEntry) {
+        const nextAt = new Date(nextAnchorEntry.date.getTime());
+        nextAt.setHours(12, 0, 0, 0);
+        const yearDays = Math.round((nextAt - anchorTime) / 86400000);
+        isAthikamat = yearDays === 384;
+        isAthikawan = yearDays === 355;
+    }
+
     let daysRemaining = Math.round((time - anchorTime.getTime()) / (1000 * 60 * 60 * 24));
 
     // 2. ตั้งค่าเริ่มต้นการนับเดือน (เริ่มที่เดือน 5)
@@ -156,8 +168,7 @@ function getThaiLunar(dateInput) {
     while (true) {
         let daysInMonth;
 
-        // FIX 3: รวม logic เดือน 8 ที่ซ้ำกันเป็นเงื่อนไขเดียว
-        if (currentMonth === 8 && anchor.isAthikamat) {
+        if (currentMonth === 8 && isAthikamat) {
             // เดือน 8 ทุกหน (ทั้งหนแรกและหนหลัง) ของปีอธิกมาส มี 30 วัน
             daysInMonth = 30;
         } else if (currentMonth % 2 === 0) {
@@ -166,8 +177,7 @@ function getThaiLunar(dateInput) {
         } else {
             // เดือนคี่ปกติ (1, 3, 5, 7, 9, 11) มี 29 วัน
             daysInMonth = 29;
-            // FIX 2: ใช้ !! ป้องกัน undefined สำหรับปีก่อน 2017 ที่ไม่มี field isAthikawan
-            if (currentMonth === 7 && !!anchor.isAthikawan) daysInMonth = 30;
+            if (currentMonth === 7 && isAthikawan) daysInMonth = 30;
         }
 
         // ตรวจสอบว่าจำนวนวันที่เหลือ "พอ" สำหรับเดือนนี้ไหม
@@ -177,7 +187,7 @@ function getThaiLunar(dateInput) {
         daysRemaining -= daysInMonth;
 
         // จัดการเรื่องลำดับเดือน 8 สองหน
-        if (currentMonth === 8 && anchor.isAthikamat && !isSecondMonth8) {
+        if (currentMonth === 8 && isAthikamat && !isSecondMonth8) {
             isSecondMonth8 = true; // ยังอยู่เดือน 8 แต่เป็นหนที่สอง
         } else {
             isSecondMonth8 = false;
@@ -197,13 +207,35 @@ function getThaiLunar(dateInput) {
     if (currentMonth === 2) monthLabel = "ยี่ (2)";
     if (isSecondMonth8) monthLabel = "8-8";
 
+    
+    // คำนวณวันพระ (วันธรรมสวนะ)
+    let isHolyDay = false;
+    if (amount === 8 || amount === 15) {
+        isHolyDay = true;
+    } else if (amount === 14 && phase === "ข้างแรม") {
+        // แรม 14 ค่ำ จะเป็นวันพระก็ต่อเมื่อเดือนนั้นมี 29 วัน
+        let daysInThisMonth = 29;
+        if (currentMonth === 8 && isAthikamat) {
+            daysInThisMonth = 30;
+        } else if (currentMonth % 2 === 0) {
+            daysInThisMonth = 30;
+        } else {
+            if (currentMonth === 7 && isAthikawan) daysInThisMonth = 30;
+        }
+        if (daysInThisMonth === 29) {
+            isHolyDay = true;
+        }
+    }
+    
     return {
         phase,
         amount,
         month: monthLabel,
         zodiac: anchor.zodiac,
-        fullString: `${phase} ${amount} ค่ำ เดือน ${monthLabel} ปี${anchor.zodiac}`
+        fullString: `${phase} ${amount} ค่ำ เดือน ${monthLabel} ปี${anchor.zodiac}`,
+        isHolyDay
     };
+
 }
 
 
@@ -213,7 +245,7 @@ function getThaiLunar(dateInput) {
 function displayLunar() {
     const dateInput = document.getElementById('checkDate').value;
     if (!dateInput) {
-        alert("กรุณาเลือกวันที่ก่อนครับ");
+        Swal.fire('แจ้งเตือน', 'กรุณาเลือกวันที่ก่อนครับ', 'warning');
         return;
     }
 

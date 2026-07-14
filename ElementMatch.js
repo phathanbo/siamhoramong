@@ -183,7 +183,7 @@ function calculateMarriageMatch() {
 
     // Validation
     if (!male || !female) {
-        alert("กรุณาเลือกปีเกิดของทั้งชายและหญิง");
+        Swal.fire('แจ้งเตือน', 'กรุณาเลือกปีเกิดของทั้งชายและหญิง', 'warning');
         return;
     }
 

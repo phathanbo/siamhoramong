@@ -13,13 +13,24 @@ const SidebarCalculations = {
      * ดึงข้อมูลผู้ใช้จาก LocalStorage
      */
     getUserData() {
+        // อ่านจาก canonical key userBirthdate (YYYY-MM-DD) แล้วแตกเป็น component
+        const isoDate = localStorage.getItem('userBirthdate') || '';
+        let birthDate = '', birthMonth = '', birthYear = '';
+        if (isoDate) {
+            const parts = isoDate.split('-');
+            if (parts.length === 3) {
+                birthYear  = parts[0];
+                birthMonth = String(parseInt(parts[1]));
+                birthDate  = String(parseInt(parts[2]));
+            }
+        }
         return {
-            birthDay: localStorage.getItem('birthDay') || '',
-            birthDate: localStorage.getItem('birthDate') || '',
-            birthTime: localStorage.getItem('birthTime') || '',
-            userName: localStorage.getItem('thaiHoroUserName') || 'ผู้มาเยือน',
-            birthMonth: localStorage.getItem('birthMonth') || '',
-            birthYear: localStorage.getItem('birthYear') || ''
+            birthDay:   birthDate,
+            birthDate:  birthDate,
+            birthTime:  localStorage.getItem('userBirthTime') || '',
+            userName:   localStorage.getItem('thaiHoroUserName') || 'ผู้มาเยือน',
+            birthMonth: birthMonth,
+            birthYear:  birthYear
         };
     },
 

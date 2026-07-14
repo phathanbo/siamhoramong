@@ -435,7 +435,7 @@ function analyzeFengShui() {
     const resultEl = document.getElementById('fengshuiResult');
 
     if (!birthdayEl.value || !sittingDirEl.value) {
-        alert('⚠️ กรุณาป้อนวันเกิดและเลือกทิศหลังบ้าน');
+        Swal.fire('แจ้งเตือน', 'กรุณาป้อนวันเกิดและเลือกทิศหลังบ้าน', 'warning');
         return;
     }
 
@@ -564,10 +564,10 @@ function displayFengShuiCalendar() {
     const year = parseInt(yearEl.value);
 
     if (!month) {
-        alert('⚠️ กรุณาเลือกเดือน');
+        Swal.fire('แจ้งเตือน', 'กรุณาเลือกเดือน', 'warning');
         return;
-    }
-
+    }    
+    
     // ล้างค่าข้อมูลเก่าทั้งหมดในกล่องผลลัพธ์เพื่อป้องกันปัญหากดซ้ำแล้ว HTML ต่อกันยาวจนเละ
     resultEl.innerHTML = '';
 
@@ -995,7 +995,6 @@ function getColorCodeForName(colorName) {
 // ผูกฟังก์ชันเข้ากับสภาวะแวดล้อมตอนหน้าจอโหลดสำเร็จ
 document.addEventListener("DOMContentLoaded", () => {
     showFengShuiPage();
-    console.log("✅ fengshui.js loaded - อิงธาตุ 5 + ดาว 9 ดวง (authentic Feng Shui) และแก้ไขข้อผิดพลาดแล้ว");
 });
 
 window.showFengShuiPage = showFengShuiPage;

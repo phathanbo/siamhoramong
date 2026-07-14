@@ -147,7 +147,7 @@ function calculateFortune() {
     const resultEl = document.getElementById('fortuneResult');
 
     if (!birthDateEl.value) {
-        alert('⚠️ กรุณากรอกวันเกิด');
+        Swal.fire('แจ้งเตือน', 'กรุณากรอกวันเกิด', 'warning');
         return;
     }
 

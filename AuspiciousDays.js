@@ -111,70 +111,8 @@ function calculateRuek(date) {
 }
 
 /* ======================================================
-   ฟังก์ชันเดิม (ไม่เปลี่ยนชื่อ)
+   หมายเหตุ: ฟังก์ชัน getAuspiciousDays ถูกย้ายไปที่ utils-auspicious.js แล้ว
 ====================================================== */
-
-function getAuspiciousDays(month, year) {
-
-    const daysInMonth = new Date(year, month, 0).getDate()
-
-    let result = []
-
-    for (let d = 1; d <= daysInMonth; d++) {
-
-        let date = new Date(year, month - 1, d)
-
-        let dayName = date.getDay()
-
-        let status = "วันปกติ"
-        let color = "text-dark"
-
-        const kala = calculateKalaYok(date)
-
-        if (dayName === kala.thongChai) {
-            status = "🚩 ธงชัย"
-            color = "text-success"
-        }
-
-        else if (dayName === kala.athibadi) {
-            status = "👑 อธิบดี"
-            color = "text-primary"
-        }
-
-        else if (dayName === kala.mahaSiddhi) {
-            status = "🔮 มหาสิทธิโชค"
-            color = "text-info"
-        }
-
-        else if (dayName === kala.rachaChok) {
-            status = "👑 ราชาโชค"
-            color = "text-warning"
-        }
-
-        else if (dayName === kala.chaiChok) {
-            status = "🌟 ชัยโชค"
-            color = "text-success"
-        }
-
-        else if (dayName === kala.ubart) {
-            status = "⚠️ อุบาทว์"
-            color = "text-warning"
-        }
-
-        else if (dayName === kala.lokawinat) {
-            status = "❌ โลกาวินาศ"
-            color = "text-danger"
-        }
-
-        result.push({
-            day: d,
-            status,
-            color
-        })
-    }
-
-    return result
-}
 
 /* ======================================================
    ฟังก์ชันแสดงหน้าปฏิทิน (แก้ไขใหม่)
@@ -489,7 +427,7 @@ async function downloadAuspiciousImage(element, bgColor) {
 
     } catch (e) {
         console.error("Save Error:", e);
-        alert("บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง");
+        Swal.fire('เกิดข้อผิดพลาด', 'บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง', 'error');
     } finally {
         if (btn) {
             btn.innerHTML = originalText;

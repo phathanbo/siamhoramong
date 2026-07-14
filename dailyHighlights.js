@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function downloadDailyMap(element) {
     // ตรวจสอบว่ามี Library html2canvas หรือไม่
     if (typeof html2canvas === "undefined") {
-        alert("ระบบไม่พบ Library สำหรับสร้างภาพ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต");
+        Swal.fire('เกิดข้อผิดพลาด', 'ระบบไม่พบ Library สำหรับสร้างภาพ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต', 'error');
         return;
     }
 
@@ -290,7 +290,7 @@ async function downloadDailyMap(element) {
 
     } catch (e) {
         console.error("Capture Error:", e);
-        alert("ไม่สามารถสร้างรูปภาพได้: " + e.message);
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้: ' + e.message, 'error');
     } finally {
         // [BUG FIX #3] คืนค่า style และลบ footer ใน finally เสมอ ไม่ว่าจะ success หรือ error
         if (area.contains(footer)) {

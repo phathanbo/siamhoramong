@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siamhora - 12 Zodiac Single Premium</title>
+    
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    
+    <!-- Google Fonts (Sarabun & Prompt) -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    
+    <!-- html2canvas -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #fff;
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .sidebar {
+            width: 350px;
+            background: #1e1e1e;
+            border-right: 1px solid #333;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 25px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .main-content {
+            margin-left: 350px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0a0a0a;
+        }
+        
+        /* Premium Layout Styles (1080x1350 Vertical) */
+        #zdCaptureArea {
+            width: 1080px;
+            height: 1350px;
+            background-color: #1a0831;
+            background-image: url('assets/thai_astrology_bg.png');
+            background-size: cover;
+            background-position: center;
+            border: 8px solid #e9b64c;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(233, 182, 76, 0.4);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Sarabun', sans-serif;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .ornate-border {
+            position: absolute;
+            top: 20px; left: 20px; right: 20px; bottom: 20px;
+            border: 3px dashed rgba(233, 182, 76, 0.7);
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .header-ribbon {
+            display: inline-block;
+            background: linear-gradient(180deg, #d4af37 0%, #b8860b 100%);
+            padding: 15px 50px;
+            border-radius: 5px;
+            font-size: 2.2rem;
+            color: #1a0831;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
+            margin-top: 25px;
+        }
+        
+        .zodiac-icon-large {
+            font-size: 150px;
+            color: #f9d976;
+            text-shadow: 0 0 30px rgba(233,182,76,0.6);
+            margin: 40px 0;
+            z-index: 2;
+        }
+        
+        .zodiac-name-large {
+            font-size: 5rem;
+            font-family: 'Prompt', sans-serif;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 2px 2px 10px #000, 0 0 20px #e9b64c;
+            margin-bottom: 5px;
+            z-index: 2;
+        }
+        
+        .zodiac-date-large {
+            font-size: 2rem;
+            color: #d4af37;
+            margin-bottom: 50px;
+            z-index: 2;
+        }
+        
+        .zodiac-prediction-card {
+            background: linear-gradient(135deg, rgba(255,249,235,0.95) 0%, rgba(253,228,181,0.95) 100%);
+            border: 4px solid #b8860b;
+            border-radius: 20px;
+            padding: 40px;
+            color: #1a0831;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+            width: 100%;
+            max-width: 900px;
+            z-index: 2;
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #zdPreviewContainer {
+            transform-origin: center center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <!-- Back Button -->
+        <button class="btn btn-outline-light mb-4" onclick="window.location.href='admin.html'">
+            <i class="fas fa-arrow-left mr-2"></i> กลับไประบบหลังบ้าน
+        </button>
+
+        <h4 style="color: #d4af37; margin-bottom: 30px;">
+            <i class="fas fa-th-list mr-2"></i>ดวง 12 ราศี (แยกแผ่น)
+        </h4>
+        
+        <div class="form-group mb-3">
+            <label class="font-weight-bold" style="color: #d4af37;">📅 เลือกวันที่ทำนาย:</label>
+            <input type="date" id="zdDate" class="form-control bg-dark text-white border-secondary" onchange="renderZodiacSinglePreview()">
+        </div>
+        
+        <div class="form-group mb-4">
+            <label class="font-weight-bold" style="color: #d4af37;">🌟 เลือกราศี:</label>
+            <select id="zdZodiacSelect" class="form-control bg-dark text-white border-secondary" onchange="renderZodiacSinglePreview()">
+                <option value="0">ราศีเมษ</option>
+                <option value="1">ราศีพฤษภ</option>
+                <option value="2">ราศีเมถุน</option>
+                <option value="3">ราศีกรกฎ</option>
+                <option value="4">ราศีสิงห์</option>
+                <option value="5">ราศีกันย์</option>
+                <option value="6">ราศีตุลย์</option>
+                <option value="7">ราศีพิจิก</option>
+                <option value="8">ราศีธนู</option>
+                <option value="9">ราศีมังกร</option>
+                <option value="10">ราศีกุมภ์</option>
+                <option value="11">ราศีมีน</option>
+            </select>
+        </div>
+        
+        <hr style="border-color: #333;">
+        
+        <button class="btn btn-warning btn-block font-weight-bold py-3 mt-4" style="border-radius: 10px; background: linear-gradient(135deg, #f1c40f, #d4af37); color: #000; border: none;" onclick="downloadZodiacSingleImage()">
+            <i class="fas fa-download mr-2"></i> ดาวน์โหลดรูปราศีนี้ (1 รูป)
+        </button>
+        
+        <button class="btn btn-danger btn-block font-weight-bold py-3 mt-2 mb-4" style="border-radius: 10px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; border: none;" onclick="downloadAllZodiacImages()">
+            <i class="fas fa-file-archive mr-2"></i> ดาวน์โหลดทั้งหมด (12 รูป)
+        </button>
+        
+        <button class="btn btn-primary btn-block font-weight-bold py-3" style="border-radius: 10px; background: linear-gradient(135deg, #1877F2, #0d5aab); color: #fff; border: none; box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4);" onclick="copyTextForFacebook()">
+            <i class="fab fa-facebook mr-2"></i> คัดลอกข้อความ (ราศีนี้)
+        </button>
+        <p class="text-muted small mt-3 text-center mb-3">คัดลอกคำทำนายฉบับเต็มของราศีที่เลือก</p>
+        
+        <label class="font-weight-bold" style="color: #d4af37;">📝 ตัวอย่างข้อความ Facebook:</label>
+        <textarea id="fbTextPreview" class="form-control bg-dark text-white border-secondary mb-4" rows="8" readonly style="font-size: 13px;"></textarea>
+    </div>
+
+    <div class="main-content">
+        <div id="zdPreviewContainer">
+            <!-- พื้นที่ที่จะถูกวาดเป็นรูป -->
+            <div id="zdCaptureArea">
+                <div class="ornate-border"></div>
+                
+                <!-- Header -->
+                <div style="text-align: center; margin-bottom: 10px; position: relative; z-index: 2; width: 100%;">
+                    <h1 style="font-size: 5.5rem; margin: 0; color: #f9d976; text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 25px #e9b64c; font-weight: 700; line-height: 1.1; font-family: 'Prompt', sans-serif;">ทำนายดวงชะตา</h1>
+                    <div class="header-ribbon" id="zdDateBadge">
+                        ประจำวัน...
+                    </div>
+                </div>
+
+                <!-- Zodiac Identity -->
+                <div class="zodiac-icon-large" id="zsIcon">♈</div>
+                <div class="zodiac-name-large" id="zsName">ราศีเมษ</div>
+                <div class="zodiac-date-large" id="zsDateRange">13 เม.ย. - 13 พ.ค.</div>
+
+                <!-- Prediction Card -->
+                <div class="zodiac-prediction-card">
+                    <div style="font-size: 2.2rem; line-height: 1.6; margin-bottom: 30px; text-align: center; flex-grow: 1; display: flex; align-items: center; justify-content: center;" id="zsDescription">
+                        <!-- Description -->
+                    </div>
+                    
+                    <div style="font-size: 2rem; font-weight: 600; text-align: left; background: rgba(255,255,255,0.5); padding: 25px; border-radius: 15px; border: 1px dashed #b8860b;">
+                        <div style="color: #2E7D32; margin-bottom: 15px;"><i class="fas fa-check-circle mr-2"></i> <span style="color: #000;">ดี:</span> <span id="zsGood"></span></div>
+                        <div style="color: #C62828;"><i class="fas fa-exclamation-triangle mr-2"></i> <span style="color: #000;">ระวัง:</span> <span id="zsBad"></span></div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="text-align: center; color: #f9d976; font-size: 1.8rem; letter-spacing: 2px; position: relative; z-index: 2; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); margin-top: 40px; width: 100%;">
+                    ✦ โดย สยามโหรามงคล ✦
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="zodiac-daily-data.js"></script>
+    <script src="adminZodiacSingle.js"></script>
+
+    <script>
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('zdDate').value = todayStr;
+            
+            // Initial render
+            setTimeout(() => {
+                initZodiacSingleStandalone();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

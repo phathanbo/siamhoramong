@@ -1,288 +1,167 @@
 /**
- * 🛠️ Utility Helper Functions
- *
- * รวม helper functions ที่ใช้บ่อย ๆ ทั่ว app
+ * utils-helpers.js
+ * รวบรวมฟังก์ชันอรรถประโยชน์ (Utility Functions) ที่ใช้ซ้ำในหลายๆ ไฟล์
+ * เพื่อลดความซ้ำซ้อนของโค้ด (DRY)
  */
 
-"use strict";
-
-/**
- * ⬆️ เลื่อนไปบนสุด
- *
- * @param {number} duration - เวลา scroll (millisecond, default 300)
- */
-function scrollToTop(duration = 300) {
-    const start = window.scrollY;
-    const startTime = performance.now();
-
-    function scroll(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-
-        // Easing function (ease-out-cubic)
-        const easeProgress = 1 - Math.pow(1 - progress, 3);
-
-        window.scrollY = start * (1 - easeProgress);
-        window.scrollTo(0, start * (1 - easeProgress));
-
-        if (progress < 1) {
-            requestAnimationFrame(scroll);
-        }
-    }
-
-    requestAnimationFrame(scroll);
-}
-
-/**
- * 📋 ตรวจสอบว่า element มองเห็นใน viewport หรือไม่
- *
- * @param {HTMLElement} element
- * @returns {boolean}
- */
-function isElementInViewport(element) {
-    if (!element) return false;
-    const rect = element.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
-}
-
-/**
- * 🎯 เลื่อนไปหาขององค์ประกอบ
- *
- * @param {string} elementId - ID ของ element
- * @param {number} offset - offset จากบนสุด (default 0)
- */
-function scrollToElement(elementId, offset = 0) {
-    const element = document.getElementById(elementId);
-    if (!element) {
-        console.warn(`❌ Element #${elementId} ไม่พบ`);
-        return;
-    }
-
-    const top = element.offsetTop - offset;
-    window.scrollTo({
-        top: top,
-        behavior: 'smooth'
-    });
-}
-
-/**
- * ⏱️ Debounce function
- *
- * @param {function} func - function ที่ต้อง debounce
- * @param {number} wait - เวลาหลังจาก event สุดท้าย (millisecond)
- * @returns {function}
- */
-function debounce(func, wait = 300) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-/**
- * 🎭 Throttle function
- *
- * @param {function} func - function ที่ต้อง throttle
- * @param {number} limit - เวลา limit (millisecond)
- * @returns {function}
- */
-function throttle(func, limit = 300) {
-    let lastRun = 0;
-    return function(...args) {
-        const now = Date.now();
-        if (now - lastRun >= limit) {
-            func.apply(this, args);
-            lastRun = now;
-        }
-    };
-}
-
-/**
- * 📝 Copy text ไปที่ clipboard
- *
- * @param {string} text - text ที่ต้อง copy
- * @returns {Promise<boolean>}
- */
-async function copyToClipboard(text) {
+// 1. ฟังก์ชันแปลงวันที่เกิดจาก String (dd/mm/yyyy หรือ yyyy-mm-dd) เป็น Date Object ที่รองรับ properties ครบถ้วน
+function parseBirthdate(dateString) {
+    if (!dateString || dateString === "undefined") return null;
     try {
-        await navigator.clipboard.writeText(text);
-        console.log('✅ Copy to clipboard สำเร็จ');
-        return true;
-    } catch (err) {
-        console.error('❌ Copy to clipboard ล้มเหลว:', err);
-        return false;
+        let day, month, year, d;
+        if (typeof dateString === 'string' && dateString.includes('/')) {
+            const parts = dateString.split('/');
+            if (parts.length === 3) {
+                day = parseInt(parts[0], 10);
+                month = parseInt(parts[1], 10) - 1;
+                year = parseInt(parts[2], 10);
+                if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                    if (year > 2400) year -= 543; // แปลง พ.ศ. เป็น ค.ศ.
+                    d = new Date(year, month, day);
+                }
+            }
+        } else {
+            d = new Date(dateString);
+            if (!isNaN(d.getTime())) {
+                day = d.getDate();
+                month = d.getMonth();
+                year = d.getFullYear();
+                if (year > 2400) {
+                    year -= 543;
+                    d = new Date(year, month, day);
+                }
+            }
+        }
+
+        if (d && !isNaN(d.getTime())) {
+            d.day = day;
+            d.month = month;
+            d.year = year;
+            d.dateObj = d;
+            return d;
+        }
+    } catch (e) {
+        return null;
+    }
+    return null;
+}
+
+// 2. ฟังก์ชันดึงชื่อผู้ใช้ปัจจุบันจาก Session
+function getCurrentUsername() {
+    try {
+        const session = JSON.parse(localStorage.getItem('siamhora_auth_session') || '{}');
+        return session.username || localStorage.getItem('userId') || localStorage.getItem('thaiHoroUserName') || null;
+    } catch (e) {
+        return null;
     }
 }
 
-/**
- * 🎨 สร้าง URL query string จาก object
- *
- * @param {object} params - object ของ parameters
- * @returns {string} - query string
- */
-function buildQueryString(params) {
-    return Object.keys(params)
-        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-        .join('&');
+// 3. ฟังก์ชันดึงชื่อเดือนภาษาไทย
+function getMonthNameThai(monthNum) {
+    const months = [
+        "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+        "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+    ];
+    return months[monthNum - 1] || "เดือนไม่ทราบ";
 }
 
-/**
- * 📱 ตรวจสอบว่า device เป็น mobile หรือไม่
- *
- * @returns {boolean}
- */
-function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-    );
+// 4. ฟังก์ชันป้องกัน XSS (Sanitize HTML)
+function escapeHTML(str) {
+    if (typeof str !== 'string') return str;
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
-/**
- * 🔔 แสดง notification ง่าย ๆ
- *
- * @param {string} message - ข้อความ
- * @param {string} type - 'success', 'error', 'warning', 'info' (default: 'info')
- * @param {number} duration - เวลาแสดง (millisecond, default: 3000)
- */
-function showNotification(message, type = 'info', duration = 3000) {
-    // สร้าง element สำหรับ notification
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
-    notification.style.position = 'fixed';
-    notification.style.top = '20px';
-    notification.style.right = '20px';
-    notification.style.zIndex = '9999';
-    notification.style.minWidth = '300px';
-    notification.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
+// 5. คำนวณวันในสัปดาห์ทางโหราศาสตร์ (0=อาทิตย์, 1=จันทร์ ... 6=เสาร์)
+// ตัดวันตอน 06:00 น. หากเกิดก่อน 06:00 จะนับเป็นวันก่อนหน้า
+function getAstrologicalDayOfWeek(dateString, timeString) {
+    if (!dateString) return null;
 
-    document.body.appendChild(notification);
-
-    // ลบออกหลังจาก duration
-    setTimeout(() => {
-        notification.remove();
-    }, duration);
-}
-
-/**
- * 📥 ดาวน์โหลด horoscope image
- *
- * @param {string} elementId - ID ของ element ที่ต้อง capture
- * @param {string} filename - ชื่อไฟล์ที่บันทึก (default: 'horoscope.png')
- */
-function downloadHoroscopeImage(elementId, filename = 'horoscope.png') {
-    const element = document.getElementById(elementId);
-    if (!element) {
-        showNotification('❌ ไม่พบหน้าที่ต้องการบันทึก', 'error');
-        return;
+    let d;
+    // Handle YYYY-MM-DD format explicitly to avoid UTC timezone issues.
+    // new Date('YYYY-MM-DD') creates a UTC date, which can cause off-by-one day errors.
+    // We parse it manually to create a local date at noon.
+    if (typeof dateString === 'string' && dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        const parts = dateString.split('-');
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // JS months are 0-indexed
+        const day = parseInt(parts[2], 10);
+        d = new Date(year, month, day, 12, 0, 0); // Noon local time
+    } else {
+        // Fallback for other formats like DD/MM/YYYY, relies on parseBirthdate
+        d = parseBirthdate(dateString);
     }
-
-    // ตรวจสอบว่า html2canvas มี (library สำหรับ capture element)
-    if (typeof html2canvas === 'undefined') {
-        showNotification('⚠️ ไลบรารี html2canvas ยังไม่ได้โหลด', 'warning');
-        console.warn('ต้องใช้: <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>');
-        return;
+    
+    if (!d || isNaN(d.getTime())) {
+        return null;
     }
-
-    // สร้าง canvas จาก element
-    html2canvas(element, {
-        backgroundColor: '#ffffff',
-        scale: 2
-    }).then(canvas => {
-        // สร้าง link สำหรับ download
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        showNotification('✅ ดาวน์โหลดสำเร็จ!', 'success');
-    }).catch(err => {
-        console.error('❌ ข้อผิดพลาดในการบันทึกภาพ:', err);
-        showNotification('❌ บันทึกภาพล้มเหลว', 'error');
-    });
+    
+    let dayOfWeek = d.getDay(); // Get day based on local timezone. 0 = Sunday.
+    
+    // Only adjust the day if a valid time is provided.
+    if (timeString && typeof timeString === 'string' && timeString.includes(':')) {
+        const timeParts = timeString.split(':');
+        const hour = parseInt(timeParts[0], 10);
+        
+        // If hour is before 6 AM (astrological sunrise), it's the previous day.
+        if (!isNaN(hour) && hour < 6) {
+            dayOfWeek = dayOfWeek - 1;
+            if (dayOfWeek < 0) {
+                dayOfWeek = 6; // Rollover from Sunday (0) to Saturday (6).
+            }
+        }
+    }
+    
+    return dayOfWeek;
 }
 
-/**
- * 📱 Share ไปยัง Facebook
- *
- * @param {string} url - URL ที่ต้อง share (default: current page)
- * @param {string} title - ชื่อเรื่อง (optional)
- */
-function shareToFacebook(url = null, title = null) {
-    const shareUrl = url || window.location.href;
-    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-
-    // เปิด Facebook share dialog
-    window.open(facebookShareUrl, 'facebook-share-dialog', 'width=626,height=436');
+// 6. คำนวณ "อายุย่าง" อัตโนมัติตามปฏิทิน
+function calculateRunningAge(dateString) {
+    const d = parseBirthdate(dateString);
+    if (!d) return 0;
+    
+    const today = new Date();
+    let fullAge = today.getFullYear() - d.getFullYear();
+    
+    // ตรวจสอบว่าถึงวันเกิดในปีนี้หรือยัง
+    const isBeforeBirthdayThisYear = 
+        today.getMonth() < d.getMonth() || 
+        (today.getMonth() === d.getMonth() && today.getDate() < d.getDate());
+        
+    if (isBeforeBirthdayThisYear) {
+        fullAge--;
+    }
+    
+    // อายุย่าง = อายุเต็ม + 1
+    return fullAge + 1;
 }
 
-/**
- * 📱 Share ไปยัง Twitter (X)
- *
- * @param {string} text - ข้อความ
- * @param {string} url - URL (optional)
- */
-function shareToTwitter(text, url = null) {
-    const shareUrl = url || window.location.href;
-    const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`;
-
-    window.open(twitterShareUrl, 'twitter-share-dialog', 'width=626,height=436');
+// 7. ฟังก์ชันแปลงปีพ.ศ. เป็น ค.ศ.
+function toCE(year) {
+    if (!year) return 0;
+    year = parseInt(year, 10);
+    return year > 2400 ? year - 543 : year;
 }
 
-/**
- * 📧 Share ไปยัง Email
- *
- * @param {string} subject - หัวเรื่อง
- * @param {string} body - เนื้อหา
- */
-function shareViaEmail(subject, body) {
-    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
+// 8. ฟังก์ชันแปลงปีค.ศ. เป็น พ.ศ.
+function toBE(year) {
+    if (!year) return 0;
+    year = parseInt(year, 10);
+    return year < 2400 ? year + 543 : year;
 }
 
-/**
- * 📋 Share ไปยัง WhatsApp
- *
- * @param {string} text - ข้อความ
- * @param {string} url - URL (optional)
- */
-function shareToWhatsApp(text, url = null) {
-    const message = url ? `${text}\n${url}` : text;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-
-    window.open(whatsappUrl, 'whatsapp-share-dialog', 'width=626,height=436');
-}
-
-// Export
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        scrollToTop,
-        isElementInViewport,
-        scrollToElement,
-        debounce,
-        throttle,
-        copyToClipboard,
-        buildQueryString,
-        isMobileDevice,
-        showNotification,
-        downloadHoroscopeImage,
-        shareToFacebook,
-        shareToTwitter,
-        shareViaEmail,
-        shareToWhatsApp
-    };
+// 🌐 Export to window for global access across scripts and modules
+if (typeof window !== 'undefined') {
+    window.parseBirthdate = parseBirthdate;
+    window.getCurrentUsername = getCurrentUsername;
+    window.getMonthNameThai = getMonthNameThai;
+    window.escapeHTML = escapeHTML;
+    window.getAstrologicalDayOfWeek = getAstrologicalDayOfWeek;
+    window.calculateRunningAge = calculateRunningAge;
+    window.toCE = toCE;
+    window.toBE = toBE;
 }

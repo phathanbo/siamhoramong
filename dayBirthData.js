@@ -411,6 +411,7 @@ const DAY_COLORS = {
 };
 
 
+
 function showdaybirth(){
     const contianer = document.getElementById('showdaybirthpage')
     if (contianer) {
@@ -418,84 +419,116 @@ function showdaybirth(){
     }
 
     const html = `
-    <div class="container">
-            <h2 class="text-center mb-4">ทำนายลักษณะตามวันเกิด</h2>
+    <div class="container" style="max-width: 900px; margin: 0 auto; padding: 20px 10px;">
+            <h2 class="text-center text-gold mb-4 font-weight-bold" style="text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);">✨ คำพยากรณ์ลักษณะนิสัยและพื้นดวงตามวันเกิด ✨</h2>
     
-            <div class="day-selector d-flex justify-content-center flex-wrap gap-2 mb-4" style="gap: 10px;">
-                <button class="btn-day id="btn-day-1""
+            <div class="day-selector d-flex justify-content-center flex-wrap gap-2 mb-4" style="gap: 12px;">
+                <button class="btn-day" id="btn-day-1"
                     onclick="showDayInfo(1, event); showPlanet(1); showPlanetaryData(1); showBuddha(1); showDetailDay(1); showThaksaDay(1);"
-                    style="--day-color: #FF0000;">อา.</button>
-                <button class="btn-day id="btn-day-2""
+                    style="--day-color: #FF4D4D;">อา.</button>
+                <button class="btn-day" id="btn-day-2"
                     onclick="showDayInfo(2, event); showPlanet(2); showPlanetaryData(2); showBuddha(2); showDetailDay(2); showThaksaDay(2);"
                     style="--day-color: #FFD700;">จ.</button>
-                <button class="btn-day id="btn-day-3""
+                <button class="btn-day" id="btn-day-3"
                     onclick="showDayInfo(3, event); showPlanet(3); showPlanetaryData(3); showBuddha(3); showDetailDay(3); showThaksaDay(3);"
-                    style="--day-color: #FFC0CB;">อ.</button>
-                <button class="btn-day id="btn-day-4""
+                    style="--day-color: #FF80B3;">อ.</button>
+                <button class="btn-day" id="btn-day-4"
                     onclick="showDayInfo(4, event); showPlanet(4); showPlanetaryData(4); showBuddha(4); showDetailDay(4); showThaksaDay(4);"
-                    style="--day-color: #008000;">พ.</button>
-                <button class="btn-day id="btn-day-5""
+                    style="--day-color: #2ECC71;">พ.</button>
+                <button class="btn-day" id="btn-day-5"
                     onclick="showDayInfo(5, event); showPlanet(5); showPlanetaryData(5); showBuddha(5); showDetailDay(5); showThaksaDay(5);"
                     style="--day-color: #FFA500;">พฤ.</button>
-                <button class="btn-day id="btn-day-6""
+                <button class="btn-day" id="btn-day-6"
                     onclick="showDayInfo(6, event); showPlanet(6); showPlanetaryData(6); showBuddha(6); showDetailDay(6); showThaksaDay(6);"
-                    style="--day-color: #87CEEB;">ศ.</button>
-                <button class="btn-day id="btn-day-7""
+                    style="--day-color: #33C9FF;">ศ.</button>
+                <button class="btn-day" id="btn-day-7"
                     onclick="showDayInfo(7, event); showPlanet(7); showPlanetaryData(7); showBuddha(7); showDetailDay(7); showThaksaDay(7);"
-                    style="--day-color: #800080;">ส.</button>
+                    style="--day-color: #A349A4;">ส.</button>
             </div>
-            <div id="prediction-card" class="prediction-card shadow-sm d-none">
-                <div class="card-header text-white" id="card-name-bg">
-                    <h3 id="display-name" class="m-0"></h3>
-                    <small id="display-meta"></small>
-                    <small id="planetarydatadisplay" class="text"></small><br>
-                    <small id="detailelement" class="text"></small><small id="buddhadisplay" class="text"></small><br>
-                    <small id="detaildaybody" class="text"></small><br>
-
+            <div id="prediction-card" class="prediction-card shadow-lg d-none" style="background: rgba(10, 15, 29, 0.92) !important; border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 20px !important; padding: 0 !important; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.7) !important;">
+                <div class="card-header" id="card-name-bg" style="border-radius: 20px 20px 0 0; padding: 25px 30px; border-bottom: 2px solid rgba(212, 175, 55, 0.4);">
+                    <h3 id="display-name" class="m-0 mb-2" style="font-weight: 800; font-size: 1.8rem; color: #D4AF37;"></h3>
+                    <div style="color: #F3F4F6 !important; font-size: 1.05rem; line-height: 1.8;">
+                        <span id="display-meta" style="color: #F9E596 !important; font-weight: 600;"></span><br>
+                        <span id="planetarydatadisplay"></span><br>
+                        <span id="detailelement"></span> <span id="buddhadisplay" style="color: #F9E596 !important;"></span><br>
+                        <span id="detaildaybody"></span>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <h5 class="text-primary"><i class="fas fa-user"></i> ลักษณะนิสัย</h5>
-                        <p id="display-character" class="text-muted"></p>
-                        <p id="detailday" class="text-muted"></p>
-                        <p id="detailemployment" class="text-muted"></p>
+                <div class="card-body" style="padding: 30px; color: #F3F4F6 !important; background: transparent;">
+                    <div class="mb-4">
+                        <h4 class="text-gold mb-3" style="color: #D4AF37 !important; font-weight: bold;"><i class="fas fa-user mr-2"></i> ลักษณะนิสัยและพื้นดวง</h4>
+                        <p id="display-character" style="color: #F3F4F6 !important; font-size: 1.1rem; line-height: 1.8; text-align: justify; margin-bottom: 15px;"></p>
+                        <p id="detailday" style="color: #F3F4F6 !important; font-size: 1.1rem; line-height: 1.8; text-align: justify; margin-bottom: 15px;"></p>
+                        <div id="detailemployment" style="color: #F3F4F6 !important; font-size: 1.05rem; line-height: 1.8;"></div>
                     </div>
-                    <hr>
-                    <div class="mb-3">
-                        <h5 class="text-danger"><i class="fas fa-calendar-alt"></i> เกณฑ์อายุสำคัญ</h5>
-                        <ul id="displaymilestones" class="listunstyled"></ul>
+                    <hr style="border: 0; border-bottom: 1px dashed rgba(212, 175, 55, 0.35); margin: 28px 0;">
+                    <div class="mb-4">
+                        <h4 class="text-gold mb-3" style="color: #D4AF37 !important; font-weight: bold;"><i class="fas fa-calendar-alt mr-2"></i> เกณฑ์อายุสำคัญชะตาชีวิต</h4>
+                        <ul id="displaymilestones" class="list-unstyled" style="color: #F3F4F6 !important; font-size: 1.05rem; line-height: 1.8; padding-left: 0;"></ul>
                     </div>
-                    <hr>
+                    <hr style="border: 0; border-bottom: 1px dashed rgba(212, 175, 55, 0.35); margin: 28px 0;">
                     <div>
-                        <h5 class="text-success"><i class="fas fa-compass"></i> ทิศมงคลและการจัดบ้าน</h5>
-                        <div id="display-directions" class="listunstyled"></div>
+                        <h4 class="text-gold mb-3" style="color: #D4AF37 !important; font-weight: bold;"><i class="fas fa-compass mr-2"></i> ทิศมงคลและการจัดบ้านเรือน</h4>
+                        <div id="display-directions" class="list-unstyled" style="color: #F3F4F6 !important; font-size: 1.05rem; line-height: 1.8;"></div>
                     </div>
-                    <hr>
-                    <div id="planetinfodisplay" class="listunstyled"></div>
-                    <hr>
-                    <div id="thaksaday" class="listunstyled"></div>
+                    <hr style="border: 0; border-bottom: 1px dashed rgba(212, 175, 55, 0.35); margin: 28px 0;">
+                    <div id="planetinfodisplay" class="mb-4" style="color: #F3F4F6 !important; font-size: 1.05rem; line-height: 1.8;"></div>
+                    <hr style="border: 0; border-bottom: 1px dashed rgba(212, 175, 55, 0.35); margin: 28px 0;">
+                    <div id="thaksaday" style="color: #F3F4F6 !important; font-size: 1.05rem; line-height: 1.8;"></div>
                 </div>
-
             </div>
 
-            <div class="text-center mt-4">
+            <div class="text-center mt-4 mb-5">
                 <div class="row mt-4">
                     <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
+                        <button class="btn btn-outline-gold btn-block" style="border: 1px solid rgba(212,175,55,0.4); color: #F9E596; background: rgba(15,23,42,0.8); border-radius: 50px; padding: 10px 20px; transition: 0.3s;" onclick="navigateTo('mainpage')">
                             <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
                         </button>
                     </div>
                     <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                        <button class="btn btn-outline-gold btn-block" style="border: 1px solid rgba(212,175,55,0.4); color: #F9E596; background: rgba(15,23,42,0.8); border-radius: 50px; padding: 10px 20px; transition: 0.3s;" onclick="goBack()">
                             <i class="fas fa-home"></i> กลับหน้าหลัก
                         </button>
                     </div>
                 </div>
             </div>
-        </div>    
+    </div>    
     `;
 
     contianer.innerHTML = html;
+
+    // Auto-select user's day of birth if available
+    try {
+        const profileStr = localStorage.getItem('thaiHoroProfile');
+        if (profileStr) {
+            const profile = JSON.parse(profileStr);
+            if (profile && profile.birthdate) {
+                const bDate = new Date(profile.birthdate);
+                let dayIdx = bDate.getDay(); // 0=Sun, 1=Mon ... 6=Sat
+                
+                // Adjust for Thai day change at 6:00 AM
+                if (typeof calculateThaiDay === 'function') {
+                    dayIdx = calculateThaiDay(bDate);
+                }
+                
+                // Map dayIdx to the button ID format (1=Sun, 2=Mon ... 7=Sat)
+                const dayMap = { 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7 };
+                const dayId = dayMap[dayIdx];
+                
+                if (dayId) {
+                    setTimeout(() => {
+                        const btn = document.getElementById(`btn-day-${dayId}`);
+                        if (btn) {
+                            btn.click();
+                        }
+                    }, 50);
+                }
+            }
+        }
+    } catch (e) {
+        console.error("Error auto-selecting day of birth", e);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () =>{
@@ -531,14 +564,23 @@ setEl("display-name", data.name);
 setEl("display-meta", data.meta);
 setEl("display-character", data.character);
 
-// สี header
+// สี header ให้ตัดกับพื้นหลังหรูหรา
 const bg = document.getElementById("card-name-bg");
-if (bg) bg.style.backgroundColor = DAY_COLORS[num] || "#888";
+if (bg) {
+    bg.style.background = `linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(10, 15, 29, 0.98) 100%)`;
+    bg.style.borderBottom = `3px solid ${DAY_COLORS[num] || "#D4AF37"}`;
+    bg.style.boxShadow = `0 6px 25px rgba(0,0,0,0.6)`;
+}
+const dispName = document.getElementById("display-name");
+if (dispName) {
+    dispName.style.color = DAY_COLORS[num] || "#D4AF37";
+    dispName.style.textShadow = "0 2px 10px rgba(0,0,0,0.8)";
+}
 
 // milestones
 if (data.milestones) {
     const milestonesHTML = data.milestones.map(m =>
-        `<li class="mb-1"><b>อายุ ${m.age}:</b> ${m.detail}</li>`
+        `<li class="mb-2" style="color: #F3F4F6 !important; font-size: 1.05rem; line-height: 1.7;"><b style="color: #F9E596;">อายุ ${m.age}:</b> ${m.detail}</li>`
     ).join("");
     setElHTML("displaymilestones", milestonesHTML);
 }
@@ -547,9 +589,9 @@ if (data.milestones) {
 if (data.directions) {
     const directionsHTML = Object.entries(data.directions).map(([key, val]) => {
         const label = DIRECTION_LABELS[key] || key;
-        return `<div class="col-6"><b>${label}:</b> ${val}</div>`;
+        return `<div class="col-md-6 mb-2" style="color: #F3F4F6 !important; font-size: 1.05rem;"><b style="color: #F9E596;">${label}:</b> ${val}</div>`;
     }).join("");
-    setElHTML("display-directions", directionsHTML);
+    setElHTML("display-directions", `<div class="row">${directionsHTML}</div>`);
 }
 
 // =========================
@@ -576,8 +618,8 @@ const num = parseInt(btn.dataset.num);
     showPlanet(planetNum);
     showPlanetaryData(planetNum);
     showBuddha(planetNum);
-    showDetailDay(num);
-    showThaksaDay(num);
+    showDetailDay(planetNum);
+    showThaksaDay(planetNum);
 });
 });
 
@@ -589,20 +631,21 @@ function analyzePlanetElement(planetNum) {
     const planet = planetData[planetNum];
     if (!planet) return "ไม่พบข้อมูลพระเคราะห์";
 
-    let html = `<b>พระ${planet.name}</b> (เลข ${planetNum}) ครอง<b>ธาตุ${planet.element}</b> `;
+    let html = `<div style="color: #F3F4F6 !important; font-size: 1.05rem; line-height: 1.8;"><h4 class="text-gold mb-3" style="color: #D4AF37 !important; font-weight: bold;"><i class="fas fa-globe mr-2"></i> ข้อมูลพระเคราะห์ประจำวันเกิด</h4>`;
+    html += `<b>พระ${planet.name}</b> (เลข ${planetNum}) ครอง<b style="color: #F9E596;">ธาตุ${planet.element}</b> `;
     html += `ประจำทิศ${planet.direction} มีกำลังมหาจักรคือ ${planet.power} `;
     html += `ทรง${planet.vehicle}เป็นพาหนะ ผิวกายสี${planet.color} `;
-    html += `| สีมงคล: ${planet.colors.join(", ")}`;
+    html += `| <b style="color: #F9E596;">สีมงคล:</b> ${planet.colors.join(", ")}`;
 
     if (planet.คู่ธาตุ) {
         const pair = planetData[planet.คู่ธาตุ];
         if (pair) {
-            html += `<br><span class="text-primary"><b>คู่ธาตุ:</b> พระ${planet.name} และ พระ${pair.name} `;
+            html += `<br><br><span style="color: #F9E596 !important; background: rgba(212, 175, 55, 0.15); padding: 8px 14px; border-radius: 10px; display: inline-block; border: 1px solid rgba(212, 175, 55, 0.3);"><b>💡 คู่ธาตุเสริมบารมี:</b> พระ${planet.name} และ พระ${pair.name} `;
             html += `เป็นคู่ธาตุ${planet.element} (คู่อสิติธาตุ) `;
             html += `หากกุมลัคนาจะรุ่งเรืองยิ่งนัก แม้เกิดในตระกูลต่ำก็เด่นขึ้นมาได้</span>`;
         }
     }
-
+    html += `</div>`;
     return html;
 }
 
@@ -618,7 +661,7 @@ function showPlanetaryData(planetNum) {
     const el = document.getElementById("planetarydatadisplay");
     if (!el) return;
     if (!planet) { el.innerHTML = "ไม่พบข้อมูลพระเคราะห์"; return; }
-    el.innerHTML = `สีประจำตัว: ${planet.colors.join(", ")}`;
+    el.innerHTML = `<b style="color: #F9E596;">🎨 สีมงคลประจำตัว:</b> <span style="color: #F3F4F6 !important;">${planet.colors.join(", ")}</span>`;
 }
 
 // ---------------------------------------------------------------------------
@@ -629,7 +672,7 @@ function showBuddha(planetNum) {
     if (!el) return;
     const data = buddha[planetNum];
     el.innerHTML = data
-        ? `<b> พระพุทธรูปประจำ:</b> ${data.name}`
+        ? `<b style="color: #F9E596;">🙏 พระพุทธรูปประจำวัน:</b> <span style="color: #F3F4F6 !important;">${data.name}</span>`
         : "ไม่พบข้อมูลพระพุทธรูปประจำเคราะห์";
 }
 
@@ -644,8 +687,8 @@ function showDetailDay(num) {
     }
     setElHTML("detailday",        data.mind);
     setElHTML("detaildaybody",    data.body);
-    setElHTML("detailelement",    `<b>ธาตุประจำวัน:</b> ${data.element}`);
-    setElHTML("detailemployment", `<h5 style="color:#007bff;">อาชีพที่เหมาะสม</h5>${data.employment}`);
+    setElHTML("detailelement",    `<b style="color: #F9E596;">🌱 ธาตุประจำวัน:</b> <span style="color: #F3F4F6 !important;">${data.element}</span>`);
+    setElHTML("detailemployment", `<h4 class="text-gold mt-4 mb-2" style="color: #D4AF37 !important; font-weight: bold;"><i class="fas fa-briefcase mr-2"></i> อาชีพและหน้าที่การงานที่เหมาะสม</h4><div style="color: #F3F4F6 !important; font-size: 1.05rem; line-height: 1.8;">${data.employment}</div>`);
 }
 
 // ---------------------------------------------------------------------------
@@ -658,14 +701,16 @@ function showThaksaDay(dayKey) {
     if (!data) { el.innerHTML = "ไม่พบข้อมูลทักษาพยากรณ์"; return; }
 
     el.innerHTML = `
-        <h5 style="color:#007bff;">ทักษาพยากรณ์</h5>
-        <b>บริวาร:</b> ${data.บริวาร}<br>
-        <b>อายุ:</b> ${data.อายุ}<br>
-        <b>เดช:</b> ${data.เดช}<br>
-        <b>ศรี:</b> ${data.ศรี}<br>
-        <b>มูลละ:</b> ${data.มูลละ}<br>
-        <b>อุตสาหะ:</b> ${data.อุตสาหะ}<br>
-        <b>มนตรี:</b> ${data.มนตรี}<br>
-        <b>กาลกิณี:</b> ${data.กาลกิณี}
+        <h4 class="text-gold mb-3" style="color: #D4AF37 !important; font-weight: bold;"><i class="fas fa-star mr-2"></i> ทักษาพยากรณ์ประจำวันเกิด</h4>
+        <div style="color: #F3F4F6 !important; font-size: 1.05rem; line-height: 1.9; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+            <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 10px; border-left: 3px solid #D4AF37;"><b style="color: #F9E596;">👑 บริวาร:</b> ${data.บริวาร}</div>
+            <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 10px; border-left: 3px solid #2ECC71;"><b style="color: #F9E596;">🌿 อายุ:</b> ${data.อายุ}</div>
+            <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 10px; border-left: 3px solid #FF4D4D;"><b style="color: #F9E596;">🔥 เดช:</b> ${data.เดช}</div>
+            <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 10px; border-left: 3px solid #33C9FF;"><b style="color: #F9E596;">💎 ศรี:</b> ${data.ศรี}</div>
+            <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 10px; border-left: 3px solid #FFA500;"><b style="color: #F9E596;">💰 มูลละ:</b> ${data.มูลละ}</div>
+            <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 10px; border-left: 3px solid #FF80B3;"><b style="color: #F9E596;">⚙️ อุตสาหะ:</b> ${data.อุตสาหะ}</div>
+            <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 10px; border-left: 3px solid #A349A4;"><b style="color: #F9E596;">🛡️ มนตรี:</b> ${data.มนตรี}</div>
+            <div style="background: rgba(255,0,0,0.15); padding: 10px 15px; border-radius: 10px; border-left: 3px solid #FF0000;"><b style="color: #FF6B6B;">⚠️ กาลกิณี:</b> ${data.กาลกิณี}</div>
+        </div>
     `;
 }

@@ -176,27 +176,47 @@ function findCeremonyDate() {
     const resultEl = document.getElementById('ceremonyResult');
 
     if (!typeEl.value || !monthEl.value) {
-        alert('⚠️ กรุณาเลือกประเภทพิธีและเดือน');
+        Swal.fire('แจ้งเตือน', 'กรุณาเลือกประเภทพิธีและเดือน', 'warning');
         return;
     }
 
     const ceremonyType = typeEl.value;
     const [year, month] = monthEl.value.split('-');
     const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
 
     const ceremony = CEREMONY_DATA[ceremonyType];
-    const goodDays = getAuspiciousDays(monthNum);
+    const goodDays = getAuspiciousDays(monthNum, yearNum);
 
-    if (!ceremony || goodDays.length === 0) {
-        alert('❌ ไม่พบข้อมูลวันมงคล');
+    if (!ceremony || !goodDays || goodDays.length === 0) {
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่พบข้อมูลวันมงคล - โปรดลองเดือนอื่น', 'error');
         return;
     }
 
-    const daysHTML = goodDays.map(day => `
-        <span style="display: inline-block; margin: 5px; padding: 10px 15px; background: rgba(40, 167, 69, 0.2); border: 1px solid #28a745; border-radius: 5px; color: #28a745; font-weight: bold;">
-            วันที่ ${day}
-        </span>
-    `).join('');
+    // สีตามสถานะ
+    function getColorByStatus(status) {
+        if (!status) return '#28a745'; // เขียว (default)
+        if (status.includes('ธงชัย')) return '#28a745'; // เขียว
+        if (status.includes('อธิบดี')) return '#007bff'; // น้ำเงิน
+        if (status.includes('มหาสิทธิโชค')) return '#17a2b8'; // ฟ้า
+        if (status.includes('ราชาโชค')) return '#ffc107'; // เหลือง
+        if (status.includes('ชัยโชค')) return '#20c997'; // เขียวลึก
+        if (status.includes('อุบาทว์')) return '#fd7e14'; // ส้ม
+        if (status.includes('โลกาวินาศ')) return '#dc3545'; // แดง
+        return '#6c757d'; // เทา
+    }
+
+    const daysHTML = goodDays.map(dayObj => {
+        const day = typeof dayObj === 'object' ? dayObj.day : dayObj;
+        const status = typeof dayObj === 'object' && dayObj.status ? dayObj.status : 'วันดี';
+        const color = getColorByStatus(status);
+        const bgColor = color + '22';
+        return `
+            <span style="display: inline-block; margin: 5px; padding: 10px 15px; background: ${bgColor}; border: 2px solid ${color}; border-radius: 6px; color: ${color}; font-weight: bold;">
+                วันที่ ${day} ${status}
+            </span>
+        `;
+    }).join('');
 
     resultEl.innerHTML = `
         <div class="card shadow-sm border-0 p-4" style="background: rgba(212, 175, 55, 0.05);">
@@ -233,7 +253,6 @@ function findCeremonyDate() {
 
 document.addEventListener("DOMContentLoaded", () => {
     showCeremonyPage();
-    console.log("✅ ceremony-date.js loaded - อิงปฏิทินฤกษ์มงคล + ลัคนา");
 });
 
 window.findCeremonyDate = findCeremonyDate;

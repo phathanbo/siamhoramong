@@ -261,25 +261,35 @@ function resetTaksa() {
 }
 
 // -------------------------------------------------------------------
-//  คำนวณทักษา (แก้ logic ให้ถูกต้อง)
+//  คำนวณทักษา ตามตำราหลวง
 // -------------------------------------------------------------------
 /**
  * birthDay : 0 = อาทิตย์ … 7 = ราหู  (ตรงกับ id ใน TAKSA_MASTER)
  * age      : อายุย่าง (เริ่มจาก 1)
+ * gender   : 'male' | 'female'
  *
- * วิธีคิด:
+ * วิธีคิดตามตำรา:
  *  - steps = (age - 1) % 8
- *  - ดาวบริวารจร  = STAR_CYCLE_ORDER[ (indexOfBirthDay + steps) % 8 ]
- *  - เวียนต่อไปตาม STAR_CYCLE_ORDER อีก 7 ตำแหน่งสำหรับภูมิที่เหลือ
+ *  - ชาย   → เวียนขวา  startIndex = (birthIndex + steps) % 8
+ *  - หญิง  → เวียนซ้าย startIndex = (birthIndex - steps + 8) % 8
+ *  - เวียนภูมิ 8 ตำแหน่งต่อเนื่อง (ทิศเดียวกับดาวหลัก)
  */
-function computeTaksa(birthDay, age) {
-    const birthIndex  = STAR_CYCLE_ORDER.indexOf(birthDay);
-    const steps       = (age - 1) % 8;
-    const startIndex  = (birthIndex + steps) % 8;
+function computeTaksa(birthDay, age, gender) {
+    const birthIndex = STAR_CYCLE_ORDER.indexOf(birthDay);
+    const steps      = (age - 1) % 8;
+    const isFemale   = (gender === 'female');
+
+    // ชาย → บวก steps (เวียนขวา), หญิง → ลบ steps (เวียนซ้าย)
+    const startIndex = isFemale
+        ? ((birthIndex - steps) % 8 + 8) % 8
+        : (birthIndex + steps) % 8;
+
+    // ทิศเวียนภูมิ: ชาย +1 ต่อภูมิ, หญิง -1 ต่อภูมิ
+    const dir = isFemale ? -1 : 1;
 
     const result = {};
     GEO_ORDER.forEach((geo, i) => {
-        const cycleIdx = (startIndex + i) % 8;
+        const cycleIdx = ((startIndex + dir * i) % 8 + 8) % 8;
         const starId   = STAR_CYCLE_ORDER[cycleIdx];
         result[geo]    = { id: starId };
     });
@@ -568,45 +578,46 @@ function calculateAndShowTaksa() {
     const btn       = document.getElementById('taksaBtn');
     const ageInput  = document.getElementById('userAge');
     const daySelect = document.getElementById('birthDaySelect');
-    const gender    = document.querySelector('input[name="gender"]:checked')?.value || 'male';
+
+    // อ่านเพศจาก select#taksagender (UI ใช้ select ไม่ใช่ radio)
+    const genderSelect = document.getElementById('taksagender');
+    const gender       = genderSelect?.value || 'male';
 
     // Validate อายุ
     const age = parseInt(ageInput?.value);
     if (!age || age < 1 || age > 120) {
         ageInput?.focus();
-        // แสดง feedback แทน alert (ถ้ามี element แสดง error)
         const errEl = document.getElementById('taksaAgeError');
         if (errEl) {
             errEl.textContent = 'กรุณากรอกอายุย่างให้ถูกต้อง (1–120 ปี)';
             errEl.style.display = 'block';
         } else {
-            alert('กรุณากรอกอายุย่างให้ถูกต้อง (1–120 ปี)');
+            Swal.fire('แจ้งเตือน', 'กรุณากรอกอายุย่างให้ถูกต้อง (1–120 ปี)', 'warning');
         }
         return;
     }
 
-    // ซ่อน error (ถ้ามี)
     const errEl = document.getElementById('taksaAgeError');
     if (errEl) errEl.style.display = 'none';
 
-    // birthDay: ค่า value ของ select ควรเป็น 0–7 ตรงกับ id ดาวใน TAKSA_MASTER
     const birthDay = parseInt(daySelect?.value ?? '0');
 
     if (btn) {
-        btn.disabled   = true;
-        btn.innerHTML  = '<i class="fas fa-spinner fa-spin me-2"></i>กำลังผูกดวง...';
+        btn.disabled  = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>กำลังผูกดวง...';
     }
 
     setTimeout(() => {
         try {
-            const taksa = computeTaksa(birthDay, age);
+            // ส่ง gender เข้า computeTaksa เพื่อเวียนซ้าย/ขวาตามตำรา
+            const taksa = computeTaksa(birthDay, age, gender);
             document.getElementById('taksaInput').style.display  = 'none';
             document.getElementById('taksaResult').style.display = 'block';
             renderTaksaResult(taksa, age, gender);
             document.getElementById('taksaResult').scrollIntoView({ behavior: 'smooth' });
         } catch (e) {
             console.error('calculateAndShowTaksa error:', e);
-            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            Swal.fire('เกิดข้อผิดพลาด', 'กรุณาลองใหม่อีกครั้ง', 'error');
         } finally {
             if (btn) {
                 btn.disabled  = false;
@@ -641,7 +652,7 @@ function showtaksatable(){
                 </div>
 
                     <div class="form-group mt-2 mx-auto" style="max-width: 300px;">
-                        <label class="text-white-50">วันเกิดของคุณ</label>
+                        <label class="text-gold">เพศ (ทิศเวียนทักษา)</label>
                             <select id="taksagender" class="form-control bg-dark text-white border-gold" style="height: 55px;"> 
                                 <option value="male"> ชาย (เวียนขวา)</option>
                                 <option value="female"> หญิง (เวียนซ้าย)</option>
@@ -649,7 +660,7 @@ function showtaksatable(){
                         </label>
                     </div>
                     <div class="form-group mt-2 mx-auto" style="max-width: 300px;">
-                        <label class="text-white-50">วันเกิดของคุณ</label>
+                        <label class="text-white-50">วันเกิด</label>
                         <select id="birthDaySelect" class="form-control bg-dark text-white border-gold"
                             style="height: 55px;">
                             <option value="0">วันอาทิตย์</option>
@@ -739,7 +750,7 @@ async function downloadSpecificPart(elementId, fileName) {
         link.click();
     } catch (e) {
         console.error('downloadSpecificPart error:', e);
-        alert('ไม่สามารถบันทึกภาพได้ กรุณาลองใหม่');
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกภาพได้ กรุณาลองใหม่', 'error');
     } finally {
         area.style.cssText = savedStyle;
         if (shareBtns) shareBtns.style.visibility = 'visible';
@@ -752,7 +763,7 @@ async function downloadSpecificPart(elementId, fileName) {
 async function downloadTaksaImage() {
     const element = document.getElementById('taksaResult');
     if (!element || element.style.display === 'none') {
-        alert('กรุณาผูกดวงทักษาก่อนทำการบันทึกภาพ');
+        Swal.fire('แจ้งเตือน', 'กรุณาผูกดวงทักษาก่อนทำการบันทึกภาพ', 'warning');
         return;
     }
 
@@ -788,7 +799,7 @@ async function downloadTaksaImage() {
         link.click();
     } catch (err) {
         console.error('downloadTaksaImage error:', err);
-        alert('ไม่สามารถบันทึกภาพได้');
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกภาพได้', 'error');
     } finally {
         actionButtons.forEach(el => { el.style.visibility = 'visible'; });
         element.style.cssText = savedElemStyle;

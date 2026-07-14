@@ -137,7 +137,7 @@ function calculatePirun() {
     const resultEl = document.getElementById('pirunResult');
 
     if (!birthDateEl.value) {
-        alert('⚠️ กรุณากรอกวันเกิด');
+        Swal.fire('แจ้งเตือน', 'กรุณากรอกวันเกิด', 'warning');
         return;
     }
 

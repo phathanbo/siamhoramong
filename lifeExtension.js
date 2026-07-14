@@ -1,3 +1,62 @@
+const dayDict = {
+    "1": { 
+        name: "วันอาทิตย์ (๑)", 
+        power: 6, 
+        candleText: "บูชาเทียนมงคลกำลัง ๖ เล่ม ตามกำลังดาวอาทิตย์", 
+        dayPrayer: "คาถาโมรปริตร: อุเทตะยัญจักขุมา เอกะราชา หะริสสะวัณโณ ปะฐะวิปะภาโส (สวด ๖ จบ)",
+        guardian: "พระอาทิตย์ - เสริมตบะอำนาจ ขจัดศัตรูและอุปสรรคมืดมนให้สิ้นไป"
+    },
+    "2": { 
+        name: "วันจันทร์ (๒)", 
+        power: 15, 
+        candleText: "บูชาเทียนมงคลกำลัง ๑๕ เล่ม ตามกำลังดาวจันทร์", 
+        dayPrayer: "คาถาอภัยปริตร: ยันทุนนิมิตตัง อะวะมังคะลัญจะ โย จามะนาโป สะกุณัสสะ สัทโธ (สวด ๑๕ จบ)",
+        guardian: "พระจันทร์ - เสริมเสน่ห์ เมตตามหานิยม และความสงบเย็นในจิตใจ"
+    },
+    "3": { 
+        name: "วันอังคาร (๓)", 
+        power: 8, 
+        candleText: "บูชาเทียนมงคลกำลัง ๘ เล่ม ตามกำลังดาวอังคาร", 
+        dayPrayer: "คาถากรณียเมตตสูตร: ยัสสานุภาวะโต ยักขา เนวะ ทัสเสนติ ภิงสะนัง (สวด ๘ จบ)",
+        guardian: "พระอังคาร - เสริมความเข้มแข็ง ขจัดภูตผีปีศาจและภัยอันตรายทั้งปวง"
+    },
+    "4": { 
+        name: "วันพุธ (กลางวัน) (๔)", 
+        power: 17, 
+        candleText: "บูชาเทียนมงคลกำลัง ๑๗ เล่ม ตามกำลังดาวพุธ", 
+        dayPrayer: "คาถาสัพพะมงคลคาถา: สัพพะมังคะละสัจจัง สัพพะเทวะตานุภาเวนะ สัพพะโสตถี ภะวันตุ เต (สวด ๑๗ จบ)",
+        guardian: "พระพุธ - เสริมปัญญา วาจาสิทธิ์ ค้าขายคล่อง และเจริญในโภคทรัพย์"
+    },
+    "8": { 
+        name: "วันพุธ (กลางคืน) / พระราหู (๘)", 
+        power: 12, 
+        candleText: "บูชาเทียนมงคลกำลัง ๑๒ เล่ม ตามกำลังพระราหู", 
+        dayPrayer: "คาถาสุริยปริตร-จันทปริตร: กินนุ สันตะระมาโนวะ ราหุ จันทัง ปะมุญจะสิ (สวด ๑๒ จบ)",
+        guardian: "พระราหู - พลิกดวงชะตาจากร้ายกลายเป็นดี เสริมมหาโชคลาภลี้ลับ"
+    },
+    "5": { 
+        name: "วันพฤหัสบดี (๕)", 
+        power: 19, 
+        candleText: "บูชาเทียนมงคลกำลัง ๑๙ เล่ม ตามกำลังดาวพฤหัสบดี", 
+        dayPrayer: "คาถารัตนสูตร: ยานีธะ ภูตานิ สะมาคะตานิ ภุมมานิ วา ยานิวะ อันตะลิกเข (สวด ๑๙ จบ)",
+        guardian: "พระพฤหัสบดี - เสริมบารมีแห่งปัญญา ครูบาอาจารย์ และเทพยดาอุปถัมภ์ค้ำชู"
+    },
+    "6": { 
+        name: "วันศุกร์ (๖)", 
+        power: 21, 
+        candleText: "บูชาเทียนมงคลกำลัง ๒๑ เล่ม ตามกำลังดาวศุกร์", 
+        dayPrayer: "คาถาธชัคคสูตร: อิติปิ โส ภะคะวา อะระหัง สัมมาสัมพุทโธ (สวด ๒๑ จบ ขจัดความกลัวและภัยร้าย)",
+        guardian: "พระศุกร์ - เสริมความอุดมสมบูรณ์ ดึงดูดทรัพย์สมบัติ ความรัก และความร่มเย็น"
+    },
+    "7": { 
+        name: "วันเสาร์ (๗)", 
+        power: 10, 
+        candleText: "บูชาเทียนมงคลกำลัง ๑๐ เล่ม ตามกำลังดาวเสาร์", 
+        dayPrayer: "คาถาองคุลีมาลปริตร: ยะโตหัง ภะคินิ อะริยายะ ชาติยา ชาโต (สวด ๑๐ จบ สะเดาะเคราะห์หนักและโรคภัย)",
+        guardian: "พระเสาร์ - เสริมความมั่นคงถาวร แคล้วคลาดจากเคราะห์กรรม ผ่านพ้นทุกข์โศกโรคภัย"
+    }
+};
+
 const adviceDict = {
     "1": { 
         advice: "ดวงปีนี้เปรียบเสมือนตะเกียงที่ขาดน้ำมัน ต้องเติมแสงสว่างให้จิตใจและโชคลาภ", 
@@ -30,7 +89,7 @@ const adviceDict = {
         avoid: "การลบหลู่ดูหมิ่นสถานศักดิ์สิทธิ์หรือครูบาอาจารย์" 
     },
     "6": { 
-        advice: "ดวงชะตามีเกณฑ์ปากเป็นเอก ต้องระวังวาจาแต่ให้ใช้เสียงสร้างบุญ", 
+        advice: "ดวงชะตามมีเกณฑ์ปากเป็นเอก ต้องระวังวาจาแต่ให้ใช้เสียงสร้างบุญ", 
         prayer: "คาถาสาริกาลิ้นทอง: พุทธา อะเนนา มะลิยา สุสังคะเยมิ (ภาวนา 3 จบ) ให้วาจาศักดิ์สิทธิ์มีเสน่ห์",
         do: "ร่วมบุญพิมพ์หนังสือธรรมะ หรือบริจาคเครื่องขยายเสียงให้วัด", 
         avoid: "การนินทาว่าร้ายหรือพูดจาส่อเสียดผู้อื่น" 
@@ -60,7 +119,7 @@ const adviceDict = {
         avoid: "การข้องแวะกับอบายมุขและสิ่งมึนเมา" 
     },
     "11": { 
-        advice: "ดวงชะตามีพลังงานไหลเวียนดีแต่ต้องระวังภัยจากบริวาร", 
+        advice: "ดวงชะตามมีพลังงานไหลเวียนดีแต่ต้องระวังภัยจากบริวาร", 
         prayer: "คาถาเรียกทรัพย์ (หลวงพ่อปาน): พุทธะ มะอะอุ นะโมพุทธายะ (ภาวนา 9 จบ) เร่งโชคลาภให้ไหลมา",
         do: "ไหว้พระพรหมขอพรให้เปิดทางโชคลาภ", 
         avoid: "การนำคนแปลกหน้าเข้าบ้านหรือไว้ใจคนง่ายเกินไป" 
@@ -75,7 +134,7 @@ const adviceDict = {
 
 
 function showlifeextension() {
-    const contianer = document.getElementById('showlifeextensionpage')
+    const contianer = document.getElementById('showlifeextensionpage');
     if (!contianer) return;
     
     const html = `
@@ -84,7 +143,7 @@ function showlifeextension() {
                 style="background: radial-gradient(circle, #1a1a1a 0%, #000 100%); border: 1px solid #d4af37; border-radius: 20px;">
                 <div class="card-header text-center py-4 border-gold">
                     <h2 class="text-gold"><i class="fas fa-praying-hands mr-2"></i> วิชามหามงคล "ต่อชะตาชีวิต"</h2>
-                    <h4 class="text-muted">เสริมสิริมงคล แก้เคล็ดดวงชะตา ตามตำรับสยามโหรามงคล</h4>
+                    <h4 class="text-muted">เสริมสิริมงคล สะเดาะเคราะห์ต่ออายุ ตามตำราพรหมชาติและคัมภีร์ทักษา</h4>
                 </div>
                 <div class="card-body text-center p-5">
                     <div class="candle-container mb-5">
@@ -92,26 +151,40 @@ function showlifeextension() {
                         <div class="candle"></div>
                     </div>
                     <div id="setupExtension">
-                        <h4 class="text-white mb-4">ระบุเดือนเกิดของท่านเพื่อเริ่มพิธี</h4>
+                        <h4 class="text-white mb-4">ระบุวันเกิดและเดือนเกิดของท่านเพื่อเริ่มพิธี</h4>
                         <div class="row justify-content-center">
-                            <div class="col-md-6">
-                                <select id="birthMonth" class="form-control bg-dark text-white border-gold mb-4" onclick="startRitual()">
-                                    <option value="">-- เลือกเดือนเกิด --</option>
-                                    <option value="1">มกราคม</option>
-                                    <option value="2">กุมภาพันธ์</option>
-                                    <option value="3">มีนาคม</option>
-                                    <option value="4">เมษายน</option>
-                                    <option value="5">พฤษภาคม</option>
-                                    <option value="6">มิถุนายน</option>
-                                    <option value="7">กรกฎาคม</option>
-                                    <option value="8">สิงหาคม</option>
-                                    <option value="9">กันยายน</option>
-                                    <option value="10">ตุลาคม</option>
-                                    <option value="11">พฤศจิกายน</option>
-                                    <option value="12">ธันวาคม</option>
+                            <div class="col-md-8">
+                                <label class="text-gold small text-left d-block mb-1" style="font-weight:bold;">๑. เลือกวันเกิด (เพื่อกำหนดกำลังเทียนมงคลและดาวคุ้มครอง)</label>
+                                <select id="birthDay" class="form-control bg-dark text-white border-gold mb-3">
+                                    <option value="">-- เลือกวันเกิด (อาทิตย์ - เสาร์) --</option>
+                                    <option value="1">วันอาทิตย์ (๑) - กำลังเทียนมงคล ๖ เล่ม</option>
+                                    <option value="2">วันจันทร์ (๒) - กำลังเทียนมงคล ๑๕ เล่ม</option>
+                                    <option value="3">วันอังคาร (๓) - กำลังเทียนมงคล ๘ เล่ม</option>
+                                    <option value="4">วันพุธ กลางวัน (๔) - กำลังเทียนมงคล ๑๗ เล่ม</option>
+                                    <option value="8">วันพุธ กลางคืน / พระราหู (๘) - กำลังเทียนมงคล ๑๒ เล่ม</option>
+                                    <option value="5">วันพฤหัสบดี (๕) - กำลังเทียนมงคล ๑๙ เล่ม</option>
+                                    <option value="6">วันศุกร์ (๖) - กำลังเทียนมงคล ๒๑ เล่ม</option>
+                                    <option value="7">วันเสาร์ (๗) - กำลังเทียนมงคล ๑๐ เล่ม</option>
+                                </select>
+
+                                <label class="text-gold small text-left d-block mb-1" style="font-weight:bold;">๒. เลือกเดือนเกิด (นับตามจันทรคติไทยในตำราพรหมชาติ)</label>
+                                <select id="birthMonth" class="form-control bg-dark text-white border-gold mb-4">
+                                    <option value="">-- เลือกเดือนเกิดตามตำราพรหมชาติ --</option>
+                                    <option value="1">เดือนอ้าย (เดือน ๑ - ผู้เกิดช่วง ธ.ค. / ม.ค.)</option>
+                                    <option value="2">เดือนยี่ (เดือน ๒ - ผู้เกิดช่วง ม.ค. / ก.พ.)</option>
+                                    <option value="3">เดือนสาม (เดือน ๓ - ผู้เกิดช่วง ก.พ. / มี.ค.)</option>
+                                    <option value="4">เดือนสี่ (เดือน ๔ - ผู้เกิดช่วง มี.ค. / เม.ย.)</option>
+                                    <option value="5">เดือนห้า (เดือน ๕ - ผู้เกิดช่วง เม.ย. / พ.ค.)</option>
+                                    <option value="6">เดือนหก (เดือน ๖ - ผู้เกิดช่วง พ.ค. / มิ.ย.)</option>
+                                    <option value="7">เดือนเจ็ด (เดือน ๗ - ผู้เกิดช่วง มิ.ย. / ก.ค.)</option>
+                                    <option value="8">เดือนแปด (เดือน ๘ - ผู้เกิดช่วง ก.ค. / ส.ค.)</option>
+                                    <option value="9">เดือนเก้า (เดือน ๙ - ผู้เกิดช่วง ส.ค. / ก.ย.)</option>
+                                    <option value="10">เดือนสิบ (เดือน ๑๐ - ผู้เกิดช่วง ก.ย. / ต.ค.)</option>
+                                    <option value="11">เดือนสิบเอ็ด (เดือน ๑๑ - ผู้เกิดช่วง ต.ค. / พ.ย.)</option>
+                                    <option value="12">เดือนสิบสอง (เดือน ๑๒ - ผู้เกิดช่วง พ.ย. / ธ.ค.)</option>
                                 </select>
                                 <button class="btn btn-gold btn-lg btn-block" onclick="startRitual()">
-                                    <i class="fas fa-fire mr-2"></i> เริ่มพิธีต่อชะตา
+                                    <i class="fas fa-fire mr-2"></i> เริ่มพิธีต่อชะตาสะเดาะเคราะห์
                                 </button>
                                 <button class="btn btn-outline-secondary btn-block mt-4 border-0"
                                     onclick="navigateTo('mainpage')">
@@ -138,26 +211,31 @@ function showlifeextension() {
                             <div id="finalAdvice" style="display: none; position: relative; z-index: 10;">
                                 <div id="captureRitualArea" class="p-4"
                                     style="background: rgba(0,0,0,0.4); border-radius: 15px;">
-                                    <h2 class="text-gold mb-4">✨ ผลพิธีต่อชะตาชีวิต ✨</h2>
+                                    <h2 class="text-gold mb-4">✨ ผลพิธีต่อชะตาชีวิตและสะเดาะเคราะห์ ✨</h2>
 
-                                    <div class="prayer-summary-box mb-4 p-3"
-                                        style="border: 1px double #d4af37; background: rgba(212, 175, 55, 0.05);">
-                                        <small class="text-gold-50">บทสวดมงคลประจำชะตาของท่าน</small>
-                                        <p id="summaryPrayer" class="text-white mt-2 mb-0"
-                                            style="font-size: 1.3rem; font-weight: bold;"></p>
+                                    <div class="prayer-summary-box mb-3 p-3 text-left"
+                                        style="border: 1px solid #d4af37; background: rgba(212, 175, 55, 0.1); border-radius: 10px;">
+                                        <small class="text-gold-50">เครื่องบูชาต่อชะตาประจำกำลังวันเกิด</small>
+                                        <div id="summaryDayPower" class="text-white mt-1 mb-0" style="font-size: 1.1rem;"></div>
+                                    </div>
+
+                                    <div class="prayer-summary-box mb-4 p-3 text-left"
+                                        style="border: 1px double #d4af37; background: rgba(212, 175, 55, 0.05); border-radius: 10px;">
+                                        <small class="text-gold-50">บทสวดมงคลต่อชะตาประจำตัวท่าน</small>
+                                        <div id="summaryPrayer" class="text-white mt-2 mb-0" style="font-size: 1.1rem;"></div>
                                     </div>
 
                                     <div class="row text-left mb-4">
                                         <div class="col-12 mb-3">
-                                            <label class="text-muted small">เกณฑ์ชะตาปีนี้:</label>
+                                            <label class="text-muted small">เกณฑ์ชะตาและคำแนะนำปีนี้:</label>
                                             <p id="extensionAdvice" class="text-white" style="font-size: 1.1rem;"></p>
                                         </div>
                                         <div class="col-6">
-                                            <label class="text-success-gold small">สิ่งที่ควรทำเสริมดวง:</label>
+                                            <label class="text-success-gold small">สิ่งที่ควรทำเสริมดวง (แก้เคล็ด):</label>
                                             <p id="toDo" class="text-white"></p>
                                         </div>
                                         <div class="col-6">
-                                            <label class="text-danger small">สิ่งที่ควรระวัง:</label>
+                                            <label class="text-danger small">สิ่งที่ควรระวังเป็นพิเศษ:</label>
                                             <p id="toAvoid" class="text-white"></p>
                                         </div>
                                     </div>
@@ -196,41 +274,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function startRitual() {
+    const day = document.getElementById('birthDay').value;
     const month = document.getElementById('birthMonth').value;
-    if (!month) {
+    if (!day || !month) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('แจ้งเตือน', 'กรุณาระบุทั้งวันเกิดและเดือนเกิดให้ครบถ้วนตามตำรา', 'warning');
+        } else {
+            alert('กรุณาระบุทั้งวันเกิดและเดือนเกิดให้ครบถ้วน');
+        }
         return;
     }
 
-    const result = adviceDict[month];
+    const mRes = adviceDict[month];
+    const dRes = dayDict[day];
 
-    // เปลี่ยนข้อความในบทสวดให้เป็นของเดือนนั้นๆ
     const prayerContainer = document.querySelector('.prayer-content');
     prayerContainer.innerHTML = `
-        <p>--- เริ่มพิธีต่อชะตาเฉพาะเดือนเกิด ---</p>
+        <p style="color: #ffd700; font-weight: bold;">--- เริ่มพิธีต่อชะตาสำหรับผู้เกิด${dRes.name} ---</p>
+        <p class="text-white" style="font-size:1.1rem;">${dRes.candleText}</p>
         <p>ตั้งนะโม 3 จบ</p>
-        <p style="color: #ffd700; font-size: 1.5rem; font-weight: bold;">${result.prayer}</p>
-        <p>✨ ตั้งจิตอธิษฐานให้สิ่งชั่วร้ายกลายเป็นดี ✨</p>
+        <p style="color: #ffd700; font-size: 1.25rem; font-weight: bold; margin-top:15px;">[พระคาถาประจำวันเกิด]<br><span style="color:#fff; font-size:1.1rem;">${dRes.dayPrayer}</span></p>
+        <p style="color: #00ffcc; font-size: 1.25rem; font-weight: bold; margin-top:15px;">[พระคาถาประจำเดือนเกิด]<br><span style="color:#fff; font-size:1.1rem;">${mRes.prayer}</span></p>
+        <p style="margin-top:20px;">✨ ตั้งจิตอธิษฐาน ขออานุภาพพระรัตนตรัยและแรงครู เปลี่ยนร้ายกลายเป็นดี ✨</p>
     `;
 
     $("#setupExtension").fadeOut(500, function() {
         $("#ritualResult").fadeIn(500);
         
-        // เริ่มเลื่อนบทสวด (ปรับเวลาตามต้องการ)
-        prayerContainer.style.animation = "scrollUp 12s linear forwards";
+        prayerContainer.style.animation = "scrollUp 14s linear forwards";
 
         setTimeout(() => {
             $("#prayerScroll").fadeOut(1000, function() {
-                const result = adviceDict[month];
-                
-                // ใส่ข้อมูลลงในหน้าสรุป
-                document.getElementById('summaryPrayer').innerText = result.prayer;
-                document.getElementById('extensionAdvice').innerText = result.advice;
-                document.getElementById('toDo').innerText = result.do;
-                document.getElementById('toAvoid').innerText = result.avoid;
+                document.getElementById('summaryDayPower').innerHTML = `<strong class="text-gold" style="font-size:1.15rem;">${dRes.candleText}</strong><br><small class="text-muted">เทวดาคุ้มครอง: ${dRes.guardian}</small>`;
+                document.getElementById('summaryPrayer').innerHTML = `<div style="margin-bottom:10px;"><strong>คาถาประจำวันเกิด:</strong> <span style="color:#ffd700;">${dRes.dayPrayer}</span></div><div><strong>คาถาประจำเดือนเกิด:</strong> <span style="color:#00ffcc;">${mRes.prayer}</span></div>`;
+                document.getElementById('extensionAdvice').innerText = mRes.advice;
+                document.getElementById('toDo').innerText = mRes.do;
+                document.getElementById('toAvoid').innerText = mRes.avoid;
 
                 $("#finalAdvice").fadeIn(1000);
             });
-        }, 12000);
+        }, 14000);
     });
 }
 

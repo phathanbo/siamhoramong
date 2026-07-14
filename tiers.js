@@ -1,3 +1,4 @@
+
 "use strict";
 
 const siteSeo = {
@@ -6,9 +7,8 @@ const siteSeo = {
     packageTitle: "ดูดวงตามหลักโหราศาสตร์ไทยที่แม่นยำ"
 };
 
-// 1. ข้อมูลระดับของ Package และราคา
 const packages = [
-    { name: "ทดลองใช้", m: 30, y: 300 },
+    { name: "ทดลองใช้", m: "ฟรี", y: "ฟรี" },
     { name: "ธรรมดา", m: 60, y: 600 },
     { name: "ทองแดง", m: 90, y: 900 },
     { name: "เงิน", m: 150, y: 1500 },
@@ -26,94 +26,208 @@ const packages = [
     { name: "วิมาน", m: "ติดต่อ", y: "ติดต่อ" }
 ];
 
-// 2. รายการบริการทั้งหมด 42 รายการ
-const services = [
-    "1. ทำนายดวงประจำวัน", "2. - การงาน", "3. - การเงิน", "4. - โชคลาภ", "5. - ความรัก", "6. - ชะตาชีวิต", "7. - การสะเดาะเคราะห์",
-    "8. วิธีเสริมมงคล", "9. ทำนายดวงประจำวันเกิด", "10. ทำนายดวงประจำเดือนเกิด", "11. ทำนายดวงประจำปีเกิด",
-    "12. เบอร์มงคล", "13. ชื่อมงคล", "14. ตั้งชื่อมงคล", "15. ตรวจดวงสมพงษ์", "16. เลขนำโชค",
-    "17. ฤกษ์มงคล", "18. - ฤกษ์เดินทาง", "19. - ฤกษ์ปลูกบ้าน", "20. - ฤกษ์แต่งงาน", "21. - ฤกษ์ทำบุญ",
-    "22. ฉัตร 3 ชั้น", "23. พยากรณ์รายปี", "24. พยากรณ์รายเดือน", "25. พยากรณ์รายวัน",
-    "26. พยากรณ์เฉพาะเรื่อง", "27. - การงาน", "28. - การเงิน", "29. - โชคลาภ", "30. - ความรัก", "31. - ชะตาชีวิต", "32. - การสะเดาะเคราะห์",
-    "33. ตรวจกำลังพระประจำชะตา", "34. ต่อชะตาชีวิต", "35. ทำนายฝัน", "36. พยากรณ์พระเคราะห์เสวยอายุ",
-    "37. บูชาเทวดาและสะเดาะเคราะห์", "38. แก้เรื่องอุบาทว์", "39. ตรวจดูนรลักษณ์", "40. ตรวจลายมือ", "41. ผูกดวงพิชัยสงคราม", "42. สร้างพระประจำวัน"
-];
+// โหลดข้อมูลสิทธิ์จาก Firebase แบบง่าย
+window.packagePermissions = {};
+
+async function loadPackagePermissions() {
+    if (!window.firebaseDb) {
+        setTimeout(loadPackagePermissions, 500);
+        return;
+    }
+    try {
+        const { doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        const snapshot = await getDoc(doc(window.firebaseDb, 'settings', 'packagePermissions'));
+        if (snapshot.exists()) {
+            window.packagePermissions = snapshot.data();
+        }
+        buildTableInternal();
+        if (typeof buildDashboard === 'function') buildDashboard();
+    } catch (e) {
+        console.error("Error loading permissions", e);
+    }
+}
+
+function checkPermissionDefault(pkgName, menuIndex) {
+    if (pkgName === "ทดลองใช้") return menuIndex < 3;
+    if (pkgName === "ธรรมดา") return menuIndex < 6;
+    return true; // แพ็กเกจอื่นได้หมดตาม default เดิม
+}
+
+window.togglePermission = async function(pkgName, menuId, tdId, menuIndex, pIndex) {
+    if (!isAdmin()) return;
+    
+    if (!window.packagePermissions[pkgName]) {
+        window.packagePermissions[pkgName] = {};
+    }
+    
+    let isAllowed = window.packagePermissions[pkgName][menuId];
+    if (isAllowed === undefined) {
+        isAllowed = checkPermissionDefault(pkgName, menuIndex);
+    }
+    
+    const newState = !isAllowed;
+    window.packagePermissions[pkgName][menuId] = newState;
+    
+    const tdElement = document.getElementById(tdId);
+    if (tdElement) {
+        tdElement.innerHTML = newState ? '<span class="check" style="cursor:pointer;">✔</span>' : '<span class="not-allow" style="cursor:pointer;">✘</span>';
+    }
+    
+    if (pIndex !== undefined) {
+        if (newState === false) {
+            // ถ้าปิด ต้องปิดระดับที่ต่ำกว่าทั้งหมดด้วย
+            for (let i = 0; i < pIndex; i++) {
+                const lowerPkg = packages[i].name;
+                if (!window.packagePermissions[lowerPkg]) window.packagePermissions[lowerPkg] = {};
+                window.packagePermissions[lowerPkg][menuId] = false;
+                const lowerTd = document.getElementById(`td_${menuId}_${i}`);
+                if (lowerTd) lowerTd.innerHTML = '<span class="not-allow" style="cursor:pointer;">✘</span>';
+            }
+        } else {
+            // ถ้าเปิด ต้องเปิดระดับที่สูงกว่าทั้งหมดด้วย
+            for (let i = pIndex + 1; i < packages.length; i++) {
+                const higherPkg = packages[i].name;
+                if (!window.packagePermissions[higherPkg]) window.packagePermissions[higherPkg] = {};
+                window.packagePermissions[higherPkg][menuId] = true;
+                const higherTd = document.getElementById(`td_${menuId}_${i}`);
+                if (higherTd) higherTd.innerHTML = '<span class="check" style="cursor:pointer;">✔</span>';
+            }
+        }
+    }
+    
+    try {
+        const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        await setDoc(doc(window.firebaseDb, 'settings', 'packagePermissions'), window.packagePermissions, { merge: true });
+    } catch (e) {
+        console.error("Error saving permission", e);
+        alert("บันทึกสิทธิ์ล้มเหลว: " + e.message);
+    }
+}
 
 function applySiteSeo() {
     document.title = siteSeo.title;
-
     const descriptionMeta = document.querySelector('meta[name="description"]');
     if (descriptionMeta) {
         descriptionMeta.setAttribute('content', siteSeo.description);
     }
 }
 
-function buildTable() {
-    applySiteSeo();
-
+function buildTableInternal() {
     const title = document.querySelector('#package .title');
     const head = document.getElementById('headerRow');
     const body = document.getElementById('serviceBody');
     const mRow = document.querySelector('.row-m');
     const yRow = document.querySelector('.row-y');
+    const bRow = document.querySelector('.row-buy');
 
-    // ตรวจสอบว่า Element ครบถ้วนก่อนทำงาน
     if (!head || !body || !mRow || !yRow) return;
 
-    if (title) {
-        title.textContent = siteSeo.packageTitle;
-    }
+    if (title) title.textContent = siteSeo.packageTitle;
 
-    // ล้างข้อมูลเก่า (เผื่อมีการเรียกใช้ซ้ำ)
     head.innerHTML = '<th class="sticky-col">รายการพยากรณ์</th>';
     body.innerHTML = '';
+    if (mRow) mRow.innerHTML = '<th class="sticky-col">รายเดือน (30 วัน)</th>';
+    if (yRow) yRow.innerHTML = '<th class="sticky-col">รายปี (365 วัน)</th>';
+    if (bRow) bRow.innerHTML = '<th class="sticky-col" style="background:#fff;">เลือกแพ็กเกจ</th>';
 
-    // วนลูปสร้าง Header และ Footer (ราคา)
     packages.forEach(pkg => {
-        // หัวตาราง: แสดงชื่อ Package
         const th = document.createElement('th');
         th.textContent = pkg.name;
         head.appendChild(th);
 
-        // แถวราคามรายเดือน
-        const tdM = document.createElement('td');
+        const tdM = document.createElement('th');
         tdM.className = 'price-cell';
-        tdM.textContent = typeof pkg.m === 'number' ? pkg.m.toLocaleString() : pkg.m;
+        if (pkg.name === "ทดลองใช้") {
+            tdM.innerHTML = `<button class="btn btn-sm btn-secondary" disabled style="width:100%; border-radius: 4px;">ฟรี</button>`;
+        } else {
+            const priceText = typeof pkg.m === 'number' ? pkg.m.toLocaleString() : pkg.m;
+            if (typeof pkg.m === 'number') {
+                tdM.innerHTML = `<button class="btn btn-sm" style="background:#d4af37; color:#000; font-weight:bold; border-radius: 4px; width:100%;" onclick="openPaymentModal('${pkg.name}', 'รายเดือน', ${pkg.m})">รายเดือน ฿${priceText}</button>`;
+            } else {
+                tdM.innerHTML = `<button class="btn btn-sm btn-info" style="width:100%; border-radius: 4px;" onclick="window.open('https://line.me/ti/p/', '_blank')">${priceText}</button>`;
+            }
+        }
         mRow.appendChild(tdM);
 
-        // แถวราคารายปี
-        const tdY = document.createElement('td');
+        const tdY = document.createElement('th');
         tdY.className = "price-cell";
-        tdY.textContent = typeof pkg.y === 'number' ? pkg.y.toLocaleString() : pkg.y;
+        if (pkg.name === "ทดลองใช้") {
+            tdY.innerHTML = `<button class="btn btn-sm btn-secondary" disabled style="width:100%; border-radius: 4px;">ฟรี</button>`;
+        } else {
+            const priceText = typeof pkg.y === 'number' ? pkg.y.toLocaleString() : pkg.y;
+            if (typeof pkg.y === 'number') {
+                tdY.innerHTML = `<button class="btn btn-sm" style="background:#b8960c; color:#000; font-weight:bold; border-radius: 4px; width:100%;" onclick="openPaymentModal('${pkg.name}', 'รายปี', ${pkg.y})">รายปี ฿${priceText}</button>`;
+            } else {
+                tdY.innerHTML = `<button class="btn btn-sm btn-info" style="width:100%; border-radius: 4px;" onclick="window.open('https://line.me/ti/p/', '_blank')">${priceText}</button>`;
+            }
+        }
         yRow.appendChild(tdY);
     });
 
-    // วนลูปสร้างรายการบริการ (Rows)
-    services.forEach((s, index) => {
-    const tr = document.createElement('tr');
-    let rowHTML = `<td class="sticky-col">${s}</td>`;
-    
-    // วนลูปตามจำนวน Package เพื่อเช็คสิทธิ์
-    packages.forEach(pkg => {
-        let access = ""; // ตัวแปรเก็บสัญลักษณ์ (✔ หรือ ✘)
+    // ใช้ APP_MENU จาก mainpage.js ยกเว้นเมนูที่จัดการระบบ
+    let validMenus = [];
+    if (typeof APP_MENU !== 'undefined') {
+        validMenus = APP_MENU.filter(m => m.id !== 'package' && !m.id.toLowerCase().includes('admin'));
+    } else {
+        // Fallback ถ้ายังไม่มี
+        validMenus = [{id: 'none', title: 'รอโหลดข้อมูล...'}];
+    }
 
-        if (pkg.name === "ทดลองใช้") {
-            // ถ้าเป็น Package ทดลองใช้ และ index อยู่ใน 3 ข้อแรก (0, 1, 2)
-            access = (index < 3) ? '<span class="check">✔</span>' : '<span class="not-allow">✘</span>';
-        } else if (pkg.name === "ธรรมดา") {
-            // ถ้าเป็น Package ธรรมดา และ index อยู่ใน 6 ข้อแรก (0, 1, 2, 3, 4, 5)
-            access = (index < 6) ? '<span class="check">✔</span>' : '<span class="not-allow">✘</span>';
-        } else {
-            // Package อื่นๆ ให้ดูได้หมด (หรือจะใส่ Logic เพิ่มเติมที่นี่ก็ได้)
-            access = '<span class="check">✔</span>';
+    // จัดกลุ่มตามความลึก (จากมากไปน้อย)
+    const depthScores = {
+        'deepSynastryPage': 100, 'ayanamsaPage': 99, 'monthlyTransitPage': 98, 'twelveHousesPage': 97, 'dashaPage': 96,
+        'thaksaninesection': 95, 'taksaPage': 94, 'chatninePage': 93, 'sevenDigitsPage': 92, 'horoscopeseven': 91,
+        'sompong-wealth': 90, 'personalizedAuspiciousPage': 89, 'chatraPage': 88, 'climate-section': 87, 'planetRelationPage': 86,
+        'ascendantPage': 85, 'nameAnalysisPage': 84, 'numerologyPage': 83, 'soulmate-direction': 82, 'marriage-compatibility': 81,
+        'compatibilityPage': 80, 'patient-prognosis': 79, 'lifeExtensionPage': 78, 'auspiciousOpening': 77, 'ceremonyDate': 76,
+        'planetaryHoursPage': 75, 'dailyHighlightPage': 74, 'birthfortune': 73, 'kaliyokepage': 72, 'reuxpage': 71,
+        'thaiHoraPage': 70, 'thaiAstrology': 69
+    };
+
+    validMenus.sort((a, b) => {
+        const scoreA = depthScores[a.id] || 50; // default score for unlisted items
+        const scoreB = depthScores[b.id] || 50;
+        
+        // ถ้าคะแนนเท่ากัน ให้เรียงตามชื่อ
+        if (scoreA === scoreB) {
+            return a.title.localeCompare(b.title, 'th');
         }
-
-        rowHTML += `<td class="status-cell">${access}</td>`;
+        // เรียงจากน้อยไปมาก
+        return scoreA - scoreB;
     });
-    
-    tr.innerHTML = rowHTML;
-    body.appendChild(tr);
-});
+
+
+    validMenus.forEach((menu, index) => {
+        const tr = document.createElement('tr');
+        // ทำความสะอาด HTML tags จากชื่อเมนู
+        let cleanTitle = menu.title.replace(/<[^>]*>?/gm, ' ');
+        let rowHTML = `<td class="sticky-col" style="text-align:left;"><i class="fas ${menu.icon} mr-2"></i> ${cleanTitle}</td>`;
+        
+        packages.forEach((pkg, pIndex) => {
+            let isAllowed = window.packagePermissions && window.packagePermissions[pkg.name] && window.packagePermissions[pkg.name][menu.id] !== undefined
+                ? window.packagePermissions[pkg.name][menu.id]
+                : checkPermissionDefault(pkg.name, index);
+                
+            let adminClick = '';
+            let cursorStyle = '';
+            if (typeof isAdmin === 'function' && isAdmin()) {
+                adminClick = `onclick="togglePermission('${pkg.name}', '${menu.id}', 'td_${menu.id}_${pIndex}', ${index}, ${pIndex})"`;
+                cursorStyle = 'cursor:pointer;';
+            }
+            
+            let iconHtml = isAllowed ? `<span class="check" style="${cursorStyle} ">✔</span>` : `<span class="not-allow" style="${cursorStyle} ">✘</span>`;
+            rowHTML += `<td class="status-cell" id="td_${menu.id}_${pIndex}" ${adminClick}>${iconHtml}</td>`;
+        });
+        
+        tr.innerHTML = rowHTML;
+        body.appendChild(tr);
+    });
 }
 
-// เริ่มทำงานเมื่อโหลด DOM เสร็จ
+function buildTable() {
+    applySiteSeo();
+    buildTableInternal();
+    loadPackagePermissions();
+}
+
 document.addEventListener('DOMContentLoaded', buildTable);

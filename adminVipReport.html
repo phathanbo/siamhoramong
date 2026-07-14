@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สร้างรายงานดวงชะตา (VIP) - สยามโหรามงคล</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { 
+            margin: 0; 
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
+            color: #fff; 
+            font-family: 'Sarabun', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        .header { 
+            background: rgba(15, 12, 41, 0.8); 
+            backdrop-filter: blur(10px);
+            padding: 20px 40px; 
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5); 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 { 
+            margin: 0; 
+            color: #FFDF73; 
+            font-size: 26px; 
+            text-shadow: 0 0 15px rgba(212,175,55,0.4); 
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .header h1 i { color: #d4af37; }
+        .back-btn { 
+            background: rgba(255, 255, 255, 0.05); 
+            color: #FFDF73; 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            padding: 10px 25px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 16px; 
+        }
+        .back-btn:hover { 
+            background: rgba(212, 175, 55, 0.15); 
+            border-color: #d4af37; 
+            box-shadow: 0 0 15px rgba(212,175,55,0.2);
+            transform: translateY(-2px);
+        }
+        .content { 
+            display: flex; 
+            flex: 1; 
+            padding: 30px 40px; 
+            gap: 40px; 
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .sidebar { 
+            flex: 0 0 400px; 
+            background: rgba(20, 15, 35, 0.6); 
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.2); 
+            border-radius: 20px; 
+            padding: 35px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 25px; 
+            height: fit-content;
+        }
+        .sidebar-title {
+            color: #FFF;
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-title i { color: #d4af37; }
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            background: rgba(255, 255, 255, 0.03); 
+            padding: 20px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        .form-group:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            background: rgba(212, 175, 55, 0.02);
+        }
+        .form-group label { 
+            color: #FFDF73; 
+            font-weight: 500; 
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-group select, .form-group input { 
+            padding: 14px; 
+            border-radius: 8px; 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            background: rgba(0, 0, 0, 0.4); 
+            color: #fff; 
+            font-family: 'Sarabun'; 
+            font-size: 16px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .form-group select:focus, .form-group input:focus { 
+            outline: none; 
+            border-color: #d4af37; 
+            box-shadow: 0 0 0 2px rgba(212,175,55,0.2);
+        }
+        .form-group option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+        .form-group button:hover {
+            background: rgba(212, 175, 55, 0.2) !important;
+            border-color: #d4af37 !important;
+        }
+        .btn-generate { 
+            background: linear-gradient(135deg, #d4af37, #f39c12); 
+            color: #111; 
+            font-weight: 700; 
+            font-size: 18px; 
+            padding: 18px; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            margin-top: 10px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 20px rgba(212,175,55,0.3);
+        }
+        .btn-generate:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 30px rgba(212,175,55,0.5); 
+            background: linear-gradient(135deg, #f9e596, #d4af37);
+        }
+        .btn-generate:active {
+            transform: translateY(0);
+        }
+        .preview-area { 
+            flex: 1; 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+            border-radius: 20px; 
+            padding: 40px; 
+            display: flex; 
+            justify-content: center; 
+            overflow-y: auto; 
+            align-items: flex-start; 
+            position: relative;
+        }
+        .preview-placeholder {
+            color: rgba(255,255,255,0.4); 
+            text-align: center; 
+            margin-top: 15vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .preview-placeholder i {
+            font-size: 80px; 
+            color: rgba(212, 175, 55, 0.2);
+        }
+        .preview-placeholder h3 {
+            margin: 0;
+            font-weight: 400;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1><i class="fas fa-file-pdf"></i> ออกรายงานดวงชะตารายเดือน (VIP)</h1>
+        <a href="admin.html" class="back-btn"><i class="fas fa-arrow-left"></i> กลับไประบบหลังบ้าน</a>
+    </div>
+
+    <div class="content">
+        <div class="sidebar">
+            <h3 class="sidebar-title"><i class="fas fa-sliders-h"></i> ตั้งค่ารายงาน</h3>
+            
+            <div class="form-group">
+                <label><i class="fas fa-user-circle"></i> เลือกชื่อลูกค้าจากฐานข้อมูล:</label>
+                <select id="vipMemberSelect" onchange="window.autoFillVipMember(this.value)">
+                    <option value="">-- โหลดข้อมูลลูกค้า --</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> เลือกเดือนที่ต้องการทำนาย:</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button type="button" onclick="changeMonth(-1)" style="padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: #FFDF73; border-radius: 8px; cursor: pointer; transition: 0.3s;"><i class="fas fa-chevron-left"></i></button>
+                    <input type="month" id="vipTargetMonth" style="flex: 1; width: 100%;">
+                    <button type="button" onclick="changeMonth(1)" style="padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: #FFDF73; border-radius: 8px; cursor: pointer; transition: 0.3s;"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Hidden fields for JS logic -->
+            <input type="hidden" id="vipName">
+            <input type="hidden" id="vipIdCard">
+            <input type="hidden" id="vipDobDate">
+            <input type="hidden" id="vipDobTime">
+            <input type="hidden" id="vipLocation">
+            
+            <button class="btn-generate" onclick="generateVIPReport()"><i class="fas fa-magic"></i> สร้างรายงาน (PDF)</button>
+        </div>
+        
+        <div class="preview-area" id="previewArea">
+            <div class="preview-placeholder">
+                <i class="fas fa-file-invoice"></i>
+                <h3>ยังไม่ได้สร้างรายงาน</h3>
+                <p>โปรดเลือกข้อมูลลูกค้า และกดปุ่ม "สร้างรายงาน" เพื่อดูตัวอย่าง</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core astrologic scripts required for calculations -->
+    <script src="ascendant.js"></script>
+    <script src="thai-astrology-data.js"></script>
+    <script src="horoscopeseven.js"></script>
+    <!-- Script that handles PDF generation logic -->
+    <script src="adminVipReport.js"></script>
+</body>
+</html>

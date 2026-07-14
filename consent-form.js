@@ -469,23 +469,26 @@ function rejectConsent() {
         localStorage.removeItem('userId');
         sessionStorage.removeItem('userId');
         hideConsentOverlay();
-        alert('คุณได้ปฏิเสธการยินยอม ระบบจะนำคุณออกจากระบบ');
-        window.location.href = 'index.html';
+        Swal.fire('แจ้งเตือน', 'คุณได้ปฏิเสธการยินยอม ระบบจะนำคุณออกจากระบบ', 'info').then(() => {
+            window.location.href = 'index.html';
+        });
     }
 }
 
-// ส่งข้อมูลยินยอมไปยัง Server
-function sendConsentToServer(consentData) {
-    const apiEndpoint = '/api/consent' || 'http://localhost:3000/api/consent';
-
-    fetch(apiEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(consentData)
-    })
-    .then(response => response.json())
-    .then(data => console.log('Consent saved to server:', data))
-    .catch(error => console.error('Error sending consent:', error));
+// ส่งข้อมูลยินยอมไปยัง Server (อัปเดตให้รองรับ Firestore ถ้าระบบพร้อม)
+async function sendConsentToServer(consentData) {
+    try {
+        if (window.firebaseDb) {
+            // ใช้ Firestore แทน API ถ้ามีการต่อ Firebase
+            const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+            await addDoc(collection(window.firebaseDb, "consents"), consentData);
+            console.log('Consent saved to Firestore');
+        } else {
+            console.log('Consent saved locally (Firestore not available)');
+        }
+    } catch (error) {
+        console.error('Error saving consent to Firestore:', error);
+    }
 }
 
 // แสดงข้อความสำเร็จ

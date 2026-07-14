@@ -41,33 +41,6 @@ const ZODIAC_RELATIONS = {
 // 2. ฟังก์ชันการทำงาน (Logic)
 // ==========================================
 
-function updateDailyTaboo(dayIndex) {
-    const data = TABOO_DATA[dayIndex];
-    if (!data) return;
-
-    const dayTitle = document.getElementById('tabooDayTitle');
-    const goodList = document.getElementById('goodList');
-    const badList = document.getElementById('badList');
-
-    if (dayTitle) dayTitle.innerText = "วัน" + data.day;
-    
-    // ใช้ Inline Style สำหรับสีเขียว/แดง เพื่อความชัวร์
-    if (goodList) {
-        goodList.innerHTML = data.good.map(item => 
-            `<li style="list-style:none; color:#5cb85c;"><i class="fas fa-check-circle mr-2"></i> ${item}</li>`
-        ).join('');
-    }
-
-    if (badList) {
-        badList.innerHTML = data.bad.map(item => 
-            `<li style="list-style:none; color:#d9534f;"><i class="fas fa-times-circle mr-2"></i> ${item}</li>`
-        ).join('');
-    }
-
-    if (typeof updateDirectionDisplay === 'function') updateDirectionDisplay(dayIndex);
-    if (typeof updateZodiacLuckDisplay === 'function') updateZodiacLuckDisplay(dayIndex);
-}
-
 function updateDirectionDisplay(dayIndex) {
     const dir = DIRECTION_DATA[dayIndex];
     const container = document.getElementById('directionContainer');
@@ -197,7 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const dateDisplay = document.getElementById('current-date-display');
     if (dateDisplay) {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateDisplay.innerText = "วันนี้: " + now.toLocaleDateString('th-TH', options);
+        let dateStr = "วันนี้: " + now.toLocaleDateString('th-TH', options);
+        if (typeof getThaiLunar === 'function') {
+            const lunar = getThaiLunar(now);
+            if (lunar && lunar.fullString) {
+                dateStr += ` (${lunar.fullString})`;
+            }
+        }
+        dateDisplay.innerText = dateStr;
     }
 
     // รันข้อมูลรายวัน

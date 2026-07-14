@@ -21,7 +21,7 @@ function safeSetText(id, text) {
 /* =========================
    2. VALIDATION
 ========================= */
-function validateInput(day, month, year, be) {
+function validateBirthFortuneInput(day, month, year, be) {
     if (!day || day < 1 || day > 31) return "วันไม่ถูกต้อง";
     if (!month || month < 1 || month > 12) return "เดือนไม่ถูกต้อง";
     if (!be || be < 2000) return "ปี พ.ศ. ไม่ถูกต้อง";
@@ -46,9 +46,9 @@ function calculateBirthFortune() {
         const year = getInt("fortuneYear"); // เลขเสริม/เลขปี
         const be = getInt("fortuneBE");
 
-        const error = validateInput(day, month, year, be);
+        const error = validateBirthFortuneInput(day, month, year, be);
         if (error) {
-            alert("❗ " + error);
+            Swal.fire('เกิดข้อผิดพลาด', error, 'error');
             return;
         }
 
@@ -119,6 +119,6 @@ function calculateBirthFortune() {
 
     } catch (err) {
         console.error("🔥 ERROR:", err);
-        alert("ระบบเกิดข้อผิดพลาด กรุณาลองใหม่");
+        Swal.fire('เกิดข้อผิดพลาด', 'ระบบเกิดข้อผิดพลาด กรุณาลองใหม่', 'error');
     }
 }

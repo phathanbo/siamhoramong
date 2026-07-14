@@ -1,9 +1,24 @@
 "use strict";
 
 /**
- * ข้อมูลราศีและคำนิยามลัคนา
+ * ═══════════════════════════════════════════════════════════════════════
+ * ระบบคำนวณลัคนาพยากรณ์ — ตามหลักโหราศาสตร์ไทย-ฮินดู (นิรายันระบบ)
+ * ═══════════════════════════════════════════════════════════════════════
+ * หลักการ:
+ *   1. คำนวณ Julian Day Number (JDN) จากวัน-เดือน-ปี-เวลาเกิด (UTC+7)
+ *   2. คำนวณ Greenwich Sidereal Time (IAU 2006) → Local Sidereal Time
+ *   3. คำนวณองศาลัคนาสุริยวิถีแบบสายัน (Tropical Ascendant)
+ *      สูตร: atan(cos(LST) / (-sin(ε)·tan(φ) + cos(ε)·sin(LST)))
+ *      พร้อม Quadrant Correction
+ *   4. ลบอยันศ์ลาหิริ (Lahiri Ayanamsha) → ลัคนานิรายัน (Sidereal)
+ *   5. แบ่งราศี 30° ต่อราศี → ได้ลัคนาราศี + องศา นาที วินาที
+ *
+ * ใช้ค่าคงที่เดียวกับ thaiHora.js:
+ *   LAHIRI_OFFSET_J2000 = 23.853056°
+ *   PRECESSION_RATE     = 50.290966"/yr
  */
 
+// ─── ข้อมูล 12 ราศี (Rasi) ─────────────────────────────────────────────
 const ZODIAC_DATA = [
   {
     name: "เมษ", icon: "♈",
@@ -92,325 +107,565 @@ const ZODIAC_DATA = [
   {
     name: "พิจิก", icon: "♏",
     desc: "เป็นคนมีความลึกลับ มีพลังอำนาจในตัว และมีความมุ่งมั่นสูง",
-    element: "ธาตุน้ำ", ruler: "ดาวอังคาร/พลูโต",
+    element: "ธาตุน้ำ", ruler: "ดาวอังคาร",
     strengths: ["ลึกซึ้ง", "อดทน", "อ่านคนออก"],
     weaknesses: ["หึงหวง", "แค้นฝัง", "ควบคุม"],
     luckyColor: "แดงเลือดหมู, ดำ", luckyNumber: [8, 11],
     compatible: ["กรกฎ", "มีน", "กันย์"],
     career: "สืบสวน จิตแพทย์ การเงิน นักวิจัย",
-    love: "รักสุดใจ ต้องการความซื่อสัตย์ 100%",
-    health: "ระวังระบบสืบพันธุ์ ความเครียดสะสม"
+    love: "รักลึก หวงแหน ต้องการความจริงใจ 100%",
+    health: "ระวังอวัยวะสืบพันธุ์ ระบบขับถ่าย"
   },
   {
     name: "ธนู", icon: "♐",
-    desc: "เป็นคนรักอิสระ มองโลกในแง่ดี ชอบเรียนรู้สิ่งใหม่ๆ และมีคุณธรรม",
-    element: "ธาตุไฟ", ruler: "ดาวพฤหัส",
-    strengths: ["มองบวก", "ซื่อตรง", "ชอบผจญภัย"],
-    weaknesses: ["พูดตรงเกิน", "เบื่อง่าย", "ไม่ผูกมัด"],
+    desc: "เป็นคนมองโลกกว้าง รักอิสระ ชอบเดินทาง และมีปรัชญาในการใช้ชีวิต",
+    element: "ธาตุไฟ", ruler: "ดาวพฤหัสบดี",
+    strengths: ["มองภาพใหญ่", "เป็นกันเอง", "ซื่อตรง"],
+    weaknesses: ["ปากตรงเกิน", "หวือหวา", "ไม่มีวินัย"],
     luckyColor: "ม่วง, น้ำเงิน", luckyNumber: [3, 12],
-    compatible: ["เมษ", "สิงห์", "ตุลย์"],
-    career: "อาจารย์ ไกด์ นักเดินทาง สื่อต่างประเทศ",
-    love: "ต้องการพื้นที่ รักที่เป็นเพื่อนกันได้",
-    health: "ระวังสะโพก ตับ จากการใช้ชีวิตสุดเหวี่ยง"
+    compatible: ["เมษ", "สิงห์", "กุมภ์"],
+    career: "อาจารย์ นักเดินทาง ทนาย ศาสนา",
+    love: "รักเสรีภาพ ต้องการคนที่ให้พื้นที่",
+    health: "ระวังสะโพก ต้นขา น้ำหนักเกิน"
   },
   {
     name: "มังกร", icon: "♑",
-    desc: "เป็นคนมีความรับผิดชอบสูง มุ่งมั่นในความสำเร็จ และมีความอดทนเป็นเลิศ",
+    desc: "เป็นคนทะเยอทะยาน มีวินัย ขยันและอดทนเพื่อความสำเร็จ",
     element: "ธาตุดิน", ruler: "ดาวเสาร์",
-    strengths: ["วินัย", "อดทน", "วางแผนเก่ง"],
-    weaknesses: ["เคร่งเครียด", "มองโลกแง่ร้าย", "บ้างาน"],
-    luckyColor: "ดำ, น้ำตาลเข้ม", luckyNumber: [4, 8],
-    compatible: ["พฤษภ", "กันย์", "มีน"],
-    career: "ผู้บริหาร วิศวกร ราชการ การเงิน",
-    love: "รักช้าแต่มั่นคง แสดงออกด้วยการดูแล",
+    strengths: ["อดทน", "มีวินัย", "มุ่งมั่น"],
+    weaknesses: ["เย็นชา", "ทำงานหนักเกิน", "ยึดติดสถานะ"],
+    luckyColor: "เทา, ดำ, น้ำตาล", luckyNumber: [8, 10],
+    compatible: ["พฤษภ", "กันย์", "พิจิก"],
+    career: "บริหาร วิศวกรรม การเงิน รัฐการ",
+    love: "รักมั่นคง ต้องการความจริงจัง",
     health: "ระวังเข่า กระดูก ผิวหนัง"
   },
   {
     name: "กุมภ์", icon: "♒",
-    desc: "เป็นคนมีเอกลักษณ์ ชอบอิสระ มีความคิดสร้างสรรค์ และรักพวกพ้อง",
+    desc: "เป็นคนคิดนอกกรอบ รักความเป็นเอกเทศ และมีอุดมการณ์เพื่อส่วนรวม",
     element: "ธาตุลม", ruler: "ดาวเสาร์/ยูเรนัส",
-    strengths: ["นวัตกรรม", "มนุษยธรรม", "เป็นตัวของตัวเอง"],
-    weaknesses: ["ดื้อเงียบ", "เย็นชา", "แหกกฎ"],
-    luckyColor: "ฟ้าไฟฟ้า, เงิน", luckyNumber: [7, 11],
+    strengths: ["สร้างสรรค์", "เป็นตัวเอง", "มีอุดมการณ์"],
+    weaknesses: ["ห่างเหิน", "ดื้อ", "ไม่แน่ใจในอารมณ์"],
+    luckyColor: "ฟ้า, ม่วง", luckyNumber: [4, 11],
     compatible: ["เมถุน", "ตุลย์", "ธนู"],
-    career: "เทคโนโลยี นักประดิษฐ์ NGO งานสังคม",
-    love: "ต้องการเพื่อนก่อนเป็นแฟน ไม่ชอบผูกมัด",
-    health: "ระวังระบบไหลเวียน ข้อเท้า ความเครียด"
+    career: "IT วิทยาศาสตร์ สังคมสงเคราะห์ นวัตกรรม",
+    love: "ต้องการเพื่อนคู่คิด ไม่ชอบความน่าเบื่อ",
+    health: "ระวังข้อเท้า ระบบไหลเวียน"
   },
   {
     name: "มีน", icon: "♓",
-    desc: "เป็นคนอ่อนไหว มีเมตตา มีจินตนาการสูง และชอบช่วยเหลือผู้อื่น",
-    element: "ธาตุน้ำ", ruler: "ดาวพฤหัส/เนปจูน",
-    strengths: ["เห็นอกเห็นใจ", "ศิลปะ", "ยืดหยุ่น"],
-    weaknesses: ["หนีปัญหา", "โลเล", "อ่อนไหวเกิน"],
-    luckyColor: "เขียวทะเล, ม่วงลาเวนเดอร์", luckyNumber: [7, 12],
+    desc: "เป็นคนมีจินตนาการสูง เห็นอกเห็นใจผู้อื่น และมีจิตวิญญาณทางศิลปะ",
+    element: "ธาตุน้ำ", ruler: "ดาวพฤหัสบดี/เนปจูน",
+    strengths: ["เห็นอกเห็นใจ", "สร้างสรรค์", "ลึกซึ้ง"],
+    weaknesses: ["โลกส่วนตัว", "เปราะบาง", "ไม่ตั้งใจ"],
+    luckyColor: "ทะเล, ม่วงอ่อน", luckyNumber: [7, 12],
     compatible: ["กรกฎ", "พิจิก", "มังกร"],
-    career: "ศิลปิน นักบำบัด งานช่วยเหลือ ครีเอทีฟ",
-    love: "รักแบบเสียสละ ต้องการคนเข้าใจ",
-    health: "ระวังเท้า ระบบน้ำเหลือง ภูมิแพ้"
+    career: "ศิลปิน นักดนตรี นักจิตวิทยา งานบวช",
+    love: "รักด้วยหัวใจ ต้องการความอ่อนโยน",
+    health: "ระวังเท้า ระบบน้ำเหลือง ภาวะซึมเศร้า"
   }
 ];
 
-const colors = {
-    ธาตุไฟ: "#ff0000",
-    ธาตุดิน: "#914600",
-    ธาตุลม: "#abfcff",
-    ธาตุน้ำ: "#00a2ff",
+// ─── สีตามธาตุ ─────────────────────────────────────────────────────────
+const ASC_ELEMENT_COLORS = {
+  "ธาตุไฟ": "#ff4444",
+  "ธาตุดิน": "#c68642",
+  "ธาตุลม": "#00ddff",
+  "ธาตุน้ำ": "#0077ff"
 };
 
-function showascen(){
-    const contianer = document.getElementById('showascPage')
-    if (!contianer) return ;
+// ─── รายชื่อจังหวัด/เมืองสำคัญทั่วไทย ─────────────────────────────────
+const ASC_CITY_LIST = [
+  { name:"กรุงเทพมหานคร",    lat:13.7563, lng:100.5018 },
+  { name:"กาญจนบุรี",        lat:14.0023, lng: 99.5472 },
+  { name:"กาฬสินธุ์",        lat:16.4315, lng:103.5060 },
+  { name:"กำแพงเพชร",        lat:16.4828, lng: 99.5228 },
+  { name:"ขอนแก่น",          lat:16.4322, lng:102.8236 },
+  { name:"จันทบุรี",         lat:12.6105, lng:102.1044 },
+  { name:"ฉะเชิงเทรา",       lat:13.6904, lng:101.0779 },
+  { name:"ชลบุรี",           lat:13.3611, lng:100.9847 },
+  { name:"ชัยนาท",           lat:15.1853, lng:100.1246 },
+  { name:"ชัยภูมิ",          lat:15.8068, lng:101.9222 },
+  { name:"ชุมพร",            lat:10.4930, lng: 99.1800 },
+  { name:"เชียงของ",         lat:20.2694, lng:100.4017 },
+  { name:"เชียงราย",         lat:19.9071, lng: 99.8308 },
+  { name:"เชียงใหม่",        lat:18.7883, lng: 98.9853 },
+  { name:"ตรัง",             lat: 7.5591, lng: 99.6114 },
+  { name:"ตราด",             lat:12.2428, lng:102.5167 },
+  { name:"ตาก",              lat:16.8800, lng: 99.1428 },
+  { name:"นครนายก",          lat:14.2048, lng:101.2131 },
+  { name:"นครปฐม",           lat:13.8199, lng:100.0640 },
+  { name:"นครพนม",           lat:17.4101, lng:104.7730 },
+  { name:"นครราชสีมา",       lat:14.9799, lng:102.0978 },
+  { name:"นครศรีธรรมราช",    lat: 8.4324, lng: 99.9631 },
+  { name:"นครสวรรค์",        lat:15.7027, lng:100.1369 },
+  { name:"นนทบุรี",          lat:13.8621, lng:100.5149 },
+  { name:"นราธิวาส",         lat: 6.4264, lng:101.8236 },
+  { name:"น่าน",             lat:18.7756, lng:100.7731 },
+  { name:"บึงกาฬ",           lat:18.3609, lng:103.6484 },
+  { name:"บุรีรัมย์",        lat:14.9950, lng:103.1029 },
+  { name:"ปทุมธานี",         lat:14.0208, lng:100.5250 },
+  { name:"ประจวบคีรีขันธ์",  lat:11.8126, lng: 99.7978 },
+  { name:"ปราจีนบุรี",       lat:14.0519, lng:101.3673 },
+  { name:"ปัตตานี",          lat: 6.8697, lng:101.2510 },
+  { name:"พระนครศรีอยุธยา",  lat:14.3532, lng:100.5697 },
+  { name:"พะเยา",            lat:19.1566, lng: 99.9000 },
+  { name:"พังงา",            lat: 8.4515, lng: 98.5254 },
+  { name:"พัทลุง",           lat: 7.6167, lng:100.0743 },
+  { name:"พิจิตร",           lat:16.4426, lng:100.3493 },
+  { name:"พิษณุโลก",         lat:16.8211, lng:100.2659 },
+  { name:"เพชรบุรี",         lat:13.1119, lng: 99.9399 },
+  { name:"เพชรบูรณ์",        lat:16.4190, lng:101.1591 },
+  { name:"แพร่",             lat:18.1445, lng:100.1399 },
+  { name:"ภูเก็ต",           lat: 7.8804, lng: 98.3923 },
+  { name:"มหาสารคาม",        lat:16.1851, lng:103.3000 },
+  { name:"มุกดาหาร",         lat:16.5432, lng:104.7239 },
+  { name:"แม่ฮ่องสอน",       lat:19.3020, lng: 97.9655 },
+  { name:"ยโสธร",            lat:15.7924, lng:104.1478 },
+  { name:"ยะลา",             lat: 6.5213, lng:101.2804 },
+  { name:"ร้อยเอ็ด",         lat:16.0540, lng:103.6520 },
+  { name:"ระนอง",            lat: 9.9529, lng: 98.6085 },
+  { name:"ระยอง",            lat:12.6814, lng:101.2816 },
+  { name:"ราชบุรี",          lat:13.5282, lng: 99.8134 },
+  { name:"ลพบุรี",           lat:14.7995, lng:100.6534 },
+  { name:"ลำปาง",            lat:18.2888, lng: 99.4944 },
+  { name:"ลำพูน",            lat:18.5741, lng: 99.0087 },
+  { name:"เลย",              lat:17.4866, lng:101.7236 },
+  { name:"ศรีสะเกษ",         lat:15.1199, lng:104.3217 },
+  { name:"สกลนคร",           lat:17.1554, lng:104.1348 },
+  { name:"สงขลา/หาดใหญ่",   lat: 7.0078, lng:100.4730 },
+  { name:"สตูล",             lat: 6.6238, lng:100.0673 },
+  { name:"สมุทรปราการ",      lat:13.5991, lng:100.5999 },
+  { name:"สมุทรสงคราม",      lat:13.4098, lng:100.0019 },
+  { name:"สมุทรสาคร",        lat:13.5477, lng:100.2742 },
+  { name:"สระแก้ว",          lat:13.8236, lng:102.0643 },
+  { name:"สระบุรี",          lat:14.5289, lng:100.9097 },
+  { name:"สิงห์บุรี",        lat:14.8897, lng:100.3967 },
+  { name:"สุโขทัย",          lat:17.0060, lng: 99.8260 },
+  { name:"สุพรรณบุรี",       lat:14.4744, lng:100.1178 },
+  { name:"สุราษฎร์ธานี",     lat: 9.1382, lng: 99.3314 },
+  { name:"สุรินทร์",         lat:14.8827, lng:103.4937 },
+  { name:"หนองคาย",          lat:17.8782, lng:102.7410 },
+  { name:"หนองบัวลำภู",      lat:17.2047, lng:102.4378 },
+  { name:"อ่างทอง",          lat:14.5896, lng:100.4552 },
+  { name:"อำนาจเจริญ",       lat:15.8601, lng:104.6252 },
+  { name:"อุดรธานี",         lat:17.4158, lng:102.7878 },
+  { name:"อุตรดิตถ์",        lat:17.6248, lng:100.0993 },
+  { name:"อุทัยธานี",        lat:15.3835, lng:100.0256 },
+  { name:"อุบลราชธานี",      lat:15.2448, lng:104.8473 },
+];
 
+// ═══════════════════════════════════════════════════════════════════════
+// ฟังก์ชันดาราศาสตร์ (ใช้ค่าคงที่เดียวกับ thaiHora.js)
+// ═══════════════════════════════════════════════════════════════════════
 
-    const html = `
-            <div class="container mt-4">
-            <div class="card bg-dark border-gold text-white p-4 shadow-lg text-center">
-                <h2 class="text-gold mb-4"><i class="fas fa-star-and-crescent mr-2"></i> คำนวณลัคนาพยากรณ์</h2>
+/** Julian Day Number (Gregorian calendar, อัลกอริทึม Meeus) */
+function ascJD(year, month, day, utHour) {
+  const A = Math.floor((14 - month) / 12);
+  const Y = year + 4800 - A;
+  const M = month + 12 * A - 3;
+  const jdn = day + Math.floor((153 * M + 2) / 5)
+            + 365 * Y + Math.floor(Y / 4)
+            - Math.floor(Y / 100) + Math.floor(Y / 400)
+            - 32045;
+  return jdn - 0.5 + utHour / 24.0;
+}
 
-                <div class="form-group mb-3">
-                    <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
-                    <select class="form-control bg-black text-black border-gold member-selector-shared"
-                        onchange="autoFillMemberData(this.value);calculateAscendant()"> >
-                        <option value="">-- เลือกสมาชิก --</option>
-                    </select>
-                </div>
+/** Normalize to [0, 360) */
+function ascNorm(deg) {
+  let d = deg % 360;
+  return d < 0 ? d + 360 : d;
+}
 
-                <div class="row justify-content-center">
-                    <div class="col-md-5 mb-3">
-                        <label>วันเกิด (ค.ศ.)</label>
-                        <input type="date" id="ascBirthDate" class="form-control bg-black text-gold border-gold">
-                    </div>
-                    <div class="col-md-5 mb-3">
-                        <label>เวลาเกิด (HH:mm)</label>
-                        <input type="time" id="ascBirthTime" class="form-control bg-black text-gold border-gold">
-                    </div>
-                </div>
-                <button class="btn btn-gold btn-block mt-3" onclick="calculateAscendant()">
-                    <i class="fas fa-magic"></i> คำนวณลัคนา
-                </button>
+/** Greenwich Sidereal Time (IAU 2006) เป็นองศา */
+function ascGST(jd) {
+  const T = (jd - 2451545.0) / 36525.0;
+  const θ = 280.46061837
+           + 360.98564736629 * (jd - 2451545.0)
+           + 0.000387933 * T * T
+           - T * T * T / 38710000.0;
+  return ascNorm(θ);
+}
 
-                <div id="ascendantResult" class="mt-4 p-4 rounded"
-                    style="display: none; background: rgba(212, 175, 55, 0.1); border: 1px dashed #d4af37;">
-                    <h3 id="ascSign" class="text-gold"></h3>
-                    <span style="font-size: 1.1rem;">ดาวประจำตัวคือ </span><b id="ascruler" class="text-gold" style="font-size: 1.1rem;"></b> <span id="ascElement" style="font-size: 1.1rem; text-align: center;"></span><span style="font-size: 1.1rem;"> ราศีที่เกี่ยวข้องคือ </span><b id="asccompatible" class="text-gold" style="font-size: 1.1rem;"></b><br>
-                    <span id="ascDesc" style="font-size: 1.1rem; text-align: center;"></span>
-                    <br>
-                    <span id="asccareer" style="font-size: 1.1rem; text-align: center;"></span><br>
-                    <span class="text-success">จุดเด่นของลัคนานี้ คือ </span><span id="ascstrengths" style="font-size: 1.1rem; text-align: center;"></span><br>
-                    <span class="text-danger">จุดที่ควรระวัง คือ </span><span id="ascweaknesses" style="font-size: 1.1rem; text-align: center;"></span><br>
-                    <span class="text-info">เรื่องรักของลัคนานี้ คือ </span><span id="ascLove" style="font-size: 1.1rem; text-align: center;"></span><br>
-                    <span class="text-warning">เรื่องสุขภาพของลัคนานี้ คือ </span><span id="ascHealth" style="font-size: 1.1rem; text-align: center;"></span><br>
-                    <hr style="border-top: 1px solid rgba(212, 175, 55, 0.3);">
-                    <h5 class="text-gold mb-3"><i class="fas fa-th-large mr-2"></i> พื้นฐานดวงชะตา 12 ภพเรือน</h5>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-bordered text-white border-gold"
-                            style="background: rgba(0,0,0,0.3);">
-                            <thead class="text-gold">
-                                <tr>
-                                    <th>ภพเรือน</th>
-                                    <th>ราศีที่สถิต</th>
-                                    <th>จุดเด่น</th>
-                                    <th>จุดที่ควรระวัง</th>
-                                </tr>
-                            </thead>
-                            <tbody id="houseTableBody">
-                            </tbody>
-                        </table>                 
-                    </div>                    
-                </div>
-                <div class="text-center mt-4">
-                        <button class="btn btn-outline-gold px-5 py-2" onclick="saveAscendantImg()">
-                            <i class="fas fa-camera mr-2"></i> บันทึกภาพดวงชะตา
-                        </button>
-                    </div>
+/** Obliquity of the ecliptic (องศา) */
+function ascObliquity(jd) {
+  const T = (jd - 2451545.0) / 36525.0;
+  return 23.439291 - 0.013004 * T;
+}
 
-                <div class="row mt-4">
-                    <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
-                            <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
-                        </button>
-                    </div>
-                    <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
-                            <i class="fas fa-home"></i> กลับหน้าหลัก
-                        </button>
-                    </div>
-                </div>
-            </div>
+/** อยันศ์ลาหิริ (Lahiri Ayanamsha) เป็นองศา — ค่าเดียวกับ thaiHora.js */
+function ascAyanamsha(jd) {
+  const LAHIRI_J2000  = 23.853056;
+  const PRECESSION_YR = 50.290966 / 3600; // deg/year
+  return LAHIRI_J2000 + PRECESSION_YR * (jd - 2451545.0) / 365.25;
+}
+
+/**
+ * คำนวณองศาลัคนาสุริยวิถี (Tropical Ascendant)
+ * สูตร: atan(cos(LST) / (-sin(ε)·tan(φ) + cos(ε)·sin(LST)))
+ * พร้อม Quadrant Correction ตามเครื่องหมาย sin(LST)
+ *
+ * @param {number} lst - Local Sidereal Time (degrees)
+ * @param {number} lat - Geographic latitude (degrees north)
+ * @param {number} eps - Obliquity of ecliptic (degrees)
+ * @returns {number} Tropical ecliptic longitude of Ascendant (0–360°)
+ */
+function ascTropical(lst, lat, eps) {
+  const D      = Math.PI / 180;
+  const lstRad = lst * D;
+  const latRad = lat * D;
+  const epsRad = eps * D;
+
+  const cosLST = Math.cos(lstRad);
+  const sinLST = Math.sin(lstRad);
+  const tanLat = Math.tan(latRad);
+  const sinEps = Math.sin(epsRad);
+  const cosEps = Math.cos(epsRad);
+
+  const tanAsc = cosLST / (-sinEps * tanLat + cosEps * sinLST);
+  let asc = Math.atan(tanAsc) / D;
+
+  // Quadrant correction (เหมือน thaiHora.js)
+  if (sinLST < 0)                        asc += 180;
+  else if (sinLST > 0 && cosLST < 0)    asc += 360;
+
+  return ascNorm(asc);
+}
+
+/**
+ * ฟังก์ชันหลัก: คำนวณลัคนาทั้งหมด
+ * @param {string} dateStr  - "YYYY-MM-DD" (ค.ศ.)
+ * @param {string} timeStr  - "HH:MM"
+ * @param {number} lat      - ละติจูด (degrees N)
+ * @param {number} lng      - ลองจิจูด (degrees E)
+ * @returns {{ rasi, deg, min, sec, tropical, sidereal, ayan, jd, lst, eps }}
+ */
+function ascCalcLagna(dateStr, timeStr, lat, lng) {
+  // แปลงเวลาท้องถิ่น UTC+7 → UTC ด้วย Date object (จัดการ rollover อัตโนมัติ)
+  const dt    = new Date(`${dateStr}T${timeStr}:00+07:00`);
+  const y     = dt.getUTCFullYear();
+  const mo    = dt.getUTCMonth() + 1;
+  const d     = dt.getUTCDate();
+  const utH   = dt.getUTCHours() + dt.getUTCMinutes() / 60;
+
+  const jd      = ascJD(y, mo, d, utH);
+  const gst     = ascGST(jd);
+  const lst     = ascNorm(gst + lng);
+  const eps     = ascObliquity(jd);
+  const ayan    = ascAyanamsha(jd);
+  const tropical = ascTropical(lst, lat, eps);
+
+  let sidereal = tropical - ayan;
+  sidereal = ascNorm(sidereal);
+
+  const rasi      = Math.floor(sidereal / 30);
+  const degInSign = sidereal - rasi * 30;
+  const deg       = Math.floor(degInSign);
+  const minFrac   = (degInSign - deg) * 60;
+  const min       = Math.floor(minFrac);
+  const sec       = Math.floor((minFrac - min) * 60);
+
+  return { rasi, deg, min, sec, tropical, sidereal, ayan, jd, lst, eps };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// UI — สร้างหน้าลัคนา
+// ═══════════════════════════════════════════════════════════════════════
+
+function showascen() {
+  const container = document.getElementById('showascPage');
+  if (!container) return;
+
+  const cityOpts = ASC_CITY_LIST
+    .map((c, i) => `<option value="${i}"${c.name.includes('กรุงเทพ') ? ' selected' : ''}>${c.name}</option>`)
+    .join('');
+
+  container.innerHTML = `
+    <div class="container mt-4">
+      <div class="card bg-dark border-gold text-white p-4 shadow-lg">
+
+        <h2 class="text-gold mb-1 text-center">
+          <i class="fas fa-star-and-crescent mr-2"></i> คำนวณลัคนาพยากรณ์
+        </h2>
+        <p class="text-center mb-4" style="color:#aaa; font-size:0.82rem;">
+          ระบบนิรายัน (Sidereal) · อยันศ์ลาหิริ · โหราศาสตร์ไทย-ฮินดู
+        </p>
+
+        <!-- เลือกสมาชิก -->
+        <div class="form-group mb-3">
+          <label class="text-gold small">เลือกสมาชิกจากประวัติ:</label>
+          <select class="form-control bg-black text-gold border-gold member-selector-shared"
+            onchange="autoFillMemberData(this.value); setTimeout(calculateAscendant, 300);">
+            <option value="">-- เลือกสมาชิก --</option>
+          </select>
         </div>
-    `;
-    contianer.innerHTML = html;
+
+        <!-- ฟอร์มกรอกข้อมูล -->
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="text-gold small">วันเกิด (ค.ศ.)</label>
+            <input type="date" id="ascBirthDate"
+              class="form-control bg-black text-gold border-gold">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="text-gold small">เวลาเกิด (น.)</label>
+            <input type="time" id="ascBirthTime"
+              class="form-control bg-black text-gold border-gold">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="text-gold small">จังหวัดที่เกิด</label>
+            <select id="ascCity" class="form-control bg-black text-gold border-gold">
+              ${cityOpts}
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-gold btn-block mt-2" onclick="calculateAscendant()">
+          <i class="fas fa-magic mr-2"></i> คำนวณลัคนา
+        </button>
+
+        <!-- ผลลัพธ์ -->
+        <div id="ascendantResult" class="mt-4 p-4 rounded"
+          style="display:none; background:rgba(212,175,55,0.08); border:1px dashed #d4af37;">
+
+          <!-- หัวข้อลัคนา -->
+          <div class="text-center mb-3">
+            <div id="ascIcon" style="font-size:3.5rem; line-height:1;"></div>
+            <h3 id="ascSign" class="text-gold mt-2 mb-0"></h3>
+            <div id="ascDegree" style="font-size:0.95rem; color:#d4af37; opacity:0.85;"></div>
+          </div>
+
+          <!-- ข้อมูลลัคนา -->
+          <div class="mb-2">
+            <span class="text-gold">ดาวเจ้าเรือน:</span>
+            <b id="ascruler" class="text-white ml-2"></b>
+            <span id="ascElement" class="ml-2"></span>
+          </div>
+          <div class="mb-2">
+            <span class="text-gold">ราศีที่สมพงศ์:</span>
+            <b id="asccompatible" class="text-white ml-2"></b>
+          </div>
+          <div id="ascDesc" class="mb-2" style="font-size:0.95rem;"></div>
+          <div id="asccareer" class="mb-1" style="font-size:0.9rem;"></div>
+          <div class="mb-1">
+            <span class="text-success">จุดเด่น: </span>
+            <span id="ascstrengths" style="font-size:0.9rem;"></span>
+          </div>
+          <div class="mb-1">
+            <span class="text-danger">ควรระวัง: </span>
+            <span id="ascweaknesses" style="font-size:0.9rem;"></span>
+          </div>
+          <div class="mb-1">
+            <span class="text-info">เรื่องรัก: </span>
+            <span id="ascLove" style="font-size:0.9rem;"></span>
+          </div>
+          <div class="mb-3">
+            <span class="text-warning">สุขภาพ: </span>
+            <span id="ascHealth" style="font-size:0.9rem;"></span>
+          </div>
+
+          <hr style="border-top:1px solid rgba(212,175,55,0.3);">
+
+          <!-- ตาราง 12 ภพเรือน -->
+          <h5 class="text-gold mb-3">
+            <i class="fas fa-th-large mr-2"></i> พื้นฐานดวงชะตา 12 ภพเรือน
+          </h5>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered text-white border-gold mb-3"
+              style="background:rgba(0,0,0,0.3); font-size:0.82rem;">
+              <thead class="text-gold">
+                <tr>
+                  <th>ภพ</th><th>ราศีสถิต</th><th>จุดเด่น</th><th>ควรระวัง</th>
+                </tr>
+              </thead>
+              <tbody id="houseTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- ข้อมูลดาราศาสตร์ (สำหรับผู้สนใจ) -->
+          <div id="ascAstroInfo"
+            style="font-size:0.78rem; color:#888; background:rgba(0,0,0,0.25); border-radius:6px; padding:8px 12px;">
+          </div>
+
+          <!-- ปุ่มบันทึกภาพ -->
+          <div class="text-center mt-4">
+            <button class="btn btn-outline-gold px-5 py-2" onclick="saveAscendantImg()">
+              <i class="fas fa-camera mr-2"></i> บันทึกภาพดวงชะตา
+            </button>
+          </div>
+        </div><!-- /ascendantResult -->
+
+        <!-- ปุ่มนำทาง -->
+        <div class="row mt-4">
+          <div class="col-6">
+            <button class="btn btn-outline-secondary btn-block border-0"
+              onclick="navigateTo('mainpage')">
+              <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+            </button>
+          </div>
+          <div class="col-6">
+            <button class="btn btn-outline-secondary btn-block border-0"
+              onclick="goBack()">
+              <i class="fas fa-home"></i> กลับหน้าหลัก
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    showascen()
-});
+document.addEventListener('DOMContentLoaded', () => { showascen(); });
 
-/**
- * ฟังก์ชันหลัก: คำนวณลัคนาราศี
- */
+// ═══════════════════════════════════════════════════════════════════════
+// ฟังก์ชันคำนวณ (เรียกจากปุ่ม)
+// ═══════════════════════════════════════════════════════════════════════
+
 function calculateAscendant() {
-    const dateInput = document.getElementById('ascBirthDate');
-    const timeInput = document.getElementById('ascBirthTime');
-    const resDiv = document.getElementById('ascendantResult');
+  const dateEl = document.getElementById('ascBirthDate');
+  const timeEl = document.getElementById('ascBirthTime');
+  const cityEl = document.getElementById('ascCity');
 
-    if (!dateInput || !dateInput.value || !timeInput || !timeInput.value) {
-        alert("กรุณาระบุวันเกิดและเวลาเกิดให้ครบถ้วนครับ");
-        return;
-    }
+  if (!dateEl?.value || !timeEl?.value) {
+    Swal.fire('แจ้งเตือน', 'กรุณาระบุวันเกิดและเวลาเกิดให้ครบถ้วนครับ', 'warning');
+    return;
+  }
 
-    const [hours, mins] = timeInput.value.split(':').map(Number);
-    const totalMinutes = (hours * 60) + mins;
+  const cityIdx = parseInt(cityEl?.value ?? '0') || 0;
+  const city    = ASC_CITY_LIST[cityIdx] || ASC_CITY_LIST[0];
 
-    /**
-     * คำนวณหาลัคนาแบบประมาณการ (อิงตามเวลาเกิดมาตรฐาน)
-     * ลำดับราศีเริ่มที่ เมษ (06:00-07:59 โดยประมาณ)
-     */
-    let adjustedMinutes = totalMinutes - 360; // เริ่มนับจาก 06:00 น.
-    if (adjustedMinutes < 0) adjustedMinutes += 1440; // กรณีเกิดหลังเที่ยงคืน
-
-    // ราศีหนึ่งใช้เวลาประมาณ 120 นาที (2 ชม.)
-    let zodiacIndex = Math.floor(adjustedMinutes / 120);
-    zodiacIndex = Math.min(Math.max(zodiacIndex, 0), 11); // คุมให้อยู่ใน 0-11
-    generateHouseTable(zodiacIndex); // <--- เพิ่มบรรทัดนี้
-
-    const result = ZODIAC_DATA[zodiacIndex];
-    displayAscendantResult(result);
+  const result = ascCalcLagna(dateEl.value, timeEl.value, city.lat, city.lng);
+  generateHouseTable(result.rasi);
+  displayAscendantResult(ZODIAC_DATA[result.rasi], result, city);
 }
 
-/**
- * ฟังก์ชันสร้างตารางภพเรือน 12 ภพ
- * @param {number} startZodiacIndex - ดัชนีราศีที่เป็นลัคนา (0-11)
- */
+// ═══════════════════════════════════════════════════════════════════════
+// สร้างตาราง 12 ภพเรือน
+// ═══════════════════════════════════════════════════════════════════════
+
 function generateHouseTable(startZodiacIndex) {
-    const tableBody = document.getElementById('houseTableBody');
-    if (!tableBody) return;
+  const tableBody = document.getElementById('houseTableBody');
+  if (!tableBody) return;
 
-    const houseNames = [
-        "ตนุ (ตัวตน)", "กดุมพะ (การเงิน)", "สหัชชะ (สังคม)", 
-        "พันธุ (ครอบครัว)", "ปุตตะ (บุตร/บริวาร)", "อริ (อุปสรรค)", 
-        "ปัตนิ (คู่ครอง)", "มรณะ (ความสูญเสีย)", "ศุภะ (ความสุข/ความสำเร็จ)", 
-        "กัมมะ (การงาน)", "ลาภะ (โชคลาภ)", "วินาศ (ความลับ/เบื้องหลัง)"
-    ];
+  const houseNames = [
+    "ตนุ (ตัวตน)",
+    "กดุมพะ (การเงิน)",
+    "สหัชชะ (สังคม)",
+    "พันธุ (ครอบครัว)",
+    "ปุตตะ (บุตร/บริวาร)",
+    "อริ (อุปสรรค)",
+    "ปัตนิ (คู่ครอง)",
+    "มรณะ (ความสูญเสีย)",
+    "ศุภะ (ความสุข/ศาสนา)",
+    "กัมมะ (การงาน)",
+    "ลาภะ (โชคลาภ)",
+    "วินาศ (ความลับ/เบื้องหลัง)"
+  ];
 
-    let html = '';
-    for (let i = 0; i < 12; i++) {
-        // คำนวณราศีที่เวียนไปตามภพเรือน
-        const currentZodiacIndex = (startZodiacIndex + i) % 12;
-        const zodiac = ZODIAC_DATA[currentZodiacIndex];
-
-        html += `
-            <tr>
-                <td class="text-gold">${houseNames[i]}</td>
-                <td>${zodiac.icon} ราศี${zodiac.name}</td>
-                <td><span class="text-success">${zodiac.strengths}</span></td>
-                <td><span class="text-danger"> ${zodiac.weaknesses}</span></td>
-            </tr>
-        `;
-    }
-    tableBody.innerHTML = html;
+  let html = '';
+  for (let i = 0; i < 12; i++) {
+    const idx    = (startZodiacIndex + i) % 12;
+    const zodiac = ZODIAC_DATA[idx];
+    html += `
+      <tr>
+        <td class="text-gold" style="white-space:nowrap;">${i + 1}. ${houseNames[i]}</td>
+        <td style="white-space:nowrap;">${zodiac.icon} ราศี${zodiac.name}</td>
+        <td><span class="text-success">${zodiac.strengths.join(', ')}</span></td>
+        <td><span class="text-danger">${zodiac.weaknesses.join(', ')}</span></td>
+      </tr>`;
+  }
+  tableBody.innerHTML = html;
 }
 
-/**
- * แสดงผลลัพธ์ลงบนหน้าจอ
- */
-function displayAscendantResult(data) {
-    const resDiv = document.getElementById('ascendantResult');
-    const signEl = document.getElementById('ascSign');
-    const iconEl = document.getElementById('ascIcon');
-    const descEl = document.getElementById('ascDesc');
-    const elementEl = document.getElementById('ascElement');
-    const careerEl = document.getElementById('asccareer');
-    const strengthsEl = document.getElementById('ascstrengths');
-    const weaknessesEl = document.getElementById('ascweaknesses');
-    const loveEl = document.getElementById('ascLove');
-    const healthEl = document.getElementById('ascHealth');
-    const rulerEl = document.getElementById('ascruler');
-    const compatibleEl = document.getElementById('asccompatible');
-    const color = colors[data.element] || '#ffffff';
+// ═══════════════════════════════════════════════════════════════════════
+// แสดงผลลัพธ์ลัคนา
+// ═══════════════════════════════════════════════════════════════════════
 
+function displayAscendantResult(data, result, city) {
+  const resDiv = document.getElementById('ascendantResult');
+  if (!resDiv) return;
 
-    if (!resDiv) return;
+  const color = ASC_ELEMENT_COLORS[data.element] || '#ffffff';
 
-    if (signEl) signEl.innerText = `ลัคนาราศี${data.name} ${data.icon}`;
-    if (iconEl) iconEl.innerText = data.icon;
-    if (descEl) descEl.innerText = data.desc;
-    if (elementEl) elementEl.innerHTML = `<span style="color: ${color};">(${data.element})</span>`;
-    if (careerEl) careerEl.innerText = `อาชีพที่เหมาะสม คือ${data.career}`;
-    if (strengthsEl) strengthsEl.innerText = `${data.strengths.join(', ')}`;
-    if (weaknessesEl) weaknessesEl.innerText = `${data.weaknesses.join(', ')}`;
-    if (loveEl) loveEl.innerText = `${data.love}`;
-    if (healthEl) healthEl.innerText = `${data.health}`;
-    if (rulerEl) rulerEl.innerText = `${data.ruler}`;
-    if (compatibleEl) compatibleEl.innerText = `${data.compatible.join(', ')}`;
+  // องศา นาที วินาทีในราศี
+  const degStr = `${result.deg}° ${result.min}' ${result.sec}" ในราศี${data.name}`;
 
-    resDiv.style.display = 'block';
-    resDiv.classList.add('animate__animated', 'animate__fadeIn');
-    
-    // เลื่อนหน้าจอไปที่ผลลัพธ์
-    resDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // อยันศ์
+  const ayanDeg = Math.floor(result.ayan);
+  const ayanMin = Math.floor((result.ayan - ayanDeg) * 60);
+
+  document.getElementById('ascSign').innerText     = `ลัคนาราศี${data.name} ${data.icon}`;
+  document.getElementById('ascIcon').innerText     = data.icon;
+  document.getElementById('ascDegree').innerHTML   =
+    `<b>${degStr}</b> &nbsp;|&nbsp; สายันที่ ${result.tropical.toFixed(2)}°`;
+  document.getElementById('ascDesc').innerText     = data.desc;
+  document.getElementById('asccareer').innerText   = `อาชีพที่เหมาะสม: ${data.career}`;
+  document.getElementById('ascstrengths').innerText = data.strengths.join(', ');
+  document.getElementById('ascweaknesses').innerText = data.weaknesses.join(', ');
+  document.getElementById('ascLove').innerText     = data.love;
+  document.getElementById('ascHealth').innerText   = data.health;
+  document.getElementById('ascruler').innerText    = data.ruler;
+  document.getElementById('asccompatible').innerText = data.compatible.join(', ');
+  document.getElementById('ascElement').innerHTML  =
+    `<span style="color:${color};">(${data.element})</span>`;
+
+  // ข้อมูลดาราศาสตร์
+  document.getElementById('ascAstroInfo').innerHTML = `
+    📍 สถานที่เกิด: <b>${city.name}</b>
+    (ละติจูด ${city.lat.toFixed(4)}°N, ลองจิจูด ${city.lng.toFixed(4)}°E)
+    &nbsp;|&nbsp; JD: ${result.jd.toFixed(5)}
+    &nbsp;|&nbsp; LST: ${result.lst.toFixed(3)}°
+    &nbsp;|&nbsp; ε: ${result.eps.toFixed(4)}°
+    &nbsp;|&nbsp; อยันศ์ลาหิริ: ${ayanDeg}°${ayanMin}'
+    &nbsp;|&nbsp; ลัคนาสายัน: ${result.tropical.toFixed(3)}°
+    &nbsp;|&nbsp; ลัคนานิรายัน: ${result.sidereal.toFixed(3)}°
+  `;
+
+  resDiv.style.display = 'block';
+  resDiv.classList.add('animate__animated', 'animate__fadeIn');
+  resDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
+// ═══════════════════════════════════════════════════════════════════════
+// บันทึกภาพ
+// ═══════════════════════════════════════════════════════════════════════
 
-
-
-/**
- * บันทึกรูปภาพผลลัพธ์ (Capture)
- */
 async function saveAscendantImg() {
-    if (typeof html2canvas === "undefined") {
-        alert("ระบบไม่พบ Library สำหรับสร้างภาพ");
-        return;
-    }
-
-    const captureArea = document.getElementById('ascendantResult');
-    if (!captureArea || captureArea.style.display === 'none') {
-        alert("กรุณาคำนวณลัคนาก่อนบันทึกภาพครับ");
-        return;
-    }
-
-    // เตรียมปุ่มแชร์เพื่อซ่อน
-    const saveButton = document.querySelector('.btn-outline-gold');
-    const originalDisplay = saveButton ? saveButton.style.display : '';
-
-    if (saveButton) saveButton.style.display = 'none';
-
-    try {
-        const canvas = await html2canvas(captureArea, {
-            backgroundColor: '#000000',
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            onclone: (clonedDoc) => {
-                // ปรับแต่ง UI ใน Clone ก่อนถ่ายภาพให้ดูสวยงาม
-                const clonedArea = clonedDoc.getElementById('ascendantResult');
-                if (clonedArea) {
-                    clonedArea.style.padding = '30px';
-                    clonedArea.style.border = '2px solid #d4af37';
-                    clonedArea.style.borderRadius = '15px';
-                }
-            }
-        });
-
-        const imageData = canvas.toDataURL("image/png");
-        const downloadLink = document.createElement('a');
-        downloadLink.href = imageData;
-        
-        const zodiacName = document.getElementById('ascSign')?.innerText.replace('ลัคนาราศี', '') || 'Zodiac';
-        downloadLink.download = `ลัคนา_ราศี${zodiacName}.png`;
-        downloadLink.click();
-
-    } catch (error) {
-        console.error("Capture Error:", error);
-        alert("ไม่สามารถบันทึกภาพได้ โปรดลองอีกครั้ง");
-    } finally {
-        if (saveButton) saveButton.style.display = originalDisplay;
-    }
+  if (typeof html2canvas === "undefined") {
+    Swal.fire('เกิดข้อผิดพลาด', 'ระบบไม่พบ Library สำหรับสร้างภาพ', 'error');
+    return;
+  }
+  const captureArea = document.getElementById('ascendantResult');
+  if (!captureArea || captureArea.style.display === 'none') {
+    Swal.fire('แจ้งเตือน', 'กรุณาคำนวณลัคนาก่อนบันทึกภาพครับ', 'warning');
+    return;
+  }
+  const saveBtn = document.querySelector('.btn-outline-gold');
+  if (saveBtn) saveBtn.style.display = 'none';
+  try {
+    const canvas = await html2canvas(captureArea, {
+      backgroundColor: '#000000', scale: 2, useCORS: true, logging: false,
+      onclone: (clonedDoc) => {
+        const el = clonedDoc.getElementById('ascendantResult');
+        if (el) { el.style.padding = '30px'; el.style.border = '2px solid #d4af37'; el.style.borderRadius = '15px'; }
+      }
+    });
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    const zodiacName = document.getElementById('ascSign')?.innerText.replace('ลัคนาราศี', '') || '';
+    link.download = `ลัคนา_ราศี${zodiacName}.png`;
+    link.click();
+  } catch (e) {
+    console.error('Capture Error:', e);
+    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกภาพได้ โปรดลองอีกครั้ง', 'error');
+  } finally {
+    if (saveBtn) saveBtn.style.display = '';
+  }
 }
 
-// ผูกฟังก์ชันเข้ากับ DOM
+// ─── Event listener ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-    const calcBtn = document.getElementById('btnCalculateAsc');
-    if (calcBtn) calcBtn.addEventListener('click', calculateAscendant);
+  const calcBtn = document.getElementById('btnCalculateAsc');
+  if (calcBtn) calcBtn.addEventListener('click', calculateAscendant);
 });

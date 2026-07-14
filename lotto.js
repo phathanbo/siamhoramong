@@ -19,13 +19,16 @@
 
 // ตารางดาว 9 ดวงตามวันเกิด (อิงจาก thai-astrology.js)
 const PLANET_NUMBERS = {
-    "อาทิตย์": 1,   // อาทิตย์ = 1
-    "จันทร์": 2,     // จันทร์ = 2
-    "อังคาร": 9,     // อังคาร = 9
-    "พุธ": 5,        // พุธ = 5
-    "พฤหัสบดี": 3,   // พฤหัสบดี = 3
-    "ศุกร์": 6,      // ศุกร์ = 6
-    "เสาร์": 8       // เสาร์ = 8
+    "อาทิตย์": 1,     // อาทิตย์ = 1
+    "จันทร์": 2,       // จันทร์ = 2
+    "อังคาร": 3,       // อังคาร = 3 (ตรงตามตำราทักษาปกรณ์)
+    "พุธ": 4,          // พุธกลางวัน = 4 (ตรงตามตำราทักษาปกรณ์)
+    "พุธกลางคืน": 8,   // พุธกลางคืน (ราหู) = 8 (ตรงตามตำราทักษาปกรณ์)
+    "พฤหัสบดี": 5,     // พฤหัสบดี = 5 (ตรงตามตำราทักษาปกรณ์)
+    "ศุกร์": 6,        // ศุกร์ = 6
+    "เสาร์": 7,        // เสาร์ = 7 (ตรงตามตำราทักษาปกรณ์)
+    "ราหู": 8,         // ราหู = 8
+    "เกตุ": 9          // เกตุ = 9
 };
 
 // ตารางธาตุ 5 ประการ (อิงจาก element.js)
@@ -96,10 +99,7 @@ function getNextLottoDate() {
  */
 function calculateZodiacAnimal(birthYear) {
     // ถ้า input เป็น พ.ศ. → แปลงเป็น ค.ศ.
-    let yearAD = birthYear;
-    if (birthYear > 2400) {
-        yearAD = birthYear - 543; // พ.ศ. → ค.ศ.
-    }
+    const yearAD = typeof toCE === 'function' ? toCE(birthYear) : (birthYear > 2400 ? birthYear - 543 : birthYear);
 
     const zodiacIndex = (yearAD - 1900) % 12;
     return ZODIAC_ANIMAL_ELEMENT[zodiacIndex];
@@ -167,25 +167,49 @@ function calculateMainNumbers(birthDay, userName, birthYear) {
 }
 
 /**
- * คำนวณ sum ของชื่อ (อิงจาก namesdb.js)
- * ใช้ตัวหนังสือไทยแปลงเป็นตัวเลข 1-9
+ * คำนวณ sum ของชื่อ (อิงจากหลักทักษาอักษรไทย / เลขศาสตร์คชาปกรณ์มาตรฐาน)
+ * เชื่อมโยงกับตาราง NameAnalysis.alphabetValues เพื่อความแม่นยำ 100%
  */
 function calculateNameSum(name) {
     if (!name) return 0;
 
-    // ตัวหนังสือไทยแปลงเป็นตัวเลข (Unicode ไทย)
+    // ตารางค่าอักษรเลขศาสตร์ไทยมาตรฐาน (คชาปกรณ์ / ทักษาอักษร จาก nameAnalysis.js)
+    const ALPHABET_VALUES = {
+        // ค่าตัวเลข 1 (อาทิตย์)
+        'ก': 1, 'ด': 1, 'ถ': 1, 'ท': 1, 'ภ': 1, 'ส': 1, 'า': 1, 'ำ': 1, 'ุ': 1,
+        // ค่าตัวเลข 2 (จันทร์)
+        'ข': 2, 'ช': 2, 'ง': 2, 'บ': 2, 'ป': 2, 'ู': 2,
+        // ค่าตัวเลข 3 (อังคาร)
+        'ฆ': 3, 'ต': 3, 'ฑ': 3, 'ฒ': 3,
+        // ค่าตัวเลข 4 (พุธ)
+        'ค': 4, 'ธ': 4, 'ญ': 4, 'ร': 4, 'ะ': 4,
+        // ค่าตัวเลข 5 (พฤหัสบดี)
+        'ฉ': 5, 'ฌ': 5, 'ฎ': 5, 'น': 5, 'ม': 5, 'ห': 5, 'ฮ': 5,
+        // ค่าตัวเลข 6 (ศุกร์)
+        'จ': 6, 'ล': 6, 'ว': 6, 'ใ': 6,
+        // ค่าตัวเลข 7 (เสาร์)
+        'ซ': 7, 'ศ': 7, 'ษ': 7, 'ี': 7, 'ื': 7, 'เ': 7, 'แ': 7,
+        // ค่าตัวเลข 8 (ราหู)
+        'ย': 8, 'ผ': 8, 'ฝ': 8, 'พ': 8, 'ฟ': 8, 'ึ': 8, '็': 8,
+        // ค่าตัวเลข 9 (เกตุ)
+        'ฏ': 9, 'ฐ': 9, 'ไ': 9, 'โ': 9, 'อ': 9, '์': 9, 'ิ': 9
+    };
+
     let sum = 0;
-    for (let i = 0; i < name.length; i++) {
-        const code = name.charCodeAt(i);
-        // ตัวหนังสือไทย Unicode 0x0E00 - 0x0E7F
-        if (code >= 0x0E00 && code <= 0x0E7F) {
-            sum += (code - 0x0E00) % 9 + 1;
-        } else if (/[0-9]/.test(name[i])) {
-            sum += parseInt(name[i]) || 1;
+    // ถ้าในระบบโหลด NameAnalysis อยู่ ให้เรียกใช้เพื่อ Single Source of Truth
+    if (typeof NameAnalysis !== 'undefined' && typeof NameAnalysis.calculate === 'function') {
+        sum = NameAnalysis.calculate(name);
+    } else {
+        // คำนวณตามตารางมาตรฐาน
+        for (let char of name) {
+            sum += ALPHABET_VALUES[char] || 0;
+            if (/[0-9]/.test(char)) {
+                sum += parseInt(char) || 0;
+            }
         }
     }
 
-    // ลดให้เหลือหลักเดียว (Numerology)
+    // ลดให้เหลือหลักเดียวตามหลักเลขศาสตร์ดาวนพเคราะห์ (1-9)
     while (sum > 9) {
         sum = Math.floor(sum / 10) + (sum % 10);
     }
@@ -242,6 +266,30 @@ function generateThreeDigits(main, secondary, forbidden, count = 6) {
  * Input: วันเกิด (date) + ชื่อ
  * Compute: ธาตุประจำปี (จากปีนักษัตร)
  */
+/**
+ * 🎯 สร้างเลขมงคลจาก array ของตัวเลข (สำหรับ lucky.js)
+ */
+function generateLuckyNumberFromArray(baseNumbers) {
+    if (!baseNumbers || baseNumbers.length === 0) {
+        return "ไม่มีข้อมูล";
+    }
+
+    // สุ่มเลข 1 ตัวจาก baseNumbers
+    const randomIndex = Math.floor(Math.random() * baseNumbers.length);
+    const selected = baseNumbers[randomIndex];
+
+    // ถ้าเป็น 2 ตัวเลข ให้ add digit
+    if (selected.length === 1) {
+        const digit = Math.floor(Math.random() * 10);
+        return `${selected}${digit}`;
+    }
+
+    return selected;
+}
+
+/**
+ * 🎰 เลขมงคล - เมื่อผู้ใช้กรอกข้อมูลในหน้า lottoPage
+ */
 function generateLuckyNumbers() {
     const birthdayEl = document.getElementById("lottoBirthday");
     const userNameEl = document.getElementById("lottoUserName") || { value: "" };
@@ -260,9 +308,17 @@ function generateLuckyNumbers() {
 
     // คำนวณวันในสัปดาห์ → ชื่อเป็นภาษาไทย
     const thaiDays = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
-    const dayName = thaiDays[birthDate.getDay()];
+    let dayName = thaiDays[birthDate.getDay()];
 
-    const userName = userNameEl.value || "ไม่ระบุ";
+    // ตรวจสอบตัวเลือกพุธกลางคืน (ราหู = 8)
+    const wedNightEl = document.getElementById("lottoIsWednesdayNight");
+    if (dayName === "พุธ" && wedNightEl && wedNightEl.checked) {
+        dayName = "พุธกลางคืน";
+    }
+
+    // ป้องกัน XSS โดยแปลงอักขระพิเศษก่อนนำไปใส่ innerHTML
+    const rawUserName = userNameEl.value || "ไม่ระบุ";
+    const userName = typeof escapeHTML === 'function' ? escapeHTML(rawUserName) : rawUserName;
 
     const next = getNextLottoDate();
     const calc = calculateMainNumbers(dayName, userName, birthYear);
@@ -352,9 +408,21 @@ function showlotto(){
                     </div>
 
                     <form onsubmit="return false;">
+                        <div class="form-group mb-3">
+                            <label class="text-gold"><strong>👤 เลือกสมาชิกจากประวัติ:</strong></label>
+                            <select class="form-control bg-black text-black border-gold member-selector-shared"
+                                onchange="autoFillMemberData(this.value); setTimeout(generateLuckyNumbers, 300)">
+                                <option value="">-- เลือกสมาชิก --</option>
+                            </select>
+                        </div>
+
                         <div class="form-group">
                             <label class="text-gold"><strong>📅 วันเกิด <span class="text-danger">*</span></strong></label>
                             <input type="date" id="lottoBirthday" class="form-control form-control-lg" required>
+                            <div class="custom-control custom-checkbox mt-2">
+                                <input type="checkbox" class="custom-control-input" id="lottoIsWednesdayNight">
+                                <label class="custom-control-label text-dark small" for="lottoIsWednesdayNight">🌌 เกิดวันพุธกลางคืน (หลัง 18:00 น. - นับเป็นดาวราหู เลข 8)</label>
+                            </div>
                             <small class="text-muted">วันเกิด = คำนวณดาว 9 + ปีเกิด = ปีนักษัตร + ธาตุ</small>
                         </div>
 
@@ -397,14 +465,17 @@ function showlotto(){
     contioner.innerHTML = html;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    showlotto();
-});
+if (typeof document !== 'undefined') {
+    document.addEventListener("DOMContentLoaded", () => {
+        showlotto();
+    });
+}
 
-window.saveAscendantImage = function() {
+if (typeof window !== 'undefined') {
+    window.saveAscendantImage = function() {
     const captureArea = document.getElementById('ascResult');
     if (!captureArea || captureArea.style.display === 'none') {
-        alert("คำนวณก่อนเซฟครับประธาน!");
+        Swal.fire('แจ้งเตือน', 'คำนวณก่อนเซฟครับประธาน!', 'warning');
         return;
     }
 
@@ -438,11 +509,13 @@ window.saveAscendantImage = function() {
         console.log("📸 เซฟรูปขนาด Facebook Standard เรียบร้อย!");
     });
 };
+}
 
 // 3. ฟังก์ชันบันทึกภาพ
-function downloadLottoResult() {
+if (typeof window !== 'undefined') {
+    window.downloadLottoResult = function() {
     const area = document.getElementById('lottoCaptureArea');
-    if (!area) return alert("คำนวณเลขก่อนครับประธาน");
+    if (!area) { Swal.fire('แจ้งเตือน', 'คำนวณเลขก่อนครับประธาน', 'warning'); return; }
 
     html2canvas(area, {
         backgroundColor: null, // ปล่อยเป็นใสเพื่อให้ Background ที่เราตั้งใน clone ทำงาน
@@ -495,4 +568,15 @@ function downloadLottoResult() {
         link.href = canvas.toDataURL("image/png");
         link.click();
     });
+};
+}
+
+// Global exports for testing and module usage
+if (typeof window !== 'undefined') {
+    window.PLANET_NUMBERS = PLANET_NUMBERS;
+    window.calculateNameSum = calculateNameSum;
+    window.calculateMainNumbers = calculateMainNumbers;
+}
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { PLANET_NUMBERS, calculateNameSum, calculateMainNumbers };
 }

@@ -32,7 +32,7 @@ function showThaksanine() {
 
           <div>
             <label class="form-col">อายุ (ปี)</label>
-            <input type="number" id="age" value="35" onchange="calculateAll()">
+            <input type="number" id="age" value="35" onchange="calculateAll()" readonly>
           </div>
 
             <div>
@@ -163,7 +163,7 @@ function calculateAll() {
   const weekNum = parseInt(document.getElementById("week").value);
 
   const start = birthToIndex[wd];
-  const yearPos = (start + age) % 9;
+  const yearPos = (start + age - 1) % 9;
   const monthPos = (yearPos + Math.floor(month * 0.75)) % 9;
   const weekPos = (yearPos + Math.floor(weekNum * 0.35)) % 9;
 
@@ -212,7 +212,7 @@ function createDetailedSection(title, pos, unit, value) {
   html += `</div>`;
 
   // คำพยากรณ์ยาว
-  html += `<br><div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-8 whitespace-pre-line text-gold leading-relaxed">`;
+  html += `<br><div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-8 whitespace-pre-line text-dark leading-relaxed">`;
   html += generateLongPrediction(unit, mainPlanet, mainElement, meanings);
   html += `</div>`;
 
@@ -222,10 +222,10 @@ function createDetailedSection(title, pos, unit, value) {
     const p = (pos + i) % 9;
     const rel = getElementRelation(mainElement, elements[p]);
     html += `
-        <div style="${rel.color === "text-green-600" ? "#16a34a" : rel.color === "text-red-600" ? "#dc2626" : "#4b5563"}; padding-left: 12px; background-color: ${rel.color === "text-green-600" ? "#32ff95" : rel.color === "text-red-600" ? "#ff9191" : "#bacef7"}; border-radius: 8px; color: #000;">
-        <span>${meanings[i]} → ${planetNames[p]} (${elements[p]})</span>
-        <span${rel.color}>${rel.text}</span>
-        <p>${rel.advice} ${meaningDesc[meanings[i]]}</p>
+        <div style="border-left: 4px solid ${rel.color === 'text-green-600' ? '#16a34a' : rel.color === 'text-red-600' ? '#dc2626' : '#4b5563'}; padding: 8px 12px; background-color: ${rel.color === 'text-green-600' ? '#e6ffec' : rel.color === 'text-red-600' ? '#ffe6e6' : '#e6f0ff'}; border-radius: 8px; color: #333; margin-bottom: 8px;">
+        <span style="font-weight: bold;">${meanings[i]} → ${planetNames[p]} (${elements[p]})</span>
+        <span class="${rel.color}" style="font-weight: bold; margin-left: 8px;">${rel.text}</span>
+        <p style="margin-top: 4px; margin-bottom: 0;">${rel.advice} ${meaningDesc[meanings[i]]}</p>
         </div>
       `;
   }

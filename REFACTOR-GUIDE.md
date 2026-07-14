@@ -156,19 +156,21 @@ findCeremonyDate();  // ควรทำงานปกติ
 
 | Function | Status | Files |
 |----------|--------|-------|
-| `getAuspiciousDays()` | 🟡 Utility created | 4 files to clean |
-| `validateInput()` | 🟢 Need to consolidate | numerology.js |
-| `getCurrentUsername()` | ⏳ To do | 2+ files |
-| `parseBirthdate()` | ⏳ To do | 2+ files |
+| `getAuspiciousDays()` | ✅ Done (Using `utils-auspicious.js`) | Cleaned duplicate in AuspiciousDays.js |
+| `validateInput()` | ✅ Done (Renamed in `BirthFortune.js`) | Resolved collision with numerology.js |
+| `getCurrentUsername()` | ✅ Done (Consolidated in `utils-helpers.js`) | Removed from script.js, membermanager.js |
+| `parseBirthdate()` | ✅ Done (Consolidated in `utils-helpers.js`) | Removed from lifeGraph.js, mahataksa.js |
+| `searchKnowledge()` | ✅ Done | Removed dead code in knowledge.js |
+| `updateDailyTaboo()` | ✅ Done | Removed dead code in dailyTaboo.js |
 
 ---
 
 ## 🎬 Next Steps
 
-1. **ทำ:** ลบ duplicate `getAuspiciousDays` (priority HIGH)
-2. **ทำ:** ลบ duplicate `validateInput` (priority MEDIUM)
-3. **ทำ:** ทดสอบ app หลังแก้
-4. **ทำ:** Commit changes
+1. **เสร็จสิ้น:** ลบ duplicate `getAuspiciousDays` (Priority 1 - Done ✅)
+2. **เสร็จสิ้น:** ลบ duplicate `validateInput`, `getCurrentUsername`, `parseBirthdate`, และ Dead Code (Priority 2 - Done ✅)
+3. **เสร็จสิ้น:** ทดสอบระบบและ Gun Milan Calculator หลังแก้ (Passed All Tests ✅)
+4. **พร้อม:** สำหรับการทำ Priority 3 ในอนาคต (Refactor large functions / Add Unit Tests)
 
 ---
 

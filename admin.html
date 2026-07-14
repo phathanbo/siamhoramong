@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - สยามโหรามงคล</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="modern-theme.css">
+    <style>
+        body { background-color: #121212; color: #f8f9fa; font-family: 'Sarabun', sans-serif; }
+        .admin-card { background: #1e1e1e; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .text-gold { color: #d4af37 !important; }
+        .btn-gold { background-color: #d4af37; color: #121212; font-weight: bold; }
+        .btn-gold:hover { background-color: #f1c40f; color: #121212; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-dark border-bottom border-warning">
+        <a class="navbar-brand text-gold" href="index.html">
+            <i class="fas fa-crown"></i> สยามโหรามงคล Admin
+        </a>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="text-gold mb-4"><i class="fas fa-cogs"></i> ระบบหลังบ้าน (Admin Dashboard)</h2>
+
+        <!-- Quick Tools Container -->
+        <div id="adminQuickToolsContainer"></div>
+
+        <!-- จัดการฐานข้อมูลพจนานุกรม -->
+        <div class="admin-card">
+            <h4 class="text-gold"><i class="fas fa-book"></i> จัดการพจนานุกรมตั้งชื่อมงคล</h4>
+            <p class="text-white-50">เพิ่มคำศัพท์ใหม่สำหรับระบบ Name Generator</p>
+            
+            <form id="addVocabForm" class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="vocabType">ประเภทคำ (Type)</label>
+                    <select id="vocabType" class="form-control bg-dark text-white border-secondary" required>
+                        <option value="prefixes">คำขึ้นต้น (Prefix)</option>
+                        <option value="middles">คำกลาง (Middle)</option>
+                        <option value="suffixes">คำลงท้าย (Suffix)</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="vocabWord">คำศัพท์ (Word)</label>
+                    <input type="text" id="vocabWord" class="form-control bg-dark text-white border-secondary" required placeholder="เช่น ธน">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="vocabMeaning">ความหมาย (Meaning)</label>
+                    <input type="text" id="vocabMeaning" class="form-control bg-dark text-white border-secondary" required placeholder="เช่น ทรัพย์สมบัติ">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>หมวดหมู่ (Tag)</label>
+                </div>
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-gold"><i class="fas fa-plus"></i> เพิ่มคำศัพท์ลงฐานข้อมูล</button>
+                    <span id="vocabStatus" class="ml-3 text-success"></span>
+                </div>
+            </form>
+        </div>
+            </form>
+        </div>
+
+        <!-- รายการคำศัพท์ปัจจุบัน -->
+        <div class="admin-card">
+            <h5 class="text-gold"><i class="fas fa-list"></i> คำศัพท์ในฐานข้อมูล</h5>
+            <div class="table-responsive mt-3">
+                <table class="table table-dark table-hover border-secondary">
+                    <thead>
+                        <tr>
+                            <th>ประเภท</th>
+                            <th>คำศัพท์</th>
+                            <th>ความหมาย</th>
+                            <th>หมวดหมู่</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vocabTableBody">
+                        <tr><td colspan="5" class="text-center text-white-50">กำลังโหลด...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ตรวจสอบการชำระเงิน -->
+        <div class="admin-card">
+            <h4 class="text-gold"><i class="fas fa-money-check-alt"></i> ตรวจสอบการชำระเงิน (Pending Payments)</h4>
+            <p class="text-white-50">รายการแจ้งโอนเงินที่รอการตรวจสอบจากผู้ดูแลระบบ</p>
+            
+            <div class="table-responsive mt-3">
+                <table class="table table-dark table-hover border-secondary">
+                    <thead>
+                        <tr>
+                            <th>เวลาที่แจ้ง</th>
+                            <th>บัญชีผู้ใช้ (Username)</th>
+                            <th>แพ็กเกจ</th>
+                            <th>ยอดโอน</th>
+                            <th>สถานะ</th>
+                            <th>การจัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsTableBody">
+                        <tr><td colspan="6" class="text-center text-white-50">กำลังโหลดข้อมูล...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="admin.js"></script>
+
+    <!-- Data & Utilities (For Quick Tools) -->
+    <script src="utils-helpers.js"></script>
+    <script src="ascendant.js"></script>
+    <script src="thai-astrology-data.js"></script>
+    <script src="thai-astrology-calculator.js"></script>
+    <script src="AuspiciousDays.js"></script>
+    <script src="colors.js"></script>
+    <script src="namesdb.js"></script>
+    <script src="namesdb-female-addon.js"></script>
+    <script src="namesdb-special-addon.js"></script>
+    <script src="namesdb-extended.js"></script>
+    <script src="utils-auspicious.js"></script>
+
+    <!-- Modals Logic (For Quick Tools) -->
+    <script src="adminContentGenerator.js"></script>
+    <script src="adminCarouselFortune.js"></script>
+    <script src="fortune-daily-data.js"></script>
+    <script src="adminTarotFortune.js"></script>
+    <script src="adminWeeklyFortune.js"></script>
+    <script src="adminPdfGenerator.js"></script>
+    <script src="zodiac-daily-data.js"></script>
+    <script src="adminZodiacDaily.js"></script>
+    
+    <!-- Cartomancy (For Quick Tools) -->
+    <script src="cartomancy-data.js"></script>
+    <script src="adminCartomancy.js"></script>
+    
+    <!-- Page Logic -->
+    <script src="adminQuickTools.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof initAdminQuickTools === 'function') {
+                initAdminQuickTools();
+                // Remove the "Back to Dashboard" button since we are already on the dashboard
+                setTimeout(() => {
+                    const btn = document.querySelector('button[onclick="navigateTo(\\\'adminDashboard\\\')"]');
+                    if (btn) btn.style.display = 'none';
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>

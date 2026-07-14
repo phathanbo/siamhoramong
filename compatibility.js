@@ -6,14 +6,14 @@
 const ZODIAC_MASTER = {
     "ชวด":   { element: "น้ำ", animal: "หนู", friend: ["ฉลู", "มะโรง", "วอก"], enemy: ["มะเมีย"] },
     "ฉลู":   { element: "ดิน", animal: "วัว", friend: ["ชวด", "มะเส็ง", "ระกา"], enemy: ["มะแม"] },
-    "ขาล":   { element: "ลม", animal: "เสือ", friend: ["มะเมีย", "จอ", "กุน"], enemy: ["วอก"] },
+    "ขาล":   { element: "ไฟ", animal: "เสือ", friend: ["มะเมีย", "จอ", "กุน"], enemy: ["วอก"] },
     "เถาะ":  { element: "ลม", animal: "กระต่าย", friend: ["มะแม", "กุน", "จอ"], enemy: ["ระกา"] },
     "มะโรง": { element: "ดิน", animal: "งูใหญ่", friend: ["ชวด", "วอก", "ระกา"], enemy: ["จอ"] },
     "มะเส็ง": { element: "ไฟ", animal: "งูเล็ก", friend: ["ฉลู", "ระกา"], enemy: ["กุน"] },
     "มะเมีย": { element: "ไฟ", animal: "ม้า", friend: ["ขาล", "จอ"], enemy: ["ชวด"] },
     "มะแม":  { element: "ดิน", animal: "แพะ", friend: ["เถาะ", "กุน"], enemy: ["ฉลู"] },
     "วอก":   { element: "ลม", animal: "ลิง", friend: ["ชวด", "มะโรง"], enemy: ["ขาล"] },
-    "ระกา":  { element: "ลม", animal: "ไก่", friend: ["ฉลู", "มะเส็ง", "มะโรง"], enemy: ["เถาะ"] },
+    "ระกา":  { element: "ดิน", animal: "ไก่", friend: ["ฉลู", "มะเส็ง", "มะโรง"], enemy: ["เถาะ"] },
     "จอ":    { element: "ดิน", animal: "หมา", friend: ["ขาล", "มะเมีย", "เถาะ"], enemy: ["มะโรง"] },
     "กุน":   { element: "น้ำ", animal: "หมู", friend: ["เถาะ", "มะแม", "ขาล"], enemy: ["มะเส็ง"] }
 };

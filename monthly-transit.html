@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบพยากรณ์ดาวจร 12 ราศี | สยามโหรามงคล</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo-deep:#151935;
+    --indigo-mid:#232a56;
+    --gold:#c9a45c;
+    --gold-bright:#e8c876;
+    --maroon:#7a2e2e;
+    --parchment:#f4ecd8;
+    --ink:#2a2418;
+    --line:rgba(201,164,92,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at top, #1c2149 0%, var(--indigo-deep) 55%, #0d0f22 100%);
+    color:var(--parchment);
+    font-family:'Sarabun',sans-serif;
+    line-height:1.7;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px;}
+
+  header{text-align:center;margin-bottom:8px;}
+  .eyebrow{
+    letter-spacing:.25em;color:var(--gold-bright);font-size:.78rem;
+    text-transform:uppercase;margin-bottom:10px;
+  }
+  h1{
+    font-family:'Chonburi',serif;
+    font-size:clamp(1.9rem,4vw,3rem);
+    color:var(--gold-bright);
+    margin:0 0 6px;
+    text-shadow:0 0 24px rgba(232,200,118,0.25);
+  }
+  .subtitle{color:#cfd3ea;font-size:1rem;margin-bottom:28px;}
+
+  .method-note{
+    background:rgba(35,42,86,0.55);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px 22px;
+    font-size:.92rem;
+    color:#dfe2f2;
+    margin-bottom:36px;
+  }
+  .method-note b{color:var(--gold-bright);}
+
+  /* wheel section */
+  .wheel-section{
+    display:grid;grid-template-columns:400px 1fr;gap:36px;
+    align-items:center;margin-bottom:44px;
+  }
+  @media (max-width:760px){ .wheel-section{grid-template-columns:1fr;} }
+
+  .wheel-box{position:relative;width:100%;max-width:400px;margin:0 auto;}
+  svg{width:100%;height:auto;overflow:visible;}
+  .sign-arc{fill:none;stroke:var(--line);stroke-width:1;}
+  .sign-label{fill:#a9afd6;font-size:11px;font-family:'Sarabun';}
+  .ring{fill:none;stroke:var(--line);stroke-width:1;}
+  .planet{font-size:19px;fill:var(--gold-bright);text-anchor:middle;dominant-baseline:middle;
+    filter:drop-shadow(0 0 5px rgba(232,200,118,.55));}
+  .planet-tag{font-size:9px;fill:#cfd3ea;text-anchor:middle;}
+
+  .transit-list{font-size:.93rem;}
+  .transit-list h2{
+    font-family:'Chonburi';color:var(--gold-bright);font-size:1.25rem;margin:0 0 14px;
+  }
+  .transit-list ul{list-style:none;margin:0;padding:0;}
+  .transit-list li{
+    padding:9px 0;border-bottom:1px dashed var(--line);
+    display:flex;gap:10px;align-items:baseline;
+  }
+  .transit-list li .glyph{color:var(--gold-bright);width:22px;flex:none;font-size:1.05rem;}
+  .transit-list li .desc b{color:#fff;}
+  .retro{color:#e08a8a;font-size:.82rem;}
+
+  /* month map for birth-sign lookup */
+  details{
+    background:rgba(122,46,46,0.18);
+    border:1px solid rgba(232,200,118,0.25);
+    border-radius:14px;padding:14px 20px;margin-bottom:44px;
+  }
+  summary{cursor:pointer;color:var(--gold-bright);font-weight:600;}
+  .month-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:8px;margin-top:14px;font-size:.86rem;color:#dfe2f2;
+  }
+  .month-grid div{padding:6px 10px;background:rgba(255,255,255,0.04);border-radius:8px;}
+
+  /* sign cards */
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+  }
+  .card{
+    background:linear-gradient(160deg, rgba(35,42,86,0.7), rgba(21,25,53,0.85));
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px 24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;top:-40px;right:-40px;width:120px;height:120px;
+    background:radial-gradient(circle,rgba(232,200,118,0.18),transparent 70%);
+  }
+  .card h3{
+    font-family:'Chonburi';color:var(--gold-bright);font-size:1.3rem;margin:0 0 4px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .card .glyph-big{font-size:1.5rem;}
+  .card .dates{color:#9aa0c9;font-size:.8rem;margin-bottom:12px;}
+  .card p{font-size:.93rem;color:#e8e9f5;margin:0 0 10px;}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .tag{
+    font-size:.72rem;padding:3px 9px;border-radius:999px;
+    border:1px solid var(--line);color:#cfd3ea;
+  }
+  .tag.good{border-color:#7cbf8e;color:#a7ddb3;}
+  
+  .tag.watch{border-color:#e08a8a;color:#f0b3b3;}
+
+  .highlight-card {
+    border: 2px solid #e8c876 !important;
+    box-shadow: 0 0 20px rgba(232, 200, 118, 0.5) !important;
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+  }
+  .btn-save {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(201, 164, 92, 0.2);
+    border: 1px solid rgba(201, 164, 92, 0.5);
+    color: #e8c876;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+  .btn-save:hover {
+    background: rgba(201, 164, 92, 0.4);
+  }
+  .personal-box {
+    background: rgba(35, 42, 86, 0.4);
+    border: 1px dashed rgba(201,164,92,0.4);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+
+  footer{
+    margin-top:56px;text-align:center;color:#7d83ac;font-size:.8rem;
+  }
+  footer a{color:var(--gold-bright);}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="wrap">
+
+  
+  <header>
+    
+    <a href="index.html" style="position: absolute; top: 20px; left: 20px; color: #e8c876; text-decoration: none; font-size: 0.9rem; background: rgba(35, 42, 86, 0.6); padding: 8px 15px; border-radius: 8px; border: 1px solid rgba(201,164,92,0.3);">
+        <i class="fas fa-home"></i> กลับหน้าหลัก
+    </a>
+    <div class="eyebrow"
+>สยามโหรามงคล · ดวงดาวจร</div>
+    <h1>คำทำนายดาวจรประจำเดือน</h1>
+    <div class="subtitle">คำนวณตำแหน่งดาวจริงระบบนิรายนะ (Lahiri Ayanamsa) แล้วตีความตามหลักโคจรจร 12 ราศี</div>
+    
+    
+    <div style="text-align: center; margin-bottom: 15px;">
+        <div class="mode-toggle" style="display: inline-flex; background: rgba(35, 42, 86, 0.6); border-radius: 8px; border: 1px solid rgba(201,164,92,0.35); overflow: hidden;">
+            <button id="btnModeMonthly" class="mode-btn" style="padding: 8px 20px; border: none; background: rgba(201,164,92,0.2); color: #e8c876; cursor: pointer; font-family: 'Sarabun'; font-weight: 600; transition: all 0.3s;">ดูแบบรายเดือน</button>
+            <button id="btnModeDaily" class="mode-btn" style="padding: 8px 20px; border: none; background: transparent; color: #7d83ac; cursor: pointer; font-family: 'Sarabun'; font-weight: 600; transition: all 0.3s;">ดูแบบรายวัน</button>
+        </div>
+    </div>
+
+    <div id="monthlyControls" style="background: rgba(35, 42, 86, 0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(201,164,92,0.35); display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; margin-bottom: 20px;">
+        <label style="color: #e8c876; font-weight: 600;">เลือกเดือน:</label>
+        <select id="selectMonth" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #c9a45c; background: #151935; color: #fff; outline: none; font-family: 'Sarabun';">
+            <option value="1">มกราคม</option>
+            <option value="2">กุมภาพันธ์</option>
+            <option value="3">มีนาคม</option>
+            <option value="4">เมษายน</option>
+            <option value="5">พฤษภาคม</option>
+            <option value="6">มิถุนายน</option>
+            <option value="7">กรกฎาคม</option>
+            <option value="8">สิงหาคม</option>
+            <option value="9">กันยายน</option>
+            <option value="10">ตุลาคม</option>
+            <option value="11">พฤศจิกายน</option>
+            <option value="12">ธันวาคม</option>
+        </select>
+        <label style="color: #e8c876; font-weight: 600; margin-left: 10px;">ปี พ.ศ.:</label>
+        <input type="number" id="selectYear" value="2569" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #c9a45c; background: #151935; color: #fff; width: 100px; outline: none; font-family: 'Sarabun';">
+        <button id="btnCalcTransit" style="padding: 8px 16px; border-radius: 6px; border: none; background: linear-gradient(135deg, #ffd88a, #d4af37); color: #151935; font-weight: bold; cursor: pointer; font-family: 'Sarabun';">คำนวณ</button>
+    
+    </div>
+    <div id="dailyControls" style="display: none; background: rgba(35, 42, 86, 0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(201,164,92,0.35); justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+        <label style="color: #e8c876; font-weight: 600;">เลือกวันที่:</label>
+        <input type="date" id="selectTransitDate" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #c9a45c; background: #151935; color: #fff; outline: none; font-family: 'Sarabun';">
+        <button id="btnCalcDaily" style="padding: 8px 16px; border-radius: 6px; border: none; background: linear-gradient(135deg, #ffd88a, #d4af37); color: #151935; font-weight: bold; cursor: pointer; font-family: 'Sarabun';">คำนวณรายวัน</button>
+    </div>
+
+    
+    <div class="personal-box">
+        <div style="color: #cfd3ea; font-size: 0.95rem; margin-bottom: 10px;">
+            <i class="fas fa-user-circle"></i> ดูดาวจรเฉพาะคุณ (ผูกดวงจากวันเกิด)
+        </div>
+        <div style="display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center;">
+            <input type="date" id="inpBirthDate" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #c9a45c; background: #151935; color: #fff; outline: none; font-family: 'Sarabun';">
+            <input type="time" id="inpBirthTime" value="12:00" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #c9a45c; background: #151935; color: #fff; outline: none; font-family: 'Sarabun';">
+            
+            <button id="btnPersonal" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #e8c876; background: transparent; color: #e8c876; cursor: pointer; font-family: 'Sarabun'; transition: all 0.2s;">
+                ไปที่ดวงของคุณ
+            </button>
+            
+            <select id="memberSelect" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #7cbf8e; background: rgba(124, 191, 142, 0.1); color: #7cbf8e; outline: none; font-family: 'Sarabun'; margin-left: 5px;">
+                <option value="">-- เลือกจากฐานข้อมูลสมาชิก --</option>
+            </select>
+
+
+        </div>
+    </div>
+    
+    <h2 id="reportTitle"
+ style="font-family: 'Chonburi'; color: #e8c876; font-size: 1.8rem; margin: 10px 0;"></h2>
+  </header>
+
+
+  <div class="method-note">
+    <b>วิธีคำนวณ:</b> ตำแหน่งดาวทุกดวงคำนวณจากตำแหน่งจริงบนท้องฟ้าด้วยไลบรารีดาราศาสตร์ (astronomy-engine) แปลงเป็นระบบนิรายนะด้วยอายนางศ์แบบลาหิรี ตรงตามวิธีที่ใช้ในหน้าโหราศาสตร์ของเว็บนี้ ส่วนการตีความอิงหลัก <b>โคจรจร (Gochara)</b> — นับเรือนของดาวเคราะห์จรจากราศีเกิดของแต่ละคน ตามดาวพฤหัสบดี ดาวเสาร์ ราหู-เกตุ ซึ่งเป็นดาวโคจรช้าและกำหนดธีมหลักของเดือน ร่วมกับการย้ายราศีของอาทิตย์ พุธ ศุกร์ อังคารระหว่างเดือน<br>
+    <b>ราศีเกิด</b> ในที่นี้หมายถึงราศีสุริยคติแบบนิรายนะ (ราศีตามวันเดือนเกิด) — ดูตารางเทียบเดือนเกิดด้านล่าง
+  </div>
+
+  
+  <div class="wheel-section" id="wheelSectionContainer" style="position: relative;">
+    <button id="btnSaveWheel" class="btn-save" onclick="saveWheelSection()" title="บันทึกภาพดาวจรเด่น" style="top: -10px; right: 0px;">
+        <i class="fas fa-download"></i> เซฟแผ่นดวง
+    </button>
+    <div class="wheel-box">
+
+      
+      <svg id="transitWheel" viewBox="-20 -20 440 440">
+        <!-- zodiac ring divisions, 12 sectors starting Aries at top, clockwise -->
+        <circle class="ring" cx="200" cy="200" r="180"/>
+        <circle class="ring" cx="200" cy="200" r="142"/>
+        <g id="sectors"></g>
+        <g id="planetsGroup"></g>
+      </svg>
+
+    </div>
+
+    <div class="transit-list">
+      <h2>ดาวจรเด่นในเดือนนี้</h2>
+      
+      <ul id="transitHighlightList">
+      </ul>
+
+    </div>
+  </div>
+
+  <details>
+    <summary>ตารางเทียบเดือนเกิด → ราศี (นิรายนะ/ลาหิรี) สำหรับหาราศีเกิดของตนเอง</summary>
+    <div class="month-grid">
+      <div>เมษ — 14 เม.ย. ถึง 14 พ.ค.</div>
+      <div>พฤษภ — 15 พ.ค. ถึง 14 มิ.ย.</div>
+      <div>เมถุน — 15 มิ.ย. ถึง 16 ก.ค.</div>
+      <div>กรกฎ — 17 ก.ค. ถึง 17 ส.ค.</div>
+      <div>สิงห์ — 18 ส.ค. ถึง 16 ก.ย.</div>
+      <div>กันย์ — 17 ก.ย. ถึง 17 ต.ค.</div>
+      <div>ตุลย์ — 18 ต.ค. ถึง 16 พ.ย.</div>
+      <div>พิจิก — 17 พ.ย. ถึง 15 ธ.ค.</div>
+      <div>ธนู — 16 ธ.ค. ถึง 14 ม.ค.</div>
+      <div>มังกร — 15 ม.ค. ถึง 12 ก.พ.</div>
+      <div>กุมภ์ — 13 ก.พ. ถึง 13 มี.ค.</div>
+      <div>มีน — 14 มี.ค. ถึง 13 เม.ย.</div>
+    </div>
+  </details>
+
+  
+  <section class="grid" id="predictionsGrid">
+  </section>
+
+
+  <footer>
+    ตำแหน่งดาว: astronomy-engine (สายนะ) + Lahiri Ayanamsa · คำนวณสำหรับช่วง 1–31 สิงหาคม 2569<br>
+    การตีความอิงหลักโคจรจร (Gochara) เป็นแนวทางทั่วไป มิใช่การพยากรณ์เฉพาะบุคคลที่ต้องผูกดวงสมผุสจริงประกอบ<br>
+    <a href="https://phathanbo.github.io/siamhoramong">สยามโหรามงคล</a>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const svgns = "http://www.w3.org/2000/svg";
+  const signsTH = ["เมษ","พฤษภ","เมถุน","กรกฎ","สิงห์","กันย์","ตุลย์","พิจิก","ธนู","มังกร","กุมภ์","มีน"];
+  const cx=200, cy=200, rOuter=180, rInner=142, rLabel=161;
+  const g = document.getElementById('sectors');
+  for (let i=0;i<12;i++){
+    const a0 = i*30 * Math.PI/180;
+    const a1 = (i+1)*30 * Math.PI/180;
+    const x0o = cx+rOuter*Math.sin(a0), y0o = cy-rOuter*Math.cos(a0);
+    const x1o = cx+rOuter*Math.sin(a1), y1o = cy-rOuter*Math.cos(a1);
+    const line = document.createElementNS(svgns,'line');
+    line.setAttribute('x1',x0o);line.setAttribute('y1',y0o);
+    line.setAttribute('x2', cx+rInner*Math.sin(a0));
+    line.setAttribute('y2', cy-rInner*Math.cos(a0));
+    line.setAttribute('class','sign-arc');
+    g.appendChild(line);
+
+    const mid = (i*30+15) * Math.PI/180;
+    const lx = cx + rLabel*Math.sin(mid);
+    const ly = cy - rLabel*Math.cos(mid);
+    const text = document.createElementNS(svgns,'text');
+    text.setAttribute('x',lx);text.setAttribute('y',ly);
+    text.setAttribute('class','sign-label');
+    text.setAttribute('text-anchor','middle');
+    text.textContent = signsTH[i];
+    g.appendChild(text);
+  }
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<script src="ayanamsa-data.js"></script>
+<script src="monthly-transit.js"></script>
+
+</body>
+</html>

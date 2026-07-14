@@ -1,0 +1,5 @@
+Debug notes:
+- Member select changed to memberId value in mahathaksa.js
+- Removed premature calculateThaksa call from index.html select onchange
+- autoFillMemberData now dispatches change/input and calls calculateThaksa(false) after fill
+- calculateThaksa uses birthDate or birthdate element

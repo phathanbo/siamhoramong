@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ดาวจรประจำเดือนสิงหาคม 2569 | สยามโหรามงคล</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo-deep:#151935;
+    --indigo-mid:#232a56;
+    --gold:#c9a45c;
+    --gold-bright:#e8c876;
+    --maroon:#7a2e2e;
+    --parchment:#f4ecd8;
+    --ink:#2a2418;
+    --line:rgba(201,164,92,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at top, #1c2149 0%, var(--indigo-deep) 55%, #0d0f22 100%);
+    color:var(--parchment);
+    font-family:'Sarabun',sans-serif;
+    line-height:1.7;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px;}
+
+  header{text-align:center;margin-bottom:8px;}
+  .eyebrow{
+    letter-spacing:.25em;color:var(--gold-bright);font-size:.78rem;
+    text-transform:uppercase;margin-bottom:10px;
+  }
+  h1{
+    font-family:'Chonburi',serif;
+    font-size:clamp(1.9rem,4vw,3rem);
+    color:var(--gold-bright);
+    margin:0 0 6px;
+    text-shadow:0 0 24px rgba(232,200,118,0.25);
+  }
+  .subtitle{color:#cfd3ea;font-size:1rem;margin-bottom:28px;}
+
+  .method-note{
+    background:rgba(35,42,86,0.55);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px 22px;
+    font-size:.92rem;
+    color:#dfe2f2;
+    margin-bottom:36px;
+  }
+  .method-note b{color:var(--gold-bright);}
+
+  /* wheel section */
+  .wheel-section{
+    display:grid;grid-template-columns:400px 1fr;gap:36px;
+    align-items:center;margin-bottom:44px;
+  }
+  @media (max-width:760px){ .wheel-section{grid-template-columns:1fr;} }
+
+  .wheel-box{position:relative;width:100%;max-width:400px;margin:0 auto;}
+  svg{width:100%;height:auto;overflow:visible;}
+  .sign-arc{fill:none;stroke:var(--line);stroke-width:1;}
+  .sign-label{fill:#a9afd6;font-size:11px;font-family:'Sarabun';}
+  .ring{fill:none;stroke:var(--line);stroke-width:1;}
+  .planet{font-size:19px;fill:var(--gold-bright);text-anchor:middle;dominant-baseline:middle;
+    filter:drop-shadow(0 0 5px rgba(232,200,118,.55));}
+  .planet-tag{font-size:9px;fill:#cfd3ea;text-anchor:middle;}
+
+  .transit-list{font-size:.93rem;}
+  .transit-list h2{
+    font-family:'Chonburi';color:var(--gold-bright);font-size:1.25rem;margin:0 0 14px;
+  }
+  .transit-list ul{list-style:none;margin:0;padding:0;}
+  .transit-list li{
+    padding:9px 0;border-bottom:1px dashed var(--line);
+    display:flex;gap:10px;align-items:baseline;
+  }
+  .transit-list li .glyph{color:var(--gold-bright);width:22px;flex:none;font-size:1.05rem;}
+  .transit-list li .desc b{color:#fff;}
+  .retro{color:#e08a8a;font-size:.82rem;}
+
+  /* month map for birth-sign lookup */
+  details{
+    background:rgba(122,46,46,0.18);
+    border:1px solid rgba(232,200,118,0.25);
+    border-radius:14px;padding:14px 20px;margin-bottom:44px;
+  }
+  summary{cursor:pointer;color:var(--gold-bright);font-weight:600;}
+  .month-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:8px;margin-top:14px;font-size:.86rem;color:#dfe2f2;
+  }
+  .month-grid div{padding:6px 10px;background:rgba(255,255,255,0.04);border-radius:8px;}
+
+  /* sign cards */
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+  }
+  .card{
+    background:linear-gradient(160deg, rgba(35,42,86,0.7), rgba(21,25,53,0.85));
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px 24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;top:-40px;right:-40px;width:120px;height:120px;
+    background:radial-gradient(circle,rgba(232,200,118,0.18),transparent 70%);
+  }
+  .card h3{
+    font-family:'Chonburi';color:var(--gold-bright);font-size:1.3rem;margin:0 0 4px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .card .glyph-big{font-size:1.5rem;}
+  .card .dates{color:#9aa0c9;font-size:.8rem;margin-bottom:12px;}
+  .card p{font-size:.93rem;color:#e8e9f5;margin:0 0 10px;}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .tag{
+    font-size:.72rem;padding:3px 9px;border-radius:999px;
+    border:1px solid var(--line);color:#cfd3ea;
+  }
+  .tag.good{border-color:#7cbf8e;color:#a7ddb3;}
+  .tag.watch{border-color:#e08a8a;color:#f0b3b3;}
+
+  footer{
+    margin-top:56px;text-align:center;color:#7d83ac;font-size:.8rem;
+  }
+  footer a{color:var(--gold-bright);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">สยามโหรามงคล · ดวงดาวจร</div>
+    <h1>คำทำนายดาวจรประจำเดือน<br>สิงหาคม พ.ศ. 2569</h1>
+    <div class="subtitle">คำนวณตำแหน่งดาวจริงระบบนิรายนะ (Lahiri Ayanamsa) แล้วตีความตามหลักโคจรจร 12 ราศี</div>
+  </header>
+
+  <div class="method-note">
+    <b>วิธีคำนวณ:</b> ตำแหน่งดาวทุกดวงคำนวณจากตำแหน่งจริงบนท้องฟ้าด้วยไลบรารีดาราศาสตร์ (astronomy-engine) แปลงเป็นระบบนิรายนะด้วยอายนางศ์แบบลาหิรี ตรงตามวิธีที่ใช้ในหน้าโหราศาสตร์ของเว็บนี้ ส่วนการตีความอิงหลัก <b>โคจรจร (Gochara)</b> — นับเรือนของดาวเคราะห์จรจากราศีเกิดของแต่ละคน ตามดาวพฤหัสบดี ดาวเสาร์ ราหู-เกตุ ซึ่งเป็นดาวโคจรช้าและกำหนดธีมหลักของเดือน ร่วมกับการย้ายราศีของอาทิตย์ พุธ ศุกร์ อังคารระหว่างเดือน<br>
+    <b>ราศีเกิด</b> ในที่นี้หมายถึงราศีสุริยคติแบบนิรายนะ (ราศีตามวันเดือนเกิด) — ดูตารางเทียบเดือนเกิดด้านล่าง
+  </div>
+
+  <div class="wheel-section">
+    <div class="wheel-box">
+      <svg viewBox="-20 -20 440 440">
+        <!-- zodiac ring divisions, 12 sectors starting Aries at top, clockwise -->
+        <circle class="ring" cx="200" cy="200" r="180"/>
+        <circle class="ring" cx="200" cy="200" r="142"/>
+        <g id="sectors"></g>
+        <!-- planets at 1 ส.ค. 2569 -->
+        <text class="planet" x="337.4" y="235.7">☉</text>
+        <text class="planet-tag" x="337.4" y="250">อาทิตย์</text>
+
+        <text class="planet" x="341.5" y="188.3">☿</text>
+        <text class="planet-tag" x="341.5" y="174">พุธ</text>
+
+        <text class="planet" x="271.4" y="322.8">♀</text>
+        <text class="planet-tag" x="271.4" y="337">ศุกร์</text>
+
+        <text class="planet" x="321.5" y="126.5">♂</text>
+        <text class="planet-tag" x="321.5" y="112">อังคาร</text>
+
+        <text class="planet" x="338.5" y="231.3" dx="-18">♃</text>
+        <text class="planet-tag" x="356" y="215">พฤหัสฯ</text>
+
+        <text class="planet" x="176.6" y="59.9">♄</text>
+        <text class="planet-tag" x="176.6" y="46">เสาร์ (พักร์)</text>
+
+        <text class="planet" x="86.2" y="115.1">☊</text>
+        <text class="planet-tag" x="86.2" y="101">ราหู (พักร์)</text>
+
+        <text class="planet" x="313.8" y="284.9">☋</text>
+        <text class="planet-tag" x="313.8" y="299">เกตุ (พักร์)</text>
+      </svg>
+    </div>
+
+    <div class="transit-list">
+      <h2>ดาวจรเด่นในเดือนนี้</h2>
+      <ul>
+        <li><span class="glyph">☉</span><span class="desc"><b>อาทิตย์</b> อยู่ราศีกรกฎถึง ~17 ส.ค. แล้วย้ายเข้าราศีสิงห์ (ราศีตนเอง) ถึงสิ้นเดือน — ครึ่งเดือนหลังพลังอาทิตย์แข็งแรงขึ้นทุกราศี</span></li>
+        <li><span class="glyph">♃</span><span class="desc"><b>พฤหัสบดี</b> ยังอยู่ราศีกรกฎตลอดเดือน และโคจรใกล้อาทิตย์มาก (เกือบร่วมราศีเดียวกันช่วงต้นเดือน) — ปีนี้ราศีกรกฎ, พิจิก, มีน ได้รับอิทธิพลบวกชัดเจน</span></li>
+        <li><span class="glyph">♄</span><span class="desc"><b>เสาร์</b> พักร์ (ถอยหลัง) อยู่ราศีมีนตลอดเดือน — ราศีที่เจอเสาร์จรเรือน 1,2,4,7,8,12 ควรระมัดระวังเป็นพิเศษ</span></li>
+        <li><span class="glyph">☊☋</span><span class="desc"><b>ราหู-เกตุ</b> พักร์อยู่แกนกุมภ์-สิงห์ตลอดเดือน ไม่ย้ายราศี</span></li>
+        <li><span class="glyph">♀</span><span class="desc"><b>ศุกร์</b> ย้ายจากสิงห์เข้ากันย์ราว 2 ส.ค. แล้วอยู่กันย์ตลอดเดือน</span></li>
+        <li><span class="glyph">♂</span><span class="desc"><b>อังคาร</b> ย้ายจากพฤษภเข้าเมถุนราว 2-3 ส.ค. แล้วอยู่เมถุนตลอดเดือน</span></li>
+        <li><span class="glyph">☿</span><span class="desc"><b>พุธ</b> เดินหน้าตลอดเดือน ไม่มีพักร์ — เริ่มเดือนที่เมถุน เข้ากรกฎราว 5 ส.ค. แล้วเข้าสิงห์ราว 23 ส.ค.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <details>
+    <summary>ตารางเทียบเดือนเกิด → ราศี (นิรายนะ/ลาหิรี) สำหรับหาราศีเกิดของตนเอง</summary>
+    <div class="month-grid">
+      <div>เมษ — 14 เม.ย. ถึง 14 พ.ค.</div>
+      <div>พฤษภ — 15 พ.ค. ถึง 14 มิ.ย.</div>
+      <div>เมถุน — 15 มิ.ย. ถึง 16 ก.ค.</div>
+      <div>กรกฎ — 17 ก.ค. ถึง 17 ส.ค.</div>
+      <div>สิงห์ — 18 ส.ค. ถึง 16 ก.ย.</div>
+      <div>กันย์ — 17 ก.ย. ถึง 17 ต.ค.</div>
+      <div>ตุลย์ — 18 ต.ค. ถึง 16 พ.ย.</div>
+      <div>พิจิก — 17 พ.ย. ถึง 15 ธ.ค.</div>
+      <div>ธนู — 16 ธ.ค. ถึง 14 ม.ค.</div>
+      <div>มังกร — 15 ม.ค. ถึง 12 ก.พ.</div>
+      <div>กุมภ์ — 13 ก.พ. ถึง 13 มี.ค.</div>
+      <div>มีน — 14 มี.ค. ถึง 13 เม.ย.</div>
+    </div>
+  </details>
+
+  <section class="grid">
+
+    <div class="card">
+      <h3><span class="glyph-big">♈</span> ราศีเมษ</h3>
+      <div class="dates">14 เม.ย. – 14 พ.ค.</div>
+      <p>เสาร์จรตกเรือน 12 ซึ่งเป็นเรือนหนักที่สุดของสาเดสาตี ทำให้เดือนนี้ค่าใช้จ่ายและความเหนื่อยล้าแอบแฝงมาโดยไม่รู้ตัว ควรพักผ่อนและตรวจสุขภาพ แต่ราหูจรเรือน 11 ช่วยหนุนเรื่องรายได้เสริมและเครือข่ายเพื่อนฝูง อังคารจรเรือน 3 เดือนนี้ทำให้กล้าพูดกล้าติดต่อสื่อสารมากขึ้น ช่วงกลางเดือนที่อาทิตย์-พุธเคลื่อนเข้าเรือน 5 ให้ระวังเรื่องลูกหรือการลงทุนเสี่ยง</p>
+      <div class="tags"><span class="tag watch">เสาร์ เรือน 12</span><span class="tag good">ราหู เรือน 11</span><span class="tag good">อังคาร เรือน 3</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♉</span> ราศีพฤษภ</h3>
+      <div class="dates">15 พ.ค. – 14 มิ.ย.</div>
+      <p>เสาร์จรเรือน 11 เป็นเรือนดี ช่วยให้ผลตอบแทนจากความพยายามระยะยาวเริ่มเก็บเกี่ยวได้ ศุกร์เจ้าเรือนตนเองจรเรือน 5 หนุนความรักและความคิดสร้างสรรค์ชัดเจน แต่ราหูจรเรือน 10 ให้ระวังเรื่องหน้าที่การงานถูกจับตามองหรือเปลี่ยนแปลงกะทันหัน อังคารเรือน 2 ระวังรายจ่ายและคำพูดที่อาจกระทบเงินทอง</p>
+      <div class="tags"><span class="tag good">เสาร์ เรือน 11</span><span class="tag good">ศุกร์ เรือน 5</span><span class="tag watch">ราหู เรือน 10</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♊</span> ราศีเมถุน</h3>
+      <div class="dates">15 มิ.ย. – 16 ก.ค.</div>
+      <p>พฤหัสบดีจรเรือน 2 หนุนการเงินและทรัพย์สินให้เติบโตต่อเนื่อง เป็นจุดแข็งของเดือน ศุกร์จรเรือน 4 ทำให้บ้านและจิตใจสงบขึ้น แต่อังคารเจ้าเรือนตนเองย้ายมาอยู่ราศีตนเอง (เรือน 1) ตลอดเดือน ให้พลังฮึกเหิมแต่ต้องระวังอุบัติเหตุและอารมณ์ร้อนเกินเหตุ ราหูจรเรือน 9 ให้ระวังเรื่องเดินทางไกลหรือความเชื่อที่ยังพิสูจน์ไม่ได้</p>
+      <div class="tags"><span class="tag good">พฤหัสฯ เรือน 2</span><span class="tag good">ศุกร์ เรือน 4</span><span class="tag watch">อังคาร เรือน 1</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♋</span> ราศีกรกฎ</h3>
+      <div class="dates">17 ก.ค. – 17 ส.ค.</div>
+      <p>พฤหัสบดีเจ้าเรือนมิตรจรทับราศีตนเอง (เรือน 1) พร้อมอาทิตย์เกือบร่วมองศาเดียวกันช่วงต้นเดือน เป็นพลังบวกที่หายาก ตัวตนและความมั่นใจโดดเด่น เหมาะเริ่มต้นสิ่งใหม่ กลางเดือนอาทิตย์ย้ายออกจากราศีตนเองเข้าเรือน 2 ให้ระวังเรื่องการเงินและคำพูด ราหูจรเรือน 8 ต้องระวังสุขภาพและเรื่องลี้ลับ/มรดกเป็นพิเศษตลอดเดือน</p>
+      <div class="tags"><span class="tag good">พฤหัสฯ เรือน 1</span><span class="tag good">อาทิตย์ ต้นเดือน</span><span class="tag watch">ราหู เรือน 8</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♌</span> ราศีสิงห์</h3>
+      <div class="dates">18 ส.ค. – 16 ก.ย.</div>
+      <p>เกตุจรทับราศีตนเอง (เรือน 1) ตลอดเดือน ให้ความรู้สึกเหมือนหลุดโฟกัสหรือค้นหาตัวเองบ่อยครั้ง เสาร์จรเรือน 8 ให้ระวังอุบัติเหตุและความเครียดสะสม ข่าวดีคือกลางเดือนอาทิตย์ย้ายเข้าสู่ราศีตนเอง (เรือน 1) ทันที ช่วยดึงพลังกลับมาแข็งแกร่งในช่วงครึ่งเดือนหลัง ศุกร์จรเรือน 2 หนุนการเงินและอังคารจรเรือน 11 หนุนรายได้จากเครือข่าย</p>
+      <div class="tags"><span class="tag watch">เกตุ เรือน 1</span><span class="tag watch">เสาร์ เรือน 8</span><span class="tag good">อาทิตย์ กลางเดือน</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♍</span> ราศีกันย์</h3>
+      <div class="dates">17 ก.ย. – 17 ต.ค.</div>
+      <p>ศุกร์เจ้าเรือนตนเองย้ายกลับมาอยู่ราศีตนเอง (เรือน 1) ตลอดเดือน เสริมเสน่ห์และบุคลิกให้โดดเด่น พฤหัสบดีจรเรือน 11 หนุนรายได้และมิตรภาพดี แต่เสาร์จรเรือน 7 ให้ระวังเรื่องคู่ครองและสัญญาทางธุรกิจเป็นพิเศษ อาจต้องปรับเงื่อนไขหรือรับภาระเพิ่ม ราหูจรเรือน 6 กลับดี ช่วยให้ชนะคู่แข่งหรือปลดหนี้ได้</p>
+      <div class="tags"><span class="tag good">ศุกร์ เรือน 1</span><span class="tag good">พฤหัสฯ เรือน 11</span><span class="tag watch">เสาร์ เรือน 7</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♎</span> ราศีตุลย์</h3>
+      <div class="dates">18 ต.ค. – 16 พ.ย.</div>
+      <p>พฤหัสบดีจรเรือน 10 หนุนหน้าที่การงานและชื่อเสียงให้ก้าวหน้าชัดเจนที่สุดในรอบปี เสาร์จรเรือน 6 ช่วยให้สู้ปัญหาเดิมและเอาชนะอุปสรรคที่ค้างคาได้สำเร็จ แต่ศุกร์เจ้าเรือนตนเองตกเรือน 12 ให้ระวังรายจ่ายฟุ่มเฟือยหรือใช้เงินเพื่อผ่อนคลายเกินตัว ราหูจรเรือน 5 ให้ระวังเรื่องความรักและการลงทุนเสี่ยงกับบุตรหลาน</p>
+      <div class="tags"><span class="tag good">พฤหัสฯ เรือน 10</span><span class="tag good">เสาร์ เรือน 6</span><span class="tag watch">ศุกร์ เรือน 12</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♏</span> ราศีพิจิก</h3>
+      <div class="dates">17 พ.ย. – 15 ธ.ค.</div>
+      <p>พฤหัสบดีจรเรือน 9 หนุนโชคลาภ บิดา และเรื่องความเชื่อ/การศึกษาต่อให้เป็นไปได้ดี อังคารเจ้าเรือนตนเองจรเรือน 8 แม้เป็นเรือนอันตรายแต่ก็เป็นพลังลี้ลับพิเศษเฉพาะราศีนี้ ใช้สัญชาตญาณได้แม่นกว่าปกติ ทว่าเสาร์จรเรือน 5 ให้ระมัดระวังเรื่องบุตรหลานหรือการลงทุนระยะยาว ราหูจรเรือน 4 ระวังเรื่องบ้านและความสงบภายในใจ</p>
+      <div class="tags"><span class="tag good">พฤหัสฯ เรือน 9</span><span class="tag watch">เสาร์ เรือน 5</span><span class="tag watch">ราหู เรือน 4</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♐</span> ราศีธนู</h3>
+      <div class="dates">16 ธ.ค. – 14 ม.ค.</div>
+      <p>พฤหัสบดีเจ้าเรือนตนเองตกเรือน 8 เป็นตำแหน่งที่ต้องระวังมากที่สุดในรอบปี เรื่องสุขภาพและการเปลี่ยนแปลงใหญ่ในชีวิตอาจเกิดขึ้นแบบไม่ทันตั้งตัว เสาร์จรเรือน 4 กดดันเรื่องบ้านและครอบครัว ควรหลีกเลี่ยงการตัดสินใจใหญ่ช่วงนี้ ราหูจรเรือน 3 เป็นจุดดีเดียวที่ช่วยเรื่องการสื่อสารและพี่น้อง ใช้ให้เป็นประโยชน์</p>
+      <div class="tags"><span class="tag watch">พฤหัสฯ เรือน 8</span><span class="tag watch">เสาร์ เรือน 4</span><span class="tag good">ราหู เรือน 3</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♑</span> ราศีมังกร</h3>
+      <div class="dates">15 ม.ค. – 12 ก.พ.</div>
+      <p>เสาร์เจ้าเรือนตนเองจรกลับเรือนตนเอง (เรือน 3) ให้ผลดี งานที่ลงแรงมานานเริ่มออกดอกออกผล พฤหัสบดีจรเรือน 7 หนุนคู่ครองและหุ้นส่วนธุรกิจให้เป็นไปในทางที่ดี อังคารจรเรือน 6 ช่วยให้สู้และชนะปัญหาเฉพาะหน้าได้ จุดที่ต้องระวังคือราหูจรเรือน 2 ให้ระวังเรื่องการเงินและคำพูดที่อาจสร้างปัญหาโดยไม่ตั้งใจ</p>
+      <div class="tags"><span class="tag good">เสาร์ เรือน 3</span><span class="tag good">พฤหัสฯ เรือน 7</span><span class="tag watch">ราหู เรือน 2</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♒</span> ราศีกุมภ์</h3>
+      <div class="dates">13 ก.พ. – 13 มี.ค.</div>
+      <p>ราหูจรทับราศีตนเอง (เรือน 1) ตลอดเดือน อาจรู้สึกกระวนกระวายหรืออยากเปลี่ยนแปลงตัวเองแบบฉับพลัน ควรมีสติก่อนตัดสินใจ เสาร์เจ้าเรือนตนเองตกเรือน 2 เป็นจุดเริ่มต้นช่วงที่ต้องรัดเข็มขัดเรื่องการเงิน ข่าวดีคือพฤหัสบดีจรเรือน 6 ช่วยให้เอาชนะอุปสรรคและคู่แข่งได้ อังคารจรเรือน 5 หนุนความคิดสร้างสรรค์และความรัก</p>
+      <div class="tags"><span class="tag watch">ราหู เรือน 1</span><span class="tag watch">เสาร์ เรือน 2</span><span class="tag good">พฤหัสฯ เรือน 6</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="glyph-big">♓</span> ราศีมีน</h3>
+      <div class="dates">14 มี.ค. – 13 เม.ย.</div>
+      <p>เสาร์เจ้าเรือนที่สองของตนเองพักร์ทับราศีตนเอง (เรือน 1) ตลอดเดือน เป็นช่วงกลางของรอบสาเดสาตี ภาระหน้าที่และความรับผิดชอบหนักขึ้นชัดเจน ต้องอดทนและวางแผนระยะยาว แต่พฤหัสบดีเจ้าเรือนตนเองจรเรือน 5 ช่วยหนุนเรื่องบุตร ความคิดสร้างสรรค์ และการลงทุนให้ผลดี เกตุจรเรือน 6 ช่วยให้ชนะปัญหาที่หมักหมมมานาน</p>
+      <div class="tags"><span class="tag watch">เสาร์ เรือน 1</span><span class="tag good">พฤหัสฯ เรือน 5</span><span class="tag good">เกตุ เรือน 6</span></div>
+    </div>
+
+  </section>
+
+  <footer>
+    ตำแหน่งดาว: astronomy-engine (สายนะ) + Lahiri Ayanamsa · คำนวณสำหรับช่วง 1–31 สิงหาคม 2569<br>
+    การตีความอิงหลักโคจรจร (Gochara) เป็นแนวทางทั่วไป มิใช่การพยากรณ์เฉพาะบุคคลที่ต้องผูกดวงสมผุสจริงประกอบ<br>
+    <a href="https://phathanbo.github.io/siamhoramong">สยามโหรามงคล</a>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const svgns = "http://www.w3.org/2000/svg";
+  const signsTH = ["เมษ","พฤษภ","เมถุน","กรกฎ","สิงห์","กันย์","ตุลย์","พิจิก","ธนู","มังกร","กุมภ์","มีน"];
+  const cx=200, cy=200, rOuter=180, rInner=142, rLabel=161;
+  const g = document.getElementById('sectors');
+  for (let i=0;i<12;i++){
+    const a0 = i*30 * Math.PI/180;
+    const a1 = (i+1)*30 * Math.PI/180;
+    const x0o = cx+rOuter*Math.sin(a0), y0o = cy-rOuter*Math.cos(a0);
+    const x1o = cx+rOuter*Math.sin(a1), y1o = cy-rOuter*Math.cos(a1);
+    const line = document.createElementNS(svgns,'line');
+    line.setAttribute('x1',x0o);line.setAttribute('y1',y0o);
+    line.setAttribute('x2', cx+rInner*Math.sin(a0));
+    line.setAttribute('y2', cy-rInner*Math.cos(a0));
+    line.setAttribute('class','sign-arc');
+    g.appendChild(line);
+
+    const mid = (i*30+15) * Math.PI/180;
+    const lx = cx + rLabel*Math.sin(mid);
+    const ly = cy - rLabel*Math.cos(mid);
+    const text = document.createElementNS(svgns,'text');
+    text.setAttribute('x',lx);text.setAttribute('y',ly);
+    text.setAttribute('class','sign-label');
+    text.setAttribute('text-anchor','middle');
+    text.textContent = signsTH[i];
+    g.appendChild(text);
+  }
+})();
+</script>
+</body>
+</html>

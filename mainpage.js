@@ -1,67 +1,97 @@
 "use strict";
 
 const APP_MENU = [
-    { id: 'ascendantPage', title: 'คำนวณลัคนา', icon: 'fa-star-and-crescent', color: '#d4af37' },
-    { id: 'auspiciousPage', title: 'ปฏิทินฤกษ์มงคล', icon: 'fa-calendar-check', color: '#d4af37' },
-    { id: 'taksaPage', title: 'ทักษาพยากรณ์<br>(ภูมิพยากรณ์)', icon: 'fa-chart-line', color: '#d4af37' },
-    { id: 'thaksaninesection', title: 'ทักษาพยากรณ์<br>(พยากรณ์รายปี)', icon: 'fa-chart-line', color: '#d4af37' },
-    { id: 'elementManualPage', title: 'ธาตุประจำวันเกิด', icon: 'fa-fire-alt', color: '#d4af37' },
-    { id: 'planetRelationPage', title: 'คู่มิตร-ศัตรู', icon: 'fa-user-friends', color: '#d4af37' },
-    { id: 'numerologyPage', title: 'เบอร์มงคล', icon: 'fa-mobile-alt', color: '#d4af37' },
-    { id: 'dreamPage', title: 'ทำนายฝัน', icon: 'fa-moon', color: '#d4af37' },
-    { id: 'nameAnalysisPage', title: 'วิเคราะห์ชื่อ', icon: 'fa-signature', color: '#d4af37' },
-    { id: 'lottoPage', title: 'เลขเด็ด', icon: 'fa-dice', color: '#d4af37' },
-    { id: 'chatraPage', title: 'ฉัตร 3 ชั้น', icon: 'fa-tree', color: '#d4af37' },
-    { id: 'chatninePage', title: 'ฉัตร 9 ชั้น', icon: 'fa-tree', color: '#d4af37' },
-    { id: 'marriage-compatibility', title: 'เช็คดวงคู่', icon: 'fa-heart', color: '#d4af37' },
-    { id: 'patient-prognosis', title: 'ทำนายชะตาผู้ป่วย', icon: 'fa-procedures', color: '#d4af37' },
-    { id: 'soulmate-direction', title: 'ทิศเนื้อคู่', icon: 'fa-compass', color: '#d4af37' },
-    { id: 'birthfortune', title: 'พยากรณ์วันเกิด', icon: 'fa-birthday-cake', color: '#d4af37' },
-    { id: 'auspicious-day', title: 'วันมงคลประจำเดือน', icon: 'fa-calendar-day', color: '#d4af37' },
-    { id: 'ubakong-yarm', title: 'ฤกษ์ดีประจำวัน', icon: 'fa-clock', color: '#d4af37' },
-    { id: 'dailyTabooPage', title: 'ข้อห้ามประจำวัน', icon: 'fa-ban', color: '#d4af37' },
-    { id: 'package', title: 'ระดับสมาชิก', icon: 'fa-file-import', color: '#d4af37' },
-    { id: 'promchartsection', title: 'วงล้อพยากรณ์', icon: 'fa-chart-pie', color: '#d4af37' },
-    { id: 'zodiacdetailsection', title: 'ตำราพรหมชาติ', icon: 'fa-smile', color: '#d4af37' },
-    { id: 'daily-horoscope', title: 'ลักษณะผู้เกิดทั้ง 7 วัน<br>(ตำราโบราณ)', icon: 'fa-calendar-alt', color: '#d4af37' },
-    { id: 'sompong-wealth', title: 'สมพงศ์มหาสมบัติ', icon: 'fa-coins', color: '#d4af37' },
-    { id: 'climate-section', title: 'เกณฑ์พิรุณศาสตร์และชะตาโลก', icon: 'fa-cloud-showers-heavy', color: '#d4af37' },
-    { id: 'sevenDigitsPage', title: 'เลข 7 ตัว ฐาน 4', icon: 'fa-layer-group', color: '#d4af37' },
-    { id: 'horoscopeseven', title: 'เลข 7 ตัว ฐาน 4<br>(ตำราโบราณ)', icon: 'fa-layer-group', color: '#d4af37' },
-    { id: 'compatibilityPage', title: 'เช็คดวงคู่', icon: 'fa-heart', color: '#d4af37' },
-    { id: 'kaliyokepage', title: 'คำนวณกาลโยค', icon: 'fa-skull-crossbones', color: '#d4af37' },
-    { id: 'reuxpage', title: 'คำนวณฤกษ์อายุ', icon: 'fa-tree', color: '#d4af37' },
-    { id: 'dailyHighlightPage',title: 'แผนที่ฤกษ์มงคลรายวัน', icon: 'fa-calendar-alt', color: '#d4af37' },
-    { id: 'lifeExtensionPage',title: 'ต่อชะตา', icon:'fa-candle-holder', color: '#d4af37' },
-    { id: 'lunarSection' ,title: 'คำนวณจันทรคติ' ,icon: 'fa-calendar-alt', color: '#d4af37' },
-    { id: 'showdaylife', title: 'คำนวณวันเกิด', icon: 'fa-birthday-cake', color: '#d4af37' },
-    { id: 'fengShuiPage', title: '🧭 ปฏิทินฮวงจุ้ย<br>(ทิศมงคล)', icon: 'fa-compass', color: '#d4af37' },
-    { id: 'businessFortune', title: '💼 พยากรณ์ธุรกิจ<br>/การเงิน', icon: 'fa-chart-line', color: '#d4af37' },
-    { id: 'zodiacFortunePage', title: '⭐ พยากรณ์ดวง<br>ตามราศี', icon: 'fa-star', color: '#d4af37' },
-    { id: 'auspiciousOpening', title: '🏠 วันเปิดร้าน<br>/ลงหลัก', icon: 'fa-store', color: '#d4af37' },
-    { id: 'ceremonyDate', title: '💍 กำหนดวัน<br>ประกอบพิธี', icon: 'fa-ring', color: '#d4af37' },
-    { id: 'thaiAstrology', title: '🔮 โหราศาสตร์ไทย<br>(ดาวเกิด)', icon: 'fa-stars', color: '#d4af37' }
+    { id: 'todayDashboard', title: '✨ สรุปดวงวันนี้<br>(Dashboard)', icon: 'fa-sun', color: '#f1c40f', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'promchartsection', title: 'วงล้อพยากรณ์', icon: 'fa-chart-pie', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'zodiacdetailsection', title: 'ตำราพรหมชาติ', icon: 'fa-smile', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'daily-horoscope', title: 'ลักษณะผู้เกิดทั้ง 7 วัน', icon: 'fa-calendar-alt', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'showdaylife', title: 'คำนวณวันเกิด', icon: 'fa-birthday-cake', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'businessFortune', title: '💼 พยากรณ์ธุรกิจ<br>/การเงิน', icon: 'fa-chart-line', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'zodiacFortunePage', title: '⭐ พยากรณ์ดวง<br>ตามราศี', icon: 'fa-star', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'dreamPage', title: 'ทำนายฝัน', icon: 'fa-moon', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'tarotPage', title: 'ไพ่ยิปซีรายวัน', icon: 'fa-layer-group', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'cartomancyPage', title: 'ไพ่ป๊อกรายวัน', icon: 'fa-heart', color: '#e74c3c', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'siamsiPage', title: 'เซียมซีเสี่ยงทาย', icon: 'fa-drum', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'lottoPage', title: 'เลขเด็ด', icon: 'fa-dice', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'weeklyColorSection', title: 'สีมงคลประจำปี', icon: 'fa-palette', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'elementManualPage', title: 'ธาตุประจำวันเกิด', icon: 'fa-fire-alt', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'patient-prognosis', title: 'ทำนายชะตาผู้ป่วย', icon: 'fa-procedures', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'lifeExtensionPage',title: 'ต่อชะตา', icon:'fa-candle-holder', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'yearClashPage', title: '🐉 ปีชง–ปีเสริม', icon: 'fa-dragon', color: '#e74c3c', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'ascendantPage', title: 'คำนวณลัคนา', icon: 'fa-star-and-crescent', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'ayanamsaPage', title: 'ผูกดวงนิรายนะ', icon: 'fa-star', color: '#f1c40f', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'Ayanamsa.html' },
+    { id: 'monthlyTransitPage', title: 'ดาวจรรายเดือน', icon: 'fa-globe', color: '#03a9f4', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'monthly-transit.html' },
+    { id: 'taksaPage', title: 'ทักษาพยากรณ์<br>(ภูมิพยากรณ์)', icon: 'fa-chart-line', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'thaksaninesection', title: 'ทักษาพยากรณ์<br>(พยากรณ์รายปี)', icon: 'fa-chart-line', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'planetRelationPage', title: 'คู่มิตร-ศัตรู', icon: 'fa-user-friends', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'chatraPage', title: 'ฉัตร 3 ชั้น', icon: 'fa-tree', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'chatninePage', title: 'ฉัตร 9 ชั้น', icon: 'fa-tree', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'birthfortune', title: 'พยากรณ์วันเกิด', icon: 'fa-birthday-cake', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'climate-section', title: 'เกณฑ์พิรุณศาสตร์<br>และชะตาโลก', icon: 'fa-cloud-showers-heavy', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'sevenDigitsPage', title: 'เลข 7 ตัว ฐาน 4', icon: 'fa-layer-group', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'horoscopeseven', title: 'เลข 7 ตัว ฐาน 4<br>(ตำราโบราณ)', icon: 'fa-layer-group', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'thaiAstrology', title: '🔮 โหราศาสตร์ไทย<br>(ดาวเกิด)', icon: 'fa-stars', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },   
+    { id: 'thaiHoraPage', title: 'โหราศาสตร์ไทย', icon: 'fa-star-and-crescent', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'twelveHousesPage', title: '🏛️ 12 ภพ<br>(ลัคนาราศี)', icon: 'fa-th', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'dashaPage', title: '🪐 ทศาดาว<br>(ช่วงอายุดาว)', icon: 'fa-satellite', color: '#ce93d8', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
 
+    { id: 'auspiciousPage', title: 'ปฏิทินฤกษ์มงคล', icon: 'fa-calendar-check', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'personalizedAuspiciousPage', title: 'ฤกษ์มงคล<br>เฉพาะบุคคล', icon: 'fa-calendar-alt', color: '#f1c40f', category: '📅 ฤกษ์ยามและวันมงคล', action: 'initPersonalizedAuspicious()' },
+    { id: 'auspicious-day', title: 'วันมงคลประจำเดือน', icon: 'fa-calendar-day', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'ubakong-yarm', title: 'ฤกษ์ดีประจำวัน', icon: 'fa-clock', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'dailyTabooPage', title: 'ข้อห้ามประจำวัน', icon: 'fa-ban', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'kaliyokepage', title: 'คำนวณกาลโยค', icon: 'fa-skull-crossbones', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'reuxpage', title: 'คำนวณฤกษ์อายุ', icon: 'fa-tree', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'dailyHighlightPage',title: 'แผนที่ฤกษ์มงคล<br>รายวัน', icon: 'fa-calendar-alt', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'lunarSection' ,title: 'คำนวณจันทรคติ' ,icon: 'fa-moon', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'fengShuiPage', title: '🧭 ปฏิทินฮวงจุ้ย<br>(ทิศมงคล)', icon: 'fa-compass', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'auspiciousOpening', title: '🏠 วันเปิดร้าน<br>/ลงหลัก', icon: 'fa-store', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'ceremonyDate', title: '💍 กำหนดวัน<br>ประกอบพิธี', icon: 'fa-ring', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'planetaryHoursPage', title: '🌟 ฤกษ์ยาม 7 เจ้า', icon: 'fa-clock', color: '#f1c40f', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'ditheePage', title: '🌙 ดิถีพยากรณ์<br>(ข้างขึ้น-แรม)', icon: 'fa-moon', color: '#90caf9', category: '📅 ฤกษ์ยามและวันมงคล' },
+
+    { id: 'deepSynastryPage', title: 'VIP ผูกดวงคู่สมพงษ์', icon: 'fa-heartbeat', color: '#e74c3c', category: '💖 ความรักและสมพงศ์' },
+    { id: 'compatibilityPage', title: 'เช็คดวงสมพงษ์', icon: 'fa-heart', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
+    { id: 'marriage-compatibility', title: 'หาคู่รักหรือคู่สมรส', icon: 'fa-heart', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
+    { id: 'soulmate-direction', title: 'ทิศเนื้อคู่', icon: 'fa-compass', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
+    { id: 'sompong-wealth', title: 'สมพงศ์มหาสมบัติ', icon: 'fa-coins', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
+
+    { id: 'nameAnalysisPage', title: 'วิเคราะห์ชื่อ', icon: 'fa-signature', color: '#d4af37', category: '🔤 ชื่อและเลขศาสตร์' },
+    { id: 'numerologyPage', title: 'เบอร์มงคล', icon: 'fa-mobile-alt', color: '#d4af37', category: '🔤 ชื่อและเลขศาสตร์' },
+
+    { id: 'package', title: 'ระดับสมาชิก', icon: 'fa-file-import', color: '#d4af37', category: '⚙️ ระบบและอื่นๆ' }
 ];
 
 const UserProfile = {
     save: function() {
-        const data = {
-            birthDay: document.getElementById('birthDay')?.value || '',
-            birthDate: document.getElementById('birthDate')?.value || '',
-            birthTime: document.getElementById('birthTime')?.value || ''
-        };
-        localStorage.setItem('siamHora_Profile', JSON.stringify(data));
+        // ดึงวันเกิดจาก form ใดก็ได้ที่มีค่า
+        const raw = document.getElementById('birthdate')?.value ||
+                    document.getElementById('birthDate')?.value || '';
+        const birthTime = document.getElementById('birthtime')?.value ||
+                          document.getElementById('birthTime')?.value || '';
+
+        // บันทึกลง canonical key เสมอ
+        if (raw && typeof birthdateToISO === 'function') {
+            const iso = birthdateToISO(raw);
+            if (iso) localStorage.setItem('userBirthdate', iso);
+        }
+        if (birthTime) localStorage.setItem('userBirthTime', birthTime);
     },
     load: function() {
-        const saved = localStorage.getItem('siamHora_Profile');
-        if (saved) {
-            const data = JSON.parse(saved);
-            // เติมค่าให้ทุก Input ที่มี Class เหล่านี้ (ใช้ Class แทน ID เพื่อให้เติมได้หลายหน้าพร้อมกัน)
-            if (data.birthDay) $('.birth-day-input').val(data.birthDay);
-            if (data.birthDate) $('.birth-date-input').val(data.birthDate);
-            if (data.birthTime) $('.birth-time-input').val(data.birthTime);
-            return data;
+        // อ่านจาก canonical key userBirthdate
+        const iso = localStorage.getItem('userBirthdate');
+        if (iso) {
+            const display = typeof isoToDisplayDate === 'function' ? isoToDisplayDate(iso) : iso;
+            $('.birth-date-input').val(display || iso);
+            const parts = iso.split('-');
+            if (parts.length === 3) {
+                $('.birth-year-input').val(parts[0]);
+                $('.birth-month-input').val(String(parseInt(parts[1])));
+                $('.birth-day-input').val(String(parseInt(parts[2])));
+            }
+            const birthTime = localStorage.getItem('userBirthTime') || '';
+            if (birthTime) $('.birth-time-input').val(birthTime);
+            return { birthDate: iso, birthTime };
         }
         return null;
     }
@@ -71,41 +101,96 @@ function buildDashboard() {
     const menuGrid = document.getElementById('menuGrid');
     if (!menuGrid) return;
 
-    menuGrid.innerHTML = APP_MENU.map((item, index) => `
-        <div class="col-6 col-md-4 col-lg-3 mb-4" style="animation: fadeIn 0.5s ease ${index * 0.05}s both;">
-            <div class="dashboard-card"
-                 style="cursor:pointer; transition: all 0.35s cubic-bezier(0.23, 1, 0.320, 1);"
-                 onclick="navigateTo('${item.id}')"
-                 onmouseover="this.style.transform='translateY(-12px) scale(1.05)'; this.style.boxShadow='0 20px 50px rgba(212, 175, 55, 0.35)';"
-                 onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 25px rgba(212, 175, 55, 0.15)';">
+    const categories = [
+        { name: '⭐ ดูดวงและพยากรณ์ทั่วไป', color: '#f1c40f' },
+        { name: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', color: '#d4af37' },
+        { name: '📅 ฤกษ์ยามและวันมงคล', color: '#2ecc71' },
+        { name: '💖 ความรักและสมพงศ์', color: '#e74c3c' },
+        { name: '🔤 ชื่อและเลขศาสตร์', color: '#3498db' },
+        { name: '⚙️ ระบบและอื่นๆ', color: '#95a5a6' }
+    ];
 
-                <div class="card-icon-wrapper">
-                    <i class="fas ${item.icon}" style="color: ${item.color};"></i>
-                </div>
+    let html = '';
+    let globalDelay = 0;
 
-                <div class="card-body text-center px-3 py-4">
-                    <h6 class="card-body" style="font-weight: 600; line-height: 1.4;">${item.title}</h6>
-                </div>
+    categories.forEach(cat => {
+        const items = APP_MENU.filter(item => item.category === cat.name);
+        if (items.length === 0) return;
 
-                <div class="card-shine"></div>
+        // หัวข้อหมวดหมู่
+        html += `
+            <div class="col-12 mt-4 mb-3 text-left w-100">
+                <h4 style="color: var(--gold-lt, #F9E596); border-bottom: 1px dashed var(--border, rgba(212,175,55,0.3)); padding-bottom: 10px; font-weight: 600; font-size: 1.3rem; margin-top: 15px;">
+                    ${cat.name}
+                </h4>
             </div>
-        </div>
-    `).join('');
+        `;
+
+        // ปุ่มเมนูในหมวดหมู่
+        items.forEach((item) => {
+            const hasAccess = (typeof window.hasPackagePermission === 'function') ? window.hasPackagePermission(item.id) : true;
+            
+            let clickHandler = '';
+            let lockedOverlay = '';
+            
+            if (hasAccess) {
+                clickHandler = item.url ? `window.location.href='${item.url}'` : `navigateTo('${item.id}')`;
+            } else {
+                clickHandler = `navigateTo('package')`; // Go to package page if locked
+                lockedOverlay = `
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; transition: all 0.3s ease;">
+                        <i class="fas fa-lock" style="color: #d4af37; font-size: 2rem; margin-bottom: 5px;"></i>
+                        <span style="color: #fff; font-size: 0.85rem; font-weight: bold; text-align: center; padding: 0 5px; line-height: 1.2;">อัพเกรดสมาชิก<br>เพื่อปลดล็อค</span>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div class="col-6 col-md-4 col-lg-3 mb-4" style="animation: fadeIn 0.5s ease ${globalDelay * 0.05}s both; position: relative;">
+                    <div class="dashboard-card"
+                         style="cursor:pointer; position: relative; height: 100%;"
+                         onclick="${clickHandler}">
+                        
+                        ${lockedOverlay}
+
+                        <div class="card-icon-wrapper" style="${!hasAccess ? 'opacity:0.4;' : ''}">
+                            <i class="fas ${item.icon}" style="color: ${item.color};"></i>
+                        </div>
+
+                        <div class="card-body text-center px-3 py-4" style="${!hasAccess ? 'opacity:0.4;' : ''}">
+                            <h6 class="card-title">${item.title}</h6>
+                        </div>
+
+                        <div class="card-shine"></div>
+                    </div>
+                </div>
+            `;
+            globalDelay++;
+        });
+    });
+
+    menuGrid.innerHTML = html;
 
     // เพิ่ม CSS สำหรับ dashboard cards
     if (!document.getElementById('dashboardStyles')) {
         const style = document.createElement('style');
         style.id = 'dashboardStyles';
         style.textContent = '.dashboard-card {' +
-            'background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 245, 235, 0.92) 100%);' +
-            'border: 2px solid #d4af37;' +
+            'background: linear-gradient(135deg, rgba(18, 26, 46, 0.95) 0%, rgba(10, 15, 29, 0.95) 100%) !important;' +
+            'border: 1px solid rgba(212, 175, 55, 0.4) !important;' +
             'border-radius: 18px;' +
             'padding: 20px 15px;' +
             'height: 100%;' +
             'position: relative;' +
             'overflow: hidden;' +
-            'box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);' +
-            'backdrop-filter: blur(10px);' +
+            'box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;' +
+            'backdrop-filter: blur(16px);' +
+            'transition: all 0.35s cubic-bezier(0.23, 1, 0.320, 1);' +
+            '}' +
+            '.dashboard-card:hover {' +
+            'transform: translateY(-8px) scale(1.03);' +
+            'border-color: #D4AF37 !important;' +
+            'box-shadow: 0 20px 45px rgba(212, 175, 55, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;' +
             '}' +
             '.dashboard-card::before {' +
             'content: "";' +
@@ -114,26 +199,38 @@ function buildDashboard() {
             'left: -100%;' +
             'width: 100%;' +
             'height: 100%;' +
-            'background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);' +
+            'background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);' +
             'transition: left 0.5s;' +
             '}' +
             '.dashboard-card:hover::before { left: 100%; }' +
             '.card-icon-wrapper {' +
             'font-size: 2.8rem;' +
-            'margin-bottom: 12px;' +
+            'margin-bottom: 15px;' +
             'display: flex;' +
             'justify-content: center;' +
             'align-items: center;' +
             'height: 70px;' +
-            'background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.03) 100%);' +
-            'border-radius: 12px;' +
-            'transition: transform 0.3s ease;' +
+            'background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(10, 15, 29, 0.4) 100%);' +
+            'border: 1px solid rgba(212, 175, 55, 0.25);' +
+            'border-radius: 16px;' +
+            'transition: all 0.3s ease;' +
             '}' +
-            '.dashboard-card:hover .card-icon-wrapper { transform: scale(1.15) rotate(5deg); }' +
-            '.card-title {' +
-            'color: #2c1810;' +
-            'font-size: 0.95rem;' +
+            '.dashboard-card:hover .card-icon-wrapper { transform: scale(1.15) rotate(5deg); border-color: rgba(212, 175, 55, 0.6); box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }' +
+            '.dashboard-card .card-title {' +
+            'color: #F9E596 !important;' +
+            'background: none !important;' +
+            '-webkit-text-fill-color: #F3F4F6 !important;' +
+            'font-size: 1.05rem !important;' +
+            'font-weight: 600 !important;' +
             'letter-spacing: 0.3px;' +
+            'text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8) !important;' +
+            'line-height: 1.4 !important;' +
+            'margin: 0;' +
+            '}' +
+            '.dashboard-card:hover .card-title {' +
+            'color: #D4AF37 !important;' +
+            '-webkit-text-fill-color: #F9E596 !important;' +
+            'text-shadow: 0 0 12px rgba(212, 175, 55, 0.6) !important;' +
             '}' +
             '.card-shine {' +
             'position: absolute;' +
@@ -141,7 +238,7 @@ function buildDashboard() {
             'left: 0;' +
             'width: 100%;' +
             'height: 100%;' +
-            'background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.5) 0%, transparent 50%);' +
+            'background: radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 50%);' +
             'pointer-events: none;' +
             'opacity: 0;' +
             'transition: opacity 0.3s;' +
@@ -154,7 +251,7 @@ function buildDashboard() {
             '@media (max-width: 767px) {' +
             '.dashboard-card { padding: 15px 12px; }' +
             '.card-icon-wrapper { font-size: 2.2rem; height: 60px; }' +
-            '.card-title { font-size: 0.9rem; }' +
+            '.dashboard-card .card-title { font-size: 0.95rem !important; }' +
             '}';
         document.head.appendChild(style);
     }

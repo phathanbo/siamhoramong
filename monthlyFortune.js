@@ -212,7 +212,7 @@ function analyzeMonthlyFortune() {
     const resultEl = document.getElementById('monthlyResult');
 
     if (!birthDayEl.value || !birthYearEl.value || !monthEl.value) {
-        alert('⚠️ กรุณากรอกวันเกิด ปีเกิด และเลือกเดือน');
+        Swal.fire('แจ้งเตือน', 'กรุณากรอกวันเกิด ปีเกิด และเลือกเดือน', 'warning');
         return;
     }
 
@@ -221,7 +221,7 @@ function analyzeMonthlyFortune() {
     const targetMonth = parseInt(monthEl.value);
 
     if (birthDay < 1 || birthDay > 31) {
-        alert('⚠️ วันเกิดต้อง 1-31');
+        Swal.fire('แจ้งเตือน', 'วันเกิดต้อง 1-31', 'warning');
         return;
     }
 

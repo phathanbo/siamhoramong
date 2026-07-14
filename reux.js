@@ -22,8 +22,8 @@ const DAY_COLORS = {
 
 // ธาตุประจำวัน
 const DAY_ELEMENT = {
-  "อาทิตย์": "ไฟ","จันทร์": "น้ำ","อังคาร": "น้ำ",
-  "พุธ": "ดิน","พฤหัสบดี": "ไฟ","ศุกร์": "ลม","เสาร์": "ดิน",
+  "อาทิตย์": "ไฟ","จันทร์": "ดิน","อังคาร": "ลม",
+  "พุธ": "น้ำ","พฤหัสบดี": "ดิน","ศุกร์": "น้ำ","เสาร์": "ไฟ",
 };
 
 // ทิศเดช / ทิศศรี ประจำวัน
@@ -59,7 +59,7 @@ const SPIRIT_DIRECTION = {
 const RAHU_DIRECTION = [
   { label: "06:00–09:00", dir: "ตะวันออก" },
   { label: "09:00–12:00", dir: "ตะวันตกเฉียงเหนือ" },
-  { label: "12:00–14:00", dir: "เหนือ" },
+  { label: "12:00–15:00", dir: "เหนือ" },
   { label: "15:00–18:00", dir: "ตะวันออกเฉียงใต้" },
   { label: "18:00–21:00", dir: "ตะวันตก" },
   { label: "21:00–24:00", dir: "ตะวันออกเฉียงเหนือ" },
@@ -260,7 +260,16 @@ function renderToday() {
   const clkTime = document.getElementById('clkTime');
   const clkElement = document.getElementById('clkElement');
 
-  if (clkDate) clkDate.textContent = now.toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric' });
+  if (clkDate) {
+      let text = now.toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric' });
+      if (typeof getThaiLunar === 'function') {
+          const lunar = getThaiLunar(now);
+          if (lunar && lunar.fullString) {
+              text += ` (${lunar.fullString})`;
+          }
+      }
+      clkDate.textContent = text;
+  }
   if (clkDay) clkDay.textContent = info.dayName;
   if (clkTime) {
       clkTime.textContent = now.toLocaleTimeString('th-TH');

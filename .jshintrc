@@ -1,0 +1,19 @@
+{
+  "esversion": 8,
+  "browser": true,
+  "node": true,
+  "undef": true,
+  "unused": false,
+  "globals": {
+    "Swal": false,
+    "html2canvas": false,
+    "jsPDF": false,
+    "firebase": false,
+    "$": false,
+    "calculateKalaYok": false,
+    "getThaiLunar": false,
+    "thaiHora": false,
+    "Chart": false,
+    "liff": false
+  }
+}

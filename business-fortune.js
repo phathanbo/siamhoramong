@@ -326,7 +326,7 @@ function calculateAndShowBusiness() {
     const resultEl = document.getElementById("businessResult");
 
     if (!dayEl.value || !yearEl.value) {
-        alert("⚠️ กรุณากรอกวันเกิดและปีเกิด");
+        Swal.fire('แจ้งเตือน', 'กรุณากรอกวันเกิดและปีเกิด', 'warning');
         return;
     }
 
@@ -437,7 +437,7 @@ function displayBusinessFortune() {
         birthDateInput = dayName;
         birthTimeInput = parseInt(yearEl.value);
     } else {
-        alert('⚠️ กรุณาป้อนวันเกิดและเวลาเกิด หรือเลือกปีนักษัตร');
+        Swal.fire('แจ้งเตือน', 'กรุณาป้อนวันเกิดและเวลาเกิด หรือเลือกปีนักษัตร', 'warning');
         return;
     }
 

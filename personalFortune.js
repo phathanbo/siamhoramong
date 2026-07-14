@@ -166,7 +166,7 @@ function analyzePersonalFortune() {
     const resultEl = document.getElementById('fortuneResult');
 
     if (!birthdayEl.value || !birthYearEl.value) {
-        alert('⚠️ กรุณาป้อนวันเกิดและปีเกิด');
+        Swal.fire('แจ้งเตือน', 'กรุณาป้อนวันเกิดและปีเกิด', 'warning');
         return;
     }
 
@@ -180,12 +180,12 @@ function analyzePersonalFortune() {
     const planet = PLANET_PERSONALITY[planetNum];
 
     // คำนวณธาตุ 5 ประการ
-    const buddhayear = birthYear - 543; // แปลงเป็น พ.ศ. → ค.ศ.
+    const buddhayear = toCE(birthYear);
     const elementNum = buddhayear % 5;
     const element = ELEMENT_INFLUENCE[elementNum];
 
     if (!planet || !element) {
-        alert('❌ ไม่พบข้อมูลลัคนา');
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่พบข้อมูลลัคนา', 'error');
         return;
     }
 

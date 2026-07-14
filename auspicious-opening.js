@@ -140,6 +140,21 @@ function showOpeningPage() {
 }
 
 /**
+ * 🎨 หาสีตามสถานะวัน
+ */
+function getColorByStatus(status) {
+    if (!status) return '#28a745'; // เขียวสว่าง (ค่าเริ่มต้นถ้าไม่มี status)
+    if (status.includes('ธงชัย')) return '#28a745'; // เขียวสว่าง
+    if (status.includes('อธิบดี')) return '#007bff'; // น้ำเงิน
+    if (status.includes('มหาสิทธิโชค')) return '#17a2b8'; // ฟ้า
+    if (status.includes('ราชาโชค')) return '#ffc107'; // เหลือง
+    if (status.includes('ชัยโชค')) return '#20c997'; // เขียวลึก
+    if (status.includes('อุบาทว์')) return '#fd7e14'; // ส้ม
+    if (status.includes('โลกาวินาศ')) return '#dc3545'; // แดง
+    return '#6c757d'; // เทาธรรมดา (ปกติ)
+}
+
+/**
  * 🔍 หาวันมงคลและทิศมงคล
  */
 function findOpeningDate() {
@@ -147,28 +162,59 @@ function findOpeningDate() {
     const monthEl = document.getElementById('openingMonth');
     const resultEl = document.getElementById('openingResult');
 
-    if (!typeEl.value || !monthEl.value) {
-        alert('⚠️ กรุณาเลือกประเภทธุรกิจและเดือน');
+    if (!typeEl || !monthEl || !resultEl) {
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่พบ element', 'error');
+        console.error('typeEl:', typeEl, 'monthEl:', monthEl, 'resultEl:', resultEl);
+        return;
+    }
+
+    if (!typeEl.value) {
+        Swal.fire('แจ้งเตือน', 'กรุณาเลือกประเภทธุรกิจ', 'warning');
+        return;
+    }
+
+    if (!monthEl.value) {
+        Swal.fire('แจ้งเตือน', 'กรุณาเลือกเดือนและปี', 'warning');
         return;
     }
 
     const businessType = typeEl.value;
-    const [year, month] = monthEl.value.split('-');
+    const monthValue = monthEl.value; // format: "YYYY-MM"
+    const [year, month] = monthValue.split('-');
     const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
 
+    console.log('🔍 Debug:', { monthValue, year, month, monthNum, yearNum });
+
+    // ตรวจสอบ business type
     const business = OPENING_BUSINESS_TYPES[businessType];
-    const goodDays = getAuspiciousDays(monthNum);
-
-    if (!business || goodDays.length === 0) {
-        alert('❌ ไม่พบข้อมูลวันมงคล');
+    if (!business) {
+        Swal.fire('เกิดข้อผิดพลาด', 'ประเภทธุรกิจไม่ถูกต้อง', 'error');
         return;
     }
 
-    const daysHTML = goodDays.map(day => `
-        <span style="display: inline-block; margin: 5px; padding: 10px 15px; background: rgba(40, 167, 69, 0.2); border: 1px solid #28a745; border-radius: 5px; color: #28a745; font-weight: bold;">
-            วันที่ ${day}
-        </span>
-    `).join('');
+    // ดึงวันมงคล (ส่ง 2 parameters: month, year)
+    const goodDays = getAuspiciousDays(monthNum, yearNum);
+    console.log('📅 Good days:', goodDays);
+
+    if (!goodDays || goodDays.length === 0) {
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่พบข้อมูลวันมงคล - โปรดลองเดือนอื่น', 'error');
+        console.error('Error: goodDays empty or undefined');
+        return;
+    }
+
+    const daysHTML = goodDays.map(dayItem => {
+        const dayNum = typeof dayItem === 'object' ? dayItem.day : dayItem;
+        const statusStr = typeof dayItem === 'object' && dayItem.status ? dayItem.status : 'ฤกษ์ดี';
+        
+        const color = getColorByStatus(statusStr);
+        const bgColor = color + '22'; // เพิ่มความโปร่งใส
+        return `
+            <span style="display: inline-block; margin: 5px; padding: 10px 15px; background: ${bgColor}; border: 2px solid ${color}; border-radius: 6px; color: ${color}; font-weight: bold;">
+                วันที่ ${dayNum} ${statusStr}
+            </span>
+        `;
+    }).join('');
 
     // ดึงทิศมงคลสุ่มตามลัคนา
     const directionKey = (monthNum % 9) || 9;

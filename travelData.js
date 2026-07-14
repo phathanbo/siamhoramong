@@ -150,7 +150,7 @@ function findTravelDate() {
     const resultEl = document.getElementById('travelResult');
 
     if (!birthdayEl.value || !monthEl.value) {
-        alert('⚠️ กรุณาป้อนวันเกิดและเลือกเดือนเดินทาง');
+        Swal.fire('แจ้งเตือน', 'กรุณาป้อนวันเกิดและเลือกเดือนเดินทาง', 'warning');
         return;
     }
 
@@ -169,7 +169,7 @@ function findTravelDate() {
     const goodDays = getAuspiciousDays(monthNum);
 
     if (!planet || goodDays.length === 0) {
-        alert('❌ ไม่พบข้อมูลวันมงคล');
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่พบข้อมูลวันมงคล', 'error');
         return;
     }
 

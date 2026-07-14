@@ -25,20 +25,11 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const membersCol = collection(db, "horo_history");
 
-// ✅ ดึง username จาก auth session (ไม่ซ้ำกัน)
-function getCurrentUsername() {
-    try {
-        const session = localStorage.getItem('siamhora_auth_session');
-        if (session) {
-            const data = JSON.parse(session);
-            // 👤 ใช้ username (unique identifier) ไม่ใช่ displayName
-            return data.username || null;
-        }
-    } catch (e) {
-        console.warn('⚠️ ไม่สามารถดึง username จาก session:', e);
-    }
-    return localStorage.getItem('thaiHoroUserName') || null;
-}
+// Expose app and db globally so auth script can use it for Google Login
+window.firebaseApp = app;
+window.firebaseDb = db;
+
+/* หมายเหตุ: ฟังก์ชัน getCurrentUsername ถูกย้ายไปที่ utils-helpers.js แล้ว */
 
 let currentUser = getCurrentUsername();
 
@@ -62,8 +53,6 @@ async function saveToFirestore(userData) {
         // ดึงค่าออกมา
         const selectedGender = genderSelect.value; 
 
-        // ตรวจสอบค่าก่อนนำไปใช้
-        console.log("ค่าที่เลือกคือ:", selectedGender);
 
         const payload = {
             memberId: userData.memberId,
@@ -93,23 +82,41 @@ async function saveToFirestore(userData) {
 
 // --- 2. ซิงค์ข้อมูลจาก Cloud มา LocalStorage ---
 async function syncDataFromFirestore() {
-    console.log("🔄 กำลังซิงค์ข้อมูลจาก Cloud...");
     try {
-        const q = query(membersCol, orderBy("createdAt", "desc"));
+        const currentUsername = getCurrentUsername();
+        const isAdminUser = typeof isAdmin === 'function' && isAdmin();
+
+        let q;
+        if (isAdminUser) {
+            // Admin ดึงข้อมูลทั้งหมด
+            q = query(membersCol, orderBy("createdAt", "desc"));
+        } else if (currentUsername) {
+            // User ปกติ: ดึงเฉพาะข้อมูลของตนเอง (ไม่เก็บข้อมูลคนอื่นใน LocalStorage)
+            q = query(membersCol, where("username", "==", currentUsername));
+        } else {
+            localStorage.setItem('horo_history', JSON.stringify([]));
+            return;
+        }
+
         const querySnapshot = await getDocs(q);
         const history = [];
         querySnapshot.forEach((doc) => {
             history.push({ id: doc.id, ...doc.data() });
         });
 
-        // เก็บลง LocalStorage ตามเดิม
-        localStorage.setItem('horo_history', JSON.stringify(history));
+        // เรียงลำดับ client-side (สำหรับ user query ที่ไม่มี orderBy)
+        if (!isAdminUser) {
+            history.sort((a, b) => {
+                const ta = a.createdAt?.seconds ?? 0;
+                const tb = b.createdAt?.seconds ?? 0;
+                return tb - ta;
+            });
+        }
 
-        // --- ส่วนที่เพิ่มใหม่: กระจายรายชื่อไปทุกหน้า ---
+        localStorage.setItem('horo_history', JSON.stringify(history));
         updateAllMemberSelectors(history);
 
         if (typeof loadHistory === 'function') loadHistory();
-        console.log("✅ ซิงค์และอัปเดตรายชื่อสำเร็จ");
     } catch (err) {
         console.error("❌ ซิงค์ล้มเหลว:", err);
     }
@@ -131,7 +138,7 @@ function updateAllMemberSelectors(allHistory) {
         history.forEach(member => {
             const option = document.createElement('option');
             // สำคัญ: เราจะเก็บข้อมูลวันที่ไว้ใน value เพื่อให้ฟังก์ชันอื่นดึงไปใช้ง่ายๆ
-            option.value = member.birthdate || "";
+            option.value = member.memberId || member.birthdate || "";
             option.textContent = `${member.memberId ? `${member.memberId} - ` : ''}${member.name}${member.lastName ? ` ${member.lastName}` : ''}`;
             // ถ้ามีข้อมูลอายุ/วันที่ ให้เก็บไว้ใน data attribute เผื่อเรียกใช้
             option.setAttribute('data-name', member.name);
@@ -144,6 +151,7 @@ function updateAllMemberSelectors(allHistory) {
 
 // ส่งฟังก์ชันออกไปให้โลกภายนอกรู้จัก (เพราะไฟล์นี้เป็น Module)
 window.syncDataFromFirestore = syncDataFromFirestore;
+window.updateAllMemberSelectors = updateAllMemberSelectors;
 
 
 /**
@@ -209,7 +217,6 @@ window.addEventListener('load', async () => {
 
 // ✅ เรียก sync เมื่อ DOM พร้อมแต่รอ auth session ก่อน
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('📄 DOMContentLoaded: รอการเตรียมข้อมูล...');
 
     // รอ auth session initialize (สูงสุด 5 วินาที)
     let retries = 0;
@@ -218,40 +225,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     while (retries < maxRetries) {
         const session = localStorage.getItem('siamhora_auth_session');
         if (session) {
-            console.log('✅ Auth session พบแล้ว กำลังซิงค์...');
             try {
                 await syncDataFromFirestore();
-                console.log('✅ DOMContentLoaded: ซิงค์สำเร็จ');
             } catch (err) {
                 console.error('❌ DOMContentLoaded sync error:', err);
             }
             return;
         }
         retries++;
-        await new Promise(resolve => setTimeout(resolve, 100)); // รอ 100ms
+        await new Promise(resolve => setTimeout(resolve, 100));
     }
-
-    console.warn('⚠️ Auth session ไม่พบ หลังจากรอ 5 วินาที');
 });
 
 // --- เพิ่มฟังก์ชันนี้เพื่อกรอกข้อมูลอัตโนมัติ ---
 function fillUserData() {
-    const targetInput = document.getElementById('targetName');
-    if (targetInput) {
-        try {
+    try {
+        const targetInput = document.getElementById('targetName');
+        
+        // 1. ลองดึงจาก Profile Manager ก่อน
+        const profile = SingleProfileManager.load();
+        if (profile) {
+            const fields = {
+                'targetName': profile.name || '',
+                'targetLastName': profile.lastName || '',
+                'birthdate': profile.birthdate || '',
+                'birthtime': profile.birthtime || '',
+                'targetGender': profile.gender || '',
+                'dayjanta': profile.birthDaythai || '',
+                'birthMonththai': profile.birthMonththai || '',
+                'ThaiId': profile.ThaiId || '',
+                'targetProvince': profile.province || ''
+            };
+            
+            for (const [id, val] of Object.entries(fields)) {
+                const el = document.getElementById(id);
+                if (el && val) {
+                    el.value = val;
+                }
+            }
+        } 
+        
+        // 2. ถ้าช่องชื่อยังว่างอยู่ ให้พยายามใช้ displayName จาก Session
+        if (targetInput && !targetInput.value) {
             const session = localStorage.getItem('siamhora_auth_session');
             if (session) {
                 const data = JSON.parse(session);
-                // ✅ ใช้ displayName ไม่ใช่ username
                 const displayName = data.displayName || '';
                 if (displayName) {
                     targetInput.value = displayName;
-                    console.log('✅ fillUserData: เติมชื่อ', displayName);
                 }
             }
-        } catch (e) {
-            console.warn('⚠️ fillUserData error:', e);
         }
+    } catch (e) {
+        console.warn('⚠️ fillUserData error:', e);
     }
 }
 
@@ -279,7 +305,6 @@ const SingleProfileManager = {
 
             const key = this.getKey(username);
             localStorage.setItem(key, JSON.stringify(profileData));
-            console.log('✅ บันทึกข้อมูลสมาชิก:', profileData.name, '(User:', username + ')');
             return true;
         } catch (e) {
             console.error('❌ Error saving profile:', e);
@@ -429,6 +454,7 @@ async function calculateEsh() {
     let ThaiId = document.getElementById('ThaiId')?.value || '';
     let gender = document.getElementById('targetGender')?.value || '';
     let birthDaythai = document.getElementById('dayjanta')?.value || '';
+    let targetProvince = document.getElementById('targetProvince')?.value.trim() || 'กรุงเทพมหานคร';
  
     // ========================================
     // 2️⃣ ถ้า Form ว่าง → ดึงจากโปรไฟล์
@@ -449,7 +475,6 @@ async function calculateEsh() {
                 birthMonththai = month;
             }
             
-            console.log("✅ ดึงจากโปรไฟล์:", profileData);
         }
     }
  
@@ -516,6 +541,7 @@ async function calculateEsh() {
             birthMonththai: birthMonththai,
             birthDaythai: birthDaythai,
             birthtime: birthtime,
+            province: targetProvince,
             ThaiId: ThaiId,
             gender: gender,
             zodiac: zodiacName,
@@ -535,16 +561,12 @@ async function calculateEsh() {
         history.unshift(dataToSave);
         localStorage.setItem('horo_history', JSON.stringify(history));
  
-        console.log("✅ บันทึกสำเร็จ:", dataToSave);
-
         // ========================================
         // 8️⃣ อัปเดต UI (Dropdown, ประวัติ) ทันที
         // ========================================
 
-        // 🔄 ซิงค์และอัปเดต Dropdown + ประวัติ
         if (typeof syncDataFromFirestore === 'function') {
             await syncDataFromFirestore();
-            console.log('🔄 อัปเดต UI สำเร็จ');
         }
 
         // ========================================
@@ -592,7 +614,6 @@ function saveToHistory(data) {
             if (typeof saveMember === 'function') {
                 saveMember(data);
             }
-            console.log('✅ Admin: บันทึกข้อมูลสมาชิกจำนวนไม่จำกัด');
         }
     } else {
         // ✅ User ปกติ: เก็บแค่ 1 คน (Single-Entry)
@@ -602,8 +623,6 @@ function saveToHistory(data) {
             if (typeof saveMember === 'function') {
                 saveMember(data);
             }
-            console.log('✅ User: บันทึกข้อมูลสมาชิก 1 คนเรียบร้อย');
-
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
                     icon: 'success',
@@ -629,12 +648,12 @@ function deleteSingleProfile() {
     // ตรวจสอบว่า Admin หรือไม่
     const isAdminUser = typeof isAdmin === 'function' && isAdmin();
     if (isAdminUser) {
-        alert('❌ Admin สามารถจัดการข้อมูลหลายรายการได้ ไม่จำเป็นต้องลบ');
+        Swal.fire('แจ้งเตือน', 'Admin สามารถจัดการข้อมูลหลายรายการได้ ไม่จำเป็นต้องลบ', 'info');
         return;
     }
 
     if (!SingleProfileManager.exists()) {
-        alert('❌ ไม่มีข้อมูลสมาชิกที่ต้องลบ');
+        Swal.fire('แจ้งเตือน', 'ไม่มีข้อมูลสมาชิกที่ต้องลบ', 'info');
         return;
     }
 
@@ -652,7 +671,6 @@ function deleteSingleProfile() {
         }).then((result) => {
             if (result.isConfirmed) {
                 SingleProfileManager.delete();
-                console.log('✅ ลบข้อมูลแล้ว พร้อมเพิ่มข้อมูลใหม่');
                 location.reload();
             }
         });
@@ -713,8 +731,8 @@ async function generateMemberId() {
             }
         }
 
-        return dateStr +
-            String(nextSeq).padStart(2, '0');
+        // ใช้ 3 หลักเพื่อรองรับได้ถึง 999 คนต่อวัน (ป้องกัน overflow เดิมที่ 99)
+        return dateStr + String(nextSeq).padStart(3, '0');
 
     } catch (err) {
 
@@ -731,85 +749,60 @@ async function generateMemberId() {
 // --- ฟังก์ชัน Render ตารางแยกออกมาเพื่อให้ใช้ซ้ำได้ทั้ง Load ปกติ และ ค้นหา
 function renderTable(dataArray) {
     const historyBody = document.getElementById('historyBody');
-    console.log('🎨 renderTable: historyBody =', historyBody);
-    console.log('🎨 renderTable: dataArray =', dataArray);
 
     if (!historyBody) {
-        console.error('❌ ไม่พบ element: historyBody');
         return;
     }
 
     historyBody.innerHTML = '';
     if (!dataArray || dataArray.length === 0) {
-        console.warn('⚠️ ไม่พบข้อมูล');
         historyBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">ไม่พบข้อมูล</td></tr>';
         return;
     }
 
-    console.log(`✅ แสดง ${dataArray.length} แถว`);
-    dataArray.forEach((item, idx) => {
-        // ใช้ item.id (Cloud ID) แทน Date.now()
+    const esc = (v) => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+    dataArray.forEach((item) => {
+        const safeId = esc(item.id);
         const row = `
             <tr>
-                <td>${item.memberId || 'N/A'}</td>
-                <td>${item.name}</td>
-                <td>${item.lastName || '-'}</td>
-                <td>${item.birthdate}</td>
-                <td>${item.zodiac || '-'}</td>
-                <td>${item.yam || '-'}</td>
+                <td>${esc(item.memberId) || 'N/A'}</td>
+                <td>${esc(item.name)}</td>
+                <td>${esc(item.lastName) || '-'}</td>
+                <td>${esc(item.birthdate)}</td>
+                <td>${esc(item.zodiac) || '-'}</td>
+                <td>${esc(item.yam) || '-'}</td>
                 <td>
                     <div class="btn-group">
-                        <button class="btn btn-outline-primary btn-sm" onclick="viewHistory('${item.id}')">🔍 ดู</button>
-                        <button class="btn btn-outline-danger btn-sm" onclick="deleteItem('${item.id}')">🗑️ ลบ</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="viewHistory('${safeId}')">🔍 ดู</button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="deleteItem('${safeId}')">🗑️ ลบ</button>
                     </div>
                 </td>
             </tr>`;
         historyBody.insertAdjacentHTML('beforeend', row);
-        console.log(`  └─ แถว ${idx + 1}:`, item.name);
     });
 }
 
 // 🔐 ฟังก์ชันกรองข้อมูลให้เหลือแค่ของ User ที่ล็อกอิน (Admin เห็นทั้งหมด)
 function filterHistoryByCurrentUser(allHistory) {
     const currentUser = getCurrentUsername();
-    console.log('🔐 filterHistoryByCurrentUser:');
-    console.log('  currentUser (username):', currentUser);
-    console.log('  typeof isAdmin:', typeof isAdmin);
-    console.log('  allHistory[0]:', allHistory[0]); // 👈 ดูข้อมูลตัวอย่าง
 
     if (!currentUser) {
-        console.warn('⚠️ ไม่พบ currentUser');
         return [];
     }
 
-    // ✅ ตรวจสอบว่า Admin หรือไม่
     const isAdminUser = typeof isAdmin === 'function' && isAdmin();
-    console.log('  isAdminUser:', isAdminUser);
-    console.log('  allHistory.length:', allHistory.length);
 
     if (isAdminUser) {
-        // 👨‍💼 Admin เห็นข้อมูลทั้งหมด
-        console.log(`👨‍💼 Admin: แสดงข้อมูลทั้งหมด (${allHistory.length} รายการ)`);
-        console.log('  usernames:', allHistory.map(x => x.username || x.name));
         return allHistory;
     } else {
-        // 👤 User ปกติ เห็นเฉพาะของตนเอง (กรองตาม username ไม่ใช่ name)
-        console.log(`🔍 User: กรองข้อมูลสำหรับ ${currentUser}`);
-        console.log('  all usernames:', allHistory.map(x => `[${x.username}|${x.name}]`)); // 👈 ดูค่า username
-        const filtered = allHistory.filter(item => (item.username || item.name) === currentUser);
-        console.log(`✅ พบ ${filtered.length} รายการของ ${currentUser}`);
-        return filtered;
+        return allHistory.filter(item => (item.username || item.name) === currentUser);
     }
 }
 
 function loadHistory() {
     const allHistory = JSON.parse(localStorage.getItem('horo_history')) || [];
-    console.log('📊 horo_history ทั้งหมด:', allHistory.length, 'รายการ', allHistory);
-
-    // ✅ กรองให้เหลือแค่ของ current user
     const history = filterHistoryByCurrentUser(allHistory);
-    console.log('🎯 หลังกรอง:', history.length, 'รายการ', history);
-
     renderTable(history);
     const countEl = document.getElementById('historyCount');
     if (countEl) countEl.innerText = `ทั้งหมด ${history.length} รายการ`;
@@ -877,20 +870,22 @@ function selectMemberToView(name, birthdate) {
         birthField.value = birthdate;
     }
 
-    // 2. บันทึกทับลงใน LocalStorage หลัก (userBirthdate) 
-    // เพื่อให้ "กราฟชีวิต" และส่วนอื่นๆ ดึงไปใช้ต่อได้ทันที
-    localStorage.setItem('userBirthdate', birthdate);
+    // 2. บันทึกทับลงใน LocalStorage หลัก (userBirthdate) — normalize เป็น ISO เสมอ
+    const isoDate = typeof birthdateToISO === 'function' ? birthdateToISO(birthdate) : birthdate;
+    localStorage.setItem('userBirthdate', isoDate || birthdate);
     if (typeof updateGraph === 'function') {
         updateGraph();
     }
 
-    // 3. แจ้งเตือนให้ผู้ใช้ทราบ (Optional)
-    console.log("เปลี่ยนข้อมูลเป็นของ: " + name + " (" + birthdate + ")");
+    // 3. ตั้ง currentMemberId เพื่อให้ navigateTo auto-fill ได้
+    const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
+    const found = allHistory.find(m => m.birthdate === birthdate && m.name === name);
+    if (found && found.memberId) {
+        currentMemberId = found.memberId;
+        window.currentMemberId = found.memberId;
+    }
 
-    // 4. พาผู้ใช้กลับไปหน้าหลัก หรือหน้าทำนายทันที
-    // navigateTo('homePage'); // หรือหน้าอื่นๆ ที่คุณต้องการ
-
-    alert("โหลดข้อมูลของคุณ " + name + " เรียบร้อยแล้ว");
+    Swal.fire('สำเร็จ', 'โหลดข้อมูลของคุณ ' + name + ' เรียบร้อยแล้ว', 'success');
 }
 
 function showElementManual() {
@@ -967,15 +962,12 @@ async function deleteItem(docId) {
     }
 
     // Admin: ลบได้ทั้งหมด (มีข้อความแตกต่าง)
-    const confirmMsg = isAdminUser
-        ? `ลบข้อมูล ${targetItem.name}?`
-        : "ยืนยันการลบข้อมูลนี้ถาวร?";
+    const confirmMsg = isAdminUser ? `ลบข้อมูล ${targetItem.name}?` : "ยืนยันการลบข้อมูลนี้ถาวร?";
 
     if (!confirm(confirmMsg)) return;
     try {
         await deleteDoc(doc(db, "horo_history", docId));
-        await syncDataFromFirestore(); // รีเฟรชข้อมูล
-        console.log("✅ ลบข้อมูลสำเร็จ ID:", docId);
+        await syncDataFromFirestore();
     } catch (err) {
         console.error("❌ ลบไม่สำเร็จ:", err);
         Swal.fire("ข้อผิดพลาด", "ไม่สามารถลบข้อมูลได้", "error");
@@ -1010,73 +1002,100 @@ function showProfilePage(data, memberId) {
     // → ใช้ memberId จาก data.memberId ได้
     if (data && data.memberId && !memberId) {
         memberId = data.memberId;
-        console.log("📍 ใช้ memberId จาก data:", memberId);
     }
-    
+
     // 3️⃣ ถ้ายังไม่มี data → ดึงล่าสุด (fallback)
     if (!data || !data.birthdate) {
-        console.log("📌 Fallback: ดึงล่าสุด");
         data = loadLastProfileFromStorage();
     }
-    
+
     if (!data || !data.birthdate) {
         console.error("❌ ไม่พบข้อมูลโปรไฟล์");
         return;
     }
  
-    console.log("✨ แสดงโปรไฟล์:", data.name, data.lastName);
- 
     const predictionArea = document.getElementById('profPredictionArea');
     if (!predictionArea) return;
 
-    // 1. แปลงวันเกิด
-    const birthDateObj = parseThaiDate(data.birthdate);
-
-    const dayIdx = birthDateObj.getDay();
-    const monthIdx = birthDateObj.getMonth();
-    const year = birthDateObj.getFullYear();
-    const yam = getYarmFromTime(data.birthtime || "00:00");
-
-
-
-    // 2. เรียกข้อมูลธาตุจาก script.js
-    const elementData = typeof window.getElementData === 'function'
-        ? window.getElementData(data.birthdate)
-        : { name: "ไม่ระบุ", color: "#ccc", desc: "ขาดข้อมูลการคำนวณ" };
-
-    const mElement = typeof window.getMonthElement === 'function'
-        ? window.getMonthElement(monthIdx)
-        : { name: "ไม่ระบุ", color: "#ccc", strength: "-", desc: "-" };
-
-    const zElement = typeof window.getZodiacElement === 'function'
-        ? window.getZodiacElement(birthDateObj)
-        : {
-            name: "ไม่ระบุ",
-            color: "#ccc",
-            element: "-",
-            desc: "-",
-            job: "-"
-        };
-
-    // 3. วิเคราะห์ความสัมพันธ์ธาตุ
-    let relDayMonth = "ทั่วไป";
-    let relDayYear = "ทั่วไป";
-
-    if (typeof window.getElementRelation === 'function') {
-        relDayMonth = window.getElementRelation(elementData?.name, mElement?.name) || "ทั่วไป";
-        relDayYear = window.getElementRelation(elementData?.name, zElement?.element) || "ทั่วไป";
-    }
-
-    // 4. จัดรูปเวลา
-    let cleanTime = data.birthtime || "--:--";
-
+    // 1. จัดรูปเวลาเกิด (ทำก่อนเพื่อใช้คำนวณวันเกิด)
+    let cleanTime = data.birthtime || "12:00";
     if (cleanTime.includes('T')) {
         cleanTime = cleanTime.split('T')[1].substring(0, 5);
     } else {
         cleanTime = cleanTime.substring(0, 5);
     }
 
-    // 5. แสดงข้อมูล Header
+    // 2. แปลงวันเกิด
+    const birthDateObj = parseThaiDate(data.birthdate);
+    const computerDayIdx = birthDateObj.getDay();
+    
+    // ใช้ฟังก์ชัน 06:00 น. ถ้ามี
+    let dayIdx = computerDayIdx;
+    if (typeof window.getAstrologicalDayOfWeek === 'function') {
+        dayIdx = window.getAstrologicalDayOfWeek(data.birthdate, cleanTime);
+    }
+
+    const monthIdx = birthDateObj.getMonth();
+    const year = birthDateObj.getFullYear();
+    const yam = getYarmFromTime(cleanTime);
+    const currentAge = typeof window.calculateRunningAge === 'function' ? window.calculateRunningAge(data.birthdate) : "-";
+
+    // 3. ปฏิทินจันทรคติ
+    let lunarStr = "";
+    if (typeof getThaiLunar === 'function') {
+        try {
+            const lunarObj = getThaiLunar(birthDateObj);
+            lunarStr = lunarObj ? lunarObj.fullString : "ไม่สามารถแปลงได้";
+        } catch(e) { console.log(e); }
+    }
+
+    // 4. ลัคนาสถิตราศี
+    let ascText = "ไม่สามารถคำนวณได้";
+    let ascDesc = "";
+    if (typeof ascCalcLagna === 'function' && typeof ZODIAC_DATA !== 'undefined') {
+        try {
+            const parts = data.birthdate.split('/');
+            const d = parts[0].padStart(2, '0');
+            const m = parts[1].padStart(2, '0');
+            let y = parseInt(parts[2], 10);
+            if (y > 2400) y -= 543;
+            const ceDateStr = `${y}-${m}-${d}`;
+            
+            const ascObj = ascCalcLagna(ceDateStr, cleanTime, 13.75, 100.5167); // กทม.
+            const rasiData = ZODIAC_DATA[ascObj.rasi];
+            if(rasiData) {
+                ascText = `ลัคนาสถิตราศี${rasiData.name} ${rasiData.icon}`;
+                ascDesc = `<span style="font-weight:normal; font-size: 0.9em; color:#555;">${rasiData.desc} ดาวประจำตัว: ${rasiData.ruler}</span>`;
+            }
+        } catch(e) {
+            console.log("Error calculating ascendant:", e);
+        }
+    }
+
+    // 5. เรียกข้อมูลธาตุ
+    let elementData = { name: "ไม่ระบุ", color: "#ccc", desc: "ขาดข้อมูลการคำนวณ" };
+    if (typeof getBirthElement === 'function') {
+        elementData = getBirthElement(dayIdx);
+    } else if (typeof window.getElementData === 'function') {
+        elementData = window.getElementData(data.birthdate);
+    }
+
+    const mElement = typeof window.getMonthElement === 'function' ? window.getMonthElement(monthIdx) : { name: "ไม่ระบุ", color: "#ccc", strength: "-", desc: "-" };
+
+    const zElement = typeof window.getZodiacElement === 'function' ? window.getZodiacElement(birthDateObj) : { name: "ไม่ระบุ", color: "#ccc", element: "-", desc: "-", job: "-" };
+
+    // 6. วิเคราะห์ความสัมพันธ์ธาตุ
+    let relDayMonth = "ทั่วไป";
+    let relDayYear = "ทั่วไป";
+    if (typeof window.getElementRelation === 'function') {
+        const resMonth = window.getElementRelation(elementData?.name, mElement?.name);
+        relDayMonth = typeof resMonth === 'object' ? resMonth.text : (resMonth || "ทั่วไป");
+
+        const resYear = window.getElementRelation(elementData?.name, zElement?.element);
+        relDayYear = typeof resYear === 'object' ? resYear.text : (resYear || "ทั่วไป");
+    }
+
+    // 7. แสดงข้อมูล Header
     const setText = (id, text) => {
         const el = document.getElementById(id);
         if (el) el.innerText = text;
@@ -1088,87 +1107,167 @@ function showProfilePage(data, memberId) {
     setText('profBirth', data.birthdate);
     setText('profTime', cleanTime + " น.");
     setText('profZodiac', data.zodiac || zElement.name || "ไม่ระบุ");
-    setText('profYam', data.yam || "ไม่ระบุ");
+    setText('profYam', yam || "ไม่ระบุ");
     setText('profullname', `${data.name} ${data.lastName || ''}`);
 
-    // 6. แสดงผลคำทำนาย
-    predictionArea.innerHTML = `
-        <div id="captureArea" class="p-4" style="background:#fdfaf0;border:1px solid #d4af37">
-            <div class="text-center">
-                <h2 style="color:#b8860b">🔮 แผ่นดวงชะตา</h2>
-                <h4 style="color:#333; font-weight: bold; font-size: 25px;">คุณ ${data.name} ${data.lastName || ''}</h4>
-            </div>
-            <hr style="border-top:2px double #d4af37">
-            <div class="prediction-content">
-                <br><strong>วันเกิด:</strong> วัน${dayIdx !== undefined ? ` ${["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"][dayIdx]}` : ''} ที่ ${parseInt(data.birthdate.split('/')[0])} ${monthIdx !== undefined ? ` ${["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"][monthIdx]}` : ''} พ.ศ. ${year + 543}    
-               <strong>นักษัตร:</strong> ปี${zElement.name} (${zElement.element}) 
-               <br><strong>เวลาเกิด:</strong> ${cleanTime} น.   <strong>ยามเกิด:</strong> ${data.yam || "ไม่ระบุ"}
-                
-                <hr style="border-top:1px dashed #d4af37">
+    const safeName = typeof escapeHTML === 'function' ? escapeHTML(data.name) : data.name;
+    const safeLastName = typeof escapeHTML === 'function' ? escapeHTML(data.lastName || '') : (data.lastName || '');
 
+    // สร้างข้อความกำกับวันเกิด
+    const dayNames = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
+    let displayDay = `วัน${dayNames[computerDayIdx]}`;
+    let astNote = "";
+    if (dayIdx !== computerDayIdx) {
+        astNote = `<br><span style="color:#d63384; font-size:0.85em;">*(ดวงโหราศาสตร์: ตรงกับวัน${dayNames[dayIdx]} เนื่องจากเกิดก่อน 6 โมงเช้า)*</span>`;
+    } else {
+        astNote = `<br><span style="color:#6c757d; font-size:0.85em;">*(ดวงโหราศาสตร์: วัน${dayNames[dayIdx]})*</span>`;
+    }
+
+    const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+
+    let role = typeof getCurrentUserRole === 'function' ? getCurrentUserRole() : (data.role || 'user');
+    
+    // แปลง role user เป็นชื่อระดับเริ่มต้น (อิงจาก tiers.js)
+    if (role === 'user') {
+        role = 'ทดลองใช้'; 
+    }
+
+    let roleBadge = '';
+    if (role === 'admin' || role === 'Admin') {
+        roleBadge = `<span class="badge text-white ms-2" style="background-color: #dc3545; font-size: 0.5em; vertical-align: middle; padding: 5px 8px; border-radius: 12px;"><i class="fas fa-crown"></i> ผู้ดูแลระบบ</span>`;
+    } else if (role === 'ทดลองใช้') {
+        roleBadge = `<span class="badge text-dark ms-2" style="background-color: #e9ecef; font-size: 0.5em; vertical-align: middle; padding: 5px 8px; border-radius: 12px; border: 1px solid #ced4da;"><i class="fas fa-user"></i> ระดับทดลองใช้</span>`;
+    } else {
+        // ถ้าระดับตรงกับใน tiers.js (เช่น ธรรมดา, ทองแดง, เงิน, ทองคำ ฯลฯ)
+        roleBadge = `<span class="badge text-dark ms-2" style="background-color: #f8c146; font-size: 0.5em; vertical-align: middle; padding: 5px 8px; border-radius: 12px; border: 1px solid #d4af37;"><i class="fas fa-star"></i> ระดับ${role}</span>`;
+    }
+
+    // 8. แสดงผลแผ่นดวงชะตา (ธีม ทอง-ม่วงอ่อน)
+    predictionArea.innerHTML = `
+        <div class="text-end mb-2 d-flex justify-content-end align-items-center" style="gap: 10px;">
+            ${role !== 'admin' ? `
+            <button class="btn btn-sm" style="background: linear-gradient(135deg, #d4af37, #b8960c); color: #000; font-weight: bold; border-color: #d4af37;" onclick="if(typeof navigateTo === 'function') navigateTo('package');">
+                <i class="fas fa-level-up-alt"></i> อัปเกรดระดับสมาชิก
+            </button>
+            ` : ''}
+            <button class="btn btn-sm text-white" style="background-color: #6a0dad; border-color: #d4af37;" onclick="saveHoroscopeImage()">
+                <i class="fas fa-camera"></i> บันทึกภาพดวงชะตา
+            </button>
+        </div>
+        <div id="horoscopeCaptureArea" class="p-4 rounded shadow-sm" style="background: linear-gradient(135deg, #fdfaf0 0%, #f4effa 100%); border: 3px solid #d4af37; outline: 1px solid #9370db; outline-offset: -6px;">
+            <div class="text-center mb-4">
+                <h2 style="color:#6a0dad; font-weight: bold; text-shadow: 1px 1px 2px #d4af37;">🔮 แผ่นดวงชะตา</h2>
+                <h4 style="color:#333; font-weight: bold; font-size: 24px; border-bottom: 2px dashed #d4af37; display: inline-block; padding-bottom: 5px; align-items: center;">
+                    คุณ ${safeName} ${safeLastName} ${roleBadge}
+                </h4>
+                <div class="mt-2 text-muted" style="font-size: 14px;">
+                    <i class="fas fa-map-marker-alt text-danger"></i> จังหวัดที่เกิด: ${data.province || "ไม่ระบุ (อ้างอิง กทม.)"}
+                </div>
+            </div>
+            
+            <div class="prediction-content" style="font-size: 16px; line-height: 1.6;">
+                <div class="row text-center mb-3">
+                    <div class="col-md-6 mb-2">
+                        <div class="p-2 rounded" style="background-color: rgba(212, 175, 55, 0.1); border: 1px solid #d4af37;">
+                            <strong>อายุย่างปัจจุบัน</strong><br>
+                            <span style="font-size: 20px; color: #b8860b; font-weight: bold;">${currentAge} ปี</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <div class="p-2 rounded" style="background-color: rgba(147, 112, 219, 0.1); border: 1px solid #9370db;">
+                            <strong>ลัคนา</strong><br>
+                            <span style="font-size: 20px; color: #6a0dad; font-weight: bold;">${ascText}</span>
+                            <br>${ascDesc}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 mb-3 rounded" style="background: #fff; border: 1px solid #e0d4f5;">
+                    <div class="mb-2">
+                        <strong>📅 ข้อมูลปฏิทิน:</strong> ${displayDay} ที่ ${parseInt(data.birthdate.split('/')[0])} ${monthNames[monthIdx]} พ.ศ. ${year + 543}
+                        ${astNote}
+                    </div>
+                    <div class="mb-2">
+                        <strong>🌙 จันทรคติไทย:</strong> <span style="color:#6a0dad;">${lunarStr || "ไม่สามารถแปลงได้"}</span>
+                    </div>
+                    <div>
+                        <strong>⏰ เวลาเกิด:</strong> ${cleanTime} น. &nbsp;&nbsp;|&nbsp;&nbsp; <strong>ยามเกิด:</strong> ${yam || "ไม่ระบุ"}
+                    </div>
+                </div>
+
+                <hr style="border-top:1px dashed #9370db">
+
+                <h5 class="text-center" style="color:#6a0dad; margin-top: 15px;">🌟 องค์ประกอบธาตุประจำตัว</h5>
+                
                 <!-- ธาตุวันเกิด -->
-                <div class="mb-3 p-3 rounded" style="background:${elementData.color}15;border:1px solid ${elementData.color}">
+                <div class="mb-2 p-3 rounded shadow-sm" style="background:${elementData.color}15; border-left: 5px solid ${elementData.color}">
                     <strong style="color:${elementData.color}">
-                        🧬 ธาตุประจำวันเกิด: ${elementData.name} ${elementData.level || ""} <span style="font-weight: normal;">เป็นคน ${elementData.desc}</span>
+                        🧬 ธาตุประจำวันเกิด (${dayNames[dayIdx]}): ${elementData.name} ${elementData.level || ""}
                     </strong>
+                    <br><span style="font-weight: normal;">บุคลิก: ${elementData.desc}</span>
                 </div>
 
                 <!-- ธาตุเดือน -->
-                <div class="mb-3 p-3 rounded" style="background:${mElement.color}15;border:1px solid ${mElement.color}">
+                <div class="mb-2 p-3 rounded shadow-sm" style="background:${mElement.color}15; border-left: 5px solid ${mElement.color}">
                     <strong style="color:${mElement.color}">
-                        📅 ธาตุเดือนเกิด: ${mElement.name} ${mElement.level || ""} (กำลัง: ${mElement.strength}) <span style="font-weight: normal;">เป็นคน ${mElement.desc}</span>
-                    </strong>                    
+                        📅 ธาตุเดือนเกิด: ${mElement.name} ${mElement.level || ""} (กำลัง: ${mElement.strength})
+                    </strong>
+                    <br><span style="font-weight: normal;">บุคลิก: ${mElement.desc}</span>
                 </div>
 
                 <!-- ธาตุนักษัตร -->
-                <div class="mb-3 p-3 rounded" style="background:${zElement.color}15;border:1px solid ${zElement.color}">
+                <div class="mb-3 p-3 rounded shadow-sm" style="background:${zElement.color}15; border-left: 5px solid ${zElement.color}">
                     <strong style="color:${zElement.color}">
-                        🐉 ธาตุปีนักษัตร: ${zElement.name} (${zElement.element}) <span style="font-weight: normal;">เป็นคน ${zElement.desc}</span><br>
-                        <b>🚀 งานที่เหมาะกับดวงปี${zElement.name}</b> <span style="font-weight: normal;">เหมาะกับอาชีพ : ${zElement.job || "ไม่ระบุ"}</span>
+                        🐉 ธาตุปีนักษัตร (${zElement.name}): ${zElement.element}
                     </strong>
+                    <br><span style="font-weight: normal;">บุคลิก: ${zElement.desc}</span>
+                    <br><span style="font-weight: normal; color:#555;">🚀 <b>งานที่เหมาะ:</b> ${zElement.job || "ไม่ระบุ"}</span>
                 </div>
 
                 <!-- วิเคราะห์ธาตุ -->
-                <div class="mt-4 p-3 rounded" style="background:#fff;border:2px dashed #d4af37">
-                    <h5 class="text-center" style="color:#b8860b">⚖️ วิเคราะห์สมพงษ์ธาตุ</h5>
-
-                    <div class="small p-2 bg-light rounded mb-2">
-                        <strong>วันเกิด ${elementData.name} + เดือนเกิด ${mElement.name}:</strong> ${relDayMonth}
-                    </div>
-
-                    <div class="small p-2 bg-light rounded">
-                        <strong>วันเกิด${elementData.name} + ปีนักษัตร ${zElement.element}:</strong> ${relDayYear}
-                    </div>
+                <div class="mt-3 p-3 rounded shadow-sm" style="background:#fff; border: 1px dashed #d4af37;">
+                    <h6 style="color:#b8860b; font-weight:bold;">⚖️ วิเคราะห์สมพงษ์ธาตุ</h6>
+                    <ul class="mb-0" style="padding-left: 20px; font-size: 0.9em;">
+                        <li><strong>วันเกิด (${elementData.name}) + เดือนเกิด (${mElement.name}):</strong> ${relDayMonth}</li>
+                        <li><strong>วันเกิด (${elementData.name}) + ปีนักษัตร (${zElement.element}):</strong> ${relDayYear}</li>
+                    </ul>
                 </div>
-                <hr style="border-top:1px dashed #d4af37">
-                <div class="mb-3">
-                    <strong>คำทำนายวันเกิด:</strong>
-                    ${typeof getDayPrediction === 'function' ? getDayPrediction(dayIdx) : "-"}
+                
+                <hr style="border-top:1px dashed #9370db; margin-top:20px;">
+                
+                <!-- คำทำนายพื้นดวง -->
+                <h5 class="text-center" style="color:#6a0dad; margin-top: 15px; margin-bottom: 15px;">📖 คำทำนายพื้นดวงชะตา</h5>
+                <div class="mb-3 p-3 rounded shadow-sm" style="background:#fff; border: 1px solid #e0d4f5;">
+                    <strong style="color:#b8860b">คำทำนายวันเกิด:</strong>
+                    <div style="font-size: 0.9em; margin-top: 5px;">${typeof getDayPrediction === 'function' ? getDayPrediction(dayIdx) : "-"}</div>
                 </div>
-                <div class="mb-3">
-                    <strong>คำทำนายเดือนเกิด:</strong>
-                    ${typeof getMonthPrediction === 'function' ? getMonthPrediction(monthIdx) : "-"}
+                <div class="mb-3 p-3 rounded shadow-sm" style="background:#fff; border: 1px solid #e0d4f5;">
+                    <strong style="color:#b8860b">คำทำนายเดือนเกิด:</strong>
+                    <div style="font-size: 0.9em; margin-top: 5px;">${typeof getMonthPrediction === 'function' ? getMonthPrediction(monthIdx) : "-"}</div>
                 </div>
-                <div class="mb-3">
-                    <strong>คำทำนายปีนักษัตร:</strong>
-                    ${typeof getZodiacPrediction === 'function' ? getZodiacPrediction(["ชวด", "ฉลู", "ขาล", "เถาะ", "มะโรง", "มะเส็ง", "มะเมีย", "มะแม", "วอก", "ระกา", "จอ", "กุน"].indexOf(zElement.name)) : "-"}
+                <div class="mb-3 p-3 rounded shadow-sm" style="background:#fff; border: 1px solid #e0d4f5;">
+                    <strong style="color:#b8860b">คำทำนายปีนักษัตร:</strong>
+                    <div style="font-size: 0.9em; margin-top: 5px;">${typeof getZodiacPrediction === 'function' ? getZodiacPrediction(["ชวด", "ฉลู", "ขาล", "เถาะ", "มะโรง", "มะเส็ง", "มะเมีย", "มะแม", "วอก", "ระกา", "จอ", "กุน"].indexOf(zElement.name)) : "-"}</div>
                 </div>
 
-                <hr style="border-top: 2px dashed #d4af37; margin: 30px 0;">
-
-                <div class="text-center mt-4">
-                    ${typeof isAdmin === 'function' && isAdmin() ?
-                        `<p class="small text-success mb-2"><i class="fas fa-crown mr-2"></i>👑 Admin: จัดการข้อมูลจำนวนไม่จำกัด</p>` :
-                        `<p class="small text-muted mb-2">💾 ระบบเก็บข้อมูลแบบ 1 คน 1 รายการ</p>
-                        <button class="btn btn-danger btn-sm" onclick="deleteSingleProfile()" style="background-color: #dc3545; border: none;">
-                            <i class="fas fa-trash mr-2"></i>ลบข้อมูลสมาชิก
-                        </button>
-                        <p class="small text-muted mt-2">
-                            <i class="fas fa-info-circle mr-1"></i>หากต้องการเพิ่มข้อมูลใหม่ ให้ลบอันเก่าออกก่อน
-                        </p>`
-                    }
+                <hr style="border-top:1px dashed #9370db; margin-top:20px;">
+                <div class="text-center mt-3">
+                    <p class="small text-muted" style="font-size:12px;">ดวงชะตานี้คำนวณด้วยหลักโหราศาสตร์ไทย นิรายันระบบ และการตัดวันเวลา 06:00 น.</p>
                 </div>
             </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            ${typeof isAdmin === 'function' && isAdmin() ?
+                `<p class="small text-success mb-2"><i class="fas fa-crown mr-2"></i>👑 Admin: จัดการข้อมูลจำนวนไม่จำกัด</p>` :
+                `<p class="small text-muted mb-2">💾 ระบบเก็บข้อมูลแบบ 1 คน 1 รายการ</p>
+                <button class="btn btn-danger btn-sm" onclick="deleteSingleProfile()" style="background-color: #dc3545; border: none;">
+                    <i class="fas fa-trash mr-2"></i>ลบข้อมูลสมาชิก
+                </button>
+                <p class="small text-muted mt-2">
+                    <i class="fas fa-info-circle mr-1"></i>หากต้องการเพิ่มข้อมูลใหม่ ให้ลบอันเก่าออกก่อน
+                </p>`
+            }
         </div>
     `;
 }
@@ -1183,6 +1282,35 @@ function initProfileOnPageLoad() {
     }
 }
 
+async function saveHoroscopeImage() {
+    const captureArea = document.getElementById('horoscopeCaptureArea');
+    if (!captureArea) return;
+
+    try {
+        Swal.fire({
+            title: 'กำลังสร้างรูปภาพ...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        const canvas = await html2canvas(captureArea, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: "#fdfaf0"
+        });
+
+        const link = document.createElement('a');
+        link.download = `ดวงชะตา_${document.getElementById('profName')?.innerText || 'ของท่าน'}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        Swal.close();
+    } catch (err) {
+        console.error("Error capturing image:", err);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถบันทึกภาพได้', 'error');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initProfileOnPageLoad();
 });
@@ -1190,30 +1318,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function getProfileByMemberId(identifier) {
     try {
         const history = JSON.parse(localStorage.getItem('horo_history')) || [];
-        console.log('🔍 getProfileByMemberId:', { identifier, historyLength: history.length });
 
-        // ค้นหาโดยใช้ username
-        let profile = history.find(item => item.username === identifier);
-        console.log('  ค้นหา username:', { found: !!profile, username: profile?.username });
-
-        // ถ้าไม่เจอ ลองค้นหาจาก name
-        if (!profile) {
-            profile = history.find(item => item.name === identifier);
-            console.log('  ค้นหา name:', { found: !!profile, name: profile?.name });
-        }
-
-        // ถ้าไม่เจอ ลองค้นหาจาก ID
-        if (!profile) {
-            profile = history.find(item => item.id === identifier);
-            console.log('  ค้นหา ID:', { found: !!profile, id: profile?.id });
-        }
-
-        if (profile) {
-            console.log('✅ พบข้อมูล:', { username: profile.username, name: profile.name, id: profile.id });
-        } else {
-            console.log('❌ ไม่พบข้อมูล สำหรับ:', identifier);
-            console.log('  ข้อมูลที่มี:', history.slice(0, 3).map(x => ({ username: x.username, name: x.name, id: x.id })));
-        }
+        let profile = history.find(item => item.memberId === identifier);
+        if (!profile) profile = history.find(item => item.username === identifier);
+        if (!profile) profile = history.find(item => item.name === identifier);
+        if (!profile) profile = history.find(item => item.id === identifier);
 
         return profile || null;
     } catch (e) {
@@ -1223,23 +1332,17 @@ function getProfileByMemberId(identifier) {
 }
 
 function viewMemberProfile(memberId) {
-    if (!memberId) {
-        console.warn('⚠️ ไม่มี memberId');
-        return;
-    }
+    if (!memberId) return;
 
     const profile = getProfileByMemberId(memberId);
 
-    console.log('🔍 viewMemberProfile:', { memberId, foundProfile: !!profile });
-
     if (profile) {
-        showProfilePage(profile);  // ✅ ส่ง profile (data จะมี memberId)
-
+        showProfilePage(profile);
         if (typeof navigateTo === 'function') {
             navigateTo('profilePage');
         }
     } else {
-        alert('⚠️ ไม่พบข้อมูลสมาชิก');
+        Swal.fire('แจ้งเตือน', 'ไม่พบข้อมูลสมาชิก', 'warning');
     }
 }
 
@@ -1365,32 +1468,35 @@ function clearAllFormFields() {
 
     // 💾 ล้างข้อมูลใน localStorage
     localStorage.removeItem('userBirthdate');
-    localStorage.removeItem('siamHora_Profile');
+    localStorage.removeItem('userBirthTime');
 
     console.log("✨ ล้างข้อมูลเก่าและแคชเรียบร้อย");
 }
 
-window.autoFillMemberData = function (birthDate) {
-    if (!birthDate) return;
+window.autoFillMemberData = function (memberKey) {
+    if (!memberKey) return;
 
     // 🔄 ล้างข้อมูลเก่าก่อน
     clearAllFormFields();
 
-    // 1. ค้นหาข้อมูลสมาชิกตัวเต็มจาก Array (เพื่อเอาชื่อ)
+    // 1. ค้นหาสมาชิกด้วย memberId ก่อน ถ้าไม่เจอจึง fallback ด้วย birthdate
     // ✅ User ทั่วไป: เห็นเฉพาะของตนเอง | Admin: เห็นทั้งหมด
     const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
     const history = filterHistoryByCurrentUser(allHistory);
-    const member = history.find(m => m.birthdate === birthDate);
+    const member = history.find(m => m.memberId === memberKey)
+                || history.find(m => m.birthdate === memberKey);
 
     // ⚠️ ตรวจสอบ: ถ้า User ทั่วไปพยายามเข้าถึงข้อมูลของคนอื่น
     if (!member && !isAdmin()) {
         console.warn('❌ ไม่สามารถเข้าถึงข้อมูลนี้ได้');
-        Swal.fire('ปฏิเสธ', '❌ คุณสามารถเข้าถึงเฉพาะข้อมูลของตนเองเท่านั้น', 'warning');
+        Swal.fire('ปฏิเสธ', 'คุณสามารถเข้าถึงเฉพาะข้อมูลของตนเองเท่านั้น', 'warning');
         return;
     }
 
     // ถ้า Admin เปิดข้อมูล user อื่น ต้องดึงจากทั้งหมด
-    const finalMember = member || allHistory.find(m => m.birthdate === birthDate);
+    const finalMember = member
+        || allHistory.find(m => m.memberId === memberKey)
+        || allHistory.find(m => m.birthdate === memberKey);
 
     // อัปเดต currentMemberId ทันทีที่เปลี่ยนคน
     if (finalMember && finalMember.memberId) {
@@ -1403,12 +1509,14 @@ window.autoFillMemberData = function (birthDate) {
         if (dateStr.includes('/')) {
             const parts = dateStr.split('/');
             let year = parseInt(parts[2]);
-            if (year > 2400) year -= 543;
+            year = toCE(year);
             return `${year}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
         }
         return dateStr.split('T')[0];
     }
 
+    // ใช้ birthdate จาก member record เสมอ (ไม่ใช้ memberKey ที่อาจเป็น memberId)
+    const birthDate = (finalMember && finalMember.birthdate) || memberKey;
     const formattedDate = formatToInputDate(birthDate);
 
     // 3. ตรวจเช็คว่าตอนนี้อยู่หน้าไหน
@@ -1446,8 +1554,8 @@ window.autoFillMemberData = function (birthDate) {
         }
 
         if (birthDaySelect && formattedDate) {
-            // หาเลขวันในสัปดาห์ (0-6) เพื่อเลือกวันเกิดอัตโนมัติ
-            const dayOfWeek = new Date(formattedDate).getDay();
+            // หาเลขวันในสัปดาห์ (0-6) เพื่อเลือกวันเกิดอัตโนมัติ (รองรับระบบตัดเวลา 06:00 น.)
+            const dayOfWeek = window.getAstrologicalDayOfWeek(formattedDate, finalMember ? finalMember.birthtime : null);
             // หมายเหตุ: ต้องระวังเรื่องวันพุธกลางคืน ถ้าในประวัติไม่ได้เก็บไว้ ระบบจะเลือกพุธกลางวัน (3) ให้ก่อนครับ
             birthDaySelect.value = dayOfWeek;
         }
@@ -1456,10 +1564,12 @@ window.autoFillMemberData = function (birthDate) {
 
     // --- ส่วนของหน้า มหาทักษา (เหมือนเดิม) ---
     if (isMahathaksaPage) {
-        const thaksaDateInput = document.getElementById('birthDate');
+        const thaksaDateInput = document.getElementById('birthDate') || document.getElementById('birthdate');
         if (thaksaDateInput) {
             thaksaDateInput.value = formattedDate;
-            setTimeout(() => { if (typeof calculateThaksa === 'function') calculateThaksa(false); }, 100);
+            thaksaDateInput.dispatchEvent(new Event('change'));
+            thaksaDateInput.dispatchEvent(new Event('input'));
+            if (typeof calculateThaksa === 'function') calculateThaksa(false);
         }
     }
 
@@ -1467,8 +1577,7 @@ window.autoFillMemberData = function (birthDate) {
     if (isChatraPage) {
         const chatraAgeInput = document.getElementById('chatraAge');
         if (chatraAgeInput) {
-            const birthYear = new Date(formattedDate).getFullYear();
-            chatraAgeInput.value = new Date().getFullYear() - birthYear;
+            chatraAgeInput.value = window.calculateRunningAge(formattedDate);
             setTimeout(() => { if (typeof calculateChatra === 'function') calculateChatra(); }, 100);
         }
     }
@@ -1494,7 +1603,7 @@ window.autoFillMemberData = function (birthDate) {
 
         if (formattedDate) {
             // 1. จัดการเรื่องวันเกิด
-            let dayOfWeek = new Date(formattedDate).getDay();
+            let dayOfWeek = window.getAstrologicalDayOfWeek(formattedDate, finalMember ? finalMember.birthtime : null);
             if (dayOfWeek === 0) dayOfWeek = 7; // เปลี่ยนอาทิตย์จาก 0 เป็น 7 ให้ตรงกับ HTML
 
             if (ninebirthDaySelect) {
@@ -1503,10 +1612,7 @@ window.autoFillMemberData = function (birthDate) {
 
             // 2. จัดการเรื่องอายุ
             if (nineageselect) {
-                const birthYear = new Date(formattedDate).getFullYear();
-                const currentYear = new Date().getFullYear();
-                // คำนวณอายุย่าง (ปีปัจจุบัน - ปีเกิด) + 1 (หรือตามสูตรที่คุณใช้)
-                nineageselect.value = currentYear - birthYear + 1;
+                nineageselect.value = window.calculateRunningAge(formattedDate);
 
                 // 3. สั่งคำนวณอัตโนมัติ
                 setTimeout(() => {
@@ -1524,15 +1630,12 @@ window.autoFillMemberData = function (birthDate) {
         const ageInput = document.getElementById('age');
 
         if (weekdaySelect) {
-            const birthDay = new Date(formattedDate).getDay();
+            const birthDay = window.getAstrologicalDayOfWeek(formattedDate, finalMember ? finalMember.birthtime : null);
             weekdaySelect.value = birthDay;
         }
 
         if (ageInput) {
-            const birthYear = new Date(formattedDate).getFullYear();
-            const currentYear = new Date().getFullYear();
-            // คำนวณอายุย่าง
-            ageInput.value = currentYear - birthYear + 1;
+            ageInput.value = window.calculateRunningAge(formattedDate);
         }
 
         // สั่งคำนวณอัตโนมัติ (ใช้ calculateAll สำหรับหน้านี้)
@@ -1603,7 +1706,7 @@ if (isbirthfortune) {
         'ระกา' : 9,
         'จอ' : 10,
         'กุน' : 11  
-    }
+    };
     const yearfortune = document.getElementById('fortuneYear');
     const befortune = document.getElementById('fortuneBE');
 
@@ -1624,7 +1727,7 @@ if (isbirthfortune) {
     }
 
     if (befortune && member.birthdate) {
-        befortune.value = new Date(member.birthdate).getFullYear() + 543;
+        befortune.value = toBE(new Date(member.birthdate).getFullYear());
     }
 }
 
@@ -1737,10 +1840,38 @@ if (horoseven) {
     }
 }
 
+// ---- ส่วนของหน้าเลขมงคล (lotto.js) ----
+const isLottoPage = isPageVisible('lottoResultpage');
+
+if (isLottoPage && finalMember) {
+    const lottoBirthday = document.getElementById('lottoBirthday');
+    const lottoUserName = document.getElementById('lottoUserName');
+
+    if (lottoBirthday) {
+        lottoBirthday.value = formattedDate;
+    }
+
+    if (lottoUserName && finalMember.name) {
+        lottoUserName.value = finalMember.name;
+    }
+}
+
+// ---- ส่วนของหน้าปีชง-ปีเสริม (yearClash.js) ----
+const isYearClashPage = isPageVisible('yearClashContainer');
+
+if (isYearClashPage && finalMember && finalMember.birthdate) {
+    const ycInput = document.getElementById('ycBirthYear');
+    if (ycInput) {
+        const birthYear = new Date(formattedDate).getFullYear();
+        // แปลงเป็น พ.ศ. (เพราะช่องรับทั้ง พ.ศ. และ ค.ศ.)
+        ycInput.value = birthYear + 543;
+        setTimeout(() => { if (typeof renderYearClash === 'function') renderYearClash(); }, 150);
+    }
+}
+
 }
 
 // เพิ่มไว้ท้ายไฟล์ membermanager.js เพื่อแก้ Error: calculateEsh is not defined
-window.navigateTo = navigateTo;
 window.saveToHistory = saveToHistory;
 window.deleteItem = deleteItem;
 window.viewHistory = viewHistory;
@@ -1751,10 +1882,78 @@ window.syncDataFromFirestore = syncDataFromFirestore;
 window.generateMemberId = generateMemberId;
 window.deleteMember = deleteMember;
 window.getProfileData = getProfileData;
-window.analyzeName = analyzeName;
 window.calculateEsh = calculateEsh;
-window.calculateLifeGraph = calculateLifeGraph;
 window.viewMemberProfile = viewMemberProfile;
 window.loadLastProfileFromStorage = loadLastProfileFromStorage;
 window.initProfileOnPageLoad = initProfileOnPageLoad;
 window.currentMemberId = currentMemberId;
+// ===================================================
+// ===================================================
+// PAYMENT & UPGRADE SYSTEM
+// ===================================================
+window.openPaymentModal = function(pkgName, period, price) {
+    const session = getSession();
+    if (!session) {
+        Swal.fire('กรุณาเข้าสู่ระบบ', 'คุณต้องเข้าสู่ระบบก่อนอัปเกรดแพ็กเกจ', 'warning').then(() => {
+            if(typeof switchToLogin === 'function') switchToLogin();
+        });
+        return;
+    }
+
+    document.getElementById('payPkgName').textContent = pkgName;
+    document.getElementById('payPkgPeriod').textContent = period;
+    document.getElementById('payPrice').textContent = price.toLocaleString();
+
+    const promptPayId = "0943926453";
+    const qrUrl = `https://promptpay.io/${promptPayId}/${price}.png`;
+    document.getElementById('promptpayQR').src = qrUrl;
+
+    document.getElementById('slipUpload').value = '';
+    document.getElementById('paymentModalOverlay').style.display = 'flex';
+};
+
+window.submitPayment = async function() {
+    const slipFile = document.getElementById('slipUpload').files[0];
+    if (!slipFile) {
+        Swal.fire('กรุณาแนบสลิป', 'โปรดแนบรูปภาพสลิปหลักฐานการโอนเงินก่อนส่ง', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: 'กำลังส่งข้อมูล...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    try {
+        const session = getSession();
+        const pkgName = document.getElementById('payPkgName').textContent;
+        const period = document.getElementById('payPkgPeriod').textContent;
+        const price = document.getElementById('payPrice').textContent;
+
+        const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        const paymentsRef = collection(window.firebaseDb, "payments");
+
+        await addDoc(paymentsRef, {
+            username: session.username,
+            email: session.email || '',
+            package: pkgName,
+            period: period,
+            price: price,
+            status: 'pending',
+            timestamp: new Date().toISOString()
+        });
+
+        document.getElementById('paymentModalOverlay').style.display = 'none';
+
+        Swal.fire({
+            icon: 'success',
+            title: 'ส่งหลักฐานสำเร็จ!',
+            text: 'ระบบได้รับข้อมูลการชำระเงินของคุณแล้ว กรุณารอแอดมินตรวจสอบและอัปเกรดสถานะให้ภายใน 24 ชั่วโมง',
+        });
+
+    } catch (error) {
+        console.error("Payment Submission Error:", error);
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง', 'error');
+    }
+};

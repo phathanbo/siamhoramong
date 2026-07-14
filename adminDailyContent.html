@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สร้างคอนเทนต์ดวงรายวัน - สยามโหรามงคล</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { 
+            margin: 0; 
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
+            color: #fff; 
+            font-family: 'Sarabun', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        .header { 
+            background: rgba(15, 12, 41, 0.8); 
+            backdrop-filter: blur(10px);
+            padding: 20px 40px; 
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5); 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 { 
+            margin: 0; 
+            color: #FFDF73; 
+            font-size: 26px; 
+            text-shadow: 0 0 15px rgba(212,175,55,0.4); 
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .header h1 i { color: #d4af37; }
+        .back-btn { 
+            background: rgba(255, 255, 255, 0.05); 
+            color: #FFDF73; 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            padding: 10px 25px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 16px; 
+        }
+        .back-btn:hover { 
+            background: rgba(212, 175, 55, 0.15); 
+            border-color: #d4af37; 
+            box-shadow: 0 0 15px rgba(212,175,55,0.2);
+            transform: translateY(-2px);
+        }
+        .content { 
+            display: flex; 
+            flex: 1; 
+            padding: 30px 40px; 
+            gap: 40px; 
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .sidebar { 
+            flex: 0 0 400px; 
+            background: rgba(20, 15, 35, 0.6); 
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.2); 
+            border-radius: 20px; 
+            padding: 35px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 25px; 
+            height: fit-content;
+        }
+        .sidebar-title {
+            color: #FFF;
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-title i { color: #d4af37; }
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            background: rgba(255, 255, 255, 0.03); 
+            padding: 20px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        .form-group:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            background: rgba(212, 175, 55, 0.02);
+        }
+        .form-group label { 
+            color: #FFDF73; 
+            font-weight: 500; 
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-group select, .form-group input, .form-group textarea { 
+            padding: 14px; 
+            border-radius: 8px; 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            background: rgba(0, 0, 0, 0.4); 
+            color: #fff; 
+            font-family: 'Sarabun'; 
+            font-size: 16px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .form-group textarea { cursor: text; }
+        .form-group select:focus, .form-group input:focus, .form-group textarea:focus { 
+            outline: none; 
+            border-color: #d4af37; 
+            box-shadow: 0 0 0 2px rgba(212,175,55,0.2);
+        }
+        .form-group option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+        .form-group button:hover {
+            background: rgba(212, 175, 55, 0.2) !important;
+            border-color: #d4af37 !important;
+        }
+        .btn-generate { 
+            background: linear-gradient(135deg, #d4af37, #f39c12); 
+            color: #111; 
+            font-weight: 700; 
+            font-size: 18px; 
+            padding: 18px; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            margin-top: 10px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 20px rgba(212,175,55,0.3);
+        }
+        .btn-generate:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 30px rgba(212,175,55,0.5); 
+            background: linear-gradient(135deg, #f9e596, #d4af37);
+        }
+        .btn-generate:active {
+            transform: translateY(0);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: #fff;
+        }
+        .preview-area { 
+            flex: 1; 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+            border-radius: 20px; 
+            padding: 40px; 
+            display: flex; 
+            flex-direction: column;
+            overflow-y: auto; 
+            align-items: center; 
+            position: relative;
+        }
+        .preview-placeholder {
+            color: rgba(255,255,255,0.4); 
+            text-align: center; 
+            margin-top: 15vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .preview-placeholder i {
+            font-size: 80px; 
+            color: rgba(212, 175, 55, 0.2);
+        }
+        .preview-placeholder h3 {
+            margin: 0;
+            font-weight: 400;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1><i class="fas fa-star-and-crescent"></i> ระบบสร้างคอนเทนต์ดวงรายวัน</h1>
+        <a href="admin.html" class="back-btn"><i class="fas fa-arrow-left"></i> กลับไประบบหลังบ้าน</a>
+    </div>
+
+    <div class="content">
+        <div class="sidebar">
+            <h3 class="sidebar-title"><i class="fas fa-sliders-h"></i> ตั้งค่าการทำนาย</h3>
+            
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> เลือกวันที่ทำนาย:</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button type="button" onclick="window.changeDate(-1)" style="padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: #FFDF73; border-radius: 8px; cursor: pointer; transition: 0.3s;"><i class="fas fa-chevron-left"></i></button>
+                    <input type="date" id="genDate" style="flex: 1; width: 100%;">
+                    <button type="button" onclick="window.changeDate(1)" style="padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: #FFDF73; border-radius: 8px; cursor: pointer; transition: 0.3s;"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-crystal-ball"></i> ประเภทการทำนาย:</label>
+                <select id="genType">
+                    <option value="day">ดวงรายวัน (ตามวันเกิด 7 วัน)</option>
+                    <option value="zodiac">ดวงรายวัน (ตาม 12 ราศี)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-comment-dots"></i> โทนข้อความ (Tone of Voice):</label>
+                <select id="genTone">
+                    <option value="casual">วัยรุ่น เป็นกันเอง (มี Emoji เยอะ)</option>
+                    <option value="formal">สุภาพ เป็นทางการ</option>
+                    <option value="mystic">ขลัง แม่นยำ ดุดัน (ฟันธง!)</option>
+                </select>
+            </div>
+            
+            <button class="btn-generate" onclick="generateDailyContent()"><i class="fas fa-magic"></i> สร้างข้อความ (Generate)</button>
+        </div>
+        
+        <div class="preview-area" id="previewArea">
+            <div class="preview-placeholder" id="previewPlaceholder">
+                <i class="fas fa-pen-fancy"></i>
+                <h3>ยังไม่ได้สร้างคอนเทนต์</h3>
+                <p>โปรดเลือกการตั้งค่าด้านซ้าย และกดปุ่ม "สร้างข้อความ" เพื่อเริ่มต้น</p>
+            </div>
+
+            <div id="genResultContainer" style="display: none; width: 100%; max-width: 800px; flex-direction: column; gap: 20px;">
+                <div class="form-group" style="background: rgba(20, 15, 35, 0.8);">
+                    <label style="font-size: 18px;"><i class="fas fa-copy"></i> ข้อความสำหรับนำไปโพสต์:</label>
+                    <textarea id="genResultText" rows="15" readonly style="font-size: 15px; white-space: pre-wrap; resize: vertical; border-color: #d4af37;"></textarea>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 10px;">
+                        <button class="btn-secondary" style="flex: 1; background: rgba(52, 152, 219, 0.2); border-color: #3498db; color: #3498db;" onclick="copyGenResult()"><i class="fas fa-clipboard"></i> คัดลอกข้อความ (Copy)</button>
+                        <button class="btn-secondary" style="flex: 1; background: rgba(241, 196, 15, 0.2); border-color: #f1c40f; color: #f1c40f;" onclick="downloadSummaryImage()"><i class="fas fa-image"></i> ดาวน์โหลดภาพสรุปดวง (PNG)</button>
+                    </div>
+                </div>
+
+                <div id="canvasExportArea" style="width: 1080px; position: absolute; left: -9999px; top: 0;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="adminContentGenerator.js"></script>
+    <script>
+        window.changeDate = function(delta) {
+            const dateInput = document.getElementById('genDate');
+            let d = dateInput.value ? new Date(dateInput.value) : new Date();
+            d.setDate(d.getDate() + delta);
+            
+            // Adjust for timezone offset to ensure the local date string is correct
+            const offset = d.getTimezoneOffset();
+            d = new Date(d.getTime() - (offset*60*1000));
+            dateInput.value = d.toISOString().split('T')[0];
+            
+            // Auto generate when date is changed via arrows
+            if(document.getElementById('genResultContainer').style.display !== 'none') {
+                generateDailyContent();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('genDate').value = new Date().toISOString().split('T')[0];
+        });
+    </script>
+</body>
+</html>

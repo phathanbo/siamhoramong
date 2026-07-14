@@ -337,7 +337,7 @@ function calculateThaiAstrology() {
     const resultDiv = document.getElementById('astrologyResult');
 
     if (!birthDate) {
-        alert('⚠️ กรุณาระบุวันเกิด');
+        Swal.fire('แจ้งเตือน', 'กรุณาระบุวันเกิด', 'warning');
         return;
     }
 

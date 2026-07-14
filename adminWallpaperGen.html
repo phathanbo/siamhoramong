@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสร้างวอลเปเปอร์สายมู (Admin)</title>
+    
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f4f6f9; }
+        .admin-header { background: #1a1a2e; color: #fff; padding: 20px; text-align: center; }
+        .btn-gold { background: linear-gradient(135deg, #f1c40f, #e67e22); color: #fff; border: none; font-weight: bold; }
+        .btn-gold:hover { background: linear-gradient(135deg, #e67e22, #d35400); color: #fff; }
+        
+        #previewWrapper {
+            width: 100%;
+            height: 800px; /* Viewport height for preview */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background: #e9ecef;
+            border: 1px dashed #ccc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        /* 1080x1920 Canvas */
+        #renderCanvas {
+            width: 1080px;
+            height: 1920px;
+            position: relative;
+            overflow: hidden;
+            transform-origin: top center;
+            background: linear-gradient(135deg, #24243e, #302b63, #0f0c29); /* Default theme */
+            box-shadow: inset 0 0 150px rgba(0,0,0,0.9);
+        }
+
+        /* Particle / Stars Background */
+        .stars-bg {
+            position:absolute; top:0; left:0; width:100%; height:100%; opacity:0.7; 
+            background-image: radial-gradient(white, rgba(255,255,255,.3) 2px, transparent 4px), 
+                              radial-gradient(white, rgba(255,255,255,.2) 1px, transparent 3px), 
+                              radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
+            background-size: 550px 550px, 350px 350px, 250px 250px; 
+            background-position: 0 0, 40px 60px, 130px 270px;
+            z-index: 2;
+        }
+
+        .starburst {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-conic-gradient(
+                transparent 0deg,
+                rgba(212, 175, 55, 0.05) 5deg,
+                transparent 10deg
+            );
+            z-index: 1;
+        }
+
+        .mandala-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><g fill="none" stroke="rgba(212,175,55,0.15)" stroke-width="0.5"><circle cx="100" cy="100" r="90"/><circle cx="100" cy="100" r="80"/><path d="M100 10 Q140 50 190 100 Q140 150 100 190 Q60 150 10 100 Q60 50 100 10Z"/><path d="M10 100 Q50 60 100 10 Q150 60 190 100 Q150 140 100 190 Q50 140 10 100Z" transform="rotate(45 100 100)"/><circle cx="100" cy="100" r="50"/><path d="M100 50 L100 150 M50 100 L150 100" stroke-dasharray="2,2"/></g></svg>');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+        }
+        
+        .magic-circle {
+            position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%);
+            width: 850px; height: 850px;
+            border: 2px dashed rgba(212, 175, 55, 0.4);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .magic-circle::before {
+            content: '';
+            position: absolute;
+            width: 780px; height: 780px;
+            border: 3px solid rgba(212, 175, 55, 0.15);
+            border-radius: 50%;
+        }
+        .magic-circle::after {
+            content: '';
+            position: absolute;
+            width: 920px; height: 920px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+        }
+
+        .card-img {
+            position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+            width: 500px; height: auto; border-radius: 18px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 0 4px #d4af37, 0 0 0 12px rgba(212, 175, 55, 0.25);
+            z-index: 10;
+        }
+
+        .glow-effect {
+            position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%);
+            width: 600px; height: 900px; background: #e8c97a; filter: blur(120px); opacity: 0.35; border-radius: 50%;
+        }
+
+        .numbers-container {
+            position: absolute; top: 68%; left: 0; width: 100%; text-align: center; z-index: 10;
+        }
+
+        .lucky-numbers {
+            font-family: 'Cinzel', serif;
+            font-size: 10rem; font-weight: 700; color: #f1c40f;
+            text-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 30px rgba(241, 196, 15, 0.6), 0 0 10px rgba(255,255,255,0.4);
+            letter-spacing: 25px; margin: 0;
+            padding-left: 25px; /* Offset for letter-spacing to keep it centered */
+        }
+
+        .text-container {
+            position: absolute; top: 82%; left: 50%; transform: translateX(-50%);
+            width: 85%; text-align: center; z-index: 10;
+            background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.6) 100%); 
+            border-top: 1px solid rgba(212,175,55,0.5);
+            border-bottom: 1px solid rgba(212,175,55,0.5);
+            padding: 25px; 
+        }
+
+        .custom-name {
+            color: #fff; font-size: 3.2rem; font-weight: 600; margin: 0;
+            text-shadow: 2px 2px 8px rgba(0,0,0,1);
+            letter-spacing: 2px;
+        }
+        
+        .ornament {
+            color: rgba(212, 175, 55, 0.8);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 20px;
+        }
+
+        .watermark {
+            position: absolute; bottom: 50px; width: 100%; text-align: center; z-index: 10;
+            color: rgba(255,255,255,0.5); font-size: 1.5rem; letter-spacing: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-header">
+        <h2><i class="fas fa-mobile-alt text-warning mr-2"></i>ระบบสร้างวอลเปเปอร์สายมู (Lucky Wallpaper)</h2>
+        <p class="mb-0 text-white-50">สร้างภาพหน้าจอมือถือ (9:16) ปรับแต่งได้รายบุคคล</p>
+    </div>
+
+    <div class="container-fluid mt-4 mb-5">
+        <div class="row">
+            
+            <!-- Left Panel: Settings -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-header bg-dark text-white font-weight-bold">
+                        <i class="fas fa-cogs mr-1"></i> ตั้งค่าวอลเปเปอร์
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="form-group">
+                            <label class="font-weight-bold">1. ธีมสีพื้นหลัง (Theme)</label>
+                            <select id="themeSelect" class="form-control" onchange="updatePreview()">
+                                <option value="gold">มั่งคั่งร่ำรวย (โทนทอง-ดำ)</option>
+                                <option value="pink">ความรักมีเสน่ห์ (โทนชมพู-ม่วง)</option>
+                                <option value="blue">การงานสำเร็จ (โทนน้ำเงิน-ดำ)</option>
+                                <option value="green">สุขภาพความมั่นคง (โทนเขียว-ทอง)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">2. ลวดลายมนตรา (Pattern)</label>
+                            <select id="patternSelect" class="form-control" onchange="updatePreview()">
+                                <option value="mandala">มณฑลศักดิ์สิทธิ์ (Mandala) - ศูนย์กลาง</option>
+                                <option value="flower">ดอกไม้แห่งชีวิต (Flower of Life) - เต็มจอ</option>
+                                <option value="starburst">รัศมีดวงดาว (Starburst) - เส้นรัศมี</option>
+                                <option value="none">ไม่มีลวดลาย (Minimal)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">3. เลือกไพ่ยิปซีประจำตัว</label>
+                            <select id="cardSelect" class="form-control" onchange="updatePreview()">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">4. ชุดตัวเลขมงคล</label>
+                            <select class="form-control mb-2" onchange="document.getElementById('luckyNumbersInput').value = this.value; updatePreview();">
+                                <option value="4289 6395">4289 6395 - ค้าขายดี เงินเข้าไม่ขาดสาย</option>
+                                <option value="456">456 - การเงินมั่นคง สมบูรณ์พูนสุข</option>
+                                <option value="789">789 - มังกร: บารมี ผู้ใหญ่เมตตา</option>
+                                <option value="289">289 - หงส์: เงินก้อนโต ชนะการแข่งขัน</option>
+                                <option value="246">246 - เมตตามหาเสน่ห์ ความรักสมหวัง</option>
+                                <option value="159">159 - สติปัญญาบารมี ผู้ใหญ่เอ็นดู</option>
+                                <option value="999">999 - แคล้วคลาดปลอดภัย สิ่งศักดิ์สิทธิ์คุ้มครอง</option>
+                            </select>
+                            <input type="text" id="luckyNumbersInput" class="form-control" placeholder="พิมพ์ตัวเลขเองได้ที่นี่..." value="4289 6395" oninput="updatePreview()">
+                            <small class="text-muted">สามารถแก้ไขตัวเลขเองได้ในช่องนี้</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">5. ชื่อ หรือ คำอธิษฐาน</label>
+                            <input type="text" id="nameInput" class="form-control" placeholder="ชื่อ-นามสกุล หรือ คำอธิษฐาน" value="มั่งคั่ง ร่ำรวย โชคดี" oninput="updatePreview()">
+                        </div>
+
+                        <hr>
+
+                        <button class="btn btn-gold btn-block py-3 mt-3" onclick="downloadImage()">
+                            <i class="fas fa-download mr-2"></i> ดาวน์โหลดวอลเปเปอร์ (1080x1920)
+                        </button>
+                        <a href="index.html#adminDashboard" class="btn btn-secondary btn-block mt-2">กลับหน้า Admin</a>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Preview -->
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="text-center mb-3 text-muted">ตัวอย่างภาพ (Live Preview)</h5>
+                        <div id="previewWrapper">
+                            <div id="renderCanvas">
+                                <div class="starburst"></div>
+                                <div class="stars-bg"></div>
+                                <div class="mandala-bg"></div>
+                                <div class="glow-effect" id="themeGlow"></div>
+                                <div class="magic-circle"></div>
+
+                                <img id="previewCard" class="card-img" crossorigin="anonymous" src="">
+                                
+                                <div class="numbers-container">
+                                    <p class="lucky-numbers" id="previewNumbers">456</p>
+                                </div>
+
+                                <div class="text-container">
+                                    <div class="ornament">✦ ✧ ✦ ✧ ✦</div>
+                                    <p class="custom-name" id="previewName">มั่งคั่ง ร่ำรวย โชคดี</p>
+                                </div>
+
+                                <div class="watermark">
+                                    <i class="fas fa-moon mr-2"></i> สยามโหรามงคล
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="fortune-daily-data.js"></script>
+    <script src="adminWallpaperGen.js"></script>
+</body>
+</html>

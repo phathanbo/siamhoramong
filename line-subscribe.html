@@ -54,7 +54,7 @@
                     </h4>
 
                     <div class="form-group">
-                        <label class="text-gold"><strong>🔮 เลือกราศีของคุณ</strong></label>
+                        <label class="text-gold" for="zodiacSelect"><strong>🔮 เลือกราศีของคุณ</strong></label>
                         <select id="zodiacSelect" class="form-control form-control-lg">
                             <option value="">-- เลือกราศี --</option>
                             <option value="1">♈ เมษ (21 มีนาคม - 19 เมษายน)</option>
@@ -220,7 +220,7 @@
             const frequency = document.querySelector('input[name="frequency"]:checked').value;
 
             try {
-                const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
+                const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

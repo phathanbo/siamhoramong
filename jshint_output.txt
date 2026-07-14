@@ -1,0 +1,214 @@
+adminContentGenerator.js: line 149, col 9, 'alert' is not defined.
+adminContentGenerator.js: line 305, col 86, 'alert' is not defined.
+adminContentGenerator.js: line 306, col 52, 'alert' is not defined.
+adminContentGenerator.js: line 365, col 86, 'alert' is not defined.
+adminContentGenerator.js: line 366, col 52, 'alert' is not defined.
+adminContentGenerator.js: line 453, col 9, 'alert' is not defined.
+
+adminDashboard.js: line 321, col 37, 'nullish coalescing' is only available in ES11 (use 'esversion: 11').
+adminDashboard.js: line 641, col 64, 'dynamic import' is only available in ES11 (use 'esversion: 11').
+adminDashboard.js: line 713, col 77, 'dynamic import' is only available in ES11 (use 'esversion: 11').
+adminDashboard.js: line 764, col 42, 'dynamic import' is only available in ES11 (use 'esversion: 11').
+adminDashboard.js: line 35, col 29, 'toCE' is not defined.
+adminDashboard.js: line 273, col 37, 'toCE' is not defined.
+adminDashboard.js: line 301, col 29, 'toCE' is not defined.
+adminDashboard.js: line 438, col 9, 'viewMemberProfile' is not defined.
+adminDashboard.js: line 595, col 10, 'confirm' is not defined.
+adminDashboard.js: line 608, col 9, 'navigateTo' is not defined.
+
+adminPdfGenerator.js: line 122, col 2, Missing semicolon.
+adminPdfGenerator.js: line 202, col 9, 'alert' is not defined.
+adminPdfGenerator.js: line 296, col 27, 'ascCalcLagna' is not defined.
+adminPdfGenerator.js: line 295, col 22, 'ASC_CITY_LIST' is not defined.
+adminPdfGenerator.js: line 295, col 70, 'ASC_CITY_LIST' is not defined.
+adminPdfGenerator.js: line 297, col 23, 'ZODIAC_DATA' is not defined.
+adminPdfGenerator.js: line 380, col 34, 'analyzeSevenDigits' is not defined.
+adminPdfGenerator.js: line 381, col 35, 'calculateLuckScore' is not defined.
+adminPdfGenerator.js: line 382, col 31, 'analyzeStars' is not defined.
+adminPdfGenerator.js: line 383, col 33, 'getMahaBot' is not defined.
+adminPdfGenerator.js: line 402, col 28, 'getBirthElement' is not defined.
+adminPdfGenerator.js: line 419, col 34, 'ycAnalyze' is not defined.
+adminPdfGenerator.js: line 418, col 30, 'ycBirthYearToZodiac' is not defined.
+adminPdfGenerator.js: line 568, col 30, 'ycBirthYearToZodiac' is not defined.
+adminPdfGenerator.js: line 461, col 96, 'getThaiBycodeValue' is not defined.
+adminPdfGenerator.js: line 469, col 61, 'ThaiAstrologyData' is not defined.
+adminPdfGenerator.js: line 470, col 33, 'ThaiAstrologyData' is not defined.
+adminPdfGenerator.js: line 472, col 33, 'ThaiAstrologyData' is not defined.
+adminPdfGenerator.js: line 586, col 28, 'calculateBusinessFortune' is not defined.
+adminPdfGenerator.js: line 812, col 30, 'calculateLuckyColors' is not defined.
+
+AuspiciousDays.js: line 12, col 25, Missing semicolon.
+AuspiciousDays.js: line 58, col 6, Missing semicolon.
+AuspiciousDays.js: line 70, col 30, Missing semicolon.
+AuspiciousDays.js: line 80, col 6, Missing semicolon.
+AuspiciousDays.js: line 82, col 24, Missing semicolon.
+AuspiciousDays.js: line 91, col 29, Missing semicolon.
+AuspiciousDays.js: line 92, col 22, Missing semicolon.
+AuspiciousDays.js: line 93, col 25, Missing semicolon.
+AuspiciousDays.js: line 95, col 27, Missing semicolon.
+AuspiciousDays.js: line 96, col 30, Missing semicolon.
+AuspiciousDays.js: line 98, col 40, Missing semicolon.
+AuspiciousDays.js: line 99, col 42, Missing semicolon.
+AuspiciousDays.js: line 100, col 41, Missing semicolon.
+AuspiciousDays.js: line 102, col 46, Missing semicolon.
+AuspiciousDays.js: line 103, col 48, Missing semicolon.
+AuspiciousDays.js: line 104, col 48, Missing semicolon.
+AuspiciousDays.js: line 105, col 46, Missing semicolon.
+AuspiciousDays.js: line 110, col 6, Missing semicolon.
+AuspiciousDays.js: line 143, col 26, Missing semicolon.
+AuspiciousDays.js: line 147, col 52, Missing semicolon.
+AuspiciousDays.js: line 149, col 31, Missing semicolon.
+AuspiciousDays.js: line 257, col 33, Functions declared within loops referencing an outer scoped variable may lead to confusing semantics. (showDayDetail)
+AuspiciousDays.js: line 122, col 5, 'navigateTo' is not defined.
+AuspiciousDays.js: line 316, col 22, 'YARM_INFO' is not defined.
+AuspiciousDays.js: line 453, col 23, 'COLOR_MASTER' is not defined.
+
+consent-form.js: line 483, col 50, 'dynamic import' is only available in ES11 (use 'esversion: 11').
+consent-form.js: line 468, col 9, 'confirm' is not defined.
+
+dreamInterpretation.js: line 654, col 44, Functions declared within loops referencing an outer scoped variable may lead to confusing semantics. (allLuckyNumbers)
+dreamInterpretation.js: line 612, col 13, 'alert' is not defined.
+
+lifeGraph.js: line 95, col 53, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+lifeGraph.js: line 100, col 53, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+lifeGraph.js: line 333, col 101, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+lifeGraph.js: line 460, col 13, Misleading line break before '?'; readers may interpret this as an expression boundary.
+lifeGraph.js: line 85, col 9, 'currentMemberId' is not defined.
+lifeGraph.js: line 86, col 50, 'currentMemberId' is not defined.
+lifeGraph.js: line 86, col 29, 'getProfileByMemberId' is not defined.
+lifeGraph.js: line 103, col 23, 'parseBirthdate' is not defined.
+lifeGraph.js: line 145, col 9, 'navigateTo' is not defined.
+lifeGraph.js: line 244, col 61, 'parseThaiDate' is not defined.
+lifeGraph.js: line 257, col 61, 'parseThaiDate' is not defined.
+lifeGraph.js: line 339, col 61, 'parseThaiDate' is not defined.
+
+lotto.js: line 394, col 65, Missing semicolon.
+lotto.js: line 102, col 49, 'toCE' is not defined.
+lotto.js: line 200, col 55, 'NameAnalysis' is not defined.
+lotto.js: line 201, col 15, 'NameAnalysis' is not defined.
+lotto.js: line 321, col 57, 'escapeHTML' is not defined.
+
+membermanager.js: line 104, col 43, 'object spread property' is only available in ES9 (use 'esversion: 9').
+membermanager.js: line 110, col 39, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 110, col 49, 'nullish coalescing' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 111, col 39, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 111, col 49, 'nullish coalescing' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 378, col 13, Misleading line break before '?'; readers may interpret this as an expression boundary.
+membermanager.js: line 393, col 9, Misleading line break before '?'; readers may interpret this as an expression boundary.
+membermanager.js: line 424, col 58, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 425, col 66, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 426, col 57, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 427, col 57, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 428, col 67, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 429, col 51, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 430, col 57, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 431, col 59, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 432, col 67, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 485, col 44, Missing semicolon.
+membermanager.js: line 738, col 33, 'nullish coalescing' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 822, col 27, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 825, col 31, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 828, col 37, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 941, col 9, Misleading line break before '?'; readers may interpret this as an expression boundary.
+membermanager.js: line 1061, col 9, Misleading line break before '?'; readers may interpret this as an expression boundary.
+membermanager.js: line 1065, col 9, Misleading line break before '?'; readers may interpret this as an expression boundary.
+membermanager.js: line 1072, col 63, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 1072, col 79, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 1075, col 62, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 1075, col 78, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 1284, col 71, 'Optional chaining' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 1468, col 17, Misleading line break before '||'; readers may interpret this as an expression boundary.
+membermanager.js: line 1479, col 9, Misleading line break before '||'; readers may interpret this as an expression boundary.
+membermanager.js: line 1480, col 9, Misleading line break before '||'; readers may interpret this as an expression boundary.
+membermanager.js: line 1688, col 6, Missing semicolon.
+membermanager.js: line 1749, col 6, Missing semicolon.
+membermanager.js: line 1792, col 6, Missing semicolon.
+membermanager.js: line 1822, col 2, Missing semicolon.
+membermanager.js: line 1887, col 46, 'dynamic import' is only available in ES11 (use 'esversion: 11').
+membermanager.js: line 34, col 19, 'getCurrentUsername' is not defined.
+membermanager.js: line 59, col 23, 'getCurrentUsername' is not defined.
+membermanager.js: line 86, col 33, 'getCurrentUsername' is not defined.
+membermanager.js: line 269, col 16, 'getCurrentUsername' is not defined.
+membermanager.js: line 512, col 23, 'getCurrentUsername' is not defined.
+membermanager.js: line 763, col 25, 'getCurrentUsername' is not defined.
+membermanager.js: line 925, col 25, 'getCurrentUsername' is not defined.
+membermanager.js: line 87, col 62, 'isAdmin' is not defined.
+membermanager.js: line 579, col 58, 'isAdmin' is not defined.
+membermanager.js: line 624, col 58, 'isAdmin' is not defined.
+membermanager.js: line 769, col 58, 'isAdmin' is not defined.
+membermanager.js: line 926, col 58, 'isAdmin' is not defined.
+membermanager.js: line 1242, col 48, 'isAdmin' is not defined.
+membermanager.js: line 1471, col 21, 'isAdmin' is not defined.
+membermanager.js: line 187, col 10, 'confirm' is not defined.
+membermanager.js: line 653, col 13, 'confirm' is not defined.
+membermanager.js: line 944, col 10, 'confirm' is not defined.
+membermanager.js: line 208, col 9, 'checkLoginStatus' is not defined.
+membermanager.js: line 393, col 11, 'YARM_CHART' is not defined.
+membermanager.js: line 394, col 11, 'YARM_CHART' is not defined.
+membermanager.js: line 408, col 10, 'YARM_INFO' is not defined.
+membermanager.js: line 409, col 10, 'YARM_INFO' is not defined.
+membermanager.js: line 415, col 12, 'YARM_INFO' is not defined.
+membermanager.js: line 493, col 30, 'parseThaiDate' is not defined.
+membermanager.js: line 1006, col 26, 'parseThaiDate' is not defined.
+membermanager.js: line 1338, col 29, 'parseThaiDate' is not defined.
+membermanager.js: line 1359, col 29, 'parseThaiDate' is not defined.
+membermanager.js: line 556, col 13, 'navigateTo' is not defined.
+membermanager.js: line 793, col 9, 'navigateTo' is not defined.
+membermanager.js: line 1323, col 13, 'navigateTo' is not defined.
+membermanager.js: line 1825, col 21, 'navigateTo' is not defined.
+membermanager.js: line 590, col 17, 'saveMember' is not defined.
+membermanager.js: line 599, col 17, 'saveMember' is not defined.
+membermanager.js: line 849, col 60, 'birthdateToISO' is not defined.
+membermanager.js: line 852, col 9, 'updateGraph' is not defined.
+membermanager.js: line 888, col 47, 'elementData' is not defined.
+membermanager.js: line 895, col 32, 'elementData' is not defined.
+membermanager.js: line 896, col 32, 'mElement' is not defined.
+membermanager.js: line 897, col 32, 'zElement' is not defined.
+membermanager.js: line 1041, col 28, 'ascCalcLagna' is not defined.
+membermanager.js: line 1042, col 30, 'ZODIAC_DATA' is not defined.
+membermanager.js: line 1055, col 23, 'getBirthElement' is not defined.
+membermanager.js: line 1339, col 20, 'getBirthElement' is not defined.
+membermanager.js: line 1094, col 57, 'escapeHTML' is not defined.
+membermanager.js: line 1095, col 61, 'escapeHTML' is not defined.
+membermanager.js: line 1109, col 59, 'getCurrentUserRole' is not defined.
+membermanager.js: line 1223, col 112, 'getDayPrediction' is not defined.
+membermanager.js: line 1227, col 114, 'getMonthPrediction' is not defined.
+membermanager.js: line 1231, col 115, 'getZodiacPrediction' is not defined.
+membermanager.js: line 1349, col 20, 'MONTH_ELEMENTS' is not defined.
+membermanager.js: line 1365, col 20, 'ZODIAC_ELEMENTS' is not defined.
+membermanager.js: line 1375, col 20, 'getElementRelation' is not defined.
+membermanager.js: line 1493, col 20, 'toCE' is not defined.
+membermanager.js: line 1551, col 75, 'calculateThaksa' is not defined.
+membermanager.js: line 1560, col 75, 'calculateChatra' is not defined.
+membermanager.js: line 1598, col 66, 'calculateChatnine' is not defined.
+membermanager.js: line 1622, col 53, 'calculateAll' is not defined.
+membermanager.js: line 1633, col 74, 'processDestiny' is not defined.
+membermanager.js: line 1709, col 27, 'toBE' is not defined.
+membermanager.js: line 1836, col 22, 'analyzeName' is not defined.
+membermanager.js: line 1838, col 29, 'calculateLifeGraph' is not defined.
+membermanager.js: line 1848, col 21, 'getSession' is not defined.
+membermanager.js: line 1882, col 25, 'getSession' is not defined.
+membermanager.js: line 1851, col 53, 'switchToLogin' is not defined.
+
+thaiHora.js: line 42, col 13, Misleading line break before '-'; readers may interpret this as an expression boundary.
+thaiHora.js: line 229, col 22, 'object spread property' is only available in ES9 (use 'esversion: 9').
+thaiHora.js: line 230, col 22, 'object spread property' is only available in ES9 (use 'esversion: 9').
+thaiHora.js: line 231, col 22, 'object spread property' is only available in ES9 (use 'esversion: 9').
+thaiHora.js: line 232, col 22, 'object spread property' is only available in ES9 (use 'esversion: 9').
+thaiHora.js: line 233, col 22, 'object spread property' is only available in ES9 (use 'esversion: 9').
+thaiHora.js: line 234, col 22, 'object spread property' is only available in ES9 (use 'esversion: 9').
+thaiHora.js: line 235, col 22, 'object spread property' is only available in ES9 (use 'esversion: 9').
+thaiHora.js: line 236, col 22, 'object spread property' is only available in ES9 (use 'esversion: 9').
+thaiHora.js: line 237, col 22, 'object spread property' is only available in ES9 (use 'esversion: 9').
+thaiHora.js: line 1510, col 7, 'optional catch binding' is only available in ES10 (use 'esversion: 10').
+thaiHora.js: line 97, col 16, 'Astronomy' is not defined.
+thaiHora.js: line 101, col 17, 'Astronomy' is not defined.
+thaiHora.js: line 102, col 17, 'Astronomy' is not defined.
+thaiHora.js: line 148, col 18, 'toCE' is not defined.
+thaiHora.js: line 184, col 23, 'toCE' is not defined.
+
+colors.js: line 208, col 22, Missing semicolon.
+colors.js: line 94, col 53, 'toCE' is not defined.
+colors.js: line 228, col 53, 'toCE' is not defined.
+
+202 errors

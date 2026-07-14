@@ -57,9 +57,9 @@ function showchatranine(){
                             </select>
                         </div>
                         <div class="form-group mb-3">
-                            <label class="text-gold mb-2">ระบุอายุย่างของท่าน:</label>
+                            <label class="text-gold mb-2">อายุย่างตามปฏิทิน (คำนวณอัตโนมัติ):</label>
                             <input type="number" id="chatranineAge"
-                                class="form-control bg-dark text-gold border-gold-subtle" placeholder="ตัวอย่าง: 43">
+                                class="form-control bg-dark text-gold border-gold-subtle" placeholder="ตัวอย่าง: 43" readonly>
                         </div>
                         <button onclick="calculateChatnine()" class="btn btn-gold w-100 py-2 fw-bold">
                             🔮 ทำนายดวงชะตาตามตำรา
@@ -69,7 +69,7 @@ function showchatranine(){
             </div>
 
             <!-- FIX 2: แก้โครงสร้าง HTML ให้ถูกต้อง -->
-            <div id="chatranineDisplay" class="mt-5" style="display: none; position: relative;">
+            <div id="chatranineDisplay" class="mt-5" style="display: none;">
                 <div class="row justify-content-center">
                     <div class="col-md-8 text-center">
                         <div class="prediction-box p-4 rounded shadow">
@@ -123,7 +123,7 @@ function calculateChatnine() {
     const startDay = parseInt(birthDayInput.value);
 
     if (!age || age <= 0) {
-        alert("กรุณากรอกอายุย่างของท่าน");
+        Swal.fire('แจ้งเตือน', 'กรุณากรอกอายุย่างของท่าน', 'warning');
         return;
     }
 
@@ -144,12 +144,13 @@ function calculateChatnine() {
     const predictionText = document.getElementById('chatraLongPrediction');
 
     if (display && result) {
-
-        // FIX 3 & FIX 5: แก้ HTML ใน innerHTML ให้ถูกต้อง (เพิ่ม div ที่หายไป, แก้ CSS class)
+        
+        // FIX 3: แก้ HTML ใน innerHTML ให้ถูกต้อง
         predictionText.innerHTML = `
             <div class="mb-3">
                 ${result.name}
             </div>
+            <!-- FIX 5: แก้ไขการแสดงผลให้สวยงามขึ้น -->
             <div class="mb-3">
                 <span class="badge bg-gold text-dark fw-bold p-2" style="font-size: 1rem;">
                     💠 ${result.god} 💠
@@ -160,8 +161,10 @@ function calculateChatnine() {
             </div>
         `;
 
-        // แสดงผลด้วย Animation
-        $(display).fadeIn(600);
+        // FIX 4: แสดงผลแบบปกติ ไม่ใช้ jQuery
+        display.style.opacity = 0;
+        display.style.display = 'block';
+        setTimeout(() => { display.style.opacity = 1; display.style.transition = 'opacity 0.6s'; }, 10);
 
         // เลื่อนหน้าจอไปที่ผลลัพธ์
         display.scrollIntoView({ behavior: 'smooth', block: 'center' });

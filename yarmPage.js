@@ -45,7 +45,7 @@ function calculateYarm() {
     const resDiv = document.getElementById('yarmResult');
     
     if (!timeInput || !timeInput.value) { 
-        alert("กรุณาระบุเวลาครับ"); 
+        Swal.fire('แจ้งเตือน', 'กรุณาระบุเวลาครับ', 'warning');
         return; 
     }
     

@@ -70,7 +70,7 @@ function calculateAstrology() {
     const resultSection = document.getElementById('resultSection');
 
     if (!birthdateEl.value) {
-        alert('⚠️ กรุณาเลือกวันเกิด');
+        Swal.fire('แจ้งเตือน', 'กรุณาเลือกวันเกิด', 'warning');
         return;
     }
 
@@ -143,7 +143,7 @@ function calculateThaiAstrology() {
     const resultEl = document.getElementById('astrologyResult');
 
     if (!birthdateEl || !birthdateEl.value) {
-        alert('⚠️ กรุณาเลือกวันเกิด');
+        Swal.fire('แจ้งเตือน', 'กรุณาเลือกวันเกิด', 'warning');
         return;
     }
 

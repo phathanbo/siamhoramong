@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ร่างรูปแบบคำทำนาย 12 ราศี</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold-light: #f9d976;
+            --gold-mid: #e9b64c;
+            --gold-dark: #b8860b;
+            --text-dark: #333;
+            --text-good: #2E7D32;
+            --text-bad: #C62828;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #2c0f4c; /* Fallback */
+            background-image: radial-gradient(circle at center, #4b1a75 0%, #1a0831 100%);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .fortune-container {
+            width: 1400px; /* Large canvas for high-res output */
+            background: rgba(255, 255, 255, 0.05);
+            border: 4px solid var(--gold-mid);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(233, 182, 76, 0.3);
+            position: relative;
+            overflow: hidden;
+            background-image: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/stardust.png'); /* Temporary star pattern */
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 5rem;
+            margin: 0;
+            color: var(--gold-light);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 20px var(--gold-mid);
+            font-weight: 700;
+        }
+
+        .header .date-badge {
+            display: inline-block;
+            background: linear-gradient(180deg, #3a1c61 0%, #1e0b35 100%);
+            border: 2px solid var(--gold-mid);
+            padding: 10px 40px;
+            border-radius: 50px;
+            font-size: 1.8rem;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            color: #fff;
+        }
+
+        .header .subtitle {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            color: var(--gold-light);
+            letter-spacing: 2px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .zodiac-card {
+            background: linear-gradient(135deg, #fff9eb 0%, #fde4b5 100%);
+            border: 2px solid var(--gold-dark);
+            border-radius: 12px;
+            padding: 15px;
+            color: var(--text-dark);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed var(--gold-dark);
+            padding-bottom: 10px;
+        }
+
+        .zodiac-icon {
+            width: 45px;
+            height: 45px;
+            background: #2c0f4c;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: var(--gold-light);
+            border: 2px solid var(--gold-mid);
+            margin-right: 10px;
+        }
+
+        .zodiac-title {
+            line-height: 1.2;
+        }
+
+        .zodiac-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1a0831;
+        }
+
+        .zodiac-date {
+            font-size: 0.75rem;
+            color: #555;
+        }
+
+        .card-body {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            flex-grow: 1;
+            margin-bottom: 15px;
+        }
+
+        .card-footer {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .good-txt {
+            color: var(--text-good);
+            margin-bottom: 5px;
+        }
+
+        .bad-txt {
+            color: var(--text-bad);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            border-top: 1px solid rgba(233, 182, 76, 0.4);
+            padding-top: 20px;
+            color: var(--gold-light);
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="fortune-container" id="captureArea">
+        <div class="header">
+            <h1>สยามโหรามงคล</h1>
+            <div class="date-badge">คำทำนายประจำวัน ๑๔ กรกฎาคม ๒๕๖๙</div>
+            <div class="subtitle">✦ ตามหลักโหราศาสตร์ไทย ✦</div>
+        </div>
+
+        <div class="grid-container">
+            <!-- Aries -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♈</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีเมษ</div>
+                        <div class="zodiac-date">13 เม.ย. - 13 พ.ค.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    วันนี้มีเกณฑ์ได้รับสิ่งดีๆ สิ่งใหม่ๆ เข้ามาในชีวิต การงานก้าวหน้า มีโอกาสเปลี่ยนแปลงไปในทิศทางที่ดีขึ้น สิ่งที่ตั้งใจไว้จะค่อยๆ เกิดผล
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : การงาน การเงิน</div>
+                    <div class="bad-txt">ควรระวัง : อารมณ์ร้อน</div>
+                </div>
+            </div>
+
+            <!-- Taurus -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♉</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีพฤษภ</div>
+                        <div class="zodiac-date">14 พ.ค. - 13 มิ.ย.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    การเงินมีโชคลาภผู้ใหญ่หรือคนใกล้ตัว ได้รับความช่วยเหลือที่ดี การงานราบรื่น มีคนคอยสนับสนุน ความรักอบอุ่นเข้าใจกันมากขึ้น
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : การเงิน ความรัก</div>
+                    <div class="bad-txt">ควรระวัง : ใช้จ่ายฟุ่มเฟือย</div>
+                </div>
+            </div>
+
+            <!-- Gemini -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♊</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีเมถุน</div>
+                        <div class="zodiac-date">14 มิ.ย. - 14 ก.ค.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    ความคิดสร้างสรรค์โดดเด่น เหมาะกับการเจรจาติดต่อประสานงาน มีโอกาสได้ข่าวดีจากทางไกล การเดินทางราบรื่น
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : การเจรจา การสื่อสาร</div>
+                    <div class="bad-txt">ควรระวัง : พูดมากเกินไป</div>
+                </div>
+            </div>
+
+            <!-- Cancer -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♋</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีกรกฎ</div>
+                        <div class="zodiac-date">15 ก.ค. - 16 ส.ค.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    วันนี้อ่อนไหวง่าย คิดมาก ควรพักผ่อนให้เพียงพอ การงานมีภาระเพิ่มขึ้นแต่จะผ่านไปได้ด้วยดี คนใกล้ตัวคอยช่วยเหลือเป็นอย่างดี
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : ครอบครัว คนใกล้ตัว</div>
+                    <div class="bad-txt">ควรระวัง : ความเครียด</div>
+                </div>
+            </div>
+
+            <!-- Leo -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♌</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีสิงห์</div>
+                        <div class="zodiac-date">17 ส.ค. - 16 ก.ย.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    มีเกณฑ์ได้รับคำชมหรือการยอมรับในผลงานที่ทำ ชื่อเสียงโดดเด่น มีเสน่ห์เป็นพิเศษ ระวังคนอิจฉาริษยา
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : ชื่อเสียง ความก้าวหน้า</div>
+                    <div class="bad-txt">ควรระวัง : หลงตัวเอง</div>
+                </div>
+            </div>
+
+            <!-- Virgo -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♍</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีกันย์</div>
+                        <div class="zodiac-date">17 ก.ย. - 16 ต.ค.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    งานที่เกี่ยวข้องกับการวางแผน การจัดการจะสำเร็จได้ดี มีโอกาสได้เรียนรู้สิ่งใหม่ๆ ที่เป็นประโยชน์ต่ออนาคต
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : การเรียนรู้ การวางแผน</div>
+                    <div class="bad-txt">ควรระวัง : จุกจิกกับเรื่องเล็กๆ</div>
+                </div>
+            </div>
+
+            <!-- Libra -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♎</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีตุลย์</div>
+                        <div class="zodiac-date">17 ต.ค. - 15 พ.ย.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    การงานราบรื่น ได้รับความร่วมมือจากคนรอบข้าง เหมาะกับการเริ่มต้นสิ่งใหม่ ด้านความรักมีเกณฑ์ได้พบคนที่ใช่
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : ความรัก หุ้นส่วน</div>
+                    <div class="bad-txt">ควรระวัง : ลังเล ตัดสินใจช้า</div>
+                </div>
+            </div>
+
+            <!-- Scorpio -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♏</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีพิจิก</div>
+                        <div class="zodiac-date">16 พ.ย. - 15 ธ.ค.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    มีเกณฑ์เปลี่ยนแปลงครั้งสำคัญในชีวิต ไปในทางที่ดีขึ้น การงานก้าวหน้าแบบก้าวกระโดด การเงินมีรายรับก้อนใหญ่
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : การเงิน การลงทุน</div>
+                    <div class="bad-txt">ควรระวัง : ความไว้ใจคนผิด</div>
+                </div>
+            </div>
+
+            <!-- Sagittarius -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♐</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีธนู</div>
+                        <div class="zodiac-date">16 ธ.ค. - 13 ม.ค.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    โชคดีจากการเดินทางหรือการติดต่อจากต่างถิ่น ได้เปิดมุมมองใหม่ๆ ในการทำงาน สิ่งที่หวังไว้เริ่มกระจ่าง
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : การเดินทาง โชคลาภ</div>
+                    <div class="bad-txt">ควรระวัง : ใจร้อน</div>
+                </div>
+            </div>
+
+            <!-- Capricorn -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♑</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีมังกร</div>
+                        <div class="zodiac-date">14 ม.ค. - 12 ก.พ.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    งานหนักแต่คุ้มค่า ได้รับความไว้วางใจจากผู้ใหญ่ มีโอกาสเลื่อนขั้นเลื่อนตำแหน่ง การเงินมั่นคงขึ้น
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : การงาน ความมั่นคง</div>
+                    <div class="bad-txt">ควรระวัง : กดดันตัวเอง</div>
+                </div>
+            </div>
+
+            <!-- Aquarius -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♒</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีกุมภ์</div>
+                        <div class="zodiac-date">13 ก.พ. - 13 มี.ค.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    ความคิดแปลกใหม่สร้างโอกาสให้คุณ เหมาะกับการทำสิ่งที่แตกต่างจากเดิม มีคนสนับสนุนจากผลงานที่โดดเด่น
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : ความคิดสร้างสรรค์</div>
+                    <div class="bad-txt">ควรระวัง : ปฏิบัติตามกฎระเบียบ</div>
+                </div>
+            </div>
+
+            <!-- Pisces -->
+            <div class="zodiac-card">
+                <div class="card-header">
+                    <div class="zodiac-icon">♓</div>
+                    <div class="zodiac-title">
+                        <div class="zodiac-name">ราศีมีน</div>
+                        <div class="zodiac-date">14 มี.ค. - 12 เม.ย.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    สัญชาตญาณแม่นยำ เชื่อความรู้สึกของตนเองจะไม่ผิดหวัง การเงินไหลลื่น มีโชคลาภเล็กๆ น้อยๆ จากคนใกล้ตัว
+                </div>
+                <div class="card-footer">
+                    <div class="good-txt">ดี : โชคลาภ การเงิน</div>
+                    <div class="bad-txt">ควรระวัง : ฝันเฟื่อง</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            ✦ ทำดี คิดดี พูดดี จะมีแต่สิ่งดี ๆ เข้ามาในชีวิต ✦
+        </div>
+    </div>
+
+</body>
+</html>

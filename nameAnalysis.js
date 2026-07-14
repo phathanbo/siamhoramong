@@ -253,58 +253,77 @@ function showname() {
     }
 
     const html = `
-            <div class="container py-4">
-            <div class="card bg-dark border-gold text-white p-3 text-center">
-                <h2 class="text-gold">🔮 วิเคราะห์เลขศาสตร์ ชื่อ-นามสกุล</h2>
-                <h5 class="small text-white-50">ถอดรหัสตัวเลขและตรวจสอบอักษรกาลกิณี</h5>                
-                <label class="text-gold">เลือกจากรายชื่อสมาชิก (ประวัติ):</label>
-                <select id="memberSelect" class="form-control bg-dark text-white border-gold member-selector-shared"
-                    onchange="autoFillMemberData(this.value); analyzeName()">
-                    <option value="">-- เลือกสมาชิก --</option>
-                </select>
-                <div class="row mt-3">
-                    <div class="col-md-4 mb-2">
-                        <input type="text" id="firstName" class="form-control bg-dark text-white border-gold"
-                            placeholder="กรอกชื่อ">
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <input type="text" id="lastName" class="form-control bg-dark text-white border-gold"
-                            placeholder="กรอกนามสกุล">
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <select id="birthDaynumSelect" class="form-control bg-dark text-white border-gold">
-                            <option value="">-- เลือกวันเกิด (เพื่อเช็คกาลกิณี) --</option>
-                            <option value="0">วันอาทิตย์</option>
-                            <option value="1">วันจันทร์</option>
-                            <option value="2">วันอังคาร</option>
-                            <option value="3">วันพุธ (กลางวัน)</option>
-                            <option value="7">วันพุธ (กลางคืน)</option>
-                            <option value="4">วันพฤหัสบดี</option>
-                            <option value="5">วันศุกร์</option>
-                            <option value="6">วันเสาร์</option>
+        <div class="container py-4">
+            <div class="card shadow-lg border-0 mb-4" style="background: rgba(26,26,26,0.95); border: 1px solid rgba(212,175,55,0.4)!important;">
+                <div class="card-body p-4 text-center">
+                    <h2 class="text-gold mb-2"><i class="fas fa-fingerprint"></i> วิเคราะห์เลขศาสตร์ ชื่อ-นามสกุล</h2>
+                    <p class="small text-white-50 mb-4">ถอดรหัสตัวเลขและตรวจสอบอักษรกาลกิณีอย่างละเอียด</p>                
+                    
+                    <div class="form-group text-left mx-auto" style="max-width: 600px;">
+                        <label class="text-gold small"><i class="fas fa-users"></i> เลือกจากประวัติสมาชิก (ไม่บังคับ):</label>
+                        <select id="memberSelect" class="form-control bg-dark text-white border-gold member-selector-shared mb-3"
+                            onchange="autoFillMemberData(this.value); analyzeName()">
+                            <option value="">-- กรอกใหม่ด้วยตนเอง --</option>
                         </select>
                     </div>
-                    <div class="col-md-12 mb-2">
-                        <button class="btn btn-gold btn-block" onclick="analyzeName()">วิเคราะห์รหัสชีวิต</button>
-                    </div>
-                </div>
-                <div id="nameResultArea" style="display: none;"></div>
-                <div class="row mt-4">
-                    <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
-                            <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
-                        </button>
-                    </div>
-                    <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
-                            <i class="fas fa-home"></i> กลับหน้าหลัก
-                        </button>
+
+                    <div class="row mt-3 justify-content-center">
+                        <div class="col-md-5 mb-3">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-user"></i></span>
+                                </div>
+                                <input type="text" id="firstName" class="form-control bg-dark text-white border-gold" placeholder="ชื่อจริง">
+                            </div>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-user-friends"></i></span>
+                                </div>
+                                <input type="text" id="lastName" class="form-control bg-dark text-white border-gold" placeholder="นามสกุล">
+                            </div>
+                        </div>
+                        <div class="col-md-10 mb-4">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-calendar-day"></i></span>
+                                </div>
+                                <select id="birthDaynumSelect" class="form-control bg-dark text-white border-gold">
+                                    <option value="">-- เลือกวันเกิด (ใช้เช็คกาลกิณี) --</option>
+                                    <option value="0">วันอาทิตย์</option>
+                                    <option value="1">วันจันทร์</option>
+                                    <option value="2">วันอังคาร</option>
+                                    <option value="3">วันพุธ (กลางวัน)</option>
+                                    <option value="7">วันพุธ (กลางคืน)</option>
+                                    <option value="4">วันพฤหัสบดี</option>
+                                    <option value="5">วันศุกร์</option>
+                                    <option value="6">วันเสาร์</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-10 mb-2">
+                            <button class="btn btn-gold btn-block btn-lg shadow" onclick="analyzeName()"><i class="fas fa-magic"></i> วิเคราะห์รหัสชีวิต</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-    
+            <div id="nameResultArea" style="display: none;"></div>
+
+            <div class="row mt-4">
+                <div class="col-6">
+                    <button class="btn btn-outline-gold btn-block border-0" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-light btn-block border-0" onclick="goBack()">
+                        <i class="fas fa-home"></i> กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+        </div>
     `;
     container.innerHTML = html;
 }
@@ -427,14 +446,16 @@ function analyzeName(passedMemberId) {
             lastNameEl.value = lname;
             
             if (selectedDay === "" && profileData.birthdate) {
-                const birthDate = parseThaiDate(profileData.birthdate);
-                if (birthDate) {
-                    selectedDay = birthDate.getDay().toString();
+                // ✅ FIX: ตรวจสอบว่า parseThaiDate ได้ผลลัพธ์ที่ถูกต้องก่อนใช้งาน
+                const birthDateObj = typeof parseThaiDate === 'function' ? parseThaiDate(profileData.birthdate) : new Date(profileData.birthdate);
+                if (birthDateObj && !isNaN(birthDateObj.getTime())) {
+                    selectedDay = birthDateObj.getDay().toString();
                 }
             }
             
 
-            if (selectedDay) daySelectEl.value = selectedDay;
+            // ✅ FIX: ตรวจสอบว่า selectedDay มีค่าก่อนกำหนด
+            if (selectedDay !== "" && selectedDay !== null) daySelectEl.value = selectedDay;
             
             console.log("✅ ดึงจากโปรไฟล์:", fname, lname, "วัน:", selectedDay);
             console.log("✅ Clear & Set ชื่อ:", fname, lname);
@@ -455,8 +476,10 @@ function analyzeName(passedMemberId) {
     if (selectedDay !== "") {
             finalDayIdx = parseInt(selectedDay);
     } else {
-        if (memberId) {
-            const profileData = getProfileByMemberId(memberId);
+        // ✅ FIX: ตรวจสอบว่ามี memberId ก่อนเรียกใช้
+        const currentMemberIdForAnalysis = memberId || (typeof window !== 'undefined' ? window.currentMemberId : null);
+        if (currentMemberIdForAnalysis) {
+            const profileData = getProfileByMemberId(currentMemberIdForAnalysis);
             if (profileData && profileData.birthdate) {
                 const birthDate = parseThaiDate(profileData.birthdate);
                 if (birthDate) {
@@ -471,7 +494,11 @@ function analyzeName(passedMemberId) {
     const sumL = NameAnalysis.calculate(lname);
     const sumTotal = sumF + sumL;
 
-    renderNameUI(fname, lname, sumF, sumL, sumTotal, finalDayIdx, kalakiniList);
+    // ป้องกัน XSS จากการกรอกชื่อ-นามสกุล
+    const safeFname = typeof escapeHTML === 'function' ? escapeHTML(fname) : fname;
+    const safeLname = typeof escapeHTML === 'function' ? escapeHTML(lname) : lname;
+
+    renderNameUI(safeFname, safeLname, sumF, sumL, sumTotal, finalDayIdx, kalakiniList);
 }
 
 
@@ -501,54 +528,94 @@ function showLuckyChars(target, dayIdx) {
 }
 
 // ฟังก์ชันสุ่มชื่อแนะนำ (ใส่ไว้ในไฟล์ main.js)
-function suggestLuckyNames(dayIdx) {
+function suggestLuckyNames(dayIdx, preferredTag = '') {
     if (dayIdx === null || !NameDatabase[dayIdx]) {
         return Swal.fire('ระบุวันเกิด', 'เลือกวันเกิดก่อนครับประธาน', 'warning');
     }
 
-    const names = NameDatabase[dayIdx];
-    const shuffled = [...names].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 3);
+    // ถ้ากดผ่าน UI ให้ดึงค่า filter มาใช้
+    const filterSelect = document.getElementById('nameFilterSelect');
+    if (filterSelect) {
+        preferredTag = filterSelect.value;
+    }
 
-    let html = `
-        <div class="text-left animate__animated animate__fadeIn">
-            <p class="small text-white-50 mb-3 text-center">อักษรถูกคัดกรองตามหลักทักษาประจำวันเกิดของคุณแล้ว</p>
-    `;
-
-    selected.forEach(item => {
-        html += `
-            <div class="mb-3 p-3 rounded" style="background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.2);">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="h4 text-gold mb-0">${item.name}</span>
-                    <span class="badge badge-info">เลขรวม ${item.sum}</span>
+    const generateNamesHTML = () => {
+        let selected = [];
+        if (typeof generateDynamicNames === 'function') {
+            selected = generateDynamicNames(dayIdx, 3, preferredTag);
+        }
+        
+        // ถ้าได้ชื่อไม่ครบ 3 ชื่อ (หรือระบบใหม่ขัดข้อง) ให้ดึงจาก NameDatabase เดิมมาเสริม
+        if (selected.length < 3) {
+            const names = NameDatabase[dayIdx] || [];
+            // ถ้ามีการฟิลเตอร์ พยายามหาในฐานข้อมูลเดิมด้วย
+            let filteredDb = preferredTag ? names.filter(n => n.tags.includes(preferredTag)) : names;
+            if (filteredDb.length === 0) filteredDb = names; // fallback
+            
+            const shuffled = [...filteredDb].sort(() => 0.5 - Math.random());
+            const needed = 3 - selected.length;
+            selected = selected.concat(shuffled.slice(0, needed));
+        }
+        
+        let html = '';
+        selected.forEach(item => {
+            html += `
+                <div class="mb-3 p-3 rounded animate__animated animate__fadeIn" style="background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.2);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="h4 text-gold mb-0">${item.name}</span>
+                        <span class="badge badge-info">เลขรวม ${item.sum}</span>
+                    </div>
+                    <div class="mt-2">
+                        ${item.tags.map(t => `<span class="badge badge-outline-gold mr-1" style="font-size: 0.6rem;">${t}</span>`).join('')}
+                    </div>
+                    <div class="small text-white-50 mt-1 italic" style="font-size: 0.75rem;">
+                        ความหมาย: ${item.desc}
+                    </div>
                 </div>
-                <div class="mt-2">
-                    ${item.tags.map(t => `<span class="badge badge-outline-gold mr-1" style="font-size: 0.6rem;">${t}</span>`).join('')}
-                </div>
-                <div class="small text-white-50 mt-1 italic" style="font-size: 0.75rem;">
-                    ความหมาย: ${item.desc}
-                </div>
-            </div>
-        `;
-    });
+            `;
+        });
+        return html;
+    };
 
-    html += `
-        <div class="mt-3 text-center">
-            <button onclick="suggestLuckyNames(${dayIdx})" class="btn btn-sm btn-outline-gold">
-                <i class="fas fa-sync-alt mr-1"></i> สุ่มใหม่
-            </button>
-        </div>
-    </div>`;
+    const existingContainer = document.getElementById('luckyNamesContainer');
+    
+    if (existingContainer && Swal.isVisible()) {
+        existingContainer.innerHTML = generateNamesHTML();
+    } else {
+        let fullHtml = `
+            <div class="text-left">
+                <p class="small text-white-50 mb-2 text-center">อักษรถูกคัดกรองตามหลักทักษาประจำวันเกิดของคุณแล้ว</p>
+                <div class="form-group px-2">
+                    <select id="nameFilterSelect" class="form-control form-control-sm bg-dark text-white border-warning" onchange="suggestLuckyNames(${dayIdx})">
+                        <option value="">🌟 สุ่มแบบรวม (ทุกหมวดหมู่)</option>
+                        <option value="เดช">⚔️ เสริมอำนาจบารมี (เดช)</option>
+                        <option value="ศรี">💖 เสริมเสน่ห์/โชคลาภ (ศรี)</option>
+                        <option value="มูละ">💰 เสริมทรัพย์สินการเงิน (มูละ)</option>
+                        <option value="อายุ">🌿 เสริมสุขภาพ/อายุยืน (อายุ)</option>
+                        <option value="มนตรี">🤝 เสริมผู้ใหญ่เมตตา (มนตรี)</option>
+                        <option value="ปัญญา">🧠 เสริมสติปัญญา (ปัญญา)</option>
+                    </select>
+                </div>
+                <div id="luckyNamesContainer">
+                    ${generateNamesHTML()}
+                </div>
+                <div class="mt-3 text-center">
+                    <button onclick="suggestLuckyNames(${dayIdx})" class="btn btn-sm btn-outline-gold">
+                        <i class="fas fa-sync-alt mr-1"></i> สุ่มใหม่
+                    </button>
+                </div>
+            </div>`;
 
-    Swal.fire({
-        title: '🌟 ชื่อมงคลแนะนำ',
-        html: html,
-        showConfirmButton: false,
-        showCloseButton: true,
-        background: '#121212',
-        color: '#d4af37',
-        customClass: { popup: 'border-gold' }
-    });
+        Swal.fire({
+            title: '🌟 ชื่อมงคลแนะนำ',
+            html: fullHtml,
+            showConfirmButton: false,
+            showCloseButton: true,
+            background: '#121212',
+            color: '#d4af37',
+            customClass: { popup: 'border-gold' }
+        });
+    }
 }
 
 /**
@@ -688,54 +755,85 @@ function renderNameUI(f, l, sf, sl, st, dayIdx, kalaList) {
 
 
         resultDiv.innerHTML = `
-            <div class="card bg-dark border-gold text-white p-4 mt-3 shadow-lg animate__animated animate__zoomIn">
-                <div class="text-center mb-3">
-                    <h4 class="text-gold"><i class="fas fa-fingerprint mr-2"></i>วิเคราะห์รหัสชีวิต</h4>
-                    <div style="color: ${dayColor}; font-weight: bold; font-size: 1rem; text-shadow: 0 0 5px ${dayColor}55;">
+            <div class="card bg-dark border-gold text-white p-4 mt-3 shadow-lg animate__animated animate__fadeInUp" style="background: rgba(26,26,26,0.95)!important; border: 1px solid rgba(212,175,55,0.4)!important;">
+                <div class="text-center mb-4">
+                    <h4 class="text-gold"><i class="fas fa-scroll mr-2"></i>รายงานวิเคราะห์รหัสชีวิต</h4>
+                    <div style="color: ${dayColor}; font-weight: bold; font-size: 1.1rem; margin-top: 10px;">
                         <i class="fas fa-sun"></i> ดวงวันเกิด: ${dayName}
                     </div>
-                    <p class="small text-white-50 mb-0">คุณ${f} ${l}</p>
-                    ${kalaHTML}
-                    ${taksaHTML}
+                    <h5 class="mt-2 text-white">${f} ${l}</h5>
+                </div>
+
+                <!-- 1. กาลกิณี และ ทักษา -->
+                <div class="row mb-4">
+                    <div class="col-12 text-center mb-3">
+                        ${kalaHTML}
                     </div>
-                    ${luckySectionHTML}
-                    
+                    <div class="col-12">
+                        ${taksaHTML}
+                    </div>
+                </div>
+
+                <hr style="border-color: rgba(212,175,55,0.2);">
+
+                <!-- 2. ถอดรหัสตัวเลข (3 ระดับ) -->
+                <h5 class="text-gold text-center mb-4 mt-3"><i class="fas fa-sort-numeric-up-alt"></i> ถอดรหัสพลังตัวเลขศาสตร์</h5>
                 
-                <div class="row text-center mb-4 mt-3">
-                    <div class="col-4">
-                        <div class="text-white-50 small mb-2">ชื่อ</div>
-                        <div class="d-flex justify-content-center">
-                            <div style="width: 50px; height: 50px; line-height: 46px; border-radius: 50%; border: 2px solid #17a2b8; color: #17a2b8; font-weight: bold; font-size: 1.4rem; background: rgba(23, 162, 184, 0.1);">
-                                ${sf}
+                <div class="row g-4 mb-4">
+                    <!-- พลังชื่อตัว -->
+                    <div class="col-md-6 mb-3">
+                        <div class="p-3 h-100 rounded" style="background: rgba(23,162,184,0.05); border: 1px solid rgba(23,162,184,0.3);">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="text-info m-0"><i class="fas fa-user-tag"></i> พลังชื่อตัว (อุปนิสัย)</h6>
+                                <div style="width: 45px; height: 45px; line-height: 41px; border-radius: 50%; border: 2px solid #17a2b8; color: #17a2b8; font-weight: bold; font-size: 1.2rem; text-align: center; background: rgba(23, 162, 184, 0.1);">
+                                    ${sf}
+                                </div>
+                            </div>
+                            <div class="text-light small" style="line-height: 1.6; font-weight: 300;">
+                                ${NameAnalysis.getMeaning(sf)}
                             </div>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div class="text-white-50 small mb-2">นามสกุล</div>
-                        <div class="d-flex justify-content-center">
-                            <div style="width: 50px; height: 50px; line-height: 46px; border-radius: 50%; border: 2px solid #17a2b8; color: #17a2b8; font-weight: bold; font-size: 1.4rem; background: rgba(23, 162, 184, 0.1);">
-                                ${sl}
+
+                    <!-- พลังนามสกุล -->
+                    <div class="col-md-6 mb-3">
+                        <div class="p-3 h-100 rounded" style="background: rgba(40,167,69,0.05); border: 1px solid rgba(40,167,69,0.3);">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="text-success m-0"><i class="fas fa-users"></i> พลังนามสกุล (พื้นฐานครอบครัว)</h6>
+                                <div style="width: 45px; height: 45px; line-height: 41px; border-radius: 50%; border: 2px solid #28a745; color: #28a745; font-weight: bold; font-size: 1.2rem; text-align: center; background: rgba(40, 167, 69, 0.1);">
+                                    ${sl}
+                                </div>
+                            </div>
+                            <div class="text-light small" style="line-height: 1.6; font-weight: 300;">
+                                ${NameAnalysis.getMeaning(sl)}
                             </div>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div class="text-white-50 small mb-2">รวม</div>
-                        <div class="d-flex justify-content-center">
-                            <div style="width: 60px; height: 60px; line-height: 54px; border-radius: 50%; border: 3px solid #d4af37; color: #d4af37; font-weight: bold; font-size: 1.6rem; background: rgba(212, 175, 55, 0.2); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); margin-top: -5px;">
-                                ${st}
+                    
+                    <!-- พลังผลรวม (ชะตาชีวิตโดยรวม) -->
+                    <div class="col-md-12 mb-2">
+                        <div class="p-4 rounded shadow" style="background: rgba(212,175,55,0.1); border: 2px solid rgba(212,175,55,0.6);">
+                            <div class="text-center mb-3">
+                                <h5 class="text-warning m-0"><i class="fas fa-star"></i> พลังผลรวม (ชะตาชีวิตโดยรวม)</h5>
+                                <div class="mx-auto mt-3" style="width: 70px; height: 70px; line-height: 62px; border-radius: 50%; border: 4px solid #d4af37; color: #d4af37; font-weight: bold; font-size: 2rem; background: rgba(212, 175, 55, 0.2); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);">
+                                    ${st}
+                                </div>
+                            </div>
+                            <div class="text-light text-center" style="line-height: 1.7; font-size: 1.1rem; font-weight: 400;">
+                                ${NameAnalysis.getMeaning(st)}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="p-3 bg-black-50 rounded border border-gold-50 shadow-inner" style="background: rgba(0,0,0,0.3);">
-                    <div class="text-gold font-weight-bold mb-1"><i class="fas fa-scroll mr-1"></i> คำทำนายโดยสรุป:</div>
-                    <div class="text-white small" style="line-height: 1.6; font-weight: 300;">${NameAnalysis.getMeaning(st)}</div>
-                </div>
+                <!-- 3. อักษรนำโชค -->
+                ${luckySectionHTML}
 
-                <button onclick="exportNameAnalysis()" class="btn btn-gold btn-sm btn-block mt-3 shadow">
-                    <i class="fas fa-camera mr-1"></i> บันทึกภาพมงคล
-                </button>
+                <div class="mt-4">
+                    <button onclick="exportNameAnalysis()" class="btn btn-gold btn-block btn-lg shadow">
+                        <i class="fas fa-camera mr-2"></i> บันทึกภาพมงคล
+                    </button>
+                </div>
             </div>
         `;
     

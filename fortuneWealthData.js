@@ -171,7 +171,7 @@ function analyzeWealth() {
     const resultEl = document.getElementById('wealthResult');
 
     if (!birthDateEl.value || !birthYearEl.value) {
-        alert('⚠️ กรุณากรอกวันเกิดและปีเกิด');
+        Swal.fire('แจ้งเตือน', 'กรุณากรอกวันเกิดและปีเกิด', 'warning');
         return;
     }
 

@@ -113,7 +113,7 @@ function createListItem(label, value, valueClass, bgClass = "") {
 function updateHeaderLuckyBar() {
     const data = getTodayLuckyData();
     const baseNums = data.numbers.split(",").map(n => n.trim());
-    const luckyNums = generateLuckyNumbers(baseNums);
+    const luckyNums = generateLuckyNumberFromArray(baseNums);
 
     const elements = {
         'headerDayName': data.day,
