@@ -1,9 +1,9 @@
 /**
  * adminCartomancy.js
  * โลจิกสำหรับหน้า adminCartomancy.html 
+ * ปรับปรุงให้ใช้ Canvas 2D API แบบ Native แทน html2canvas
  */
 
-// โค้ดเก่าสำหรับ Modal (อาจจะไม่ถูกเรียกใช้แล้ว แต่คงไว้เผื่อจำเป็น)
 function openAdminCartomancyModal() {
     window.location.href = 'adminCartomancy.html';
 }
@@ -16,28 +16,243 @@ function adminDrawCartomancyPage() {
     
     const drawType = document.getElementById('drawType').value;
     
+    let cards = [];
     if (drawType === '1') {
-        renderOneCard();
+        cards = [drawSingleCartomancy()];
     } else {
-        renderThreeCards();
+        cards = drawThreeCartomancy();
+    }
+    
+    // บันทึกไพ่ล่าสุดไว้สำหรับวาดใหม่เมื่อแก้ข้อความเสริม
+    window.lastDrawnCards = cards;
+    
+    renderCanvas(drawType, cards);
+}
+
+function renderEmptyCanvas() {
+    const canvas = document.getElementById('cartomancyCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    const canvasWidth = 900;
+    const canvasHeight = 600;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    
+    // Draw Background
+    drawBackground(ctx, canvasWidth, canvasHeight);
+    
+    // Draw Header
+    drawHeader(ctx, canvasWidth);
+    
+    // Draw Empty State Text
+    ctx.fillStyle = '#555555';
+    ctx.font = '30px "Sarabun", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('กรุณากดสุ่มไพ่', canvasWidth / 2, canvasHeight / 2 + 50);
+}
+
+function renderCanvas(drawType, cards) {
+    const canvas = document.getElementById('cartomancyCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    // 1 card mode: 900x1200
+    // 3 cards mode: 1200x900
+    let canvasWidth = drawType === '1' ? 900 : 1200;
+    let canvasHeight = drawType === '1' ? 1200 : 900;
+    
+    // Adjust height for 3 cards based on content if needed, but 900-1000 is usually enough
+    if(drawType === '3') canvasHeight = 950;
+    
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    
+    // Enable antialiasing (usually on by default, but good to ensure high quality)
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
+    // 1. Draw Background
+    drawBackground(ctx, canvasWidth, canvasHeight);
+    
+    // 2. Draw Header
+    drawHeader(ctx, canvasWidth);
+    
+    const cardWidth = 220;
+    const cardHeight = 310;
+    const cardY = 220;
+    
+    if (drawType === '1') {
+        // 1 Card Mode
+        const cardX = (canvasWidth - cardWidth) / 2;
+        drawCard(ctx, cards[0], cardX, cardY, cardWidth, cardHeight);
+        
+        // Draw Meaning Box below the card
+        const boxY = cardY + cardHeight + 40;
+        const boxWidth = 800;
+        const boxX = (canvasWidth - boxWidth) / 2;
+        const boxHeight = canvasHeight - boxY - 40;
+        drawMeaningBox1(ctx, cards[0], boxX, boxY, boxWidth, boxHeight);
+        
+    } else {
+        // 3 Cards Mode
+        const gap = 50;
+        const totalCardsWidth = (cardWidth * 3) + (gap * 2);
+        let startX = (canvasWidth - totalCardsWidth) / 2;
+        const positions = ['อดีต', 'ปัจจุบัน', 'อนาคต'];
+        
+        for (let i = 0; i < 3; i++) {
+            const cardX = startX + (i * (cardWidth + gap));
+            
+            // Draw Position Text
+            ctx.fillStyle = '#d4af37';
+            ctx.font = 'bold 24px "Sarabun", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`ไพ่ใบที่ ${i + 1}`, cardX + (cardWidth/2), cardY - 40);
+            ctx.font = '18px "Sarabun", sans-serif';
+            ctx.fillText(`(${positions[i]})`, cardX + (cardWidth/2), cardY - 15);
+            
+            drawCard(ctx, cards[i], cardX, cardY, cardWidth, cardHeight);
+            
+            // Draw Meaning Box below each card
+            const boxY = cardY + cardHeight + 40;
+            const boxHeight = canvasHeight - boxY - 40;
+            drawMeaningBox3(ctx, cards[i], cardX, boxY, cardWidth, boxHeight);
+        }
     }
 }
 
-// Helper to generate CSS pips for playing cards
-function generatePips(rank, symbol) {
+function drawBackground(ctx, width, height) {
+    // Gradient Background
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, '#1a0831');
+    gradient.addColorStop(1, '#0d041a');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    
+    // Golden Border
+    ctx.strokeStyle = '#e9b64c';
+    ctx.lineWidth = 8;
+    ctx.strokeRect(4, 4, width - 8, height - 8);
+    ctx.lineWidth = 4;
+    ctx.strokeRect(16, 16, width - 32, height - 32);
+}
+
+function drawHeader(ctx, width) {
+    // Title
+    ctx.fillStyle = '#f9d976';
+    ctx.font = 'bold 45px "Sarabun", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = 'rgba(0,0,0,0.8)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 3;
+    ctx.shadowOffsetY = 3;
+    ctx.fillText('สยามโหรามงคล', width / 2, 70);
+    
+    // Reset shadow
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    
+    // Subtitle 1
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '30px "Sarabun", sans-serif';
+    ctx.fillText('คำทำนายไพ่ป๊อกพยากรณ์', width / 2, 120);
+    
+    // Custom Subtitle
+    const customText = document.getElementById('adminCartomancyCustomText').value || '';
+    if (customText) {
+        ctx.fillStyle = '#d4af37';
+        ctx.font = '24px "Sarabun", sans-serif';
+        ctx.fillText(customText, width / 2, 160);
+    }
+}
+
+function drawCard(ctx, card, x, y, width, height) {
+    const radius = 15;
+    
+    // Card Shadow
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 20;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 10;
+    
+    // Card Base
+    ctx.fillStyle = '#111111';
+    
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Card Gradient Overlay
+    const cardGradient = ctx.createLinearGradient(x, y, x + width, y + height);
+    cardGradient.addColorStop(0, '#111111');
+    cardGradient.addColorStop(1, '#222222');
+    ctx.fillStyle = cardGradient;
+    ctx.fill();
+    
+    // Reset shadow for content
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    
+    // Card Content Color
+    const textColor = card.color === 'red' ? '#ff3333' : '#e0e0e0';
+    ctx.fillStyle = textColor;
+    
+    const rank = card.name.split(' ')[0];
+    
+    // Top Left Corner
+    ctx.font = 'bold 24px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(rank, x + 25, y + 35);
+    ctx.font = '28px Arial';
+    ctx.fillText(card.symbol, x + 25, y + 65);
+    
+    // Bottom Right Corner (Upside down)
+    ctx.save();
+    ctx.translate(x + width - 25, y + height - 35);
+    ctx.rotate(Math.PI);
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText(rank, 0, 0);
+    ctx.font = '28px Arial';
+    ctx.fillText(card.symbol, 0, 30);
+    ctx.restore();
+    
+    // Center Content
+    drawCenterPips(ctx, rank, card.symbol, textColor, x, y, width, height);
+}
+
+function drawCenterPips(ctx, rank, symbol, color, x, y, width, height) {
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    const cx = x + (width / 2);
+    const cy = y + (height / 2);
+    
     if (['J', 'Q', 'K'].includes(rank)) {
-        // Court cards: large elegant letter + crown/star
-        let icon = rank === 'K' ? '♚' : (rank === 'Q' ? '♛' : '♞');
-        return `
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-                <span style="font-size: 60px; line-height: 1;">${icon}</span>
-                <span class="rank-large" style="font-size: 80px; margin-top: -10px;">${rank}</span>
-            </div>
-        `;
+        const icon = rank === 'K' ? '♚' : (rank === 'Q' ? '♛' : '♞');
+        ctx.font = '50px Arial';
+        ctx.fillText(icon, cx, cy - 30);
+        ctx.font = 'bold 80px Arial';
+        ctx.fillText(rank, cx, cy + 30);
+        return;
     }
     
     if (rank === 'A') {
-        return `<div style="display: flex; justify-content: center; align-items: center; height: 100%;"><span style="font-size: 100px;">${symbol}</span></div>`;
+        ctx.font = '90px Arial';
+        ctx.fillText(symbol, cx, cy);
+        return;
     }
     
     // Number cards
@@ -54,198 +269,218 @@ function generatePips(rank, symbol) {
     if (num === 9) pips = ['L1', 'R1', 'L2', 'R2', 'C3', 'L4', 'R4', 'L5', 'R5'];
     if (num === 10) pips = ['L1', 'R1', 'C2', 'L2', 'R2', 'L4', 'R4', 'C4', 'L5', 'R5'];
 
-    let gridHtml = `<div class="pip-container" style="display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: repeat(5, 1fr); width: 100%; height: 100%; padding: 25px 35px; box-sizing: border-box;">`;
+    // Pip positioning map
+    // Grid: L(eft), C(enter), R(ight) x 1(top) to 5(bottom)
+    const cw = width;
+    const ch = height;
     
-    for (let r = 1; r <= 5; r++) {
-        for (let c of ['L', 'C', 'R']) {
-            let pos = `${c}${r}`;
-            let hasPip = pips.includes(pos);
-            let invert = (r > 3) ? 'transform: rotate(180deg);' : '';
-            gridHtml += `<div style="display: flex; justify-content: center; align-items: center; font-size: 30px; line-height: 1; ${invert}">
-                            ${hasPip ? symbol : ''}
-                         </div>`;
+    const posX = { 'L': x + cw * 0.3, 'C': cx, 'R': x + cw * 0.7 };
+    const posY = { '1': y + ch * 0.2, '2': y + ch * 0.35, '3': cy, '4': y + ch * 0.65, '5': y + ch * 0.8 };
+    
+    ctx.font = '35px Arial';
+    
+    pips.forEach(p => {
+        const col = p.charAt(0);
+        const row = p.charAt(1);
+        const px = posX[col];
+        const py = posY[row];
+        
+        const invert = parseInt(row) > 3;
+        
+        ctx.save();
+        ctx.translate(px, py);
+        if (invert) ctx.rotate(Math.PI);
+        ctx.fillText(symbol, 0, 0);
+        ctx.restore();
+    });
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' '); // For Thai, word boundary is hard without a library, we might need character wrap or approximate it.
+    // Thai text wrapping on canvas without Intl.Segmenter can be tricky, we'll use a basic char-by-char approach if it's purely Thai, but space split is a start.
+    // Better yet, split by space, but for long Thai string, we might need a custom wrapper.
+    
+    // Simple custom wrapper that respects English spaces but also breaks Thai reasonably by length.
+    let line = '';
+    let currentY = y;
+    
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const testLine = line + char;
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+        
+        if (testWidth > maxWidth && i > 0) {
+            ctx.fillText(line, x, currentY);
+            line = char;
+            currentY += lineHeight;
+        } else {
+            line = testLine;
         }
     }
-    
-    gridHtml += `</div>`;
-    return gridHtml;
+    ctx.fillText(line, x, currentY);
+    return currentY + lineHeight;
 }
 
-function generatePremiumCardHtml(card) {
-    const rank = card.name.split(' ')[0];
-    const centerContent = generatePips(rank, card.symbol);
+function drawMeaningBox1(ctx, card, x, y, width, height) {
+    // Box Background
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
+    ctx.lineWidth = 1;
     
-    return `
-        <div class="cartomancy-wrapper" style="margin-bottom: 10px;">
-            <!-- Removed 3D flip classes for html2canvas compatibility -->
-            <div class="cartomancy-card admin-premium" style="cursor: default; transform: none; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);">
-                <div class="card-front ${card.color}" style="transform: none; position: relative; width: 100%; height: 100%; background-color: #111; background-image: linear-gradient(135deg, #111, #222);">
-                    <div class="corner top-left">
-                        <span class="rank">${rank}</span>
-                        <span class="suit">${card.symbol}</span>
-                    </div>
-                    <div class="center" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0;">
-                        ${centerContent}
-                    </div>
-                    <div class="corner bottom-right">
-                        <span class="rank">${rank}</span>
-                        <span class="suit">${card.symbol}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+    const radius = 15;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    // Card Name Title
+    ctx.fillStyle = '#f9d976';
+    ctx.font = 'bold 32px "Sarabun", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(card.name, x + width / 2, y + 25);
+    
+    // Meanings
+    ctx.textAlign = 'left';
+    let textY = y + 80;
+    
+    ctx.font = 'bold 22px "Sarabun", sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('🔮 ภาพรวม:', x + 30, textY);
+    ctx.font = '22px "Sarabun", sans-serif';
+    ctx.fillStyle = '#eeeeee';
+    textY = wrapText(ctx, card.meaning, x + 140, textY, width - 170, 30);
+    
+    textY += 15;
+    
+    // Sub-boxes
+    const drawSubBox = (icon, title, text, titleColor, bgColor, bdColor, sy) => {
+        // Draw small bg rect
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(x + 30, sy, width - 60, 60);
+        // Draw left border
+        ctx.fillStyle = bdColor;
+        ctx.fillRect(x + 30, sy, 5, 60);
+        
+        ctx.fillStyle = titleColor;
+        ctx.font = 'bold 20px "Sarabun", sans-serif';
+        // We'll skip emoji/fontawesome icons in canvas to avoid missing fonts, use text instead.
+        ctx.fillText(title, x + 50, sy + 18);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '20px "Sarabun", sans-serif';
+        wrapText(ctx, text, x + 150, sy + 18, width - 200, 26);
+        return sy + 75;
+    };
+    
+    textY = drawSubBox('', 'การงาน:', card.work, '#81c784', 'rgba(46, 125, 50, 0.1)', '#4caf50', textY);
+    textY = drawSubBox('', 'การเงิน:', card.finance, '#64b5f6', 'rgba(21, 101, 192, 0.1)', '#2196f3', textY);
+    textY = drawSubBox('', 'ความรัก:', card.love, '#e57373', 'rgba(198, 40, 40, 0.1)', '#f44336', textY);
 }
 
-function renderOneCard() {
-    const card = drawSingleCartomancy();
+function drawMeaningBox3(ctx, card, x, y, width, height) {
+    // Box Background
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
+    ctx.lineWidth = 1;
     
-    // Cards Render
-    document.getElementById('adminCartomancyCardRender').innerHTML = generatePremiumCardHtml(card);
+    const radius = 10;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
     
-    // Meaning Box Render
-    const html = `
-        <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 15px; padding: 30px; text-align: left;">
-            <h3 style="color: #f9d976; text-align: center; font-size: 2rem; margin-bottom: 20px;">${card.name}</h3>
-            
-            <div style="font-size: 1.2rem; line-height: 1.6; color: #eee; margin-bottom: 20px;">
-                <strong>🔮 ภาพรวม:</strong> ${card.meaning}
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                <div style="background: rgba(46, 125, 50, 0.1); border-left: 5px solid #4caf50; padding: 15px; border-radius: 5px;">
-                    <strong style="color: #81c784; font-size: 1.2rem;"><i class="fas fa-briefcase"></i> การงาน:</strong> 
-                    <span style="color: #fff; font-size: 1.1rem; line-height: 1.5;">${card.work}</span>
-                </div>
-                <div style="background: rgba(21, 101, 192, 0.1); border-left: 5px solid #2196f3; padding: 15px; border-radius: 5px;">
-                    <strong style="color: #64b5f6; font-size: 1.2rem;"><i class="fas fa-coins"></i> การเงิน:</strong> 
-                    <span style="color: #fff; font-size: 1.1rem; line-height: 1.5;">${card.finance}</span>
-                </div>
-                <div style="background: rgba(198, 40, 40, 0.1); border-left: 5px solid #f44336; padding: 15px; border-radius: 5px;">
-                    <strong style="color: #e57373; font-size: 1.2rem;"><i class="fas fa-heart"></i> ความรัก:</strong> 
-                    <span style="color: #fff; font-size: 1.1rem; line-height: 1.5;">${card.love}</span>
-                </div>
-            </div>
-        </div>
-    `;
+    // Card Name Title
+    ctx.fillStyle = '#f9d976';
+    ctx.font = 'bold 22px "Sarabun", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(card.name, x + width / 2, y + 15);
     
-    const meaningBox = document.getElementById('adminCartomancyMeaningBox');
-    meaningBox.innerHTML = html;
-    meaningBox.style.display = 'block';
-}
-
-function renderThreeCards() {
-    const cards = drawThreeCartomancy();
+    // Line separator
+    ctx.beginPath();
+    ctx.setLineDash([5, 5]);
+    ctx.moveTo(x + 20, y + 45);
+    ctx.lineTo(x + width - 20, y + 45);
+    ctx.strokeStyle = '#555555';
+    ctx.stroke();
+    ctx.setLineDash([]);
     
-    // Cards Render
-    let cardsHtml = '';
-    const positions = ['อดีต', 'ปัจจุบัน', 'อนาคต'];
+    ctx.textAlign = 'left';
+    let textY = y + 60;
     
-    cards.forEach((card, index) => {
-        cardsHtml += `
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <div style="color: #d4af37; font-size: 1.4rem; font-weight: bold; margin-bottom: 10px;">ไพ่ใบที่ ${index + 1} <br><small>(${positions[index]})</small></div>
-                ${generatePremiumCardHtml(card)}
-            </div>
-        `;
-    });
+    ctx.font = 'bold 16px "Sarabun", sans-serif';
+    ctx.fillStyle = '#d4af37';
+    ctx.fillText('ความหมาย:', x + 15, textY);
+    ctx.font = '16px "Sarabun", sans-serif';
+    ctx.fillStyle = '#cccccc';
+    textY = wrapText(ctx, card.meaning, x + 15, textY + 22, width - 30, 22);
     
-    document.getElementById('adminCartomancyCardRender').innerHTML = cardsHtml;
+    textY += 10;
     
-    // Meaning Box Render
-    let meaningHtml = '<div class="meaning-box-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">';
+    const drawLineInfo = (title, text, color, sy) => {
+        ctx.fillStyle = color;
+        ctx.font = 'bold 16px "Sarabun", sans-serif';
+        ctx.fillText(title, x + 15, sy);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '16px "Sarabun", sans-serif';
+        return wrapText(ctx, text, x + 60, sy, width - 75, 22);
+    };
     
-    cards.forEach((card, index) => {
-        meaningHtml += `
-            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 15px; padding: 20px; text-align: left; height: 100%;">
-                <h4 style="color: #f9d976; text-align: center; border-bottom: 1px dashed #555; padding-bottom: 10px; margin-bottom: 15px;">
-                    ${card.name}
-                </h4>
-                <div style="font-size: 1rem; color: #ccc; margin-bottom: 10px; line-height: 1.5;">
-                    <strong class="text-gold">ความหมาย:</strong> ${card.meaning}
-                </div>
-                <div style="font-size: 0.95rem; color: #fff; margin-bottom: 5px;">
-                    <strong style="color: #81c784;"><i class="fas fa-briefcase"></i> งาน:</strong> ${card.work}
-                </div>
-                <div style="font-size: 0.95rem; color: #fff; margin-bottom: 5px;">
-                    <strong style="color: #64b5f6;"><i class="fas fa-coins"></i> เงิน:</strong> ${card.finance}
-                </div>
-                <div style="font-size: 0.95rem; color: #fff;">
-                    <strong style="color: #e57373;"><i class="fas fa-heart"></i> รัก:</strong> ${card.love}
-                </div>
-            </div>
-        `;
-    });
-    
-    meaningHtml += '</div>';
-    
-    const meaningBox = document.getElementById('adminCartomancyMeaningBox');
-    meaningBox.innerHTML = meaningHtml;
-    meaningBox.style.display = 'block';
+    textY = drawLineInfo('งาน:', card.work, '#81c784', textY);
+    textY = drawLineInfo('เงิน:', card.finance, '#64b5f6', textY + 5);
+    textY = drawLineInfo('รัก:', card.love, '#e57373', textY + 5);
 }
 
 function downloadAdminCartomancyImagePage() {
-    if (typeof html2canvas === 'undefined') {
-        Swal.fire('ข้อผิดพลาด', 'ไม่พบไลบรารี html2canvas', 'error');
+    const canvas = document.getElementById('cartomancyCanvas');
+    if (!canvas) {
+        Swal.fire('ข้อผิดพลาด', 'ไม่พบ Canvas', 'error');
         return;
     }
-
-    const captureArea = document.getElementById('adminCartomancyCaptureArea');
-    if (document.getElementById('adminCartomancyMeaningBox').style.display === 'none') {
+    
+    // ตรวจสอบว่ามีการสุ่มไพ่หรือยัง (ดูจาก window.lastDrawnCards)
+    if (!window.lastDrawnCards || window.lastDrawnCards.length === 0) {
         Swal.fire('แจ้งเตือน', 'กรุณาสุ่มไพ่ก่อนทำการดาวน์โหลด', 'warning');
         return;
     }
     
-    Swal.fire({
-        title: 'กำลังสร้างรูปภาพ...',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-            
-            // ใช้วิธี Clone DOM Element เพื่อแก้ปัญหา Flexbox/Scroll บีบสเกล
-            const clone = captureArea.cloneNode(true);
-            
-            clone.style.position = 'absolute';
-            clone.style.top = '0px';
-            clone.style.left = '0px';
-            clone.style.zIndex = '-9999';
-            clone.style.transform = 'none';
-            clone.style.margin = '0';
-            // Adjust width if 3 cards
-            const drawType = document.getElementById('drawType').value;
-            if (drawType === '3') {
-                clone.style.width = '1200px'; 
-            } else {
-                clone.style.width = '900px';
-            }
-            
-            document.body.appendChild(clone);
-
-            html2canvas(clone, {
-                scale: 2, 
-                backgroundColor: '#1a0831',
-                useCORS: true,
-                logging: false
-            }).then(canvas => {
-                document.body.removeChild(clone);
-
-                const filename = `cartomancy_premium_${new Date().getTime()}.png`;
-                
-                const link = document.createElement('a');
-                link.download = filename;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'บันทึกรูปภาพสำเร็จ!',
-                    confirmButtonColor: '#d4af37'
-                });
-            }).catch(err => {
-                console.error("html2canvas error:", err);
-                if (document.body.contains(clone)) document.body.removeChild(clone);
-                Swal.fire('ข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้', 'error');
-            });
-        }
-    });
+    try {
+        const dataUrl = canvas.toDataURL('image/png');
+        const filename = `cartomancy_premium_${new Date().getTime()}.png`;
+        
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = dataUrl;
+        link.click();
+        
+        Swal.fire({
+            icon: 'success',
+            title: 'บันทึกรูปภาพสำเร็จ!',
+            confirmButtonColor: '#d4af37'
+        });
+    } catch (err) {
+        console.error("Canvas export error:", err);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถบันทึกรูปภาพได้', 'error');
+    }
 }

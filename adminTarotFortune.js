@@ -133,43 +133,133 @@ function drawRandomTarot() {
 }
 
 async function downloadTarotImage() {
-    const canvasEl = document.getElementById('tarotRenderCanvas');
-    const wrapper = document.getElementById('tarotPreviewWrapper');
     const nameStr = document.getElementById('tarotPreviewName').innerText.replace(/\s+/g, '_');
+    const descStr = document.getElementById('tarotPreviewDesc').innerText;
+    const imgSrc = document.getElementById('tarotPreviewImg').src;
 
-    // Remove scale trick to ensure high-res sharp capture
-    const originalTransform = canvasEl.style.transform;
-    const originalHeight = wrapper.style.height;
-
-    canvasEl.style.transform = 'none';
-    wrapper.style.height = '1080px';
-    wrapper.style.overflow = 'visible'; // temporarily allow overflow so html2canvas sees everything
-
-    // Give browser a moment to repaint without scale
-    await new Promise(r => setTimeout(r, 100));
+    Swal.fire({
+        title: 'กำลังสร้างภาพ...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
 
     try {
-        const canvas = await html2canvas(canvasEl, {
-            scale: 2, // High resolution (2160x2160 internally, exported as 1080x1080 size)
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#090915'
+        const canvas = document.createElement('canvas');
+        canvas.width = 1080;
+        canvas.height = 1080;
+        const ctx = canvas.getContext('2d');
+
+        // 1. Background Gradient
+        const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
+        bgGrad.addColorStop(0, '#090915');
+        bgGrad.addColorStop(0.5, '#1d0f3b');
+        bgGrad.addColorStop(1, '#300f3f');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, 1080, 1080);
+
+        // 2. Stars / Particles
+        ctx.fillStyle = 'white';
+        for (let i = 0; i < 200; i++) {
+            const x = Math.random() * 1080;
+            const y = Math.random() * 1080;
+            const radius = Math.random() * 2;
+            const alpha = Math.random() * 0.5 + 0.1;
+            ctx.globalAlpha = alpha;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1.0;
+
+        // 3. Branding Logo
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.font = 'bold 36px "Sarabun", sans-serif';
+        drawStrokedText(ctx, "สยามโหรามงคล", 1040, 40, '#d4af37', 'rgba(0,0,0,0.8)', 4);
+        ctx.font = '20px "Sarabun", sans-serif';
+        drawStrokedText(ctx, "ศาสตร์พยากรณ์", 1040, 85, '#f1c40f', 'rgba(0,0,0,0.8)', 2);
+
+        // 4. Daily Tarot Title
+        ctx.textAlign = 'left';
+        ctx.font = '24px "Sarabun", sans-serif';
+        drawRoundedRect(ctx, 40, 40, 250, 50, 25, 'rgba(255, 255, 255, 0.1)', 'rgba(255, 215, 0, 0.4)');
+        ctx.fillStyle = '#fff';
+        ctx.fillText("🃏 ไพ่ยิปซีประจำวัน", 65, 52);
+
+        // 5. Load and Draw Card Image
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = imgSrc;
         });
 
-        const image = canvas.toDataURL("image/png", 1.0);
-        const link = document.createElement('a');
+        // Glow behind card
+        ctx.shadowColor = '#e8c97a';
+        ctx.shadowBlur = 50;
+        drawRoundedRect(ctx, 540 - 140, 150, 280, 480, 20, '#e8c97a');
         
+        // Draw Card
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 40;
+        ctx.shadowOffsetY = 15;
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#d4af37';
+        // Approximate aspect ratio of card is usually 1:1.7
+        const imgWidth = 280;
+        const imgHeight = (img.naturalHeight / img.naturalWidth) * imgWidth;
+        const imgY = 150 + (480 - imgHeight) / 2;
+        ctx.drawImage(img, 540 - imgWidth / 2, imgY, imgWidth, imgHeight);
+        ctx.strokeRect(540 - imgWidth / 2, imgY, imgWidth, imgHeight);
+
+        ctx.shadowColor = 'transparent';
+
+        // 6. Text Box
+        const boxWidth = 918; // 85% of 1080
+        const boxHeight = 350;
+        const boxX = (1080 - boxWidth) / 2;
+        const boxY = 650;
+        
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 35;
+        ctx.shadowOffsetY = 15;
+        drawRoundedRect(ctx, boxX, boxY, boxWidth, boxHeight, 20, 'rgba(20, 10, 40, 0.6)', 'rgba(212, 175, 55, 0.3)');
+        ctx.shadowColor = 'transparent';
+
+        // Ornament
+        ctx.textAlign = 'center';
+        ctx.font = '32px Arial';
+        ctx.fillStyle = '#d4af37';
+        ctx.fillText("✦", 540, boxY - 15);
+
+        // Title
+        ctx.font = 'bold 44px "Sarabun", sans-serif';
+        drawStrokedText(ctx, document.getElementById('tarotPreviewName').innerText, 540, boxY + 40, '#e8c97a', 'rgba(0,0,0,0.8)', 4);
+
+        // Description
+        ctx.font = '26px "Sarabun", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        // Adding a slight drop shadow to text manually
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 2;
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 1;
+        wrapText(ctx, descStr, 540, boxY + 110, boxWidth - 80, 36);
+        ctx.shadowColor = 'transparent';
+
+        // Output
+        const dataUrl = canvas.toDataURL("image/png", 1.0);
+        const link = document.createElement('a');
         let dateStr = new Date().toISOString().split('T')[0];
         link.download = `Tarot_${dateStr}_${nameStr}.png`;
-        link.href = image;
+        link.href = dataUrl;
         link.click();
+        
+        Swal.close();
     } catch (error) {
         console.error("Error generating Tarot image:", error);
         Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกภาพได้', 'error');
-    } finally {
-        // Restore scale
-        canvasEl.style.transform = originalTransform;
-        wrapper.style.height = originalHeight;
-        wrapper.style.overflow = 'hidden';
     }
 }
+

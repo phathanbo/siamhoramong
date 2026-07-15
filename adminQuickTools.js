@@ -81,6 +81,12 @@ function initAdminQuickTools() {
                     <span style="font-weight: bold;">สร้างโพสต์ Facebook<br><small style="font-weight: normal; font-size: 0.95rem; color: #ddd;">(พิมพ์ข้อความเอง)</small></span>
                 </button>
                 
+                <!-- สร้างโพสต์เลขเด็ด (ทักษาพยากรณ์) -->
+                <button class="btn shadow" onclick="window.location.href='adminLottoPost.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; border: 1px solid #8E2DE2; height: 100%; transition: transform 0.2s;">
+                    <i class="fas fa-dice" style="font-size: 3.5rem; color: #f1c40f;"></i> 
+                    <span style="font-weight: bold; color: #f1c40f;">สร้างโพสต์เลขเด็ด<br><small style="font-weight: normal; font-size: 0.95rem; color: #fff;">(คำนวณตามหลักทักษา)</small></span>
+                </button>
+                
                 <!-- สร้างภาพดวงอัตโนมัติ -->
                 <button class="btn shadow" onclick="window.location.href='adminAutoPost.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #ff9a9e, #fecfef); color: #111; border: 1px solid #ff9a9e; height: 100%; transition: transform 0.2s;">
                     <i class="fas fa-magic" style="font-size: 3.5rem;"></i> 

@@ -254,122 +254,179 @@ function copyGenResult() {
 
 async function downloadSummaryImage() {
     if (!window.lastGeneratedCards || window.lastGeneratedCards.length === 0) return alert('ยังไม่มีข้อมูล กรุณากดสร้างข้อความก่อน');
-    if (typeof html2canvas === 'undefined') return alert('กำลังโหลดไลบรารีรูปภาพ กรุณารอสักครู่...');
-
-    const container = document.getElementById('canvasExportArea');
-    const cards = window.lastGeneratedCards;
     
-    // Vibrant colors for the day indicators (matches the mockup's neon glow feel)
-    const HEX_COLORS = {
-        "🔴": "#ff4d4d", "🟡": "#ffd700", "🩷": "#ffb6c1",
-        "🟢": "#00e676", "🟠": "#ff9100", "🔵": "#2979ff", "🟣": "#d500f9",
-        "♈": "#ff4d4d", "♉": "#00e676", "♊": "#ffd700", "♋": "#b0bec5",
-        "♌": "#ff9100", "♍": "#78909c", "♎": "#2979ff", "♏": "#d500f9",
-        "♐": "#ffab00", "♑": "#455a64", "♒": "#00b0ff", "♓": "#00e5ff"
-    };
-    
-    let itemsHtml = '';
-    
-    for(let card of cards) {
-        const bgColor = HEX_COLORS[card.icon] || "#d4af37";
-        
-        let wShort = card.wText.length > 50 ? card.wText.substring(0, 50) + '...' : card.wText;
-        let fShort = card.fText.length > 50 ? card.fText.substring(0, 50) + '...' : card.fText;
-        let lShort = card.lText.length > 50 ? card.lText.substring(0, 50) + '...' : card.lText;
-        
-        // Remove emoji from card title if it exists, as we use a colored circle instead
-        let cleanTitle = card.title;
-        
-        itemsHtml += `
-            <div style="background: rgba(255, 255, 255, 0.4); border-radius: 18px; padding: 20px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05), inset 0 10px 20px -10px ${bgColor}88; border: 1px solid rgba(255, 255, 255, 0.8); display: flex; flex-direction: column; gap: 8px; width: calc(33.333% - 14px); box-sizing: border-box; position: relative; overflow: hidden; backdrop-filter: blur(5px);">
-                
-                <!-- Card Header -->
-                <div style="font-size: 20px; color: #1a1a2e; font-weight: bold; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 12px; margin-bottom: 5px;">
-                    <div style="width: 18px; height: 18px; border-radius: 50%; background: ${bgColor}; box-shadow: 0 0 8px ${bgColor}; border: 2px solid white;"></div>
-                    ${cleanTitle}
-                    
-                    <!-- Faded planet icon top right -->
-                    <div style="position: absolute; top: 15px; right: 15px; font-size: 30px; opacity: 0.15; filter: grayscale(100%);">🪐</div>
-                </div>
-                
-                <!-- Content -->
-                <div style="font-size: 13.5px; line-height: 1.5; color: #2d3436; display: flex; gap: 6px;">
-                    <span style="font-size: 14px;">💼</span>
-                    <span>${wShort}</span>
-                </div>
-                <div style="font-size: 13.5px; line-height: 1.5; color: #2d3436; display: flex; gap: 6px;">
-                    <span style="font-size: 14px;">💰</span>
-                    <span>${fShort}</span>
-                </div>
-                <div style="font-size: 13.5px; line-height: 1.5; color: #2d3436; display: flex; gap: 6px;">
-                    <span style="font-size: 14px;">❤️</span>
-                    <span>${lShort}</span>
-                </div>
-                
-                <!-- Bottom Pill & Stars -->
-                <div style="margin-top: auto; padding-top: 10px; text-align: center;">
-                    <div style="background: linear-gradient(to right, #b8860b, #d4af37); color: white; padding: 4px 20px; border-radius: 20px; font-size: 13px; font-weight: bold; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-                        เลขมงคล: ${card.luckyNum || '00'}
-                    </div>
-                    <div style="margin-top: 5px; color: #FFDF73; font-size: 14px; letter-spacing: 2px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
-                        ⭐⭐⭐⭐⭐
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    const dateStr = document.getElementById('genDate').value;
-    const dateObj = new Date(dateStr);
-    const dateThStr = dateObj.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-    container.innerHTML = `
-        <div id="exportSummary" style="width: 1080px; background: linear-gradient(135deg, #6c7293, #8c90a8, #6c7293); color: #333; font-family: 'Sarabun', sans-serif; padding: 35px; box-sizing: border-box; text-align: center; position: relative;">
-            
-            <!-- Stars background -->
-            <div style="position: absolute; top: 15%; left: 10%; font-size: 10px; color: white; opacity: 0.5;">✨</div>
-            <div style="position: absolute; top: 30%; right: 15%; font-size: 14px; color: white; opacity: 0.4;">✨</div>
-            <div style="position: absolute; bottom: 20%; left: 20%; font-size: 12px; color: white; opacity: 0.6;">✨</div>
-            <div style="position: absolute; bottom: 40%; right: 10%; font-size: 8px; color: white; opacity: 0.5;">✨</div>
-            <div style="position: absolute; top: 50%; left: 5%; font-size: 16px; color: white; opacity: 0.3;">✨</div>
-            
-            <div style="position: relative; z-index: 10; background: rgba(255, 255, 255, 0.25); padding: 35px 30px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid rgba(255, 255, 255, 0.4); backdrop-filter: blur(10px);">
-                
-                <div style="margin-bottom: 25px;">
-                    <h1 style="color: #FFDF73; font-size: 48px; margin: 0 0 5px 0; font-weight: bold; text-shadow: 1px 2px 4px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; gap: 15px;">
-                        <span style="font-size: 50px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🌙</span> สรุปดวงประจำวัน
-                    </h1>
-                    <h2 style="color: #ffffff; font-weight: 500; font-size: 22px; margin: 0; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
-                        ประจำ${dateThStr}
-                    </h2>
-                </div>
-                
-                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; text-align: left;">
-                    ${itemsHtml}
-                </div>
-                
-                <div style="margin-top: 30px; font-size: 16px; color: #333; font-weight: bold; padding: 10px 30px; background: rgba(255,255,255,0.7); border-radius: 30px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.9);">
-                    <span style="color: #b8860b;">🌟</span> อ่านคำทำนายเจาะลึก 100% ได้ที่แคปชั่น! #สยามโหรามงคล <span style="color: #b8860b;">🌟</span>
-                </div>
-                
-            </div>
-        </div>
-    `;
-
-    await new Promise(r => setTimeout(r, 200));
-    const el = document.getElementById('exportSummary');
-    const canvas = await html2canvas(el, { 
-        scale: 2, 
-        useCORS: true,
-        backgroundColor: "#6c7293",
-        logging: false
+    Swal.fire({
+        title: 'กำลังสร้างภาพสรุป...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
     });
-    const dataUrl = canvas.toDataURL('image/png', 0.9);
-    
-    const link = document.createElement('a');
-    link.download = `ดวงรายวัน_${dateStr}.png`;
-    link.href = dataUrl;
-    link.click();
-    
-    container.innerHTML = '';
+
+    try {
+        const cards = window.lastGeneratedCards;
+        const HEX_COLORS = {
+            "🔴": "#ff4d4d", "🟡": "#ffd700", "🩷": "#ffb6c1",
+            "🟢": "#00e676", "🟠": "#ff9100", "🔵": "#2979ff", "🟣": "#d500f9",
+            "♈": "#ff4d4d", "♉": "#00e676", "♊": "#ffd700", "♋": "#b0bec5",
+            "♌": "#ff9100", "♍": "#78909c", "♎": "#2979ff", "♏": "#d500f9",
+            "♐": "#ffab00", "♑": "#455a64", "♒": "#00b0ff", "♓": "#00e5ff"
+        };
+        
+        const dateStr = document.getElementById('genDate').value;
+        const dateObj = new Date(dateStr);
+        const dateThStr = dateObj.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        // Calculate layout
+        const canvasWidth = 1080;
+        const cols = 3;
+        const rows = Math.ceil(cards.length / cols);
+        const cardWidth = 310; // (1080 - 60 padding - 40 gap) / 3 ≈ 326 -> 310 for safety
+        const cardHeight = 280;
+        const gap = 20;
+        
+        const paddingTop = 130;
+        const titleAreaHeight = 120;
+        const gridHeight = rows * cardHeight + (rows - 1) * gap;
+        const bottomAreaHeight = 100;
+        const paddingBottom = 65;
+        
+        const canvasHeight = paddingTop + titleAreaHeight + gridHeight + bottomAreaHeight + paddingBottom;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        const ctx = canvas.getContext('2d');
+
+        // Background
+        const bgGrad = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+        bgGrad.addColorStop(0, '#6c7293');
+        bgGrad.addColorStop(0.5, '#8c90a8');
+        bgGrad.addColorStop(1, '#6c7293');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        // Stars
+        ctx.fillStyle = 'white';
+        for (let i = 0; i < 50; i++) {
+            ctx.globalAlpha = Math.random() * 0.5 + 0.1;
+            ctx.font = (Math.random() * 10 + 8) + "px Arial";
+            ctx.fillText("✨", Math.random() * canvasWidth, Math.random() * canvasHeight);
+        }
+        ctx.globalAlpha = 1.0;
+
+        // Main Panel (Glassmorphism effect)
+        drawRoundedRect(ctx, 30, 35, canvasWidth - 60, canvasHeight - 70, 24, 'rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.4)', {color: 'rgba(0,0,0,0.1)', blur: 35});
+
+        // Title
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.font = 'bold 48px "Sarabun", sans-serif';
+        drawStrokedText(ctx, "🌙 สรุปดวงประจำวัน", canvasWidth / 2, 60, '#FFDF73', 'rgba(0,0,0,0.3)', 2);
+        
+        ctx.font = '500 22px "Sarabun", sans-serif';
+        drawStrokedText(ctx, `ประจำ${dateThStr}`, canvasWidth / 2, 120, '#ffffff', 'rgba(0,0,0,0.2)', 1);
+
+        // Grid
+        const startX = 30 + (canvasWidth - 60 - (cols * cardWidth + (cols - 1) * gap)) / 2;
+        const startY = paddingTop + titleAreaHeight;
+
+        for (let i = 0; i < cards.length; i++) {
+            const card = cards[i];
+            const col = i % cols;
+            const row = Math.floor(i / cols);
+            const cx = startX + col * (cardWidth + gap);
+            const cy = startY + row * (cardHeight + gap);
+            const bgColor = HEX_COLORS[card.icon] || "#d4af37";
+
+            // Card Panel
+            drawRoundedRect(ctx, cx, cy, cardWidth, cardHeight, 18, 'rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0.8)', {color: 'rgba(0,0,0,0.05)', blur: 15});
+            
+            // Header
+            ctx.beginPath();
+            ctx.moveTo(cx + 15, cy + 45);
+            ctx.lineTo(cx + cardWidth - 15, cy + 45);
+            ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Color circle
+            ctx.beginPath();
+            ctx.arc(cx + 25, cy + 25, 9, 0, Math.PI * 2);
+            ctx.fillStyle = bgColor;
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+            
+            // Title
+            ctx.textAlign = 'left';
+            ctx.font = 'bold 20px "Sarabun", sans-serif';
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillText(card.title, cx + 42, cy + 13);
+            
+            // Content
+            ctx.font = '13.5px "Sarabun", sans-serif';
+            ctx.fillStyle = '#2d3436';
+            
+            const wShort = card.wText.length > 50 ? card.wText.substring(0, 50) + '...' : card.wText;
+            const fShort = card.fText.length > 50 ? card.fText.substring(0, 50) + '...' : card.fText;
+            const lShort = card.lText.length > 50 ? card.lText.substring(0, 50) + '...' : card.lText;
+            
+            let currentY = cy + 55;
+            ctx.fillText("💼", cx + 15, currentY);
+            let lines = wrapText(ctx, wShort, cx + 35, currentY, cardWidth - 50, 20);
+            
+            currentY += lines * 20 + 5;
+            ctx.fillText("💰", cx + 15, currentY);
+            lines = wrapText(ctx, fShort, cx + 35, currentY, cardWidth - 50, 20);
+            
+            currentY += lines * 20 + 5;
+            ctx.fillText("❤️", cx + 15, currentY);
+            wrapText(ctx, lShort, cx + 35, currentY, cardWidth - 50, 20);
+
+            // Bottom Pill
+            const pillWidth = 140;
+            const pillHeight = 28;
+            const pillX = cx + (cardWidth - pillWidth) / 2;
+            const pillY = cy + cardHeight - 55;
+            
+            const pillGrad = ctx.createLinearGradient(pillX, pillY, pillX + pillWidth, pillY);
+            pillGrad.addColorStop(0, '#b8860b');
+            pillGrad.addColorStop(1, '#d4af37');
+            drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, 14, pillGrad, null, {color: 'rgba(0,0,0,0.2)', blur: 5, offsetY: 2});
+            
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 13px "Sarabun", sans-serif';
+            ctx.fillStyle = 'white';
+            ctx.fillText(`เลขมงคล: ${card.luckyNum || '00'}`, cx + cardWidth / 2, pillY + 6);
+            
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#FFDF73';
+            ctx.fillText("⭐⭐⭐⭐⭐", cx + cardWidth / 2, pillY + 35);
+        }
+
+        // Bottom Banner
+        const bannerWidth = 450;
+        const bannerHeight = 40;
+        const bannerX = (canvasWidth - bannerWidth) / 2;
+        const bannerY = startY + gridHeight + 30;
+        
+        drawRoundedRect(ctx, bannerX, bannerY, bannerWidth, bannerHeight, 20, 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0.9)', {color: 'rgba(0,0,0,0.1)', blur: 10, offsetY: 4});
+        
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 16px "Sarabun", sans-serif';
+        ctx.fillStyle = '#333';
+        ctx.fillText("🌟 อ่านคำทำนายเจาะลึก 100% ได้ที่แคปชั่น! #สยามโหรามงคล 🌟", canvasWidth / 2, bannerY + 12);
+
+        // Save
+        const dataUrl = canvas.toDataURL('image/png', 0.9);
+        const link = document.createElement('a');
+        link.download = `ดวงรายวัน_${dateStr}.png`;
+        link.href = dataUrl;
+        link.click();
+        
+        Swal.close();
+    } catch (err) {
+        console.error("Error drawing canvas: ", err);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถสร้างภาพได้', 'error');
+    }
 }

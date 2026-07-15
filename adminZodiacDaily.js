@@ -112,60 +112,193 @@ function renderZodiacDailyPreview() {
     }
 }
 
-function downloadZodiacDailyImage() {
-    if (typeof html2canvas === 'undefined') {
-        Swal.fire('ข้อผิดพลาด', 'ไม่พบไลบรารี html2canvas', 'error');
+async function downloadZodiacDailyImage() {
+    if (typeof generateDailyZodiacFortunes !== 'function') {
+        Swal.fire('ข้อผิดพลาด', 'ไม่พบฟังก์ชัน generateDailyZodiacFortunes', 'error');
         return;
     }
 
-    const captureArea = document.getElementById('zdCaptureArea');
-    
     Swal.fire({
         title: 'กำลังสร้างรูปภาพ...',
-        text: 'กรุณารอสักครู่ (อาจใช้เวลา 2-3 วินาที)',
+        text: 'กรุณารอสักครู่',
         allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-            
-            // Clone DOM Element to render off-screen without scaling issues
-            const clone = captureArea.cloneNode(true);
-            
-            clone.style.position = 'absolute';
-            clone.style.top = '0px';
-            clone.style.left = '0px';
-            clone.style.zIndex = '-9999';
-            clone.style.transform = 'none';
-            clone.style.margin = '0';
-            clone.style.width = '1400px';
-            clone.style.height = '900px';
-            
-            document.body.appendChild(clone);
-
-            html2canvas(clone, {
-                scale: 2, // High resolution
-                useCORS: true,
-                logging: false,
-                width: 1400,
-                height: 900
-            }).then(canvas => {
-                document.body.removeChild(clone);
-
-                const dateStr = document.getElementById('zdDate').value;
-                const filename = `zodiac_daily_premium_${dateStr}.png`;
-                
-                const link = document.createElement('a');
-                link.download = filename;
-                link.href = canvas.toDataURL('image/png', 1.0);
-                link.click();
-                
-                Swal.fire('สำเร็จ!', 'ดาวน์โหลดภาพดวง 12 ราศีเรียบร้อยแล้ว', 'success');
-            }).catch(err => {
-                console.error("HTML2Canvas Error:", err);
-                document.body.removeChild(clone);
-                Swal.fire('ผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้ กรุณาลองใหม่', 'error');
-            });
-        }
+        didOpen: () => { Swal.showLoading(); }
     });
+
+    try {
+        await document.fonts.ready;
+        
+        const dateStr = document.getElementById('zdDate').value;
+        const dateObj = new Date(dateStr);
+        const THAI_DAYS = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
+        const dayOfWeek = THAI_DAYS[dateObj.getDay()];
+        const day = dateObj.getDate();
+        const month = THAI_MONTHS[dateObj.getMonth()];
+        const year = dateObj.getFullYear() + 543;
+        
+        const badgeText = `ประจำวัน ${dayOfWeek} ที่ ${day} เดือน ${month} พ.ศ. ${year}`;
+        const predictions = generateDailyZodiacFortunes(dateObj);
+
+        const canvasWidth = 1400;
+        const canvasHeight = 900;
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        const ctx = canvas.getContext('2d');
+
+        // Draw Background image or color
+        ctx.fillStyle = '#1a0831';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        const bgImg = new Image();
+        bgImg.src = 'assets/thai_astrology_bg.png';
+        await new Promise((resolve) => {
+            bgImg.onload = () => {
+                ctx.drawImage(bgImg, 0, 0, canvasWidth, canvasHeight);
+                resolve();
+            };
+            bgImg.onerror = () => resolve(); // If missing, just use color
+        });
+        
+        // Add dark overlay to make text readable
+        ctx.fillStyle = 'rgba(26, 8, 49, 0.4)';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        // Border (6px solid #e9b64c)
+        ctx.strokeStyle = '#e9b64c';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(3, 3, canvasWidth - 6, canvasHeight - 6);
+        
+        // Ornate Border (dashed)
+        ctx.strokeStyle = 'rgba(233, 182, 76, 0.7)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([10, 10]);
+        ctx.strokeRect(15, 15, canvasWidth - 30, canvasHeight - 30);
+        ctx.setLineDash([]);
+
+        // Header Text
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#f9d976';
+        ctx.font = 'bold 76px "Prompt", sans-serif';
+        drawStrokedText(ctx, "ทำนายดวงชะตา 12ราศี", canvasWidth / 2, 95, '#f9d976', 'rgba(0,0,0,0.9)', 3);
+
+        ctx.font = 'bold 24px "Sarabun", sans-serif';
+        const badgeWidth = 480;
+        const badgeHeight = 46;
+        const badgeX = (canvasWidth - badgeWidth) / 2;
+        const badgeGrad = ctx.createLinearGradient(0, 130, 0, 176);
+        badgeGrad.addColorStop(0, '#d4af37');
+        badgeGrad.addColorStop(1, '#b8860b');
+        drawRoundedRect(ctx, badgeX, 130, badgeWidth, badgeHeight, 8, badgeGrad);
+        ctx.fillStyle = '#1a0831';
+        ctx.fillText(badgeText, canvasWidth / 2, 161);
+        
+        ctx.fillStyle = '#f9d976';
+        ctx.font = '20px "Sarabun", sans-serif';
+        drawStrokedText(ctx, "✦ โดย สยามโหรามงคล ✦", canvasWidth / 2, 210, '#f9d976', 'rgba(0,0,0,0.8)', 1);
+
+        // Grid parameters (6 columns, 2 rows)
+        const cols = 6;
+        const rows = 2;
+        const gapX = 15;
+        const gapY = 15;
+        const cardWidth = (1400 - 60 - (cols - 1) * gapX) / cols; // 30px padding on each side
+        const cardHeight = 280;
+        const startX = 30;
+        const startY = 240;
+
+        for (let i = 0; i < predictions.length; i++) {
+            const p = predictions[i];
+            const col = i % cols;
+            const row = Math.floor(i / cols);
+            const cx = startX + col * (cardWidth + gapX);
+            const cy = startY + row * (cardHeight + gapY);
+
+            // Card Background
+            const cardGrad = ctx.createLinearGradient(cx, cy, cx + cardWidth, cy + cardHeight);
+            cardGrad.addColorStop(0, 'rgba(255,249,235,0.95)');
+            cardGrad.addColorStop(1, 'rgba(253,228,181,0.95)');
+            drawRoundedRect(ctx, cx, cy, cardWidth, cardHeight, 10, cardGrad, '#b8860b', {color: 'rgba(0,0,0,0.5)', blur: 15});
+            ctx.strokeStyle = 'rgba(184, 134, 11, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(cx + 4, cy + 4, cardWidth - 8, cardHeight - 8);
+            
+            // Header Line
+            ctx.beginPath();
+            ctx.moveTo(cx + 12, cy + 65);
+            ctx.lineTo(cx + cardWidth - 12, cy + 65);
+            ctx.setLineDash([3, 3]);
+            ctx.strokeStyle = 'rgba(184, 134, 11, 0.5)';
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Icon circle
+            const iconGrad = ctx.createLinearGradient(cx + 12, cy + 12, cx + 56, cy + 56);
+            iconGrad.addColorStop(0, '#2c0f4c');
+            iconGrad.addColorStop(1, '#1a0831');
+            ctx.beginPath();
+            ctx.arc(cx + 34, cy + 34, 22, 0, Math.PI * 2);
+            ctx.fillStyle = iconGrad;
+            ctx.fill();
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#f9d976';
+            ctx.font = '22px "Sarabun", sans-serif';
+            ctx.fillText(p.icon, cx + 34, cy + 42);
+
+            // Title
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#1a0831';
+            ctx.font = 'bold 18px "Sarabun", sans-serif';
+            ctx.fillText(p.name, cx + 64, cy + 28);
+            
+            ctx.fillStyle = '#555';
+            ctx.font = '11px "Sarabun", sans-serif';
+            ctx.fillText(p.dateRange, cx + 64, cy + 46);
+
+            // Description
+            ctx.fillStyle = '#1a0831';
+            ctx.font = '13px "Sarabun", sans-serif';
+            const shortDesc = p.description.length > 55 ? p.description.substring(0, 55) + '...' : p.description;
+            wrapText(ctx, shortDesc, cx + 12, cy + 85, cardWidth - 24, 19);
+
+            // Good / Bad
+            const goodY = cy + cardHeight - 85;
+            const badY = cy + cardHeight - 45;
+            
+            ctx.fillStyle = '#2E7D32';
+            ctx.font = 'bold 12px "Sarabun", sans-serif';
+            // wrap text to prevent overflow
+            const goodTxt = `✓ ดี : ${p.good}`.substring(0, 60);
+            wrapText(ctx, goodTxt + (p.good.length > 60 ? '...' : ''), cx + 12, goodY, cardWidth - 24, 18);
+            
+            ctx.fillStyle = '#C62828';
+            const badTxt = `⚠ ระวัง : ${p.bad}`.substring(0, 60);
+            wrapText(ctx, badTxt + (p.bad.length > 60 ? '...' : ''), cx + 12, badY, cardWidth - 24, 18);
+        }
+
+        // Footer Text
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#f9d976';
+        ctx.font = '22px "Sarabun", sans-serif';
+        drawStrokedText(ctx, "ทำดี คิดดี พูดดี จะมีแต่สิ่งดี ๆ เข้ามาในชีวิต", canvasWidth / 2, canvasHeight - 35, '#f9d976', 'rgba(0,0,0,0.8)', 1);
+
+        // Save
+        const imgData = canvas.toDataURL('image/png', 0.9);
+        const link = document.createElement('a');
+        link.download = `zodiac_daily_premium_${dateStr}.png`;
+        link.href = imgData;
+        link.click();
+        
+        Swal.fire('สำเร็จ!', 'ดาวน์โหลดภาพดวง 12 ราศีเรียบร้อยแล้ว', 'success');
+
+    } catch (error) {
+        console.error(error);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้', 'error');
+    }
 }
 
 function copyTextForFacebook() {

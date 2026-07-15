@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สร้างโพสต์เลขเด็ด (ทักษาพยากรณ์) - สยามโหรามงคล</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { 
+            margin: 0; 
+            background: linear-gradient(135deg, #1f0b33, #0a0414); 
+            color: #fff; 
+            font-family: 'Sarabun', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        .header { 
+            background: rgba(15, 12, 41, 0.8); 
+            backdrop-filter: blur(10px);
+            padding: 20px 40px; 
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5); 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 { 
+            margin: 0; 
+            color: #FFDF73; 
+            font-size: 26px; 
+            text-shadow: 0 0 15px rgba(212,175,55,0.4); 
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .header h1 i { color: #d4af37; }
+        .back-btn { 
+            background: rgba(255, 255, 255, 0.05); 
+            color: #FFDF73; 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            padding: 10px 25px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 16px; 
+        }
+        .back-btn:hover { 
+            background: rgba(212, 175, 55, 0.15); 
+            border-color: #d4af37; 
+            box-shadow: 0 0 15px rgba(212,175,55,0.2);
+            transform: translateY(-2px);
+        }
+        .content { 
+            display: flex; 
+            flex: 1; 
+            padding: 30px 40px; 
+            gap: 40px; 
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .sidebar { 
+            flex: 0 0 400px; 
+            background: rgba(30, 20, 50, 0.6); 
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.2); 
+            border-radius: 20px; 
+            padding: 35px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 25px; 
+            height: fit-content;
+        }
+        .sidebar-title {
+            color: #FFF;
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            background: rgba(255, 255, 255, 0.03); 
+            padding: 20px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        .form-group label { 
+            color: #FFDF73; 
+            font-weight: 500; 
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-group input, .form-group textarea { 
+            padding: 14px; 
+            border-radius: 8px; 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            background: rgba(0, 0, 0, 0.4); 
+            color: #fff; 
+            font-family: 'Sarabun'; 
+            font-size: 16px;
+        }
+        .btn-generate { 
+            background: linear-gradient(135deg, #d4af37, #f39c12); 
+            color: #111; 
+            font-weight: 700; 
+            font-size: 18px; 
+            padding: 18px; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            margin-top: 10px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+        .btn-generate:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(212,175,55,0.5); }
+        .preview-area { 
+            flex: 1; 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+            border-radius: 20px; 
+            padding: 40px; 
+            display: flex; 
+            flex-direction: column;
+            overflow-y: auto; 
+            align-items: center; 
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.2); border-color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1><i class="fas fa-dice"></i> ระบบสร้างโพสต์เลขเด็ด (ทักษาพยากรณ์)</h1>
+        <a href="admin.html" class="back-btn"><i class="fas fa-arrow-left"></i> กลับไประบบหลังบ้าน</a>
+    </div>
+
+    <div class="content">
+        <div class="sidebar">
+            <h3 class="sidebar-title"><i class="fas fa-sliders-h"></i> ตั้งค่าการคำนวณ</h3>
+            
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> วันที่ออกสลาก:</label>
+                <input type="date" id="lottoDate">
+            </div>
+
+            <div class="form-group" style="background: rgba(255,215,0,0.1); border-color: rgba(212,175,55,0.5);">
+                <label style="color: #fff;"><i class="fas fa-info-circle"></i> หลักการคำนวณ</label>
+                <p style="font-size: 13px; color: #ddd; margin: 0; line-height: 1.5;">
+                    ระบบจะใช้วันที่ออกสลากเพื่อหา <strong>ดาวประจำวัน</strong> (เลขเด่นวิ่ง/รูด), 
+                    <strong>ภูมิศรี</strong> (โชคลาภ), และ <strong>ภูมิกาลกิณี</strong> (เลขต้องระวัง) 
+                    และนำมาจับคู่เป็นชุด 2 ตัว และ 3 ตัวตามหลักโหราศาสตร์
+                </p>
+            </div>
+            
+            <button class="btn-generate" onclick="generateLottoPost()"><i class="fas fa-magic"></i> วิเคราะห์และสร้างโพสต์</button>
+        </div>
+        
+        <div class="preview-area" id="previewArea">
+            <div id="previewPlaceholder" style="color: rgba(255,255,255,0.4); text-align: center; margin-top: 15vh;">
+                <i class="fas fa-star-and-crescent" style="font-size: 80px; color: rgba(212, 175, 55, 0.2); margin-bottom: 20px;"></i>
+                <h3 style="margin: 0; font-weight: 400;">รอกำหนดวันที่ออกสลาก</h3>
+            </div>
+
+            <div id="genResultContainer" style="display: none; width: 100%; max-width: 800px; flex-direction: column; gap: 20px;">
+                <!-- Caption Textarea -->
+                <div class="form-group" style="background: rgba(20, 15, 35, 0.8);">
+                    <label style="font-size: 18px;"><i class="fas fa-copy"></i> แคปชั่นสำหรับโพสต์ (Caption):</label>
+                    <textarea id="genResultText" rows="12" readonly style="font-size: 15px; white-space: pre-wrap; resize: vertical; border-color: #d4af37;"></textarea>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 10px;">
+                        <button class="btn-secondary" style="flex: 1; background: rgba(52, 152, 219, 0.2); border-color: #3498db; color: #3498db;" onclick="copyGenResult()"><i class="fas fa-clipboard"></i> คัดลอกแคปชั่น</button>
+                        <button class="btn-secondary" style="flex: 1; background: rgba(241, 196, 15, 0.2); border-color: #f1c40f; color: #f1c40f;" onclick="downloadLottoImage()"><i class="fas fa-image"></i> ดาวน์โหลดรูปภาพ (PNG)</button>
+                    </div>
+                </div>
+
+                <!-- Canvas Export Area -->
+                <div id="canvasExportArea" style="width: 1080px; position: absolute; left: -9999px; top: 0;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="adminLottoPost.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set next lotto date as default
+            const now = new Date();
+            let target;
+            if (now.getDate() < 16) {
+                target = new Date(now.getFullYear(), now.getMonth(), 16);
+            } else {
+                target = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            }
+            // fix timezone offset
+            const offset = target.getTimezoneOffset();
+            target = new Date(target.getTime() - (offset*60*1000));
+            document.getElementById('lottoDate').value = target.toISOString().split('T')[0];
+        });
+    </script>
+</body>
+</html>

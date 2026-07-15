@@ -192,9 +192,6 @@ function renderWeeklyFortunePreview() {
 }
 
 async function downloadWeeklyFortuneImage() {
-    const element = document.getElementById('wfCaptureArea');
-    if (!element) return;
-
     Swal.fire({
         title: 'กำลังสร้างรูปภาพ...',
         allowOutsideClick: false,
@@ -203,14 +200,156 @@ async function downloadWeeklyFortuneImage() {
 
     try {
         await document.fonts.ready;
-    const canvas = await html2canvas(element, {
-            scale: 2, 
-            useCORS: true,
-            backgroundColor: '#ffffff'
-        });
+        
+        const canvasWidth = 1200;
+        const canvasHeight = 800;
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        const ctx = canvas.getContext('2d');
+
+        // Background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        // Decor circles
+        ctx.beginPath();
+        ctx.arc(100, 100, 200, 0, Math.PI * 2); // center -100,-100 radius 200 -> center is 100,100 because width 400 is radius 200. Actually if it's top: -100px, left: -100px and size 400x400, center is 100,100.
+        ctx.fillStyle = 'rgba(241, 196, 15, 0.1)';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(canvasWidth - 150, canvasHeight - 150, 250, 0, Math.PI * 2); // size 500x500
+        ctx.fillStyle = 'rgba(212, 175, 55, 0.1)';
+        ctx.fill();
+
+        const dateStr = document.getElementById('wfDate').value;
+        const dateObj = new Date(dateStr);
+        const dayNameStr = WF_DAY_NAMES[dateObj.getDay()];
+        const dateTitle = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        // Header
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 48px "Sarabun", sans-serif';
+        ctx.fillText("เช็กดวงรายวัน!", canvasWidth / 2, 100);
+        
+        ctx.fillStyle = '#d4af37';
+        ctx.font = 'bold 42px "Sarabun", sans-serif';
+        ctx.fillText(`วัน${dayNameStr}ที่ ${dateTitle}`, canvasWidth / 2, 160);
+        
+        ctx.font = 'bold 24px "Sarabun", sans-serif';
+        const pillWidth = 220;
+        const pillHeight = 50;
+        const pillX = (canvasWidth - pillWidth) / 2;
+        drawRoundedRect(ctx, pillX, 190, pillWidth, pillHeight, 25, '#333');
+        ctx.fillStyle = '#d4af37';
+        ctx.fillText("พร้อมเคล็ดลับเสริมเฮง", canvasWidth / 2, 225);
+
+        // Best Day / Text / Bad Day
+        const highlightY = 280;
+        
+        // Best Day
+        const bestGrad = ctx.createLinearGradient(80, highlightY, 330, highlightY + 250);
+        bestGrad.addColorStop(0, '#f1c40f');
+        bestGrad.addColorStop(1, '#e67e22');
+        ctx.beginPath(); ctx.arc(205, highlightY + 125, 125, 0, Math.PI * 2);
+        ctx.fillStyle = bestGrad; ctx.fill();
+        ctx.beginPath(); ctx.arc(205, highlightY + 125, 120, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff'; ctx.fill();
+        
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 20px "Sarabun", sans-serif';
+        ctx.fillText("วันมงคลสูงสุด", 205, highlightY + 120);
+        ctx.fillStyle = '#666';
+        ctx.font = '16px "Sarabun", sans-serif';
+        ctx.fillText("(ธงชัย/อธิบดี)", 205, highlightY + 145);
+        ctx.fillStyle = '#d4af37';
+        ctx.font = 'bold 16px "Sarabun", sans-serif';
+        ctx.fillText("คำนวณอัตโนมัติ", 205, highlightY + 175);
+
+        // Bad Day
+        const badGrad = ctx.createLinearGradient(1200 - 330, highlightY, 1200 - 80, highlightY + 250);
+        badGrad.addColorStop(0, '#e74c3c');
+        badGrad.addColorStop(1, '#c0392b');
+        ctx.beginPath(); ctx.arc(1200 - 205, highlightY + 125, 125, 0, Math.PI * 2);
+        ctx.fillStyle = badGrad; ctx.fill();
+        ctx.beginPath(); ctx.arc(1200 - 205, highlightY + 125, 120, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff'; ctx.fill();
+
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 20px "Sarabun", sans-serif';
+        ctx.fillText("วันที่ต้องระวัง", 1200 - 205, highlightY + 120);
+        ctx.fillStyle = '#666';
+        ctx.font = '16px "Sarabun", sans-serif';
+        ctx.fillText("(วันอุบาทว์)", 1200 - 205, highlightY + 145);
+        ctx.fillStyle = '#e74c3c';
+        ctx.font = 'bold 16px "Sarabun", sans-serif';
+        ctx.fillText("คำนวณอัตโนมัติ", 1200 - 205, highlightY + 175);
+
+        // Center text
+        ctx.fillStyle = '#555';
+        ctx.font = '20px "Sarabun", sans-serif';
+        const centerTxt = `สรุปคำทำนายดวงชะตาประจำวัน${dayNameStr}ที่ ${dateTitle} ครบทั้ง 7 วันเกิด โดยเป็นเกณฑ์พิเศษประจำวัน พร้อมคำแนะนำสีมงคลเพื่อเสริมโชคลาภ`;
+        wrapText(ctx, centerTxt, 600, highlightY + 110, 400, 32);
+
+        // 7 Days Grid
+        const gridY = 600;
+        const cellWidth = 1140 / 7;
+        const startX = 30 + cellWidth / 2;
+        
+        for (let i = 0; i < 7; i++) {
+            let goodStr = "ทำจิตใจให้ผ่องใส";
+            let badStr = "ระวังการใช้อารมณ์";
+            let colorStr = "-";
+            
+            if (typeof DASH_TABOO !== 'undefined' && DASH_TABOO[i]) {
+                goodStr = DASH_TABOO[i].good[0] || goodStr;
+                badStr = DASH_TABOO[i].bad[0] || badStr;
+            }
+            if (typeof DASH_DAY_COLORS !== 'undefined' && DASH_DAY_COLORS[WF_DAY_NAMES[i]]) {
+                const colors = DASH_DAY_COLORS[WF_DAY_NAMES[i]].colors;
+                if(colors && colors.length > 0) colorStr = colors.join(', ');
+            }
+
+            const cx = startX + i * cellWidth;
+            
+            // Circle
+            ctx.beginPath(); ctx.arc(cx, gridY, 40, 0, Math.PI * 2);
+            ctx.fillStyle = WF_DAY_COLORS[i]; ctx.fill();
+            ctx.lineWidth = 4; ctx.strokeStyle = '#fff'; ctx.stroke();
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 24px "Sarabun", sans-serif';
+            ctx.fillText(WF_DAY_NAMES[i].substring(0,1), cx, gridY + 8);
+            
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 20px "Sarabun", sans-serif';
+            ctx.fillText(WF_DAY_NAMES[i], cx, gridY + 70);
+
+            ctx.font = '14px "Sarabun", sans-serif';
+            ctx.fillStyle = '#27ae60';
+            ctx.fillText(`จุดเด่น:`, cx, gridY + 95);
+            ctx.fillStyle = '#333';
+            wrapText(ctx, goodStr, cx, gridY + 115, cellWidth - 10, 18);
+            
+            ctx.fillStyle = '#c0392b';
+            ctx.fillText(`ระวัง:`, cx, gridY + 135);
+            ctx.fillStyle = '#333';
+            wrapText(ctx, badStr, cx, gridY + 155, cellWidth - 10, 18);
+            
+            ctx.fillStyle = '#666';
+            ctx.fillText(`สีมงคล:`, cx, gridY + 175);
+            ctx.fillStyle = '#333';
+            ctx.fillText(colorStr, cx, gridY + 195);
+        }
+        
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#999';
+        ctx.font = 'bold 18px "Sarabun", sans-serif';
+        ctx.fillText("🔮 สยามโหรามงคล", canvasWidth - 30, canvasHeight - 20);
 
         const imgData = canvas.toDataURL('image/png');
-        
         const link = document.createElement('a');
         link.download = `SiamHora_Daily_${document.getElementById('wfDate').value}.png`;
         link.href = imgData;
