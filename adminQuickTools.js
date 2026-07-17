@@ -38,17 +38,11 @@ function initAdminQuickTools() {
                     <i class="fas fa-images" style="font-size: 3.5rem;"></i> 
                     <span style="font-weight: bold;">ภาพดวงรายวัน<br>(แบบอัลบั้ม)</span>
                 </button>
-                
-                <!-- ไพ่ยิปซี (1 ใบ) -->
-                <button class="btn btn-dark shadow" onclick="openTarotFortuneModal()" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #4b134f, #c94b4b); color: #fff; border: 1px solid #c94b4b; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-clone" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">ภาพไพ่ยิปซี<br>(รายวัน 1 ใบ)</span>
-                </button>
-                
-                <!-- ไพ่ยิปซี (3 ใบ) - Navigate to external page -->
+                               
+                <!-- ไพ่ยิปซี  - Navigate to external page -->
                 <button class="btn btn-dark shadow" onclick="window.location.href='adminTarotReading.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #141e30, #243b55); color: #fff; border: 1px solid #243b55; height: 100%; transition: transform 0.2s;">
                     <i class="fas fa-layer-group" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">ทำนายไพ่ยิปซี<br>(3 ใบ)</span>
+                    <span style="font-weight: bold;">ทำนายไพ่ยิปซี<br></span>
                 </button>
                 
                 <!-- วอลเปเปอร์สายมู - Navigate to external page -->
@@ -91,6 +85,12 @@ function initAdminQuickTools() {
                 <button class="btn shadow" onclick="window.location.href='adminAutoPost.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #ff9a9e, #fecfef); color: #111; border: 1px solid #ff9a9e; height: 100%; transition: transform 0.2s;">
                     <i class="fas fa-magic" style="font-size: 3.5rem;"></i> 
                     <span style="font-weight: bold;">สร้างภาพดวงอัตโนมัติ<br><small style="font-weight: normal; font-size: 0.95rem; color: #555;">(ดึงจากฐานข้อมูลจริง)</small></span>
+                </button>
+                
+                <!-- สร้างภาพดวงอัตโนมัติ (NEW) -->
+                <button class="btn shadow" onclick="window.location.href='adminChartImageGen.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #111, #333); color: #FFDF73; border: 1px solid #D4AF37; height: 100%; transition: transform 0.2s;">
+                    <i class="fas fa-camera-retro" style="font-size: 3.5rem;"></i> 
+                    <span style="font-weight: bold;">สร้างภาพพื้นดวง<br><small style="font-weight: normal; font-size: 0.95rem; color: #AAA;">(วิเคราะห์กราฟ & ทักษา)</small></span>
                 </button>
             </div>
             

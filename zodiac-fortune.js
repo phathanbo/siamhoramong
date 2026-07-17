@@ -149,7 +149,7 @@ const ZODIAC_SIGNS = {
         name: "ราศีกุมภ์",
         english: "Aquarius",
         symbol: "♒",
-        dateRange: "20 ม.ค. - 18 พ.ค.",
+        dateRange: "20 ม.ค. - 18 ก.พ.",
         element: "อากาศ",
         mode: "Fixed (มั่นคง)",
         ruling: "ดาวยูเรนัส (Uranus)",
@@ -162,7 +162,7 @@ const ZODIAC_SIGNS = {
         name: "ราศีมีน",
         english: "Pisces",
         symbol: "♓",
-        dateRange: "19 พ.ค. - 20 มี.ค.",
+        dateRange: "19 ก.พ. - 20 มี.ค.",
         element: "น้ำ",
         mode: "Mutable (ยืดหยุ่น)",
         ruling: "ดาวเนปจูน (Neptune)",
@@ -389,6 +389,15 @@ function showZodiacFortunePage() {
             </div>
 
             <div class="card-body p-4">
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-8">
+                        <label class="text-gold"><strong>เลือกสมาชิกจากประวัติ:</strong></label>
+                        <select id="zodiacFortuneMemberSelect" class="form-control form-control-lg bg-dark text-white border-gold member-selector-shared"
+                            onchange="autoFillMemberData(this.value); handleZodiacChange()">
+                            <option value="">-- เลือกสมาชิก --</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group mb-4">

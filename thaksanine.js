@@ -5,67 +5,82 @@ function showThaksanine() {
   container.style.display = "block";
 
   const html = `
-  <div class="headpage">
-    <h1>🌟 ทักษาพยากรณ์ 🌟</h1>
-    <p class="text">ระบบพยากรณ์ดวงชะตาแบบละเอียด</p>
-  </div>
-  <div class="container">  
-      <div class="grid-taksa">
-              <select id="membersel"
-            class="form-control bg-dark text-white border-gold member-selector-shared"
-            onchange="autoFillMemberData(this.value); calculateAll()">
-            <option value="">-- เลือกสมาชิก --</option>
-        </select>
-        <div class="space-taksa">        
-          <div>          
-            <label class="form-col">วันเกิด</label>
-            <select id="weekday" onchange="calculateAll()">
-              <option value="0">อาทิตย์</option>
-              <option value="1">จันทร์</option>
-              <option value="2">อังคาร</option>
-              <option value="3">พุธ</option>
-              <option value="4">พฤหัสบดี</option>
-              <option value="5">ศุกร์</option>
-              <option value="6">เสาร์</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="form-col">อายุ (ปี)</label>
-            <input type="number" id="age" value="35" onchange="calculateAll()" readonly>
-          </div>
-
-            <div>
-              <label class="form-col">เดือน</label>
-              <input type="number" id="month" value="5" min="1" max="12" onchange="calculateAll()">
+    <div class="headpage text-center mb-4">
+        <h1>🌟 ทักษาพยากรณ์ 🌟</h1>
+        <p class="text-gold">ระบบพยากรณ์ดวงชะตาแบบละเอียด</p>
+    </div>
+    
+    <div class="container">
+        <div class="card shadow-lg border-gold overflow-hidden mb-4" style="background:#1a1a1a; border-radius:16px;">
+            <div class="card-header bg-dark text-white p-4 text-center">
+                <h4 class="mb-0 text-gold"><i class="bi bi-star-fill me-2"></i> ป้อนข้อมูลเพื่อพยากรณ์</h4>
             </div>
-
-            <div>
-              <label class="form-col">สัปดาห์</label>
-              <input type="number" id="week" value="22" min="1" max="52" onchange="calculateAll()">
-            </div>        
+            
+            <div class="card-body p-4">
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-8">
+                        <label class="text-gold mb-2"><strong>👤 เลือกสมาชิกจากประวัติ:</strong></label>
+                        <select id="membersel" class="form-control form-control-lg bg-dark text-white border-gold member-selector-shared"
+                            onchange="autoFillMemberData(this.value); calculateAll()">
+                            <option value="">-- เลือกสมาชิก --</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3 col-6">
+                        <label class="text-gold mb-2"><strong>📅 วันเกิด:</strong></label>
+                        <select id="weekday" class="form-control bg-dark text-white border-gold" onchange="calculateAll()">
+                            <option value="0">อาทิตย์</option>
+                            <option value="1">จันทร์</option>
+                            <option value="2">อังคาร</option>
+                            <option value="3">พุธ (กลางวัน)</option>
+                            <option value="7">พุธกลางคืน (ราหู)</option>
+                            <option value="4">พฤหัสบดี</option>
+                            <option value="5">ศุกร์</option>
+                            <option value="6">เสาร์</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3 col-6">
+                        <label class="text-gold mb-2"><strong>🎂 อายุ (ปี):</strong></label>
+                        <input type="number" id="age" class="form-control bg-dark text-white border-gold" value="35" onchange="calculateAll()" readonly>
+                    </div>
+                    
+                    <div class="col-md-3 col-6">
+                        <label class="text-gold mb-2"><strong>🌙 เดือน:</strong></label>
+                        <input type="number" id="month" class="form-control bg-dark text-white border-gold" value="5" min="1" max="12" onchange="calculateAll()">
+                    </div>
+                    
+                    <div class="col-md-3 col-6">
+                        <label class="text-gold mb-2"><strong>📆 สัปดาห์:</strong></label>
+                        <input type="number" id="week" class="form-control bg-dark text-white border-gold" value="22" min="1" max="52" onchange="calculateAll()">
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn btn-gold px-5 py-3 rounded-pill fw-bold" onclick="calculateAll()" style="background: linear-gradient(135deg, #b8860b, #ffd700); color: #000; border: none; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);">
+                        <i class="fas fa-magic me-2"></i> คำนวณดวงทักษา
+                    </button>
+                </div>
+            </div>
         </div>
-
-          <div class="text-center ">       
-            <button onclick="calculateAll()" style="margin-top: 1px;" class="btn-gold">คำนวณดวงทักษา</button>
-          </div> 
-          <hr>
-          <div id="result"></div> 
-          <div class="row mt-4">
+        
+        <div id="result" class="mt-4"></div>
+        
+        <div class="row mt-4 mb-5">
             <div class="col-6">
-              <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
-                <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
-              </button>
+                <button class="btn btn-outline-secondary btn-block border-0 rounded-pill p-3" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left me-2"></i> กลับห้องพยากรณ์
+                </button>
             </div>
             <div class="col-6">
-              <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
-                <i class="fas fa-home"></i> กลับหน้าหลัก
-              </button>
+                <button class="btn btn-outline-secondary btn-block border-0 rounded-pill p-3" onclick="goBack()">
+                    <i class="fas fa-home me-2"></i> กลับหน้าหลัก
+                </button>
             </div>
-          </div> 
-  </div>
-
-
+        </div>
+    </div>
   `;
   container.innerHTML = html;
 }
@@ -74,19 +89,32 @@ document.addEventListener("DOMContentLoaded", function () {
   showThaksanine();
 });
 
-// ข้อมูลหลัก
+// ข้อมูลหลัก: เรียงลำดับตามภูมิทักษา (เวียนขวา) 1-2-3-4-7-5-8-6-9
 const planetNames = [
-  "อาทิตย์",
-  "จันทร์",
-  "อังคาร",
-  "พุธ",
-  "พฤหัส",
-  "ศุกร์",
-  "เสาร์",
-  "ราหู",
-  "เกตุ",
+  "อาทิตย์", // 0
+  "จันทร์",  // 1
+  "อังคาร",  // 2
+  "พุธ",     // 3
+  "เสาร์",   // 4 (เวียนจากพุธไปเสาร์)
+  "พฤหัส",   // 5
+  "ราหู",    // 6
+  "ศุกร์",    // 7
+  "เกตุ",    // 8
 ];
-const elements = ["ไฟ", "ดิน", "ลม", "น้ำ", "ดิน", "น้ำ", "ไฟ", "ลม", "วิญญาณ"];
+
+// ธาตุตามลำดับดวงดาวในผังทักษา
+const elements = [
+  "ไฟ",     // 1 อาทิตย์
+  "ดิน",    // 2 จันทร์
+  "ลม",     // 3 อังคาร
+  "น้ำ",     // 4 พุธ
+  "ไฟ",     // 7 เสาร์
+  "ดิน",    // 5 พฤหัส
+  "ลม",     // 8 ราหู
+  "น้ำ",     // 6 ศุกร์
+  "วิญญาณ"  // 9 เกตุ
+];
+
 const meanings = [
   "บริวาร",
   "อายุ",
@@ -98,7 +126,17 @@ const meanings = [
   "กาลกิณี",
 ];
 
-const birthToIndex = { 0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6 };
+// Map วันเกิดไปยัง index ในผังทักษา
+const birthToIndex = { 
+  0: 0, // อาทิตย์ (0)
+  1: 1, // จันทร์ (1)
+  2: 2, // อังคาร (2)
+  3: 3, // พุธกลางวัน (3)
+  4: 5, // พฤหัส (5)
+  5: 7, // ศุกร์ (7)
+  6: 4, // เสาร์ (4)
+  7: 6  // พุธกลางคืน/ราหู (6) 
+};
 
 const meaningDesc = {
   บริวาร: "ตัวคุณเอง คนใกล้ชิด บริวาร ลูกหลาน คู่ครอง",

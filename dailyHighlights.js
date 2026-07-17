@@ -224,80 +224,227 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-/**
- * ดาวน์โหลดรูปภาพแผนที่ฤกษ์ประจำวัน
- */
 async function downloadDailyMap(element) {
-    // ตรวจสอบว่ามี Library html2canvas หรือไม่
-    if (typeof html2canvas === "undefined") {
-        Swal.fire('เกิดข้อผิดพลาด', 'ระบบไม่พบ Library สำหรับสร้างภาพ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต', 'error');
+    const picker = document.getElementById('highlightDatePicker');
+    if (!picker || !picker.value) {
+        if(typeof Swal !== 'undefined') Swal.fire('เกิดข้อผิดพลาด', 'กรุณาเลือกวันที่ก่อน', 'error');
+        else alert('กรุณาเลือกวันที่ก่อน');
         return;
     }
 
-    const area = document.getElementById('dailyMapCapture');
-    if (!area) return;
-
-    // [BUG FIX #2] ใช้ instanceof HTMLElement อย่างเดียวและ fallback ที่ชัดเจน
-    // หาก element ที่ส่งมาไม่ใช่ HTMLElement (เช่น event object หรือ string) จะ query ใหม่
     const btn = (element instanceof HTMLElement) ? element : document.querySelector('.download-btn');
     const originalContent = btn ? btn.innerHTML : "";
-
     if (btn) {
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังเตรียมภาพ...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังเตรียมภาพ...';
         btn.disabled = true;
     }
 
-    // สร้าง Footer สำหรับใส่ในภาพ
-    const footer = document.createElement('div');
-    footer.id = 'temp-footer';
-    footer.style.cssText = `
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-        padding-top: 15px;
-        border-top: 1px solid rgba(212,175,55,0.3);
-        color: #d4af37;
-    `;
-    footer.innerHTML = `
-        <div style="font-size: 14px;">🔮 <strong>สยามโหรามงคล</strong></div>
-        <div style="font-size: 11px; opacity: 0.7;">ลิขสิทธิ์ข้อมูลตามตำราทักษาพยากรณ์</div>
-    `;
-
-    // [BUG FIX #3] บันทึก originalStyle และเพิ่ม footer ก่อน try
-    // เพื่อให้ finally สามารถคืนค่าและลบ footer ได้เสมอ แม้เกิด error กลางคัน
-    const originalStyle = area.style.cssText;
-    area.style.width = "500px";
-    area.style.padding = "25px";
-    area.style.background = "#121212";
-    area.appendChild(footer);
-
     try {
-        const canvas = await html2canvas(area, {
-            backgroundColor: '#121212',
-            scale: 2, // เพิ่มความชัด
-            useCORS: true,
-            logging: false,
-            width: 500
-        });
+        if (!window.YARM_CHART || !window.YARM_INFO) {
+            throw new Error("ข้อมูลตารางยามมงคลยังไม่พร้อม");
+        }
 
-        // ดาวน์โหลด
-        const dateTitle = document.getElementById('mapDateTitle')?.innerText || 'Daily';
+        const [y, m, d] = picker.value.split('-').map(Number);
+        const targetDate = new Date(y, m - 1, d);
+        const dayOfWeek = targetDate.getDay();
+
+        const timeLabels = [
+            "06:00 - 07:30", "07:30 - 09:00", "09:00 - 10:30", "10:30 - 12:00",
+            "12:00 - 13:30", "13:30 - 15:00", "15:00 - 16:30", "16:30 - 18:00",
+            "18:00 - 19:30", "19:30 - 21:00", "21:00 - 22:30", "22:30 - 00:00",
+            "00:00 - 01:30", "01:30 - 03:00", "03:00 - 04:30", "04:30 - 06:00"
+        ];
+        
+        const width = 1080;
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = 3000;
+        const ctx = canvas.getContext('2d');
+        
+        await document.fonts.ready;
+        
+        const drawContent = (isMeasure = false) => {
+            let cy = 80;
+            
+            if (!isMeasure) {
+                ctx.fillStyle = '#121212';
+                ctx.fillRect(0, 0, width, canvas.height);
+                
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 4;
+                if (ctx.roundRect) {
+                    ctx.beginPath();
+                    ctx.roundRect(20, 20, width - 40, canvas.height - 40, 20);
+                    ctx.stroke();
+                } else {
+                    ctx.strokeRect(20, 20, width - 40, canvas.height - 40);
+                }
+                
+                const titleEl = document.getElementById('mapDateTitle');
+                let dateTitle = titleEl ? titleEl.innerText : targetDate.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                
+                ctx.font = '700 46px "Sarabun"';
+                ctx.fillStyle = '#d4af37';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText(dateTitle, width/2, cy);
+                
+                cy += 80;
+                ctx.strokeStyle = 'rgba(212,175,55,0.25)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(100, cy);
+                ctx.lineTo(width - 100, cy);
+                ctx.stroke();
+                
+                cy += 40;
+                ctx.font = '700 36px "Sarabun"';
+                ctx.fillStyle = '#ffc107'; 
+                ctx.fillText("☀️ ภาคกลางวัน", width/4, cy);
+                ctx.fillStyle = '#0dcaf0'; 
+                ctx.fillText("🌙 ภาคกลางคืน", (width/4)*3, cy);
+            } else {
+                cy += 80 + 40 + 40;
+            }
+            
+            cy += 60;
+            const startYLists = cy;
+            
+            const renderList = (isDay, startX, colW) => {
+                let localCy = startYLists;
+                for (let i = 0; i < 8; i++) {
+                    const starId = isDay ? window.YARM_CHART.day[dayOfWeek][i] : window.YARM_CHART.night[dayOfWeek][i];
+                    const timeRange = timeLabels[isDay ? i : i + 8];
+                    const info = window.YARM_INFO[starId];
+                    if (!info) continue;
+                    
+                    const color = typeof window.getStarColor === "function" ? window.getStarColor(starId) : "#ffd700";
+                    let count = 4;
+                    if ([0, 1, 5, 6].includes(starId)) count = 5;
+                    else if ([4, 7].includes(starId)) count = 3;
+                    const stars = "⭐".repeat(count);
+                    
+                    let boxH = 140; 
+                    
+                    if (!isMeasure) {
+                        ctx.fillStyle = 'rgba(255,255,255,0.03)';
+                        ctx.fillRect(startX, localCy, colW, boxH);
+                        
+                        ctx.fillStyle = color;
+                        ctx.fillRect(startX, localCy, 8, boxH);
+                        
+                        ctx.textAlign = 'left';
+                        ctx.fillStyle = '#aaaaaa';
+                        ctx.font = '400 24px "Sarabun"';
+                        ctx.fillText(timeRange, startX + 25, localCy + 25);
+                        
+                        ctx.fillStyle = color;
+                        ctx.font = '700 32px "Sarabun"';
+                        ctx.fillText(info.name, startX + 25, localCy + 70);
+                        
+                        ctx.font = '24px "Sarabun"';
+                        ctx.fillText(stars, startX + 25, localCy + 105);
+                        
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = '#eeeeee';
+                        ctx.font = '500 26px "Sarabun"';
+                        
+                        const maxRightW = colW - 170;
+                        let text = info.good;
+                        let lines = [];
+                        
+                        if (window.Intl && window.Intl.Segmenter) {
+                            const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+                            const segments = segmenter.segment(text);
+                            let currentLine = "";
+                            for (const {segment} of segments) {
+                                const testLine = currentLine + segment;
+                                if (ctx.measureText(testLine).width > maxRightW && currentLine.trim() !== '') {
+                                    lines.push(currentLine);
+                                    currentLine = segment;
+                                } else {
+                                    currentLine = testLine;
+                                }
+                            }
+                            lines.push(currentLine);
+                        } else {
+                            let currentLine = "";
+                            for (let j = 0; j < text.length; j++) {
+                                const char = text[j];
+                                const testLine = currentLine + char;
+                                if (ctx.measureText(testLine).width > maxRightW && j > 0) {
+                                    lines.push(currentLine);
+                                    currentLine = char;
+                                } else {
+                                    currentLine = testLine;
+                                }
+                            }
+                            lines.push(currentLine);
+                        }
+                        
+                        let tY = localCy + (boxH/2) - ((lines.length * 30)/2) + 10;
+                        for(let l of lines) {
+                            ctx.fillText(l.trim(), startX + colW - 20, tY);
+                            tY += 35;
+                        }
+                    }
+                    localCy += boxH + 15;
+                }
+                return localCy;
+            };
+            
+            const colWidth = 460;
+            const leftColY = renderList(true, 55, colWidth);
+            const rightColY = renderList(false, 55 + colWidth + 50, colWidth);
+            
+            cy = Math.max(leftColY, rightColY);
+            
+            cy += 40;
+            if (!isMeasure) {
+                ctx.strokeStyle = 'rgba(212,175,55,0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(100, cy);
+                ctx.lineTo(width-100, cy);
+                ctx.stroke();
+                
+                cy += 30;
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#d4af37';
+                ctx.font = '700 28px "Sarabun"';
+                ctx.fillText("🔮 สยามโหรามงคล", width/2, cy);
+                
+                cy += 35;
+                ctx.fillStyle = 'rgba(212,175,55,0.7)';
+                ctx.font = '400 22px "Sarabun"';
+                ctx.fillText("ลิขสิทธิ์ข้อมูลตามตำราทักษาพยากรณ์", width/2, cy);
+            }
+            
+            cy += 50;
+            return cy;
+        }
+        
+        let actualHeight = drawContent(true);
+        canvas.height = actualHeight;
+        drawContent(false);
+        
+        const titleEl = document.getElementById('mapDateTitle');
+        let dateTitle = titleEl ? titleEl.innerText : 'Daily';
+        
         const link = document.createElement('a');
         link.download = `ฤกษ์มงคล_${dateTitle.replace(/\s+/g, '_')}.png`;
-        link.href = canvas.toDataURL("image/png");
+        link.href = canvas.toDataURL('image/png');
         link.click();
-
+        
+        if (btn) {
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }
     } catch (e) {
         console.error("Capture Error:", e);
-        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้: ' + e.message, 'error');
-    } finally {
-        // [BUG FIX #3] คืนค่า style และลบ footer ใน finally เสมอ ไม่ว่าจะ success หรือ error
-        if (area.contains(footer)) {
-            area.removeChild(footer);
-        }
-        area.style.cssText = originalStyle;
-
+        if(typeof Swal !== 'undefined') Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้: ' + e.message, 'error');
+        else alert('เกิดข้อผิดพลาด: ' + e.message);
+        
         if (btn) {
             btn.innerHTML = originalContent;
             btn.disabled = false;

@@ -179,7 +179,7 @@ function generateVIPReport() {
 
             <!-- Bottom Plaque Area -->
             <div style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; text-align: center; z-index: 10;">
-                <div style="font-size: 16px; color: #AAA text-shadow: 0 0 30px rgba(255, 196, 0, 0.8), 3px 3px 10px rgb(255, 255, 255);!important;">
+                <div style="font-size: 16px; color: #AAA !important; text-shadow: 0 0 30px rgba(255, 196, 0, 0.8), 3px 3px 10px rgb(255, 255, 255) !important;">
                     จัดทำโดย สยามโหรามงคล ${tYear + 543} (สงวนลิขสิทธิ์เฉพาะคุณ${name}เท่านั้น)
                 </div>
             </div>
@@ -918,7 +918,6 @@ function generateVIPReport() {
             @media print {
                 /* Defeat Bootstrap's aggressive black text by forcing inheritance with higher specificity AND !important */
                 #vipPdfPreviewContent * {
-                    color: inherit !important;
                     text-shadow: inherit !important;
                     box-shadow: inherit !important;
                 }
@@ -957,21 +956,7 @@ function generateVIPReport() {
                     
                     background: #fff;
                 }
-                body > *:not(#vipPdfPreviewScreen) {
-                    display: none !important;
-                }
-                #vipPdfPreviewScreen {
-                    height: auto !important;
-
-                    position: static !important;
-                    left: 0 !important;
-                    top: 0 !important;
-                    width: 100% !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    overflow: visible !important;
-                    background: transparent !important;
-                }
+                /* Removed invalid body > * hiding */
                 #vipPdfPreviewNav {
                     display: none !important;
                 }
@@ -987,9 +972,10 @@ function generateVIPReport() {
                     print-color-adjust: exact !important;
                 }
                 .pdf-page {
+                    display: block !important;
                     width: 100% !important;
-                    height: 99.5vh !important;
-                    max-height: 99.5vh !important;
+                    height: 297mm !important;
+                    max-height: 297mm !important;
                     margin: 0 !important;
                     padding: 40px !important;
                     box-sizing: border-box !important;
@@ -1026,11 +1012,11 @@ function generateVIPReport() {
                 /* Hide sidebar when printing */
             }
             @media print {
-                body { background: #fff !important; }
+                html, body { background: #fff !important; overflow: visible !important; height: auto !important; display: block !important; }
                 .sidebar, .header, #vipPdfPreviewNav, .back-btn { display: none !important; }
-                .content { padding: 0 !important; gap: 0 !important; display: block !important; }
-                .preview-area { padding: 0 !important; background: none !important; border: none !important; border-radius: 0 !important; display: block !important; }
-                #vipPdfPreviewContent { gap: 0 !important; padding: 0 !important; }
+                .content { padding: 0 !important; margin: 0 !important; display: block !important; overflow: visible !important; height: auto !important; width: 100% !important; }
+                .preview-area { padding: 0 !important; margin: 0 !important; background: none !important; border: none !important; border-radius: 0 !important; display: block !important; overflow: visible !important; height: auto !important; width: 100% !important; position: static !important; }
+                #vipPdfPreviewContent { margin: 0 !important; padding: 0 !important; overflow: visible !important; height: auto !important; width: 100% !important; display: block !important; }
             }
         `;
         document.head.appendChild(style);

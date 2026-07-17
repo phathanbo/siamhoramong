@@ -9,7 +9,7 @@ const APP_MENU = [
     { id: 'businessFortune', title: '💼 พยากรณ์ธุรกิจ<br>/การเงิน', icon: 'fa-chart-line', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
     { id: 'zodiacFortunePage', title: '⭐ พยากรณ์ดวง<br>ตามราศี', icon: 'fa-star', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
     { id: 'dreamPage', title: 'ทำนายฝัน', icon: 'fa-moon', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'tarotPage', title: 'ไพ่ยิปซีรายวัน', icon: 'fa-layer-group', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'tarotPage', title: 'ไพ่ยิปซี<br>เซลติกครอส', icon: 'fa-layer-group', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
     { id: 'cartomancyPage', title: 'ไพ่ป๊อกรายวัน', icon: 'fa-heart', color: '#e74c3c', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
     { id: 'siamsiPage', title: 'เซียมซีเสี่ยงทาย', icon: 'fa-drum', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
     { id: 'lottoPage', title: 'เลขเด็ด', icon: 'fa-dice', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },

@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <title>ดวงชะตากำเนิด - วงจักรราศีไทย</title>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1939,11 +1938,11 @@
             }
         }
 
-        window.exportSection = function(btn, targetId, filename) {
+        window.exportSection = async function(btn, targetId, filename) {
             const originalText = btn.innerHTML;
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
             
-            setTimeout(() => {
+            try {
                 const target = document.getElementById(targetId);
                 const header = target.querySelector('.section-header');
                 const content = target.querySelector('.accordion-content');
@@ -1953,51 +1952,34 @@
                     wasClosed = true;
                     content.classList.add('active');
                     if (header) header.classList.add('active');
+                    // wait for animation
+                    await new Promise(r => setTimeout(r, 100));
                 }
                 
-                target.classList.add('exporting');
-                const originalBg = target.style.background;
-                const originalBorder = target.style.border;
-                const originalBoxShadow = target.style.boxShadow;
-                
-                target.style.background = "#0d0a1a"; // ensure dark solid background
-                target.style.border = "none";
-                target.style.boxShadow = "none";
-                
-                html2canvas(target, {
+                const canvas = await renderElementToCanvas(targetId, {
+                    width: 1080,
                     backgroundColor: "#0d0a1a",
-                    scale: 2
-                }).then(canvas => {
-                    const link = document.createElement("a");
-                    link.download = filename;
-                    link.href = canvas.toDataURL("image/png");
-                    link.click();
-                    
-                    btn.innerHTML = originalText;
-                    target.style.background = originalBg;
-                    target.style.border = originalBorder;
-                    target.style.boxShadow = originalBoxShadow;
-                    target.classList.remove('exporting');
-                    
-                    if (wasClosed) {
-                        content.classList.remove('active');
-                        if (header) header.classList.remove('active');
-                    }
-                }).catch(err => {
-                    console.error(err);
-                    alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ");
-                    btn.innerHTML = originalText;
-                    target.style.background = originalBg;
-                    target.style.border = originalBorder;
-                    target.style.boxShadow = originalBoxShadow;
-                    target.classList.remove('exporting');
-                    
-                    if (wasClosed) {
-                        content.classList.remove('active');
-                        if (header) header.classList.remove('active');
-                    }
+                    paddingTop: 60,
+                    paddingBottom: 60,
+                    paddingX: 40
                 });
-            }, 300);
+                
+                const link = document.createElement("a");
+                link.download = filename;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                
+                btn.innerHTML = originalText;
+                
+                if (wasClosed) {
+                    content.classList.remove('active');
+                    if (header) header.classList.remove('active');
+                }
+            } catch (err) {
+                console.error(err);
+                alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ");
+                btn.innerHTML = originalText;
+            }
         };
 
         function exportImage(btnId, targetId, filename) {
@@ -2005,28 +1987,27 @@
             const originalText = btn.innerHTML;
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> รอสักครู่...`;
             
-            setTimeout(() => {
-                const target = document.getElementById(targetId);
-                const originalBg = target.style.backgroundColor;
-                target.style.backgroundColor = "#0d0a1a";
-                
-                html2canvas(target, {
-                    backgroundColor: "#0d0a1a",
-                    scale: 2
-                }).then(canvas => {
+            setTimeout(async () => {
+                try {
+                    const canvas = await renderElementToCanvas(targetId, {
+                        width: 1080,
+                        backgroundColor: "#0d0a1a",
+                        paddingTop: 40,
+                        paddingBottom: 40,
+                        paddingX: 40
+                    });
+                    
                     const link = document.createElement("a");
                     link.download = filename;
                     link.href = canvas.toDataURL("image/png");
                     link.click();
                     btn.innerHTML = originalText;
-                    target.style.backgroundColor = originalBg;
-                }).catch(err => {
+                } catch (err) {
                     console.error(err);
                     alert("เกิดข้อผิดพลาด");
                     btn.innerHTML = originalText;
-                    target.style.backgroundColor = originalBg;
-                });
-            }, 500);
+                }
+            }, 100);
         }
 
         document.getElementById("saveImgChartBtn").addEventListener("click", () => {
@@ -2090,3 +2071,5 @@ document.addEventListener("DOMContentLoaded", () => {
 </body>
 
 </html>
+<script src="canvas-helpers.js"></script>
+<script>

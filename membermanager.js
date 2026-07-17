@@ -1143,6 +1143,7 @@ function showProfilePage(data, memberId) {
     }
 
     // 8. แสดงผลแผ่นดวงชะตา (ธีม ทอง-ม่วงอ่อน)
+    const _saveBtnStyle = `style="background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 6px;border-radius:6px;opacity:0.7;" title="บันทึกภาพส่วนนี้" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"`;
     predictionArea.innerHTML = `
         <div class="text-end mb-2 d-flex justify-content-end align-items-center" style="gap: 10px;">
             ${role !== 'admin' ? `
@@ -1151,21 +1152,25 @@ function showProfilePage(data, memberId) {
             </button>
             ` : ''}
             <button class="btn btn-sm text-white" style="background-color: #6a0dad; border-color: #d4af37;" onclick="saveHoroscopeImage()">
-                <i class="fas fa-camera"></i> บันทึกภาพดวงชะตา
+                <i class="fas fa-camera"></i> บันทึกทั้งหมด
             </button>
         </div>
         <div id="horoscopeCaptureArea" class="p-4 rounded shadow-sm" style="background: linear-gradient(135deg, #fdfaf0 0%, #f4effa 100%); border: 3px solid #d4af37; outline: 1px solid #9370db; outline-offset: -6px;">
-            <div class="text-center mb-4">
-                <h2 style="color:#6a0dad; font-weight: bold; text-shadow: 1px 1px 2px #d4af37;">🔮 แผ่นดวงชะตา</h2>
-                <h4 style="color:#333; font-weight: bold; font-size: 24px; border-bottom: 2px dashed #d4af37; display: inline-block; padding-bottom: 5px; align-items: center;">
-                    คุณ ${safeName} ${safeLastName} ${roleBadge}
-                </h4>
-                <div class="mt-2 text-muted" style="font-size: 14px;">
-                    <i class="fas fa-map-marker-alt text-danger"></i> จังหวัดที่เกิด: ${data.province || "ไม่ระบุ (อ้างอิง กทม.)"}
+
+            <!-- ── ส่วนที่ 1: ข้อมูลสมาชิก ── -->
+            <div id="profileSection_header" style="position:relative;">
+                <button onclick="saveSection('profileSection_header','แผ่นดวงชะตา')" ${_saveBtnStyle} style="position:absolute;top:0;right:0;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพส่วนนี้" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+                    <i class="fas fa-camera"></i>
+                </button>
+                <div class="text-center mb-4" style="padding-top:4px;">
+                    <h2 style="color:#6a0dad; font-weight: bold; text-shadow: 1px 1px 2px #d4af37;">🔮 แผ่นดวงชะตา</h2>
+                    <h4 style="color:#333; font-weight: bold; font-size: 24px; border-bottom: 2px dashed #d4af37; display: inline-block; padding-bottom: 5px;">
+                        คุณ ${safeName} ${safeLastName} ${roleBadge}
+                    </h4>
+                    <div class="mt-2 text-muted" style="font-size: 14px;">
+                        <i class="fas fa-map-marker-alt text-danger"></i> จังหวัดที่เกิด: ${data.province || "ไม่ระบุ (อ้างอิง กทม.)"}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="prediction-content" style="font-size: 16px; line-height: 1.6;">
                 <div class="row text-center mb-3">
                     <div class="col-md-6 mb-2">
                         <div class="p-2 rounded" style="background-color: rgba(212, 175, 55, 0.1); border: 1px solid #d4af37;">
@@ -1181,8 +1186,16 @@ function showProfilePage(data, memberId) {
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="p-3 mb-3 rounded" style="background: #fff; border: 1px solid #e0d4f5;">
+            <hr style="border-top:1px dashed #d4af37; margin: 8px 0 12px;">
+
+            <!-- ── ส่วนที่ 2: ข้อมูลปฏิทิน ── -->
+            <div id="profileSection_calendar" style="position:relative; padding-top:6px;">
+                <button onclick="saveSection('profileSection_calendar','ข้อมูลปฏิทิน')" style="position:absolute;top:0;right:0;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพส่วนนี้" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+                    <i class="fas fa-camera"></i>
+                </button>
+                <div class="p-3 mb-2 rounded" style="background: #fff; border: 1px solid #e0d4f5;">
                     <div class="mb-2">
                         <strong>📅 ข้อมูลปฏิทิน:</strong> ${displayDay} ที่ ${parseInt(data.birthdate.split('/')[0])} ${monthNames[monthIdx]} พ.ศ. ${year + 543}
                         ${astNote}
@@ -1191,69 +1204,75 @@ function showProfilePage(data, memberId) {
                         <strong>🌙 จันทรคติไทย:</strong> <span style="color:#6a0dad;">${lunarStr || "ไม่สามารถแปลงได้"}</span>
                     </div>
                     <div>
-                        <strong>⏰ เวลาเกิด:</strong> ${cleanTime} น. &nbsp;&nbsp;|&nbsp;&nbsp; <strong>ยามเกิด:</strong> ${yam || "ไม่ระบุ"}
+                        <strong>⏰ เวลาเกิด:</strong> ${cleanTime} น. &nbsp;|&nbsp; <strong>ยามเกิด:</strong> ${yam || "ไม่ระบุ"}
                     </div>
                 </div>
+            </div>
 
-                <hr style="border-top:1px dashed #9370db">
+            <hr style="border-top:1px dashed #9370db; margin: 12px 0;">
 
-                <h5 class="text-center" style="color:#6a0dad; margin-top: 15px;">🌟 องค์ประกอบธาตุประจำตัว</h5>
-                
-                <!-- ธาตุวันเกิด -->
+            <!-- ── ส่วนที่ 3: องค์ประกอบธาตุ ── -->
+            <div id="profileSection_elements" style="position:relative; padding-top:6px;">
+                <button onclick="saveSection('profileSection_elements','องค์ประกอบธาตุประจำตัว')" style="position:absolute;top:0;right:0;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพส่วนนี้" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+                    <i class="fas fa-camera"></i>
+                </button>
+                <h5 class="text-center" style="color:#6a0dad; margin-top: 8px;">🌟 องค์ประกอบธาตุประจำตัว</h5>
                 <div class="mb-2 p-3 rounded shadow-sm" style="background:${elementData.color}15; border-left: 5px solid ${elementData.color}">
-                    <strong style="color:${elementData.color}">
-                        🧬 ธาตุประจำวันเกิด (${dayNames[dayIdx]}): ${elementData.name} ${elementData.level || ""}
-                    </strong>
+                    <strong style="color:${elementData.color}">🧬 ธาตุประจำวันเกิด (${dayNames[dayIdx]}): ${elementData.name} ${elementData.level || ""}</strong>
                     <br><span style="font-weight: normal;">บุคลิก: ${elementData.desc}</span>
                 </div>
-
-                <!-- ธาตุเดือน -->
                 <div class="mb-2 p-3 rounded shadow-sm" style="background:${mElement.color}15; border-left: 5px solid ${mElement.color}">
-                    <strong style="color:${mElement.color}">
-                        📅 ธาตุเดือนเกิด: ${mElement.name} ${mElement.level || ""} (กำลัง: ${mElement.strength})
-                    </strong>
+                    <strong style="color:${mElement.color}">📅 ธาตุเดือนเกิด: ${mElement.name} ${mElement.level || ""} (กำลัง: ${mElement.strength})</strong>
                     <br><span style="font-weight: normal;">บุคลิก: ${mElement.desc}</span>
                 </div>
-
-                <!-- ธาตุนักษัตร -->
                 <div class="mb-3 p-3 rounded shadow-sm" style="background:${zElement.color}15; border-left: 5px solid ${zElement.color}">
-                    <strong style="color:${zElement.color}">
-                        🐉 ธาตุปีนักษัตร (${zElement.name}): ${zElement.element}
-                    </strong>
+                    <strong style="color:${zElement.color}">🐉 ธาตุปีนักษัตร (${zElement.name}): ${zElement.element}</strong>
                     <br><span style="font-weight: normal;">บุคลิก: ${zElement.desc}</span>
                     <br><span style="font-weight: normal; color:#555;">🚀 <b>งานที่เหมาะ:</b> ${zElement.job || "ไม่ระบุ"}</span>
                 </div>
-
-                <!-- วิเคราะห์ธาตุ -->
-                <div class="mt-3 p-3 rounded shadow-sm" style="background:#fff; border: 1px dashed #d4af37;">
+                <div class="mt-2 p-3 rounded shadow-sm" style="background:#fff; border: 1px dashed #d4af37;">
                     <h6 style="color:#b8860b; font-weight:bold;">⚖️ วิเคราะห์สมพงษ์ธาตุ</h6>
                     <ul class="mb-0" style="padding-left: 20px; font-size: 0.9em;">
                         <li><strong>วันเกิด (${elementData.name}) + เดือนเกิด (${mElement.name}):</strong> ${relDayMonth}</li>
                         <li><strong>วันเกิด (${elementData.name}) + ปีนักษัตร (${zElement.element}):</strong> ${relDayYear}</li>
                     </ul>
                 </div>
+            </div>
+
+            <hr style="border-top:1px dashed #9370db; margin: 16px 0;">
+
+            <!-- ── ส่วนที่ 4: คำทำนายพื้นดวง ── -->
+            <div id="profileSection_prediction" style="position:relative; padding-top:6px;">
+                <h5 class="text-center" style="color:#6a0dad; margin-top: 8px; margin-bottom: 15px;">📖 คำทำนายพื้นดวงชะตา</h5>
                 
-                <hr style="border-top:1px dashed #9370db; margin-top:20px;">
-                
-                <!-- คำทำนายพื้นดวง -->
-                <h5 class="text-center" style="color:#6a0dad; margin-top: 15px; margin-bottom: 15px;">📖 คำทำนายพื้นดวงชะตา</h5>
-                <div class="mb-3 p-3 rounded shadow-sm" style="background:#fff; border: 1px solid #e0d4f5;">
+                <div id="profileSection_pred_day" class="mb-3 p-3 rounded shadow-sm" style="position:relative; background:#fff; border: 1px solid #e0d4f5;">
+                    <button onclick="saveSection('profileSection_pred_day','คำทำนายวันเกิด')" style="position:absolute;top:5px;right:5px;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพคำทำนายวันเกิด" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+                        <i class="fas fa-camera"></i>
+                    </button>
                     <strong style="color:#b8860b">คำทำนายวันเกิด:</strong>
                     <div style="font-size: 0.9em; margin-top: 5px;">${typeof getDayPrediction === 'function' ? getDayPrediction(dayIdx) : "-"}</div>
                 </div>
-                <div class="mb-3 p-3 rounded shadow-sm" style="background:#fff; border: 1px solid #e0d4f5;">
+                
+                <div id="profileSection_pred_month" class="mb-3 p-3 rounded shadow-sm" style="position:relative; background:#fff; border: 1px solid #e0d4f5;">
+                    <button onclick="saveSection('profileSection_pred_month','คำทำนายเดือนเกิด')" style="position:absolute;top:5px;right:5px;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพคำทำนายเดือนเกิด" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+                        <i class="fas fa-camera"></i>
+                    </button>
                     <strong style="color:#b8860b">คำทำนายเดือนเกิด:</strong>
                     <div style="font-size: 0.9em; margin-top: 5px;">${typeof getMonthPrediction === 'function' ? getMonthPrediction(monthIdx) : "-"}</div>
                 </div>
-                <div class="mb-3 p-3 rounded shadow-sm" style="background:#fff; border: 1px solid #e0d4f5;">
+                
+                <div id="profileSection_pred_year" class="mb-3 p-3 rounded shadow-sm" style="position:relative; background:#fff; border: 1px solid #e0d4f5;">
+                    <button onclick="saveSection('profileSection_pred_year','คำทำนายปีนักษัตร')" style="position:absolute;top:5px;right:5px;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพคำทำนายปีนักษัตร" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+                        <i class="fas fa-camera"></i>
+                    </button>
                     <strong style="color:#b8860b">คำทำนายปีนักษัตร:</strong>
                     <div style="font-size: 0.9em; margin-top: 5px;">${typeof getZodiacPrediction === 'function' ? getZodiacPrediction(["ชวด", "ฉลู", "ขาล", "เถาะ", "มะโรง", "มะเส็ง", "มะเมีย", "มะแม", "วอก", "ระกา", "จอ", "กุน"].indexOf(zElement.name)) : "-"}</div>
                 </div>
+            </div>
 
-                <hr style="border-top:1px dashed #9370db; margin-top:20px;">
-                <div class="text-center mt-3">
-                    <p class="small text-muted" style="font-size:12px;">ดวงชะตานี้คำนวณด้วยหลักโหราศาสตร์ไทย นิรายันระบบ และการตัดวันเวลา 06:00 น.</p>
-                </div>
+            <hr style="border-top:1px dashed #9370db; margin-top:20px;">
+            <div class="text-center mt-3">
+                <p class="small text-muted" style="font-size:12px;">ดวงชะตานี้คำนวณด้วยหลักโหราศาสตร์ไทย นิรายันระบบ และการตัดวันเวลา 06:00 น.</p>
             </div>
         </div>
         
@@ -1293,23 +1312,532 @@ async function saveHoroscopeImage() {
             didOpen: () => { Swal.showLoading(); }
         });
 
-        const canvas = await html2canvas(captureArea, {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: "#fdfaf0"
+        await document.fonts.ready;
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1080;
+        canvas.height = 1920;
+
+        // === BACKGROUND ===
+        const bgGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        bgGrad.addColorStop(0, '#fdfaf0');
+        bgGrad.addColorStop(1, '#f4effa');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Outer gold border
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 14;
+        ctx.strokeRect(18, 18, canvas.width - 36, canvas.height - 36);
+        // Inner purple outline
+        ctx.strokeStyle = '#9370db';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+
+        // === HELPERS ===
+        const wrapText = (text, x, y, maxW, lineH, align = 'center') => {
+            if (!text) return y;
+            ctx.textAlign = align;
+            const baseX = align === 'left' ? x : (align === 'right' ? x : x);
+            let lines = [];
+            if (window.Intl && window.Intl.Segmenter) {
+                const seg = new Intl.Segmenter('th', { granularity: 'word' });
+                let curr = '';
+                for (const { segment } of seg.segment(text)) {
+                    if (ctx.measureText(curr + segment).width > maxW && curr.trim()) {
+                        lines.push(curr); curr = segment;
+                    } else curr += segment;
+                }
+                lines.push(curr);
+            } else {
+                lines.push(text);
+            }
+            for (const line of lines) {
+                ctx.fillText(line.trim(), baseX, y);
+                y += lineH;
+            }
+            return y;
+        };
+
+        const hLine = (y, color = 'rgba(147,112,219,0.35)', dash = []) => {
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash(dash);
+            ctx.beginPath(); ctx.moveTo(70, y); ctx.lineTo(canvas.width - 70, y); ctx.stroke();
+            ctx.restore();
+        };
+
+        const card = (x, y, w, h, fillColor) => {
+            ctx.fillStyle = fillColor;
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, 16);
+            ctx.fill();
+        };
+
+        const accentCard = (x, y, w, h, accentColor) => {
+            ctx.fillStyle = 'rgba(255,255,255,0.75)';
+            ctx.beginPath(); ctx.roundRect(x, y, w, h, 14); ctx.fill();
+            ctx.fillStyle = accentColor;
+            ctx.fillRect(x, y + 14, 6, h - 28);
+            ctx.fillStyle = accentColor;
+            ctx.beginPath(); ctx.roundRect(x, y, 6, 14, [14, 0, 0, 0]); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(x, y + h - 14, 6, 14, [0, 0, 0, 14]); ctx.fill();
+        };
+
+        // === COLLECT DATA FROM DOM ===
+        const getText = (id) => document.getElementById(id)?.innerText?.trim() || '';
+        const profName = getText('profName') || '?';
+        const profBirth = getText('profBirth') || '';
+        const profZodiac = getText('profZodiac') || '';
+        const profYam = getText('profYam') || '';
+
+        // Pull all text lines from the capture area for fallback
+        const captureLines = captureArea.innerText.split('\n').map(l => l.trim()).filter(l => l);
+
+        // === HEADER ===
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+
+        ctx.font = 'bold 68px "Sarabun", sans-serif';
+        ctx.fillStyle = '#6a0dad';
+        ctx.fillText('🔮 แผ่นดวงชะตา', canvas.width / 2, 70);
+
+        ctx.font = 'bold 50px "Sarabun", sans-serif';
+        ctx.fillStyle = '#333333';
+        const nameText = captureLines.find(l => l.startsWith('คุณ') || l.length > 3 && !l.startsWith('🔮') && !l.startsWith('อายุ') && !l.startsWith('จ.')) || `คุณ ${profName}`;
+        let y = 160;
+        y = wrapText(nameText, canvas.width / 2, y, canvas.width - 160, 62);
+
+        // Gold underline
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([8, 5]);
+        ctx.beginPath(); ctx.moveTo(200, y + 8); ctx.lineTo(canvas.width - 200, y + 8); ctx.stroke();
+        ctx.setLineDash([]);
+        y += 40;
+
+        // Province
+        const provinceEl = captureArea.querySelector('.text-muted [data-province], .text-muted');
+        const provinceText = captureArea.querySelector('.fa-map-marker-alt')?.parentElement?.innerText?.trim() || '';
+        if (provinceText) {
+            ctx.font = '30px "Sarabun", sans-serif';
+            ctx.fillStyle = '#888888';
+            ctx.textAlign = 'center';
+            ctx.fillText(provinceText, canvas.width / 2, y); y += 52;
+        }
+
+        hLine(y, '#d4af37', []); y += 30;
+
+        // === AGE + LAGNA CARDS ===
+        const cardY = y;
+        const cardW = (canvas.width - 180) / 2;
+        card(70, cardY, cardW, 130, 'rgba(212,175,55,0.12)');
+        ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 2; ctx.setLineDash([]);
+        ctx.strokeRect(70, cardY, cardW, 130);
+
+        card(70 + cardW + 40, cardY, cardW, 130, 'rgba(147,112,219,0.12)');
+        ctx.strokeStyle = '#9370db'; ctx.lineWidth = 2;
+        ctx.strokeRect(70 + cardW + 40, cardY, cardW, 130);
+
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 28px "Sarabun", sans-serif';
+        ctx.fillStyle = '#555';
+        ctx.fillText('อายุย่างปัจจุบัน', 70 + cardW / 2, cardY + 18);
+        ctx.font = 'bold 54px "Sarabun", sans-serif';
+        ctx.fillStyle = '#b8860b';
+        const ageEl = captureArea.querySelector('[style*="20px"][style*="b8860b"]');
+        const ageText = ageEl?.innerText || captureLines.find(l => l.includes('ปี')) || '';
+        ctx.fillText(ageText, 70 + cardW / 2, cardY + 58);
+
+        const lagnaX = 70 + cardW + 40 + cardW / 2;
+        ctx.font = 'bold 28px "Sarabun", sans-serif';
+        ctx.fillStyle = '#555';
+        ctx.fillText('ลัคนา', lagnaX, cardY + 18);
+        const lagnaEl = captureArea.querySelector('[style*="6a0dad"][style*="20px"]');
+        const lagnaText = lagnaEl?.innerText || '';
+        ctx.font = 'bold 44px "Sarabun", sans-serif';
+        ctx.fillStyle = '#6a0dad';
+        ctx.fillText(lagnaText, lagnaX, cardY + 58);
+        const lagnaDescEl = lagnaEl?.nextElementSibling;
+        if (lagnaDescEl?.innerText) {
+            ctx.font = '26px "Sarabun", sans-serif';
+            ctx.fillStyle = '#666';
+            ctx.fillText(lagnaDescEl.innerText.trim(), lagnaX, cardY + 106);
+        }
+
+        y = cardY + 150;
+
+        // === CALENDAR SECTION ===
+        hLine(y, 'rgba(147,112,219,0.3)', [8, 5]); y += 24;
+
+        const calBoxes = captureArea.querySelectorAll('.p-2.rounded, .p-3.rounded');
+        let calText = '';
+        if (calBoxes[0]) calText = calBoxes[0].innerText.replace(/\n/g, ' | ').trim();
+
+        accentCard(70, y, canvas.width - 140, 150, '#d4af37');
+        ctx.textAlign = 'left';
+        ctx.font = 'bold 30px "Sarabun", sans-serif';
+        ctx.fillStyle = '#b8860b';
+        ctx.fillText('📅 ข้อมูลปฏิทิน', 100, y + 22);
+        ctx.font = '28px "Sarabun", sans-serif';
+        ctx.fillStyle = '#333';
+        y = wrapText(calText || `วันเกิด: ${profBirth}`, 100, y + 62, canvas.width - 240, 42, 'left');
+        y += 20;
+
+        // === ELEMENTS SECTION ===
+        hLine(y, 'rgba(147,112,219,0.3)', [8, 5]); y += 24;
+
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 38px "Sarabun", sans-serif';
+        ctx.fillStyle = '#6a0dad';
+        ctx.fillText('🌟 องค์ประกอบธาตุประจำตัว', canvas.width / 2, y); y += 56;
+
+        // Pull element blocks from DOM
+        const elemBlocks = captureArea.querySelectorAll('[style*="border-left: 5px solid"]');
+        elemBlocks.forEach((block) => {
+            const bStyle = block.getAttribute('style') || '';
+            const colorMatch = bStyle.match(/border-left: 5px solid ([^;]+)/);
+            const accentColor = colorMatch ? colorMatch[1].trim() : '#6a0dad';
+            const strongEl = block.querySelector('strong');
+            const title = strongEl?.innerText?.trim() || '';
+            const desc = block.querySelector('span')?.innerText?.trim() || '';
+
+            const bh = desc ? 150 : 90;
+            accentCard(70, y, canvas.width - 140, bh, accentColor);
+            ctx.textAlign = 'left';
+            ctx.font = 'bold 28px "Sarabun", sans-serif';
+            ctx.fillStyle = accentColor;
+            y = wrapText(title, 100, y + 18, canvas.width - 220, 38, 'left');
+            if (desc) {
+                ctx.font = '26px "Sarabun", sans-serif';
+                ctx.fillStyle = '#444';
+                y = wrapText('บุคลิก: ' + desc, 100, y + 4, canvas.width - 220, 36, 'left');
+            }
+            y += 20;
         });
 
+        // === FORTUNE PREDICTION ===
+        hLine(y, 'rgba(147,112,219,0.3)', [8, 5]); y += 24;
+
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 38px "Sarabun", sans-serif';
+        ctx.fillStyle = '#6a0dad';
+        ctx.fillText('📖 คำทำนายพื้นดวงชะตา', canvas.width / 2, y); y += 54;
+
+        const predBlocks = captureArea.querySelectorAll('[style*="border: 1px solid #e0d4f5"]');
+        predBlocks.forEach((block) => {
+            const label = block.querySelector('strong')?.innerText?.trim() || '';
+            const pred = block.querySelector('div')?.innerText?.trim() || '';
+            if (!pred) return;
+
+            accentCard(70, y, canvas.width - 140, 30, '#b8860b'); // placeholder height
+            const innerTop = y;
+            ctx.textAlign = 'left';
+            ctx.font = 'bold 28px "Sarabun", sans-serif';
+            ctx.fillStyle = '#b8860b';
+            ctx.fillText(label, 100, innerTop + 18);
+            ctx.font = '26px "Sarabun", sans-serif';
+            ctx.fillStyle = '#333';
+            const afterLabel = innerTop + 58;
+            const newY = wrapText(pred, 100, afterLabel, canvas.width - 220, 38, 'left');
+            // Redraw card with correct height
+            accentCard(70, innerTop, canvas.width - 140, (newY - innerTop) + 20, '#b8860b');
+            ctx.font = 'bold 28px "Sarabun", sans-serif'; ctx.fillStyle = '#b8860b';
+            ctx.textAlign = 'left';
+            ctx.fillText(label, 100, innerTop + 18);
+            ctx.font = '26px "Sarabun", sans-serif'; ctx.fillStyle = '#333';
+            wrapText(pred, 100, afterLabel, canvas.width - 220, 38, 'left');
+            y = newY + 26;
+        });
+
+        // === FOOTER ===
+        hLine(canvas.height - 110, '#d4af37', []); 
+        ctx.textAlign = 'center';
+        ctx.font = '26px "Sarabun", sans-serif';
+        ctx.fillStyle = 'rgba(106,13,173,0.55)';
+        ctx.fillText('ดวงชะตานี้คำนวณด้วยหลักโหราศาสตร์ไทย นิรายันระบบ และการตัดวันเวลา 06:00 น.', canvas.width / 2, canvas.height - 88);
+        ctx.font = 'bold 30px "Sarabun", sans-serif';
+        ctx.fillStyle = '#d4af37';
+        ctx.fillText('✨ สยามโหรามงคล - ประธานโบ้ 🔮', canvas.width / 2, canvas.height - 52);
+
         const link = document.createElement('a');
-        link.download = `ดวงชะตา_${document.getElementById('profName')?.innerText || 'ของท่าน'}.png`;
+        link.download = `ดวงชะตา_${profName}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-        
+
         Swal.close();
     } catch (err) {
         console.error("Error capturing image:", err);
         Swal.fire('ข้อผิดพลาด', 'ไม่สามารถบันทึกภาพได้', 'error');
     }
 }
+
+
+
+window.saveHoroscopeImage = saveHoroscopeImage;
+
+// ── ฟังก์ชันบันทึกภาพเฉพาะส่วน (v2) ──
+async function saveSection(sectionId, title) {
+    const el = document.getElementById(sectionId);
+    if (!el) return;
+    const camBtns = el.querySelectorAll('button[onclick^="saveSection"]');
+    camBtns.forEach(b => { b.style.display = 'none'; });
+    try {
+        await document.fonts.ready;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1080;
+        const PAD = 72, CW = 1080 - 72 * 2, TITLE_H = 115, FOOTER_H = 90;
+        const CARD_PAD_X = PAD - 22, CARD_W = 1080 - (PAD - 22) * 2;
+
+        const wrapText = (text, x, y, maxW, lineH, align) => {
+            align = align || 'left';
+            if (!text) return y;
+            ctx.textAlign = align;
+            let lines = [];
+            if (window.Intl && window.Intl.Segmenter) {
+                const seg = new Intl.Segmenter('th', { granularity: 'word' });
+                let curr = '';
+                for (const { segment } of seg.segment(text)) {
+                    if (ctx.measureText(curr + segment).width > maxW && curr.trim()) { lines.push(curr); curr = segment; }
+                    else curr += segment;
+                }
+                lines.push(curr);
+            } else { lines.push(text); }
+            for (const line of lines) { ctx.fillText(line.trim(), x, y); y += lineH; }
+            return y;
+        };
+
+        const measureLines = (text, maxW, font) => {
+            if (!text) return 1;
+            ctx.font = font;
+            if (window.Intl && window.Intl.Segmenter) {
+                const seg = new Intl.Segmenter('th', { granularity: 'word' });
+                let curr = ''; let count = 1;
+                for (const { segment } of seg.segment(text)) {
+                    if (ctx.measureText(curr + segment).width > maxW && curr.trim()) { count++; curr = segment; }
+                    else curr += segment;
+                }
+                return count;
+            }
+            return Math.max(1, Math.ceil(ctx.measureText(text).width / maxW));
+        };
+
+        const accentCard = (x, y, w, h, color) => {
+            ctx.fillStyle = 'rgba(255,255,255,0.88)';
+            ctx.beginPath(); ctx.roundRect(x, y, w, h, 16); ctx.fill();
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y + 16, 7, h - 32);
+            ctx.beginPath(); ctx.roundRect(x, y, 7, 16, [16, 0, 0, 0]); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(x, y + h - 16, 7, 16, [0, 0, 0, 16]); ctx.fill();
+        };
+
+        const hLine = (y, color, dash) => {
+            color = color || 'rgba(212,175,55,0.55)'; dash = dash || [];
+            ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.setLineDash(dash);
+            ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(canvas.width - PAD, y); ctx.stroke();
+            ctx.restore();
+        };
+
+        // ── Pre-measure height ──
+        let contentH = 0;
+        ctx.font = '28px "Sarabun", sans-serif';
+
+        if (sectionId === 'profileSection_header') {
+            const h4 = el.querySelector('h4');
+            const badge = h4 ? h4.querySelector('.badge') : null;
+            if (badge) badge.style.display = 'none';
+            const nameText = h4 ? h4.innerText.trim() : '';
+            if (badge) badge.style.display = '';
+            contentH += measureLines(nameText, CW, 'bold 44px "Sarabun", sans-serif') * 56 + 20;
+            const provEl = el.querySelector('.text-muted');
+            const prov = provEl ? provEl.innerText.trim() : '';
+            contentH += measureLines(prov, CW, '30px "Sarabun", sans-serif') * 40 + 30 + 150;
+
+        } else if (sectionId === 'profileSection_calendar') {
+            el.querySelectorAll('.p-3 > div').forEach(row => {
+                const lbl = row.querySelector('strong') ? row.querySelector('strong').innerText.trim() : '';
+                const content = row.innerText.trim().replace(lbl, '').trim();
+                contentH += 44;
+                if (content) contentH += measureLines(content, CW, '28px "Sarabun", sans-serif') * 40 + 4;
+                contentH += 18;
+            });
+            contentH += 20;
+
+        } else if (sectionId === 'profileSection_elements') {
+            el.querySelectorAll('[style*="border-left: 5px solid"]').forEach(block => {
+                const t = block.querySelector('strong') ? block.querySelector('strong').innerText.trim() : '';
+                const spans = Array.from(block.querySelectorAll('span')).map(s => s.innerText.trim()).join(' | ');
+                contentH += measureLines(t, CW, 'bold 30px "Sarabun", sans-serif') * 42;
+                contentH += measureLines(spans, CW, '28px "Sarabun", sans-serif') * 38 + 50;
+            });
+            const relBox = el.querySelector('[style*="border: 1px dashed #d4af37"]');
+            if (relBox) {
+                const rLines = relBox.innerText.split('\n').map(l => l.trim()).filter(l => l).slice(1);
+                contentH += rLines.reduce((acc, l) => acc + measureLines('- ' + l, CW, '28px "Sarabun", sans-serif') * 38 + 4, 0) + 70;
+            }
+
+        } else if (sectionId.startsWith('profileSection_prediction') || sectionId.startsWith('profileSection_pred_')) {
+            const blocks = sectionId === 'profileSection_prediction' ? el.querySelectorAll('[style*="border: 1px solid #e0d4f5"]') : [el];
+            blocks.forEach(block => {
+                const txt = block.querySelector('div') ? block.querySelector('div').innerText.trim() : '';
+                if (!txt) return;
+                contentH += measureLines(txt, CW, '28px "Sarabun", sans-serif') * 42 + 76;
+            });
+        }
+
+        canvas.height = Math.max(TITLE_H + contentH + FOOTER_H, 380);
+
+        // ── Background ──
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        bgGrad.addColorStop(0, '#fdfaf0'); bgGrad.addColorStop(1, '#f4effa');
+        ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 12; ctx.setLineDash([]);
+        ctx.strokeRect(14, 14, canvas.width - 28, canvas.height - 28);
+        ctx.strokeStyle = '#9370db'; ctx.lineWidth = 3; ctx.setLineDash([8, 5]);
+        ctx.strokeRect(33, 33, canvas.width - 66, canvas.height - 66); ctx.setLineDash([]);
+
+        // ── Title ──
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.font = 'bold 62px "Sarabun", sans-serif'; ctx.fillStyle = '#6a0dad';
+        ctx.fillText(title, canvas.width / 2, 52);
+        hLine(TITLE_H - 8, '#d4af37', [10, 6]);
+        let y = TITLE_H + 12;
+
+        // ── Content ──
+        if (sectionId === 'profileSection_header') {
+            // ชื่อ — ซ่อน badge ก่อน capture
+            const h4 = el.querySelector('h4');
+            const badge = h4 ? h4.querySelector('.badge') : null;
+            if (badge) badge.style.display = 'none';
+            const nameText = h4 ? h4.innerText.trim() : '';
+            if (badge) badge.style.display = '';
+            ctx.font = 'bold 44px "Sarabun", sans-serif'; ctx.fillStyle = '#333';
+            y = wrapText(nameText, canvas.width / 2, y, CW, 56, 'center'); y += 14;
+            // จังหวัด
+            const provEl = el.querySelector('.text-muted');
+            const prov = provEl ? provEl.innerText.trim() : '';
+            ctx.font = '30px "Sarabun", sans-serif'; ctx.fillStyle = '#888';
+            y = wrapText(prov, canvas.width / 2, y, CW, 40, 'center'); y += 16;
+            hLine(y, '#d4af37'); y += 18;
+            // Card อายุ + ลัคนา
+            const cardW = (CW - 20) / 2;
+            ctx.fillStyle = 'rgba(212,175,55,0.15)';
+            ctx.beginPath(); ctx.roundRect(PAD, y, cardW, 130, 12); ctx.fill();
+            ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 2; ctx.setLineDash([]);
+            ctx.strokeRect(PAD, y, cardW, 130);
+            ctx.textAlign = 'center'; ctx.font = 'bold 26px "Sarabun", sans-serif'; ctx.fillStyle = '#666';
+            ctx.fillText('อายุย่างปัจจุบัน', PAD + cardW / 2, y + 14);
+            const ageEl = el.querySelector('[style*="b8860b"]');
+            const ageText = ageEl ? ageEl.innerText.trim() : '';
+            ctx.font = 'bold 52px "Sarabun", sans-serif'; ctx.fillStyle = '#b8860b';
+            ctx.fillText(ageText, PAD + cardW / 2, y + 54);
+            const lx = PAD + cardW + 20;
+            ctx.fillStyle = 'rgba(147,112,219,0.15)';
+            ctx.beginPath(); ctx.roundRect(lx, y, cardW, 130, 12); ctx.fill();
+            ctx.strokeStyle = '#9370db'; ctx.lineWidth = 2; ctx.strokeRect(lx, y, cardW, 130);
+            ctx.font = 'bold 26px "Sarabun", sans-serif'; ctx.fillStyle = '#666';
+            ctx.fillText('ลัคนา', lx + cardW / 2, y + 14);
+            const lagnaEl = el.querySelector('[style*="6a0dad"][style*="20px"]');
+            const lagnaText = lagnaEl ? lagnaEl.innerText.trim() : '';
+            ctx.font = 'bold 30px "Sarabun", sans-serif'; ctx.fillStyle = '#6a0dad';
+            let ly = wrapText(lagnaText, lx + cardW / 2, y + 54, cardW - 10, 36, 'center');
+            const lagnaDesc = lagnaEl ? lagnaEl.nextElementSibling : null;
+            if (lagnaDesc && lagnaDesc.innerText) {
+                ctx.font = '22px "Sarabun", sans-serif'; ctx.fillStyle = '#666';
+                wrapText(lagnaDesc.innerText.trim(), lx + cardW / 2, ly + 2, cardW - 10, 28, 'center');
+            }
+            y += 148;
+
+        } else if (sectionId === 'profileSection_calendar') {
+            // วาดแต่ละแถว: label บรรทัดแรก, content บรรทัดถัดไป (ไม่ซ้ำ)
+            el.querySelectorAll('.p-3 > div').forEach(row => {
+                const strong = row.querySelector('strong');
+                if (!strong) return;
+                const lbl = strong.innerText.trim();
+                // เอา content โดยตัด label ออก ไม่ให้ซ้ำ
+                const content = row.innerText.trim().replace(lbl, '').replace(/^\s*\*?\s*/, '').trim();
+                ctx.textAlign = 'left'; ctx.font = 'bold 30px "Sarabun", sans-serif'; ctx.fillStyle = '#b8860b';
+                ctx.fillText(lbl, PAD, y); y += 44;
+                if (content) {
+                    ctx.font = '28px "Sarabun", sans-serif';
+                    const colorSpan = row.querySelector('span[style*="6a0dad"]');
+                    ctx.fillStyle = colorSpan ? '#6a0dad' : '#333';
+                    y = wrapText(content, PAD, y, CW, 40, 'left');
+                }
+                y += 18;
+            });
+
+        } else if (sectionId === 'profileSection_elements') {
+            el.querySelectorAll('[style*="border-left: 5px solid"]').forEach(block => {
+                const bStyle = block.getAttribute('style') || '';
+                const cm = bStyle.match(/border-left: 5px solid ([^;]+)/);
+                const accent = cm ? cm[1].trim() : '#9370db';
+                const titleTxt = block.querySelector('strong') ? block.querySelector('strong').innerText.trim() : '';
+                const descFull = Array.from(block.querySelectorAll('span')).map(s => s.innerText.trim()).filter(t => t).join(' | ');
+                const tLines = measureLines(titleTxt, CW, 'bold 30px "Sarabun", sans-serif');
+                const dLines = measureLines(descFull, CW, '28px "Sarabun", sans-serif');
+                const bh = tLines * 42 + dLines * 38 + 46;
+                accentCard(CARD_PAD_X, y, CARD_W, bh, accent);
+                ctx.textAlign = 'left'; ctx.font = 'bold 30px "Sarabun", sans-serif'; ctx.fillStyle = accent;
+                let ty = y + 18; ty = wrapText(titleTxt, PAD, ty, CW, 42, 'left'); ty += 4;
+                ctx.font = '28px "Sarabun", sans-serif'; ctx.fillStyle = '#444';
+                ty = wrapText(descFull, PAD, ty, CW, 38, 'left');
+                y = ty + 20;
+            });
+            const relBox = el.querySelector('[style*="border: 1px dashed #d4af37"]');
+            if (relBox) {
+                const rLines = relBox.innerText.split('\n').map(l => l.trim()).filter(l => l).slice(1);
+                const rH = rLines.reduce((acc, l) => acc + measureLines('- ' + l, CW, '28px "Sarabun", sans-serif') * 38 + 4, 0) + 68;
+                ctx.fillStyle = 'rgba(255,255,255,0.88)';
+                ctx.beginPath(); ctx.roundRect(CARD_PAD_X, y, CARD_W, rH, 14); ctx.fill();
+                ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]);
+                ctx.strokeRect(CARD_PAD_X, y, CARD_W, rH); ctx.setLineDash([]);
+                ctx.font = 'bold 30px "Sarabun", sans-serif'; ctx.fillStyle = '#b8860b'; ctx.textAlign = 'left';
+                ctx.fillText('⚖️ วิเคราะห์สมพงษ์ธาตุ', PAD, y + 18);
+                let ry = y + 60; ctx.font = '28px "Sarabun", sans-serif'; ctx.fillStyle = '#333';
+                rLines.forEach(line => { ry = wrapText('• ' + line, PAD, ry, CW, 38, 'left'); ry += 4; });
+                y = ry + 18;
+            }
+
+        } else if (sectionId.startsWith('profileSection_prediction') || sectionId.startsWith('profileSection_pred_')) {
+            const blocks = sectionId === 'profileSection_prediction' ? el.querySelectorAll('[style*="border: 1px solid #e0d4f5"]') : [el];
+            blocks.forEach(block => {
+                const lbl = block.querySelector('strong') ? block.querySelector('strong').innerText.trim() : '';
+                const txt = block.querySelector('div') ? block.querySelector('div').innerText.trim() : '';
+                if (!txt) return;
+                const txtLineCount = measureLines(txt, CW, '28px "Sarabun", sans-serif');
+                const bh = txtLineCount * 42 + 68;
+                accentCard(CARD_PAD_X, y, CARD_W, bh, '#b8860b');
+                ctx.textAlign = 'left'; ctx.font = 'bold 30px "Sarabun", sans-serif'; ctx.fillStyle = '#b8860b';
+                ctx.fillText(lbl, PAD, y + 18);
+                ctx.font = '28px "Sarabun", sans-serif'; ctx.fillStyle = '#333';
+                let py = y + 60; py = wrapText(txt, PAD, py, CW, 42, 'left');
+                y = py + 20;
+            });
+        }
+
+        // ── Footer ──
+        const footerY = canvas.height - 58;
+        hLine(footerY - 10, 'rgba(212,175,55,0.6)');
+        ctx.textAlign = 'center'; ctx.font = 'bold 28px "Sarabun", sans-serif'; ctx.fillStyle = '#d4af37';
+        ctx.fillText('✨ สยามโหรามงคล 🔮', canvas.width / 2, footerY + 6);
+        const link = document.createElement('a');
+        link.download = title + '_สยามโหรามงคล.png';
+        link.href = canvas.toDataURL('image/png'); link.click();
+
+    } catch (e) {
+        console.error('saveSection error:', e);
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกภาพได้: ' + e.message, 'error');
+    } finally {
+        camBtns.forEach(b => { b.style.display = ''; });
+    }
+}
+
+window.saveSection = saveSection;
+
 
 document.addEventListener('DOMContentLoaded', () => {
     initProfileOnPageLoad();
@@ -1748,6 +2276,98 @@ if (promchartsection) {
     }
 }
 
+const isBusinessFortune = isPageVisible('businessFortune');
+
+if (isBusinessFortune && finalMember) {
+    const birthdayInput = document.getElementById('businessBirthday');
+    const birthTimeInput = document.getElementById('businessBirthTime');
+    const zodiacSelect = document.getElementById('businessZodiac');
+    const yearInput = document.getElementById('businessYear');
+
+    if (birthdayInput) {
+        birthdayInput.value = formattedDate;
+    }
+
+    if (birthTimeInput && finalMember.birthtime) {
+        birthTimeInput.value = finalMember.birthtime;
+    }
+
+    // เติมปีนักษัตรอัตโนมัติ
+    if (zodiacSelect && finalMember.zodiac) {
+        const thaiToEng = {
+            'ชวด': 'rat', 'ฉลู': 'ox', 'ขาล': 'tiger', 'เถาะ': 'rabbit',
+            'มะโรง': 'dragon', 'มะเส็ง': 'snake', 'มะเมีย': 'horse', 'มะแม': 'goat',
+            'วอก': 'monkey', 'ระกา': 'rooster', 'จอ': 'dog', 'กุน': 'pig'
+        };
+        const engZodiac = thaiToEng[finalMember.zodiac];
+        if (engZodiac) zodiacSelect.value = engZodiac;
+    }
+
+    // เติมปี ค.ศ. จากวันเกิด
+    if (yearInput && formattedDate) {
+        const birthYear = new Date(formattedDate).getFullYear();
+        if (birthYear) yearInput.value = new Date().getFullYear();
+    }
+
+    setTimeout(() => {
+        if (typeof displayBusinessFortune === 'function') displayBusinessFortune();
+    }, 150);
+}
+
+const isZodiacFortune = isPageVisible('zodiacFortunePage');
+
+if (isZodiacFortune && formattedDate) {
+    const zodiacSelect = document.getElementById('zodiacSelect');
+    
+    if (zodiacSelect) {
+        const d = new Date(formattedDate);
+        const day = d.getDate();
+        const month = d.getMonth() + 1;
+        let westernZodiac = null;
+        
+        if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) westernZodiac = 1; // Aries
+        else if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) westernZodiac = 2; // Taurus
+        else if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) westernZodiac = 3; // Gemini
+        else if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) westernZodiac = 4; // Cancer
+        else if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) westernZodiac = 5; // Leo
+        else if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) westernZodiac = 6; // Virgo
+        else if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) westernZodiac = 7; // Libra
+        else if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) westernZodiac = 8; // Scorpio
+        else if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) westernZodiac = 9; // Sagittarius
+        else if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) westernZodiac = 10; // Capricorn
+        else if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) westernZodiac = 11; // Aquarius
+        else if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) westernZodiac = 12; // Pisces
+        
+        if (westernZodiac) {
+            zodiacSelect.value = westernZodiac;
+        }
+    }
+    
+    setTimeout(() => {
+        if (typeof handleZodiacChange === 'function') handleZodiacChange();
+    }, 150);
+}
+
+const isYearClashPage = isPageVisible('yearClashPage');
+
+if (isYearClashPage && formattedDate) {
+    const ycBirthYearInput = document.getElementById('ycBirthYear');
+    
+    if (ycBirthYearInput) {
+        const d = new Date(formattedDate);
+        // ใช้ getThaiZodiacYear ถ้ามี เพื่อปรับปีสำหรับคนที่เกิดก่อนสงกรานต์
+        const birthYearCE = typeof getThaiZodiacYear === 'function' ? getThaiZodiacYear(d) : d.getFullYear();
+        
+        if (birthYearCE) {
+            ycBirthYearInput.value = birthYearCE + 543;
+        }
+    }
+    
+    setTimeout(() => {
+        if (typeof renderYearClash === 'function') renderYearClash();
+    }, 150);
+}
+
 const sevenPage = isPageVisible('sevenPage');
 
 if (sevenPage) {
@@ -1856,18 +2476,6 @@ if (isLottoPage && finalMember) {
     }
 }
 
-// ---- ส่วนของหน้าปีชง-ปีเสริม (yearClash.js) ----
-const isYearClashPage = isPageVisible('yearClashContainer');
-
-if (isYearClashPage && finalMember && finalMember.birthdate) {
-    const ycInput = document.getElementById('ycBirthYear');
-    if (ycInput) {
-        const birthYear = new Date(formattedDate).getFullYear();
-        // แปลงเป็น พ.ศ. (เพราะช่องรับทั้ง พ.ศ. และ ค.ศ.)
-        ycInput.value = birthYear + 543;
-        setTimeout(() => { if (typeof renderYearClash === 'function') renderYearClash(); }, 150);
-    }
-}
 
 }
 
@@ -1931,6 +2539,33 @@ window.submitPayment = async function() {
         const period = document.getElementById('payPkgPeriod').textContent;
         const price = document.getElementById('payPrice').textContent;
 
+        // Compress image before saving
+        const slipBase64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > MAX_WIDTH) {
+                        height = height * (MAX_WIDTH / width);
+                        width = MAX_WIDTH;
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6));
+                };
+                img.onerror = reject;
+                img.src = e.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(slipFile);
+        });
+
         const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
         const paymentsRef = collection(window.firebaseDb, "payments");
 
@@ -1940,6 +2575,7 @@ window.submitPayment = async function() {
             package: pkgName,
             period: period,
             price: price,
+            slipImage: slipBase64,
             status: 'pending',
             timestamp: new Date().toISOString()
         });
@@ -1953,7 +2589,7 @@ window.submitPayment = async function() {
         });
 
     } catch (error) {
-        console.error("Payment Submission Error:", error);
+        console.error("Payment error:", error);
         Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง', 'error');
     }
 };

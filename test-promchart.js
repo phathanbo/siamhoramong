@@ -55,7 +55,22 @@ if (PROMCHART_DATA.length === 12) {
     failCount++;
 }
 
-console.log("\n📌 2. ตรวจสอบสูตรคำนวณสำหรับชาย (นับเวียนขวา):");
+
+console.log("\n📌 2. ตรวจสอบความละเอียดของฐานข้อมูลแยกมิติครบทุกตำแหน่ง:");
+const requiredDimensionKeys = ['work', 'money', 'love', 'health', 'caution', 'remedy'];
+PROMCHART_DATA.forEach((item) => {
+    const hasBaseFields = item.position && item.name && item.meaning && item.detail && item.rating && item.tone && item.sourceNote;
+    const hasDimensions = item.dimensions && requiredDimensionKeys.every(key => typeof item.dimensions[key] === 'string' && item.dimensions[key].length >= 80);
+    const hasDetailedOverview = typeof item.detail === 'string' && item.detail.length >= 120;
+    if (hasBaseFields && hasDimensions && hasDetailedOverview) {
+        console.log(`  ✅ [PASS] ตำแหน่ง ${item.position}: ${item.name} มีข้อมูลภาพรวมและ 6 มิติครบถ้วน`);
+        passCount++;
+    } else {
+        console.error(`  ❌ [FAIL] ตำแหน่ง ${item.position}: ${item.name} ข้อมูลแยกมิติยังไม่ครบหรือสั้นเกินไป`);
+        failCount++;
+    }
+});
+console.log("\n📌 3. ตรวจสอบสูตรคำนวณสำหรับชาย (นับเวียนขวา):");
 testCalculation(1, 'male', 1, 'เจดีย์');
 testCalculation(2, 'male', 2, 'ฉัตรเงิน');
 testCalculation(6, 'male', 6, 'ราหู');
@@ -63,7 +78,7 @@ testCalculation(12, 'male', 12, 'นาคราช');
 testCalculation(13, 'male', 1, 'เจดีย์');
 testCalculation(25, 'male', 1, 'เจดีย์');
 
-console.log("\n📌 3. ตรวจสอบสูตรคำนวณสำหรับหญิง (นับเวียนซ้าย):");
+console.log("\n📌 4. ตรวจสอบสูตรคำนวณสำหรับหญิง (นับเวียนซ้าย):");
 testCalculation(1, 'female', 1, 'เจดีย์');
 testCalculation(2, 'female', 12, 'นาคราช');
 testCalculation(3, 'female', 11, 'แม่มด');

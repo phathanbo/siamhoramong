@@ -167,82 +167,265 @@ function renderCartomancyResult(card, animate = false) {
     }
 }
 
-function downloadCartomancyUserImage() {
+async function downloadCartomancyUserImage() {
     const cardData = JSON.parse(localStorage.getItem('cartomancyTodayData'));
     if (!cardData) {
-        alert("ไม่พบข้อมูลไพ่ กรุณาสุ่มไพ่ใหม่");
+        if (typeof Swal !== 'undefined') Swal.fire('เกิดข้อผิดพลาด', 'ไม่พบข้อมูลไพ่ กรุณาสุ่มไพ่ใหม่', 'error');
+        else alert("ไม่พบข้อมูลไพ่ กรุณาสุ่มไพ่ใหม่");
         return;
     }
-
-    // Create a temporary hidden container for capturing
-    const captureDiv = document.createElement('div');
-    captureDiv.style.position = 'absolute';
-    captureDiv.style.left = '-9999px';
-    captureDiv.style.top = '-9999px';
-    captureDiv.style.width = '800px';
-    captureDiv.style.padding = '50px';
-    captureDiv.style.background = '#1a0831'; // Dark purple background
-    captureDiv.style.backgroundImage = 'linear-gradient(135deg, #1a0831 0%, #0d041a 100%)';
-    captureDiv.style.color = '#fff';
-    captureDiv.style.fontFamily = "'Sarabun', sans-serif";
-    captureDiv.style.border = '10px solid #d4af37';
-    captureDiv.style.borderRadius = '20px';
-    captureDiv.style.boxSizing = 'border-box';
-    captureDiv.style.display = 'flex';
-    captureDiv.style.flexDirection = 'column';
-    captureDiv.style.alignItems = 'center';
-
-    const rank = cardData.name.split(' ')[0];
-    const centerPips = generatePips(rank, cardData.symbol);
-
-    captureDiv.innerHTML = `
-        <h2 style="color: #d4af37; font-size: 40px; margin-bottom: 5px; font-weight: bold;">สยามโหรามงคล</h2>
-        <h3 style="color: #f9e596; font-size: 28px; margin-bottom: 40px;">คำทำนายไพ่ป๊อกรายวัน</h3>
+    
+    try {
+        const width = 1080;
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = 3000;
+        const ctx = canvas.getContext('2d');
         
-        <div style="margin-bottom: 40px; transform: scale(1.2); transform-origin: top center;">
-            <div class="cartomancy-card admin-premium" style="cursor: default; transform: none; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); border: 2px solid #d4af37; border-radius: 12px; overflow: hidden; width: 220px; height: 320px;">
-                <div class="card-front ${cardData.color}" style="transform: none; position: relative; width: 100%; height: 100%; background-color: #111; background-image: linear-gradient(135deg, #111, #222);">
-                    <div class="corner top-left" style="position: absolute; top: 10px; left: 10px; font-size: 28px; font-weight: bold; line-height: 1; text-align: center;">
-                        <span class="rank" style="display: block;">${rank}</span>
-                        <span class="suit" style="display: block;">${cardData.symbol}</span>
-                    </div>
-                    <div class="center" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0; display: flex; justify-content: center; align-items: center;">
-                        ${centerPips}
-                    </div>
-                    <div class="corner bottom-right" style="position: absolute; bottom: 10px; right: 10px; font-size: 28px; font-weight: bold; line-height: 1; text-align: center; transform: rotate(180deg);">
-                        <span class="rank" style="display: block;">${rank}</span>
-                        <span class="suit" style="display: block;">${cardData.symbol}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div style="background: rgba(0,0,0,0.6); border: 1px solid #d4af37; border-radius: 15px; padding: 30px; width: 100%; text-align: left;">
-            <h3 style="color: #f9e596; text-align: center; font-size: 32px; margin-bottom: 20px;">${cardData.name}</h3>
-            <p style="font-size: 24px; line-height: 1.6; margin-bottom: 20px;"><strong>🔮 ความหมาย:</strong> ${cardData.meaning}</p>
-            <p style="font-size: 20px; line-height: 1.5; margin-bottom: 15px; color: #81c784;"><strong>💼 การงาน:</strong> ${cardData.work}</p>
-            <p style="font-size: 20px; line-height: 1.5; margin-bottom: 15px; color: #64b5f6;"><strong>💰 การเงิน:</strong> ${cardData.finance}</p>
-            <p style="font-size: 20px; line-height: 1.5; margin-bottom: 0; color: #e57373;"><strong>❤️ ความรัก:</strong> ${cardData.love}</p>
-        </div>
-    `;
-
-    document.body.appendChild(captureDiv);
-
-    // Ensure cartomancy.css styles are loaded for the card (though we inline mostly, pips need it)
-    html2canvas(captureDiv, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: null
-    }).then(canvas => {
+        await document.fonts.ready;
+        
+        const rank = cardData.name.split(' ')[0];
+        const isRed = cardData.color === 'red' || ['♥', '♦'].includes(cardData.symbol);
+        const cardColor = isRed ? '#ff4d4d' : '#ffffff';
+        
+        const drawContent = (isMeasure = false) => {
+            let cy = 80;
+            const cx = width / 2;
+            
+            if (!isMeasure) {
+                let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                grad.addColorStop(0, '#1a0831');
+                grad.addColorStop(1, '#0d041a');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, width, canvas.height);
+                
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 15;
+                ctx.strokeRect(15, 15, width - 30, canvas.height - 30);
+                
+                ctx.font = '700 60px "Chonburi"';
+                ctx.fillStyle = '#d4af37';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText("สยามโหรามงคล", cx, cy);
+                
+                cy += 90;
+                ctx.font = '400 40px "Sarabun"';
+                ctx.fillStyle = '#f9e596';
+                ctx.fillText("คำทำนายไพ่ป๊อกรายวัน", cx, cy);
+                
+                cy += 80;
+            } else {
+                cy += 80 + 90 + 80;
+            }
+            
+            const cardW = 340;
+            const cardH = 480;
+            const cardX = cx - cardW/2;
+            const cardY = cy;
+            
+            if (!isMeasure) {
+                ctx.fillStyle = '#1a1a1a';
+                if (ctx.roundRect) {
+                    ctx.beginPath();
+                    ctx.roundRect(cardX, cardY, cardW, cardH, 20);
+                    ctx.fill();
+                    ctx.lineWidth = 4;
+                    ctx.strokeStyle = '#d4af37';
+                    ctx.stroke();
+                } else {
+                    ctx.fillRect(cardX, cardY, cardW, cardH);
+                    ctx.lineWidth = 4;
+                    ctx.strokeStyle = '#d4af37';
+                    ctx.strokeRect(cardX, cardY, cardW, cardH);
+                }
+                
+                ctx.fillStyle = cardColor;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font = '700 45px "Sarabun"';
+                
+                ctx.fillText(rank, cardX + 45, cardY + 50);
+                ctx.fillText(cardData.symbol, cardX + 45, cardY + 95);
+                
+                ctx.save();
+                ctx.translate(cardX + cardW - 45, cardY + cardH - 50);
+                ctx.rotate(Math.PI);
+                ctx.fillText(rank, 0, 0); 
+                ctx.fillText(cardData.symbol, 0, 45); 
+                ctx.restore();
+                
+                const drawPipGrid = () => {
+                    let pips = [];
+                    const num = parseInt(rank);
+                    if (num === 2) pips = ['C1', 'C5'];
+                    if (num === 3) pips = ['C1', 'C3', 'C5'];
+                    if (num === 4) pips = ['L1', 'R1', 'L5', 'R5'];
+                    if (num === 5) pips = ['L1', 'R1', 'C3', 'L5', 'R5'];
+                    if (num === 6) pips = ['L1', 'R1', 'L3', 'R3', 'L5', 'R5'];
+                    if (num === 7) pips = ['L1', 'R1', 'C2', 'L3', 'R3', 'L5', 'R5'];
+                    if (num === 8) pips = ['L1', 'R1', 'C2', 'L3', 'R3', 'C4', 'L5', 'R5'];
+                    if (num === 9) pips = ['L1', 'R1', 'L2', 'R2', 'C3', 'L4', 'R4', 'L5', 'R5'];
+                    if (num === 10) pips = ['L1', 'R1', 'C2', 'L2', 'R2', 'L4', 'R4', 'C4', 'L5', 'R5'];
+                    
+                    const pW = 80;
+                    const pH = 70;
+                    const offsetX = cardX + cardW/2 - pW;
+                    const offsetY = cardY + 70;
+                    
+                    ctx.font = '60px "Sarabun"';
+                    
+                    for(let r=1; r<=5; r++) {
+                        for (let c of ['L', 'C', 'R']) {
+                            let pos = `${c}${r}`;
+                            if(pips.includes(pos)) {
+                                let px = offsetX + (c === 'L' ? 0 : (c === 'C' ? pW : pW*2));
+                                let py = offsetY + (r-1)*pH + pH/2;
+                                
+                                ctx.save();
+                                ctx.translate(px, py);
+                                if (r > 3) ctx.rotate(Math.PI);
+                                ctx.fillText(cardData.symbol, 0, 0);
+                                ctx.restore();
+                            }
+                        }
+                    }
+                };
+                
+                if (['J', 'Q', 'K'].includes(rank)) {
+                    let icon = rank === 'K' ? '♚' : (rank === 'Q' ? '♛' : '♞');
+                    ctx.font = '100px "Sarabun"';
+                    ctx.fillText(icon, cardX + cardW/2, cardY + cardH/2 - 30);
+                    ctx.font = '700 80px "Sarabun"';
+                    ctx.fillText(rank, cardX + cardW/2, cardY + cardH/2 + 60);
+                } else if (rank === 'A') {
+                    ctx.font = '140px "Sarabun"';
+                    ctx.fillText(cardData.symbol, cardX + cardW/2, cardY + cardH/2);
+                } else {
+                    drawPipGrid();
+                }
+            }
+            cy += cardH + 60;
+            
+            const boxStartX = 80;
+            const maxW = width - 160;
+            const boxY = cy;
+            
+            const items = [
+                { text: cardData.name, font: '700 48px "Sarabun"', color: '#f9e596', align: 'center', label: '', labelColor: '' },
+                { text: cardData.meaning, font: '400 36px "Sarabun"', color: '#ffffff', align: 'left', label: '🔮 ความหมาย:', labelColor: '#ffffff', spacer: true },
+                { text: cardData.work, font: '400 36px "Sarabun"', color: '#ffffff', align: 'left', label: '💼 การงาน:', labelColor: '#81c784' },
+                { text: cardData.finance, font: '400 36px "Sarabun"', color: '#ffffff', align: 'left', label: '💰 การเงิน:', labelColor: '#64b5f6' },
+                { text: cardData.love, font: '400 36px "Sarabun"', color: '#ffffff', align: 'left', label: '❤️ ความรัก:', labelColor: '#e57373' }
+            ];
+            
+            let currentBoxY = boxY + 60; 
+            const lineSpacing = 50;
+            const parsedItems = [];
+            
+            ctx.textBaseline = 'top';
+            for (let item of items) {
+                ctx.font = item.font;
+                let fullText = (item.label ? item.label + ' ' : '') + item.text;
+                let pLines = [];
+                
+                if (window.Intl && window.Intl.Segmenter) {
+                    const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+                    const segments = segmenter.segment(fullText);
+                    let currentLine = "";
+                    for (const {segment} of segments) {
+                        const testLine = currentLine + segment;
+                        if (ctx.measureText(testLine).width > (maxW - 80) && currentLine.trim() !== '') {
+                            pLines.push(currentLine);
+                            currentLine = segment;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    pLines.push(currentLine);
+                } else {
+                    let currentLine = "";
+                    for (let j = 0; j < fullText.length; j++) {
+                        const char = fullText[j];
+                        const testLine = currentLine + char;
+                        if (ctx.measureText(testLine).width > (maxW - 80) && j > 0) {
+                            pLines.push(currentLine);
+                            currentLine = char;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    pLines.push(currentLine);
+                }
+                
+                parsedItems.push({ ...item, lines: pLines, startY: currentBoxY });
+                currentBoxY += pLines.length * lineSpacing;
+                if(item.spacer) currentBoxY += 20;
+                currentBoxY += 20;
+            }
+            currentBoxY += 40; 
+            
+            if (!isMeasure) {
+                ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                if(ctx.roundRect) {
+                    ctx.beginPath();
+                    ctx.roundRect(boxStartX, boxY, maxW, currentBoxY - boxY, 20);
+                    ctx.fill();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#d4af37';
+                    ctx.stroke();
+                } else {
+                    ctx.fillRect(boxStartX, boxY, maxW, currentBoxY - boxY);
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#d4af37';
+                    ctx.strokeRect(boxStartX, boxY, maxW, currentBoxY - boxY);
+                }
+                
+                for (let parsed of parsedItems) {
+                    ctx.font = parsed.font;
+                    let ty = parsed.startY;
+                    for (let i = 0; i < parsed.lines.length; i++) {
+                        let l = parsed.lines[i];
+                        if (i === 0 && parsed.label && l.startsWith(parsed.label)) {
+                            let labelW = ctx.measureText(parsed.label + ' ').width;
+                            let rem = l.substring(parsed.label.length + 1);
+                            
+                            ctx.fillStyle = parsed.labelColor;
+                            ctx.textAlign = 'left';
+                            ctx.fillText(parsed.label, boxStartX + 40, ty);
+                            
+                            ctx.fillStyle = parsed.color;
+                            ctx.fillText(' ' + rem, boxStartX + 40 + labelW, ty);
+                        } else {
+                            ctx.fillStyle = parsed.color;
+                            ctx.textAlign = parsed.align;
+                            if (parsed.align === 'center') {
+                                ctx.fillText(l, width/2, ty);
+                            } else {
+                                ctx.fillText(l, boxStartX + 40, ty);
+                            }
+                        }
+                        ty += lineSpacing;
+                    }
+                }
+            }
+            
+            cy = currentBoxY + 80;
+            return cy;
+        };
+        
+        let actualHeight = drawContent(true);
+        canvas.height = actualHeight;
+        drawContent(false);
+        
         const link = document.createElement('a');
         link.download = `siamhora-cartomancy-${new Date().getTime()}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
         
-        document.body.removeChild(captureDiv);
-    }).catch(err => {
+    } catch (err) {
         console.error("Error generating image:", err);
-        alert("เกิดข้อผิดพลาดในการสร้างรูปภาพ กรุณาลองใหม่อีกครั้ง");
-        document.body.removeChild(captureDiv);
-    });
+        if(typeof Swal !== 'undefined') Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้ กรุณาลองใหม่อีกครั้ง', 'error');
+        else alert("เกิดข้อผิดพลาดในการสร้างรูปภาพ กรุณาลองใหม่อีกครั้ง");
+    }
 }

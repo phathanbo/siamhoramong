@@ -998,36 +998,115 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateThaksa();
 });
 
-window.saveCard = function (cardId) {
+window.saveCard = async function (cardId) {
     const element = document.getElementById(cardId);
     if (!element) return;
 
-    // แสดง Loading นิดนึงเผื่อเครื่องช้า
-    const originalText = event.target.innerText;
-    event.target.innerText = "⌛ กำลังบันทึก...";
-    event.target.disabled = true;
+    const btn = event.target;
+    const originalText = btn.innerText;
+    btn.innerText = "⌛ กำลังบันทึก...";
+    btn.disabled = true;
 
-    html2canvas(element, {
-        backgroundColor: "#1a1a1a", // สีพื้นหลังภาพ
-        scale: 2, // เพิ่มความชัดเป็น 2 เท่า (เหมาะสำหรับแชร์ลงโซเชียล)
-        logging: false,
-        useCORS: true // เผื่อมีรูปภาพจากภายนอก
-    }).then(canvas => {
-        // สร้างลิงก์ดาวน์โหลด
+    try {
+        await document.fonts.ready;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1080;
+        canvas.height = 1080;
+
+        // Background
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Border
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([8, 6]);
+        ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+        ctx.setLineDash([]);
+
+        // Watermark icon (background)
+        ctx.font = '380px serif';
+        ctx.fillStyle = 'rgba(212, 175, 55, 0.04)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🔮', canvas.width / 2, canvas.height / 2);
+
+        // Collect text content lines from the card element
+        const rawLines = element.innerText.split('\n').map(l => l.trim()).filter(l => l);
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+
+        const wrapLine = (text, x, y, maxW, lh) => {
+            if (!text) return y;
+            let lines = [];
+            if (window.Intl && window.Intl.Segmenter) {
+                const seg = new Intl.Segmenter('th', { granularity: 'word' });
+                let curr = '';
+                for (const { segment } of seg.segment(text)) {
+                    if (ctx.measureText(curr + segment).width > maxW && curr.trim()) {
+                        lines.push(curr); curr = segment;
+                    } else curr += segment;
+                }
+                lines.push(curr);
+            } else {
+                lines.push(text);
+            }
+            for (const l of lines) { ctx.fillText(l, x, y); y += lh; }
+            return y;
+        };
+
+        let y = 70;
+        rawLines.forEach((line, idx) => {
+            if (idx === 0) {
+                ctx.font = 'bold 55px "Sarabun", sans-serif';
+                ctx.fillStyle = '#d4af37';
+                y = wrapLine(line, canvas.width / 2, y, canvas.width - 160, 70);
+                y += 20;
+            } else if (idx === 1) {
+                ctx.font = '36px "Sarabun", sans-serif';
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                y = wrapLine(line, canvas.width / 2, y, canvas.width - 160, 52);
+                y += 25;
+                // Divider after subtitle
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(80, y); ctx.lineTo(canvas.width - 80, y); ctx.stroke();
+                y += 25;
+            } else {
+                ctx.font = '34px "Sarabun", sans-serif';
+                ctx.fillStyle = '#ffffff';
+                y = wrapLine(line, canvas.width / 2, y, canvas.width - 160, 50);
+                y += 8;
+            }
+            if (y > canvas.height - 120) return; // Guard overflow
+        });
+
+        // Footer
+        ctx.fillStyle = 'rgba(212, 175, 55, 0.55)';
+        ctx.font = '28px "Sarabun", sans-serif';
+        ctx.fillText('สยามโหรามงคล - มหาทักษาพยากรณ์', canvas.width / 2, canvas.height - 85);
+
         const link = document.createElement('a');
         const timestamp = new Date().getTime();
         link.download = `mu-fortune-${cardId}-${timestamp}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
 
-        // คืนค่าปุ่ม
-        event.target.innerText = originalText;
-        event.target.disabled = false;
-    }).catch(err => {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    } catch (err) {
         console.error("Save image failed:", err);
         Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกรูปภาพได้ในขณะนี้', 'error');
-    });
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
 };
+
 
 /* หมายเหตุ: ฟังก์ชัน parseBirthdate ถูกย้ายไปที่ utils-helpers.js แล้ว */
 

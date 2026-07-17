@@ -250,88 +250,252 @@ function calculateChatra() {
     $("#chatraDisplay").hide().fadeIn(1000);
 }
 
-// ฟังก์ชันบันทึกภาพฉัตร (แก้ไขแล้ว)
-function downloadChatraImage(e) {
-    const btn = e.currentTarget;
-    const originalText = btn.innerHTML;
+async function downloadChatraImage(e) {
+    const btn = e ? e.currentTarget : document.querySelector('button[onclick="downloadChatraImage()"]');
+    let originalText = btn ? btn.innerHTML : '';
+    if (btn) {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังเตรียมรูป...';
+        btn.disabled = true;
+    }
 
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังเตรียมรูป...';
-    btn.disabled = true;
-
-    const container = document.getElementById("chatraDisplay");
-
-    html2canvas(container, {
-        backgroundColor: "#121212",
-        scale: 3,
-        logging: false,
-        useCORS: true,
-        onclone: (clonedDoc) => {
-            // ซ่อนปุ่มดาวน์โหลด
-            const buttons = clonedDoc.querySelectorAll('button[data-action="download-chatra"]');
-            buttons.forEach(btn => btn.style.display = 'none');
-
-            const clonedDisplay = clonedDoc.getElementById("chatraDisplay");
-
-            // ปรับแต่ง container สำหรับรูปภาพ
-            clonedDisplay.style.padding = "80px 50px 120px 50px";
-            clonedDisplay.style.width = "1080px";           // กำหนดความกว้างชัดเจน
-            clonedDisplay.style.minHeight = "1350px";
-            clonedDisplay.style.position = "relative";
-            clonedDisplay.style.display = "flex";
-            clonedDisplay.style.flexDirection = "column";
-            clonedDisplay.style.alignItems = "center";
-            clonedDisplay.style.backgroundColor = "#121212";
-            clonedDisplay.style.borderRadius = "12px";
-
-            // หัวข้อด้านบน
-            const header = clonedDoc.createElement("div");
-            header.innerHTML = "✨ มหามงคลพยากรณ์: ฉัตร 3 ชั้น ✨";
-            header.style.cssText = `
-                position: absolute;
-                top: 40px;
-                left: 0;
-                width: 100%;
-                text-align: center;
-                color: #d4af37;
-                font-size: 32px;
-                font-weight: bold;
-                letter-spacing: 4px;
-                text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-            `;
-            clonedDisplay.prepend(header);
-
-            // ฟุตเตอร์ด้านล่าง
-            const footer = clonedDoc.createElement("div");
-            footer.innerHTML = "🔮 สยามโหรามงคล โดย ประธานโบ้";
-            footer.style.cssText = `
-                position: absolute;
-                bottom: 40px;
-                left: 0;
-                width: 100%;
-                text-align: center;
-                color: rgba(212, 175, 55, 0.75);
-                font-size: 24px;
-                font-weight: bold;
-                letter-spacing: 2px;
-                text-shadow: 1px 1px 6px rgba(0,0,0,0.9);
-            `;
-            clonedDisplay.appendChild(footer);
+    try {
+        const ageInput = document.getElementById('chatraAge').value.trim();
+        const age = parseInt(ageInput);
+        if (!age || age <= 0 || isNaN(age)) {
+            if (btn) {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+            if(typeof Swal !== 'undefined') Swal.fire('แจ้งเตือน', 'กรุณาคำนวณผลลัพธ์ก่อนบันทึกภาพ', 'warning');
+            else alert('กรุณาคำนวณผลลัพธ์ก่อนบันทึกภาพ');
+            return;
         }
-    }).then(canvas => {
+
+        const s1 = age % 3;
+        const s2 = age % 7;
+        const s3 = age % 8;
+
+        const chatraDict = {
+            tier1: ["ดวงรุ่งโรจน์ (หยิบจับอะไรเป็นเงิน)", "ตกที่นั่งลำบาก (ต้องระวัง)", "ดวงปานกลาง (ประคองตัวได้)"],
+            tier2: ["งานขยับขยาย", "จ่ายมากเก็บไม่อยู่", "การเงินทรงตัว", "มีโชคลาภลอย", "เหนื่อยเรื่องงาน", "ผู้ใหญ่หนุนหลัง", "บริวารช่วยเหลือ"],
+            tier3: ["มีอำนาจวาสนาแผ่ไพศาล", "ระวังคนปองร้าย", "เทวดาคุ้มครอง", "แคล้วคลาดปลอดภัย", "ชื่อเสียงโดดเด่น", "บริวารให้คุณ", "ชนะอุปสรรคทั้งปวง", "สำเร็จสมความปรารถนา"]
+        };
+        
+        let c1 = s1 === 1 ? '#ff4d4d' : (s1 === 2 ? '#0dcaf0' : '#d4af37'); 
+        let c2 = [1, 4].includes(s2) ? '#ff4d4d' : ([0, 3, 5, 6].includes(s2) ? '#d4af37' : '#ffffff');
+        let c3 = s3 === 1 ? '#ff4d4d' : '#d4af37';
+        
+        const width = 1080;
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = 3000;
+        const ctx = canvas.getContext('2d');
+        
+        await document.fonts.ready;
+        
+        const drawContent = (isMeasure = false) => {
+            let cy = 100;
+            const cx = 80;
+            const maxW = width - 160;
+            
+            if (!isMeasure) {
+                let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                grad.addColorStop(0, '#1c1c1e');
+                grad.addColorStop(1, '#000000');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, width, canvas.height);
+                
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 4;
+                if (ctx.roundRect) {
+                    ctx.beginPath();
+                    ctx.roundRect(40, 40, width - 80, canvas.height - 80, 25);
+                    ctx.stroke();
+                } else {
+                    ctx.strokeRect(40, 40, width - 80, canvas.height - 80);
+                }
+                
+                ctx.font = '700 60px "Chonburi"';
+                ctx.fillStyle = '#d4af37'; 
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText("✨ มหามงคลพยากรณ์: ฉัตร 3 ชั้น ✨", width/2, cy);
+                
+                ctx.font = '400 36px "Sarabun"';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`อายุย่าง ${age} ปี`, width/2, cy + 90);
+            }
+            
+            cy += 180;
+            
+            let renderTier = (label, value, color) => {
+                if (!isMeasure) {
+                    ctx.font = '400 32px "Sarabun"';
+                    ctx.fillStyle = '#cccccc';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(label, width/2, cy);
+                    
+                    ctx.font = '700 45px "Sarabun"';
+                    ctx.fillStyle = color;
+                    ctx.fillText(value, width/2, cy + 45);
+                    
+                    ctx.strokeStyle = 'rgba(212,175,55,0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(width/2 - 200, cy + 115);
+                    ctx.lineTo(width/2 + 200, cy + 115);
+                    ctx.stroke();
+                }
+                cy += 150;
+            };
+            
+            renderTier("ชั้นที่ 3: บารมี/บริวาร", chatraDict.tier3[s3], c3);
+            renderTier("ชั้นที่ 2: การงาน/การเงิน", chatraDict.tier2[s2], c2);
+            renderTier("ชั้นที่ 1: พื้นฐานดวงปีนี้", chatraDict.tier1[s1], c1);
+            
+            cy += 40;
+            
+            ctx.font = '400 36px "Sarabun"';
+            ctx.textAlign = 'left';
+            
+            const renderWrappedText = (text, textColor = '#e8e9f5', align = 'center') => {
+                let pLines = [];
+                if (window.Intl && window.Intl.Segmenter) {
+                    const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+                    const segments = segmenter.segment(text);
+                    let currentLine = "";
+                    for (const {segment} of segments) {
+                        const testLine = currentLine + segment;
+                        if (ctx.measureText(testLine).width > maxW && currentLine.trim() !== '') {
+                            pLines.push(currentLine);
+                            currentLine = segment;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    pLines.push(currentLine);
+                } else {
+                    let currentLine = "";
+                    for (let j = 0; j < text.length; j++) {
+                        const char = text[j];
+                        const testLine = currentLine + char;
+                        if (ctx.measureText(testLine).width > maxW && j > 0) {
+                            pLines.push(currentLine);
+                            currentLine = char;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    pLines.push(currentLine);
+                }
+                
+                for (let l of pLines) {
+                    if (!isMeasure) {
+                        ctx.fillStyle = textColor;
+                        ctx.textAlign = align;
+                        if(align === 'center') {
+                            ctx.fillText(l, width/2, cy);
+                        } else {
+                            ctx.fillText(l, cx, cy);
+                        }
+                    }
+                    cy += 50;
+                }
+            };
+            
+            if(!isMeasure){
+                ctx.font = '700 40px "Sarabun"';
+                ctx.fillStyle = '#d4af37';
+                ctx.textAlign = 'center';
+                ctx.fillText("บันทึกมหาพยากรณ์", width/2, cy);
+            }
+            cy += 70;
+            
+            ctx.font = '400 36px "Sarabun"';
+            
+            renderWrappedText(`ในปีนี้ที่ท่านอายุ ${age} ปี`, '#e8e9f5', 'center');
+            cy += 40;
+            
+            if(!isMeasure){
+                ctx.font = '700 36px "Sarabun"';
+                ctx.fillStyle = '#d4af37';
+                ctx.textAlign = 'left';
+                ctx.fillText(`ดวงชะตาชั้นฐาน :`, cx, cy);
+            }
+            cy += 50;
+            ctx.font = '400 36px "Sarabun"';
+            renderWrappedText(chatraDict.tier1[s1], c1, 'left');
+            renderWrappedText(chatraLongPrediction.tier1[s1], '#cccccc', 'left');
+            cy += 40;
+            
+            if(!isMeasure){
+                ctx.font = '700 36px "Sarabun"';
+                ctx.fillStyle = '#d4af37';
+                ctx.textAlign = 'left';
+                ctx.fillText(`ด้านการงานและลาภผล :`, cx, cy);
+            }
+            cy += 50;
+            ctx.font = '400 36px "Sarabun"';
+            renderWrappedText(chatraDict.tier2[s2], c2, 'left');
+            renderWrappedText(chatraLongPrediction.tier2[s2], '#cccccc', 'left');
+            cy += 40;
+            
+            if(!isMeasure){
+                ctx.font = '700 36px "Sarabun"';
+                ctx.fillStyle = '#d4af37';
+                ctx.textAlign = 'left';
+                ctx.fillText(`ด้านบารมีและการคุ้มครอง :`, cx, cy);
+            }
+            cy += 50;
+            ctx.font = '400 36px "Sarabun"';
+            renderWrappedText(chatraDict.tier3[s3], c3, 'left');
+            renderWrappedText(chatraLongPrediction.tier3[s3], '#cccccc', 'left');
+            cy += 60;
+            
+            if(!isMeasure){
+                ctx.font = '700 36px "Sarabun"';
+                ctx.fillStyle = '#d4af37';
+                ctx.textAlign = 'left';
+                ctx.fillText(`คำแนะนำจากตำรา :`, cx, cy);
+            }
+            cy += 50;
+            ctx.font = '400 36px "Sarabun"';
+            renderWrappedText("ควรหมั่นทำบุญ ไหว้พระ สวดมนต์ และรักษาจิตใจให้สงบ เพื่อเสริมดวงชะตาให้ดียิ่งขึ้นตลอดทั้งปี", '#cccccc', 'left');
+            
+            cy += 100;
+            
+            if (!isMeasure) {
+                ctx.font = '400 30px "Sarabun"';
+                ctx.fillStyle = 'rgba(212, 175, 55, 0.75)';
+                ctx.textAlign = 'center';
+                ctx.fillText("🔮 สยามโหรามงคล โดย ประธานโบ้", width/2, cy);
+            }
+            
+            cy += 80;
+            return cy;
+        }
+        
+        let actualHeight = drawContent(true);
+        canvas.height = actualHeight;
+        drawContent(false);
+        
         const link = document.createElement('a');
         link.download = `สยามโหรามงคล_ฉัตร3ชั้น_${new Date().getTime()}.png`;
-        link.href = canvas.toDataURL("image/png");
+        link.href = canvas.toDataURL('image/png');
         link.click();
-
-        // คืนค่าปุ่ม
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    }).catch(err => {
+        
+        if (btn) {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    } catch(err) {
         console.error("เกิดข้อผิดพลาดในการสร้างภาพ:", err);
-        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง', 'error');
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    });
+        if(typeof Swal !== 'undefined') Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง', 'error');
+        if (btn) {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
 }
 
 

@@ -397,27 +397,191 @@ function generateCards(planets, positions) {
     }
 }
 
-function saveCardAsImage(sign) {
+async function saveCardAsImage(sign) {
     const cardId = "card-sign-" + sign;
     const cardEl = document.getElementById(cardId);
     if(!cardEl) return;
     
-    const btn = cardEl.querySelector('.btn-save');
-    if(btn) btn.style.display = 'none'; // hide button for screenshot
+    const width = 1080;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = 3000;
+    const ctx = canvas.getContext('2d');
     
-    html2canvas(cardEl, {
-        backgroundColor: '#151935',
-        scale: 2 // good quality
-    }).then(canvas => {
-        if(btn) btn.style.display = 'block'; // show button again
-        const link = document.createElement('a');
-        link.download = `ดวงจร-ราศี${zodiacNames[sign]}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    }).catch(err => {
-        if(btn) btn.style.display = 'block';
-        console.error("Error saving image:", err);
-    });
+    await document.fonts.ready;
+    
+    const drawContent = (isMeasure = false) => {
+        let cy = 100;
+        const cx = 80;
+        const maxW = width - 160;
+        
+        if (!isMeasure) {
+            let grad = ctx.createLinearGradient(0, 0, width, canvas.height);
+            grad.addColorStop(0, '#232a56');
+            grad.addColorStop(1, '#151935');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, canvas.height);
+            
+            let rGrad = ctx.createRadialGradient(width-60, 60, 0, width-60, 60, 300);
+            rGrad.addColorStop(0, 'rgba(232,200,118,0.18)');
+            rGrad.addColorStop(1, 'transparent');
+            ctx.fillStyle = rGrad;
+            ctx.fillRect(0, 0, width, canvas.height);
+            
+            ctx.strokeStyle = 'rgba(201,164,92,0.35)';
+            ctx.lineWidth = 4;
+            if (ctx.roundRect) {
+                ctx.beginPath();
+                ctx.roundRect(20, 20, width - 40, canvas.height - 40, 25);
+                ctx.stroke();
+            } else {
+                ctx.strokeRect(20, 20, width - 40, canvas.height - 40);
+            }
+        }
+        
+        const sym = zodiacSymbols[sign];
+        const title = `ราศี${zodiacNames[sign]}`;
+        const dates = zodiacDates[sign];
+        
+        if (!isMeasure) {
+            ctx.font = '700 70px "Chonburi"';
+            ctx.fillStyle = '#e8c876';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(`${sym} ${title}`, cx, cy);
+            
+            ctx.font = '400 32px "Sarabun"';
+            ctx.fillStyle = '#9aa0c9';
+            ctx.fillText(dates, cx, cy + 90);
+        }
+        cy += 160;
+        
+        const paragraphs = Array.from(cardEl.querySelectorAll('p'));
+        for(let p of paragraphs) {
+            let text = p.innerText;
+            ctx.font = '400 36px "Sarabun"';
+            let isMinor = p.style.color === 'rgb(169, 175, 214)' || p.style.color === '#a9afd6' || p.style.fontSize === '0.85em';
+            
+            let pLines = [];
+            if (window.Intl && window.Intl.Segmenter) {
+                const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+                const segments = segmenter.segment(text);
+                let currentLine = "";
+                for (const {segment} of segments) {
+                    const testLine = currentLine + segment;
+                    if (ctx.measureText(testLine).width > maxW && currentLine.trim() !== '') {
+                        pLines.push(currentLine);
+                        currentLine = segment;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                pLines.push(currentLine);
+            } else {
+                let currentLine = "";
+                for (let j = 0; j < text.length; j++) {
+                    const char = text[j];
+                    const testLine = currentLine + char;
+                    if (ctx.measureText(testLine).width > maxW && j > 0) {
+                        pLines.push(currentLine);
+                        currentLine = char;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                pLines.push(currentLine);
+            }
+            
+            for (let l of pLines) {
+                if (!isMeasure) {
+                    let colonIdx = l.indexOf(':');
+                    if (colonIdx !== -1 && l.substring(0, colonIdx).length < 15) {
+                        let boldPart = l.substring(0, colonIdx + 1);
+                        let normPart = l.substring(colonIdx + 1);
+                        
+                        ctx.font = '700 36px "Sarabun"';
+                        ctx.fillStyle = isMinor ? '#c0c5e8' : '#ffffff';
+                        ctx.fillText(boldPart, cx, cy);
+                        
+                        let boldW = ctx.measureText(boldPart).width;
+                        ctx.font = '400 36px "Sarabun"';
+                        ctx.fillStyle = isMinor ? '#a9afd6' : '#e8e9f5';
+                        ctx.fillText(normPart, cx + boldW, cy);
+                    } else {
+                        ctx.font = '400 36px "Sarabun"';
+                        ctx.fillStyle = isMinor ? '#a9afd6' : '#e8e9f5';
+                        ctx.fillText(l, cx, cy);
+                    }
+                }
+                cy += 50;
+            }
+            cy += 20;
+        }
+        
+        const tags = Array.from(cardEl.querySelectorAll('.tag'));
+        if (tags.length > 0) {
+            cy += 20;
+            let currentX = cx;
+            let tagH = 55;
+            for (let tag of tags) {
+                let txt = tag.innerText;
+                ctx.font = '400 28px "Sarabun"';
+                let txtW = ctx.measureText(txt).width;
+                let tagW = txtW + 40;
+                
+                if (currentX + tagW > width - 80) {
+                    currentX = cx;
+                    cy += tagH + 20;
+                }
+                
+                if (!isMeasure) {
+                    ctx.beginPath();
+                    if (ctx.roundRect) ctx.roundRect(currentX, cy, tagW, tagH, 25);
+                    else ctx.rect(currentX, cy, tagW, tagH);
+                    
+                    if (tag.classList.contains('good')) {
+                        ctx.strokeStyle = '#7cbf8e';
+                        ctx.fillStyle = '#a7ddb3';
+                    } else if (tag.classList.contains('watch')) {
+                        ctx.strokeStyle = '#e08a8a';
+                        ctx.fillStyle = '#f0b3b3';
+                    } else {
+                        ctx.strokeStyle = 'rgba(201,164,92,0.35)';
+                        ctx.fillStyle = '#cfd3ea';
+                    }
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(txt, currentX + tagW/2, cy + tagH/2);
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                }
+                currentX += tagW + 20;
+            }
+            cy += tagH + 20;
+        }
+        
+        if (!isMeasure) {
+            ctx.font = '400 28px "Sarabun"';
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.textAlign = 'center';
+            ctx.fillText("คำทำนายดาวจร · สยามโหรามงคล", width/2, cy + 40);
+        }
+        cy += 100;
+        
+        return cy;
+    };
+    
+    let actualHeight = drawContent(true);
+    canvas.height = actualHeight;
+    drawContent(false);
+    
+    const link = document.createElement('a');
+    link.download = `ดวงจร-ราศี${zodiacNames[sign]}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
 }
 
 function showPersonalTransit() {
@@ -459,26 +623,143 @@ function showPersonalTransit() {
 }
 
 
-function saveWheelSection() {
-    const sectionEl = document.getElementById("wheelSectionContainer");
-    if(!sectionEl) return;
+async function saveWheelSection() {
+    const width = 1200;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = 3000;
+    const ctx = canvas.getContext('2d');
     
-    const btn = document.getElementById("btnSaveWheel");
-    if(btn) btn.style.display = 'none'; // hide button for screenshot
+    await document.fonts.ready;
     
-    html2canvas(sectionEl, {
-        backgroundColor: '#0d0f1f', // Use the background of the body for a seamless look
-        scale: 2 
-    }).then(canvas => {
-        if(btn) btn.style.display = 'block'; 
-        const link = document.createElement('a');
-        const month = document.getElementById("selectMonth").options[document.getElementById("selectMonth").selectedIndex].text;
-        const year = document.getElementById("selectYear").value;
-        link.download = `แผ่นดาวจรเด่น-${month}-${year}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    }).catch(err => {
-        if(btn) btn.style.display = 'block';
-        console.error("Error saving image:", err);
-    });
+    const drawContent = async (isMeasure = false) => {
+        let cy = 100;
+        const cx = 80;
+        const maxW = width - 160;
+        
+        if (!isMeasure) {
+            let grad = ctx.createLinearGradient(0, 0, width, canvas.height);
+            grad.addColorStop(0, '#1c2149');
+            grad.addColorStop(0.5, '#151935');
+            grad.addColorStop(1, '#0d0f22');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, canvas.height);
+            
+            const monthText = document.getElementById("selectMonth") ? document.getElementById("selectMonth").options[document.getElementById("selectMonth").selectedIndex].text : '';
+            const yearText = document.getElementById("selectYear") ? document.getElementById("selectYear").value : '';
+            const titleStr = window.currentMode === 'daily' ? document.getElementById("reportTitle").innerText : `แผ่นดาวจรเด่น ประจำเดือน${monthText} พ.ศ. ${yearText}`;
+            
+            ctx.font = '700 50px "Chonburi"';
+            ctx.fillStyle = '#e8c876';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(titleStr, width/2, cy);
+            
+            const svgEl = document.getElementById('transitWheel');
+            if (svgEl) {
+                const svgData = new XMLSerializer().serializeToString(svgEl);
+                const styleDef = `<style>
+                    .sign-arc{fill:none;stroke:rgba(201,164,92,0.35);stroke-width:1.5;}
+                    .sign-label{fill:#a9afd6;font-size:16px;font-family:'Sarabun';font-weight:bold;}
+                    .ring{fill:none;stroke:rgba(201,164,92,0.35);stroke-width:1.5;}
+                    .planet{font-size:26px;fill:#e8c876;text-anchor:middle;dominant-baseline:middle;}
+                    .planet-tag{font-size:13px;fill:#cfd3ea;text-anchor:middle;}
+                </style>`;
+                const modifiedSvg = svgData.replace(/<svg([^>]*)>/, `<svg$1>${styleDef}`);
+                const blob = new Blob([modifiedSvg], {type: 'image/svg+xml;charset=utf-8'});
+                const url = URL.createObjectURL(blob);
+                const img = new Image();
+                img.src = url;
+                await new Promise(r => { img.onload = r; img.onerror = r; });
+                
+                const svgSize = 650;
+                ctx.drawImage(img, width/2 - svgSize/2, cy + 80, svgSize, svgSize);
+                URL.revokeObjectURL(url);
+            }
+        }
+        
+        cy += 800;
+        
+        const listItems = Array.from(document.querySelectorAll('#transitHighlightList li'));
+        for(let li of listItems) {
+            let glyph = li.querySelector('.glyph') ? li.querySelector('.glyph').innerText : '';
+            let text = li.querySelector('.desc') ? li.querySelector('.desc').innerText : li.innerText;
+            
+            if (!isMeasure) {
+                ctx.font = '400 45px "Sarabun"';
+                ctx.fillStyle = '#e8c876';
+                ctx.textAlign = 'left';
+                ctx.fillText(glyph, cx, cy);
+            }
+            
+            ctx.font = '400 36px "Sarabun"';
+            const listMaxW = maxW - 80;
+            let pLines = [];
+            if (window.Intl && window.Intl.Segmenter) {
+                const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+                const segments = segmenter.segment(text);
+                let currentLine = "";
+                for (const {segment} of segments) {
+                    const testLine = currentLine + segment;
+                    if (ctx.measureText(testLine).width > listMaxW && currentLine.trim() !== '') {
+                        pLines.push(currentLine);
+                        currentLine = segment;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                pLines.push(currentLine);
+            } else {
+                let currentLine = "";
+                for (let j = 0; j < text.length; j++) {
+                    const char = text[j];
+                    const testLine = currentLine + char;
+                    if (ctx.measureText(testLine).width > listMaxW && j > 0) {
+                        pLines.push(currentLine);
+                        currentLine = char;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                pLines.push(currentLine);
+            }
+            
+            for (let l of pLines) {
+                if (!isMeasure) {
+                    ctx.fillStyle = '#cfd3ea';
+                    ctx.fillText(l, cx + 80, cy);
+                }
+                cy += 50;
+            }
+            cy += 30;
+        }
+        
+        if (!isMeasure) {
+            ctx.font = '400 28px "Sarabun"';
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.textAlign = 'center';
+            ctx.fillText("แผ่นดาวจร · สยามโหรามงคล", width/2, cy + 60);
+        }
+        
+        cy += 120;
+        return cy;
+    }
+    
+    ctx.font = '400 36px "Sarabun"'; 
+    let actualHeight = await drawContent(true);
+    canvas.height = actualHeight;
+    
+    await drawContent(false);
+    
+    const link = document.createElement('a');
+    let monthText = document.getElementById("selectMonth") ? document.getElementById("selectMonth").options[document.getElementById("selectMonth").selectedIndex].text : '';
+    let yearText = document.getElementById("selectYear") ? document.getElementById("selectYear").value : '';
+    if(window.currentMode === 'daily') {
+        const dateStr = document.getElementById("selectTransitDate").value;
+        link.download = `แผ่นดาวจรเด่น-${dateStr}.png`;
+    } else {
+        link.download = `แผ่นดาวจรเด่น-${monthText}-${yearText}.png`;
+    }
+    link.href = canvas.toDataURL('image/png');
+    link.click();
 }

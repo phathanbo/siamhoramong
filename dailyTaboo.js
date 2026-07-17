@@ -194,18 +194,141 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-// ฟังก์ชันสำหรับ Capture รูปภาพ
 async function downloadTabooImage() {
-    const area = document.getElementById('tabooCaptureArea');
-    if (!area) return;
+    Swal.fire({
+        title: 'กำลังสร้างรูปภาพ...',
+        text: 'กรุณารอสักครู่',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
+
     try {
-        const canvas = await html2canvas(area, { backgroundColor: '#1a1a1a', scale: 2 });
+        await document.fonts.ready;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1080;
+        canvas.height = 1080;
+        
+        // Background
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Border
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+        
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 8]);
+        ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+        ctx.setLineDash([]);
+
+        const dayTitle = document.getElementById('tabooDayTitle')?.innerText || 'วัน...';
+        
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#d4af37';
+        ctx.font = 'bold 80px "Sarabun", sans-serif';
+        ctx.fillText(dayTitle, canvas.width / 2, 80);
+        
+        ctx.font = '30px "Sarabun", sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.fillText('สยามโหรามงคล • พรหมชาติ & กาลโยค', canvas.width / 2, 180);
+        
+        ctx.font = 'bold 45px "Sarabun", sans-serif';
+        ctx.fillStyle = '#d4af37';
+        ctx.fillText('เคล็ดลับมงคลรายวัน', canvas.width / 2, 250);
+        
+        // Good / Bad section
+        const drawList = (items, startX, startY, isGood) => {
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 35px "Sarabun", sans-serif';
+            ctx.fillStyle = isGood ? '#28a745' : '#dc3545';
+            ctx.fillText(isGood ? '✅ สิ่งที่ควรทำ' : '🚫 สิ่งที่ควรเลี่ยง', startX, startY);
+            
+            ctx.font = '30px "Sarabun", sans-serif';
+            ctx.fillStyle = '#ffffff';
+            let curY = startY + 70;
+            items.forEach(item => {
+                let txt = item.innerText || item.textContent;
+                txt = txt.replace(/^[✅🚫\s]+/, '');
+                ctx.fillText(txt, startX, curY);
+                curY += 50;
+            });
+        };
+        
+        const goodItems = document.querySelectorAll('#goodList li, #goodList div');
+        const badItems = document.querySelectorAll('#badList li, #badList div');
+        
+        drawList(Array.from(goodItems), canvas.width / 4, 340, true);
+        drawList(Array.from(badItems), (canvas.width / 4) * 3, 340, false);
+        
+        // Line separator
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, 340);
+        ctx.lineTo(canvas.width / 2, 600);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(100, 650);
+        ctx.lineTo(canvas.width - 100, 650);
+        ctx.stroke();
+        
+        // Direction Section
+        ctx.font = 'bold 40px "Sarabun", sans-serif';
+        ctx.fillStyle = '#d4af37';
+        ctx.fillText('ทิศมงคลประจำวัน', canvas.width / 2, 690);
+        
+        const dirLucky = document.querySelector('.badge-success + div')?.innerText || '-';
+        const dirBlind = document.querySelector('.badge-danger + div')?.innerText || '-';
+        
+        ctx.font = 'bold 30px "Sarabun", sans-serif';
+        ctx.fillStyle = '#28a745';
+        ctx.fillText('🎯 ทิศโชคลาภ', canvas.width / 4, 760);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(dirLucky, canvas.width / 4, 810);
+        
+        ctx.fillStyle = '#dc3545';
+        ctx.fillText('🚫 ทิศกาลกิณี', (canvas.width / 4) * 3, 760);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(dirBlind, (canvas.width / 4) * 3, 810);
+        
+        ctx.beginPath();
+        ctx.moveTo(100, 880);
+        ctx.lineTo(canvas.width - 100, 880);
+        ctx.stroke();
+        
+        // Zodiac Section
+        ctx.font = 'bold 40px "Sarabun", sans-serif';
+        ctx.fillStyle = '#d4af37';
+        ctx.fillText('ดวงตามปีนักษัตร', canvas.width / 2, 920);
+        
+        const zGreat = document.getElementById('zodiacGreat')?.innerText || '-';
+        const zBad = document.getElementById('zodiacBad')?.innerText || '-';
+        
+        ctx.font = 'bold 30px "Sarabun", sans-serif';
+        ctx.fillStyle = '#28a745';
+        ctx.fillText('🚀 ปีที่มงคลยิ่ง', canvas.width / 4, 990);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(zGreat, canvas.width / 4, 1040);
+        
+        ctx.fillStyle = '#dc3545';
+        ctx.fillText('⚠️ ปีที่ควรระวัง', (canvas.width / 4) * 3, 990);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(zBad, (canvas.width / 4) * 3, 1040);
+
         const link = document.createElement('a');
         link.download = `ดวงรายวัน_${new Date().toLocaleDateString('th-TH').replace(/\//g, '-')}.png`;
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL('image/png');
         link.click();
+        
+        Swal.close();
     } catch (e) {
         console.error("Capture Failed:", e);
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้', 'error');
     }
 }
 

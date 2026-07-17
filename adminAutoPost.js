@@ -218,34 +218,40 @@ function generateTarotTemplate(dateObj, dateThai, container) {
         Swal.fire('ข้อผิดพลาด', 'ไม่พบฐานข้อมูลไพ่ยิปซี (tarotCards)', 'error');
         return;
     }
-    
-    // สุ่มไพ่จากวันที่ + Random
     const randomIdx = Math.floor(Math.random() * tarotCards.length);
     const card = tarotCards[randomIdx];
-    
+    window.currentDrawnCard = card; // Store for canvas
     container.classList.add('template-tarot');
     
-    // If no img URL is valid or available, we just use a styled div, but tarotCards should have img property
     const cardImgUrl = card.img || 'https://images.unsplash.com/photo-1638202513410-85f0967a149f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+    
+    const combinedLength = card.meaning.length + (card.future ? card.future.length : 0);
+    let fontSize = 32;
+    let lineH = 1.4;
+    let nameSize = 52;
+    let imgSize = 350;
+    let gap = 20;
+    
+    if (combinedLength > 150) { fontSize = 28; nameSize = 48; imgSize = 320; gap = 15; }
+    if (combinedLength > 250) { fontSize = 24; lineH = 1.3; nameSize = 42; imgSize = 270; gap = 10; }
+    if (combinedLength > 350) { fontSize = 21; lineH = 1.2; nameSize = 36; imgSize = 230; gap = 5; }
     
     container.innerHTML = `
         <div class="tarot-overlay"></div>
-        <div class="tarot-content-wrapper">
-            <div class="tarot-header">ไพ่ยิปซีประจำวัน<br><span style="font-size:32px; color:#aaa;">${dateThai}</span></div>
+        <div class="tarot-content-wrapper" style="padding: ${gap}px 0;">
+            <div class="tarot-header" style="margin-bottom: ${gap}px; font-size: 40px;">ไพ่ยิปซีประจำวัน<br><span style="font-size:26px; color:#aaa;">${dateThai}</span></div>
             
-            <div class="tarot-card-img" style="background-image: url('${cardImgUrl}');">
-                <!-- If image fails, show text fallback -->
-                ${!card.img ? card.name : ''}
+            <div class="tarot-card-img" style="background-image: url('${cardImgUrl}'); height: ${imgSize}px; width: ${imgSize * 0.6}px; background-size: cover; margin-bottom: 0;">
             </div>
             
-            <h2 style="font-size: 52px; color: #fff; margin-bottom: 15px; font-weight: bold; text-shadow: 0 5px 15px rgba(0,0,0,0.5);">${card.name}</h2>
+            <h2 style="font-size: ${nameSize}px; color: #fff; margin-bottom: ${gap}px; margin-top: ${gap}px; font-weight: bold; text-shadow: 0 5px 15px rgba(0,0,0,0.5);">${card.name}</h2>
             
-            <div class="tarot-meaning">
+            <div class="tarot-meaning" style="font-size: ${fontSize}px; line-height: ${lineH}; max-width: 900px; padding: 0 40px;">
                 "${card.meaning}"<br><br>
                 <span style="color: #d4af37;">คำแนะนำ:</span> ${card.future}
             </div>
             
-            <div style="position: absolute; bottom: 30px; font-size: 24px; color: rgba(255,255,255,0.4);">
+            <div style="position: absolute; bottom: ${gap}px; font-size: 22px; color: rgba(255,255,255,0.4);">
                 สยามโหรามงคล (Siamhora.com)
             </div>
         </div>
@@ -523,12 +529,33 @@ async function drawTarotCanvas(ctx, dateObj, dateThai) {
     
     ctx.fillStyle = '#fff'; ctx.font = 'bold 52px "Sarabun"';
     ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 15;
-    ctx.fillText(card.name, 540, 680); ctx.shadowBlur = 0;
+    ctx.fillText(card.name, 540, 660); ctx.shadowBlur = 0;
     
-    ctx.font = '32px "Sarabun"'; ctx.fillStyle = '#fff';
-    wrapText(ctx, `"${card.meaning}"`, 540, 750, 850, 45);
-    ctx.fillStyle = '#d4af37'; ctx.fillText("คำแนะนำ:", 540, 850);
-    ctx.fillStyle = '#fff'; wrapText(ctx, card.future, 540, 895, 850, 45);
+    // Dynamic text scaling
+    const combinedLength = card.meaning.length + (card.future ? card.future.length : 0);
+    let fontSize = 32;
+    let lineH = 45;
+    let startY = 720;
+    
+    if (combinedLength > 150) {
+        fontSize = 28;
+        lineH = 40;
+    }
+    if (combinedLength > 250) {
+        fontSize = 24;
+        lineH = 34;
+    }
+    if (combinedLength > 350) {
+        fontSize = 22;
+        lineH = 32;
+    }
+    
+    ctx.font = `${fontSize}px "Sarabun"`; ctx.fillStyle = '#fff';
+    const linesMeaning = wrapText(ctx, `"${card.meaning}"`, 540, startY, 900, lineH);
+    const nextY = startY + (linesMeaning * lineH) + 15;
+    
+    ctx.fillStyle = '#d4af37'; ctx.fillText("คำแนะนำ:", 540, nextY);
+    ctx.fillStyle = '#fff'; wrapText(ctx, card.future, 540, nextY + lineH, 900, lineH);
     
     ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '24px "Sarabun"';
     ctx.fillText("สยามโหรามงคล (Siamhora.com)", 540, 1000);

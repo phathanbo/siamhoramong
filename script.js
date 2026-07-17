@@ -395,35 +395,49 @@ function goBackend() {
 }
 
 // --- ฟังก์ชันบันทึกรูปภาพ ---
-function downloadImage() {
+async function downloadImage() {
     const area = document.getElementById('captureArea');
     if (!area) {
-    alert("ไม่พบพื้นที่สำหรับบันทึกภาพ กรุณากดปุ่ม 'ทำนายดวง' ก่อนนะครับ");
-    return;
+        alert("ไม่พบพื้นที่สำหรับบันทึกภาพ กรุณากดปุ่ม 'ทำนายดวง' ก่อนนะครับ");
+        return;
     }
-    html2canvas(area, {
-    backgroundColor: "#fdf6e3",
-    scale: 2
-    }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = `ดวงชะตา${document.getElementById('targetName').value}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-    });
+    
+    try {
+        const canvas = await renderElementToCanvas('captureArea', {
+            backgroundColor: "#fdf6e3",
+            width: 1080
+        });
+        
+        const link = document.createElement('a');
+        link.download = `ดวงชะตา${document.getElementById('targetName').value}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    } catch(e) {
+        console.error(e);
+        alert('เกิดข้อผิดพลาดในการสร้างรูปภาพ');
+    }
 }
 
 
-function downloadImageFromProfile() {
+async function downloadImageFromProfile() {
     const area = document.getElementById('captureArea');
     if (!area) return;
     const nameEl = document.getElementById('profName');
     const name = nameEl ? nameEl.innerText : 'profile';
-    html2canvas(area, { backgroundColor: "#fdf6e3", scale: 2 }).then(canvas => {
+    
+    try {
+        const canvas = await renderElementToCanvas('captureArea', {
+            backgroundColor: "#fdf6e3",
+            width: 1080
+        });
+        
         const link = document.createElement('a');
         link.download = `Profile${name}.png`;
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL("image/png");
         link.click();
-    });
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 
@@ -765,19 +779,31 @@ async function captureCustomArea(element, fileName) {
     element.style.padding = "20px";
     element.style.background = "#1a1a1a"; // พื้นหลังเข้มเพื่อให้ตัวหนังสือทองเด่น
     
-    const canvas = await html2canvas(element, {
-        scale: 3, // เพิ่มความชัด
-        backgroundColor: '#1a1a1a',
-        useCORS: true
-    });
-    
-    // คืนค่าเดิม
-    element.style.padding = originalPadding;
-    
-    const link = document.createElement('a');
-    link.download = `${fileName}_${Date.now()}.png`;
-    link.href = canvas.toDataURL();
-    link.click();
+    try {
+        const targetId = element.id;
+        if (!targetId) {
+            // Give it a temporary ID if it doesn't have one
+            element.id = 'temp-capture-area-' + Date.now();
+        }
+        
+        const canvas = await renderElementToCanvas(element.id, {
+            width: 1080,
+            backgroundColor: '#1a1a1a'
+        });
+        
+        // คืนค่าเดิม
+        element.style.padding = originalPadding;
+        element.style.background = '';
+        
+        const link = document.createElement('a');
+        link.download = `${fileName}_${Date.now()}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+    } catch(e) {
+        console.error(e);
+        element.style.padding = originalPadding;
+        element.style.background = '';
+    }
 }
 
 

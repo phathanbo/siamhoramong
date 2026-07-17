@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสร้างภาพพื้นดวงอัตโนมัติ (Chart Image Generator)</title>
+    
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f4f6f9; }
+        .admin-header { background: #1a1a2e; color: #fff; padding: 20px; text-align: center; }
+        .btn-gold { background: linear-gradient(135deg, #f1c40f, #e67e22); color: #fff; border: none; font-weight: bold; }
+        .btn-gold:hover { background: linear-gradient(135deg, #e67e22, #d35400); color: #fff; }
+        
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #ccc;
+            padding: 20px;
+            overflow: auto;
+            border-radius: 10px;
+            min-height: 800px;
+        }
+
+        #chartCanvas {
+            width: 1080px;
+            height: 1080px;
+            background-color: #111;
+            /* Using solid dark blue as fallback, and cover image if exists */
+            background: linear-gradient(135deg, #0d0a1a, #1a0b2e);
+            background-image: url('assets/mystical_astrology_cover.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            color: #FFF;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            /* Enable scaling for preview but native size for html2canvas */
+            transform-origin: top left;
+        }
+
+        /* Chart Canvas Inner Elements */
+        .chart-header {
+            text-align: center;
+            padding-top: 60px;
+            position: relative;
+            z-index: 2;
+        }
+        .chart-header h1 {
+            color: #FFDF73;
+            font-size: 65px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5), 3px 3px 5px #000;
+        }
+        .chart-header h2 {
+            color: #E6C27A;
+            font-size: 35px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px #000;
+        }
+        
+        .chart-grid {
+            position: absolute;
+            top: 280px;
+            left: 50px;
+            right: 50px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            z-index: 2;
+        }
+
+        .chart-box {
+            background: rgba(20, 10, 40, 0.85);
+            border: 2px solid rgba(212, 175, 55, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-box-title {
+            color: #FFDF73;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+            padding-bottom: 15px;
+        }
+
+        .zodiac-icon {
+            font-size: 80px;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #D4AF37;
+            text-shadow: 0 0 30px rgba(255, 223, 115, 0.6);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+            padding: 12px 0;
+            font-size: 22px;
+        }
+        .data-label { color: #E6C27A; }
+        .data-value { color: #FFF; font-weight: bold; }
+
+        .taksa-table {
+            width: 100%;
+            text-align: center;
+            border-collapse: collapse;
+        }
+        .taksa-table td {
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            padding: 10px 5px;
+        }
+        .taksa-label { font-size: 14px; color: #AAA; }
+        .taksa-val { font-size: 32px; color: #FFF; font-weight: bold; }
+        .taksa-base-val { font-size: 32px; color: #FFDF73; font-weight: bold; }
+
+        .chart-footer {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 18px;
+            letter-spacing: 1px;
+            z-index: 2;
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-header mb-4">
+        <h2><i class="fas fa-magic"></i> ระบบสร้างภาพพื้นดวงอัตโนมัติ (Chart Image Generator)</h2>
+        <a href="admin.html" class="btn btn-outline-light btn-sm mt-2"><i class="fas fa-arrow-left"></i> กลับหน้าแอดมิน</a>
+    </div>
+
+    <div class="container-fluid px-4 pb-5">
+        <div class="row">
+            <!-- Sidebar / Settings -->
+            <div class="col-md-3">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <i class="fas fa-cogs"></i> ตั้งค่าข้อมูลลูกค้า
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>เลือกจากประวัติ (ถ้ามี)</label>
+                            <select id="memberSelect" class="form-control" onchange="autoFillMember(this.value)">
+                                <option value="">-- เลือกลูกค้า --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ชื่อ-นามสกุล / ชื่อเล่น</label>
+                            <input type="text" id="custName" class="form-control" placeholder="ระบุชื่อที่จะให้โชว์ในภาพ">
+                        </div>
+                        <div class="form-group">
+                            <label>วันเดือนปีเกิด (ค.ศ.)</label>
+                            <input type="date" id="custDobDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>เวลาเกิด (ตกฟาก)</label>
+                            <input type="time" id="custDobTime" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>จังหวัดที่เกิด</label>
+                            <input type="text" id="custLocation" class="form-control" placeholder="กรุงเทพมหานคร">
+                        </div>
+                        
+                        <button onclick="generateChartPreview()" class="btn btn-gold btn-block mt-4">
+                            <i class="fas fa-sync-alt"></i> อัปเดตพรีวิวภาพ
+                        </button>
+                        
+                        <hr>
+                        <button onclick="downloadChart()" class="btn btn-success btn-block mt-3" id="btnDownload" style="display:none;">
+                            <i class="fas fa-download"></i> ดาวน์โหลดรูปภาพ
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="col-md-9">
+                <div class="preview-container" id="previewContainer">
+                    <div id="chartWrapper">
+                        <div id="chartCanvas">
+                            <div class="overlay"></div>
+                            <div style="position:relative; z-index: 10; display: flex; justify-content: center; align-items: center; height: 100%; color: #aaa; font-size: 24px;">
+                                <div style="background: rgba(0,0,0,0.8); padding: 40px; border-radius: 20px; border: 2px solid #555;">
+                                    กรุณากรอกข้อมูลแล้วกด "อัปเดตพรีวิวภาพ"
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Include Thai Astrology dependencies -->
+    <script src="ThaiLunar.js"></script>
+    <script src="ascendant.js"></script>
+    <script src="thai-astrology-data.js"></script>
+    <script src="adminChartImageGen.js"></script>
+</body>
+</html>

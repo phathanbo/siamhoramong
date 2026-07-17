@@ -472,102 +472,160 @@ if (typeof document !== 'undefined') {
 }
 
 if (typeof window !== 'undefined') {
-    window.saveAscendantImage = function() {
+    window.saveAscendantImage = async function() {
     const captureArea = document.getElementById('ascResult');
     if (!captureArea || captureArea.style.display === 'none') {
         Swal.fire('แจ้งเตือน', 'คำนวณก่อนเซฟครับประธาน!', 'warning');
         return;
     }
-
-    // สั่งเซฟด้วยการ "จำลอง" ขนาดใหม่
-    html2canvas(captureArea, {
-        backgroundColor: '#0a0a0a',
-        scale: 2, // เพิ่มความชัด x2
-        logging: false,
-        onclone: (clonedDoc) => {
-            // --- 💡 ความลับอยู่ตรงนี้ครับประธาน ---
-            const clonedElement = clonedDoc.getElementById('ascResult');
-            
-            // บังคับขนาดในรูปเซฟให้เป็น 1080px (ขนาดมาตรฐาน Facebook/Instagram)
-            clonedElement.style.width = '1080px';
-            clonedElement.style.maxWidth = 'none'; 
-            clonedElement.style.padding = '40px'; // เพิ่มขอบให้รูปดูแพง
-            
-            // ปรับตัวหนังสือในรูปให้ใหญ่ขึ้นนิดนึงตอนเซฟ จะได้อ่านในเฟสง่าย
-            clonedElement.style.fontSize = '20px'; 
-            
-            // แอบเติมลายน้ำหรือเครดิตแอปในรูปเซฟ (โผล่เฉพาะในรูป)
-            const footer = clonedDoc.createElement('div');
-            footer.innerHTML = '<center><p style="color:#d4af37; margin-top:20px; font-size:18px;">✨ สยามโหรามงคล - พยากรณ์ดวงชะตาแม่นยำ ✨</p></center>';
-            clonedElement.appendChild(footer);
-        }
-    }).then(canvas => {
+    try {
+        await document.fonts.ready;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1080;
+        canvas.height = 1080;
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+        const texts = captureArea.innerText.split('\n').filter(t => t.trim());
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        let y = 60;
+        texts.forEach((line, idx) => {
+            ctx.font = idx === 0 ? 'bold 50px "Sarabun", sans-serif' : '34px "Sarabun", sans-serif';
+            ctx.fillStyle = idx === 0 ? '#d4af37' : '#ffffff';
+            ctx.fillText(line, canvas.width / 2, y);
+            y += idx === 0 ? 80 : 60;
+        });
+        ctx.fillStyle = 'rgba(212, 175, 55, 0.45)';
+        ctx.font = '28px "Sarabun", sans-serif';
+        ctx.fillText('✨ สยามโหรามงคล - พยากรณ์ดวงชะตาแม่นยำ ✨', canvas.width / 2, canvas.height - 80);
         const link = document.createElement('a');
         link.download = `ดวงชะตา_${new Date().getTime()}.png`;
-        link.href = canvas.toDataURL("image/png");
+        link.href = canvas.toDataURL('image/png');
         link.click();
-        console.log("📸 เซฟรูปขนาด Facebook Standard เรียบร้อย!");
-    });
+    } catch(e) {
+        console.error('Canvas Error:', e);
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเซฟภาพได้', 'error');
+    }
 };
 }
 
 // 3. ฟังก์ชันบันทึกภาพ
 if (typeof window !== 'undefined') {
-    window.downloadLottoResult = function() {
+    window.downloadLottoResult = async function() {
     const area = document.getElementById('lottoCaptureArea');
     if (!area) { Swal.fire('แจ้งเตือน', 'คำนวณเลขก่อนครับประธาน', 'warning'); return; }
+    try {
+        await document.fonts.ready;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1080;
+        canvas.height = 1080;
 
-    html2canvas(area, {
-        backgroundColor: null, // ปล่อยเป็นใสเพื่อให้ Background ที่เราตั้งใน clone ทำงาน
-        scale: 2,
-        onclone: (clonedDoc) => {
-            const el = clonedDoc.getElementById('lottoCaptureArea');
-            
-            // --- 🎨 แต่งองค์ทรงเครื่องให้ภาพเซฟ ---
-            el.style.width = '600px';
-            el.style.background = 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)'; // พื้นหลังกาแล็กซี่ทางช้างเผือก
-            el.style.border = '5px double #d4af37'; // ขอบทองสองชั้นแบบยันต์
-            el.style.borderRadius = '20px';
-            el.style.padding = '40px';
-            el.style.color = '#fff';
-            el.style.boxShadow = 'inset 0 0 50px rgba(212, 175, 55, 0.3)'; // แสงสีทองเรืองๆ ด้านใน
+        // Galaxy background
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        grad.addColorStop(0, '#0f0c29');
+        grad.addColorStop(0.5, '#302b63');
+        grad.addColorStop(1, '#24243e');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // ปรับแต่งหัวข้อ
-            const title = el.querySelector('h4');
-            if(title) {
-                title.style.fontSize = '32px';
-                title.style.textShadow = '2px 2px 4px #000';
-                title.style.color = '#ffd700';
-                title.innerHTML = `✨ ${title.innerText} ✨`;
-            }
+        // Double gold border
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+        ctx.lineWidth = 3;
+        ctx.strokeRect(35, 35, canvas.width - 70, canvas.height - 70);
 
-            // ปรับแต่งตัวเลขเด่น (ทำให้ดูเหมือนลูกบอลทองคำ)
-            const mainNum = el.querySelector('.text-danger');
-            if(mainNum) {
-                mainNum.style.fontSize = '80px';
-                mainNum.style.color = '#fff';
-                mainNum.style.textShadow = '0 0 20px #ff0000, 0 0 30px #ff0000';
-                mainNum.style.margin = '20px 0';
-            }
+        // Inner glow
+        const glowGrad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width/2);
+        glowGrad.addColorStop(0, 'rgba(212, 175, 55, 0.15)');
+        glowGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = glowGrad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // เพิ่มเครดิตแบบหรูๆ
-            const footer = clonedDoc.createElement('div');
-            footer.style.marginTop = '30px';
-            footer.style.borderTop = '1px solid #d4af37';
-            footer.style.paddingTop = '15px';
-            footer.style.fontSize = '14px';
-            footer.style.color = '#d4af37';
-            footer.style.textAlign = 'center';
-            footer.style.letterSpacing = '2px';
-            footer.innerHTML = '⚜️ สยามโหรามงคล ⚜️';
-            el.appendChild(footer);
-        }
-    }).then(canvas => {
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+
+        // Header
+        ctx.font = 'bold 72px "Sarabun", sans-serif';
+        ctx.fillStyle = '#ffd700';
+        ctx.fillText('✨ วิเคราะห์เลขมงคล ✨', canvas.width / 2, 60);
+
+        // Get data from the rendered area
+        const calcEl = area.querySelector('.alert-info');
+        const calcText = calcEl?.innerText || '';
+        ctx.font = '30px "Sarabun", sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.fillText(calcText.split('\n')[1] || '', canvas.width / 2, 160);
+
+        // Main / Secondary / Forbidden numbers
+        const h2s = area.querySelectorAll('h2');
+        const mainNum = h2s[0]?.innerText || '?';
+        const secNum = h2s[1]?.innerText || '?';
+        const forbNum = h2s[2]?.innerText || '?';
+
+        const drawNumBox = (num, label, color, x, y, w) => {
+            ctx.fillStyle = 'rgba(255,255,255,0.08)';
+            ctx.beginPath();
+            ctx.roundRect(x - w/2, y - 10, w, 180, 20);
+            ctx.fill();
+            ctx.font = 'bold 120px "Sarabun", sans-serif';
+            ctx.fillStyle = color;
+            ctx.fillText(num, x, y);
+            ctx.font = 'bold 30px "Sarabun", sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.fillText(label, x, y + 145);
+        };
+
+        drawNumBox(mainNum,  '⭐ เด่น',   '#00e676', canvas.width * 0.2, 230, 250);
+        drawNumBox(secNum,   '✨ รอง',    '#ffc107', canvas.width * 0.5, 230, 250);
+        drawNumBox(forbNum,  '⚠️ กัน',   '#ff5252', canvas.width * 0.8, 230, 250);
+
+        // Divider
+        ctx.strokeStyle = 'rgba(212,175,55,0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(80, 460); ctx.lineTo(canvas.width - 80, 460); ctx.stroke();
+
+        // 2-digit numbers
+        const twoDigitEl = area.querySelectorAll('.text-center')[2];
+        const twoDigits = twoDigitEl?.innerText?.trim() || '';
+        ctx.font = 'bold 40px "Sarabun", sans-serif';
+        ctx.fillStyle = '#d4af37';
+        ctx.fillText('🎯 เลขแนะนำ 2 ตัว', canvas.width / 2, 490);
+        ctx.font = 'bold 60px "Sarabun", sans-serif';
+        ctx.fillStyle = '#4fc3f7';
+        ctx.fillText(twoDigits, canvas.width / 2, 550);
+
+        // 3-digit numbers
+        const threeDigitEl = area.querySelectorAll('.text-center')[3];
+        const threeDigits = threeDigitEl?.innerText?.trim() || '';
+        ctx.font = 'bold 40px "Sarabun", sans-serif';
+        ctx.fillStyle = '#d4af37';
+        ctx.fillText('🎯 เลขแนะนำ 3 ตัว', canvas.width / 2, 660);
+        ctx.font = 'bold 60px "Sarabun", sans-serif';
+        ctx.fillStyle = '#69f0ae';
+        ctx.fillText(threeDigits, canvas.width / 2, 720);
+
+        // Footer
+        ctx.strokeStyle = 'rgba(212,175,55,0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(80, 860); ctx.lineTo(canvas.width - 80, 860); ctx.stroke();
+        ctx.font = '32px "Sarabun", sans-serif';
+        ctx.fillStyle = '#d4af37';
+        ctx.fillText('⚜️ สยามโหรามงคล ⚜️', canvas.width / 2, 890);
+
         const link = document.createElement('a');
         link.download = `เลขมงคล_${new Date().getTime()}.png`;
-        link.href = canvas.toDataURL("image/png");
+        link.href = canvas.toDataURL('image/png');
         link.click();
-    });
+    } catch(e) {
+        console.error('Canvas Error:', e);
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกภาพได้', 'error');
+    }
 };
 }
 

@@ -15,7 +15,17 @@
     <!-- ===== MANIFEST (สำหรับ PWA) ===== -->
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/1995/1995434.png">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/1995/1995434.png">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1995/1995434.png">
+
+    <!-- ===== CUSTOM OPTION STYLE ===== -->
+    <style>
+        /* Force styling on option elements specifically to overcome Chrome Windows native rendering issues */
+        select option, select.bg-dark option, select.form-control option {
+            background-color: #1a1a1a !important;
+            color: #ffffff !important;
+        }
+    </style>
 
     <!-- ===== DNS PREFETCH (เพิ่มความเร็ว) ===== -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
@@ -1126,7 +1136,7 @@
     <section id="patient-prognosis" class="main-section" style="display: none;">
         <div class="compatibility-container">
             <h2 class="section-title">วิธีพยากรณ์ตัดอายุคนป่วย</h2>
-            <p class="section-subtitle">คำทำนายเกณฑ์ชะตาว่าจะตายหรือมิตายตามตำราฉัตร ๙ ชั้น</p>
+            <p class="section-subtitle">ตำราพรหมชาติ (วิชาทักษาตัดอายุคนเจ็บ)</p>
             <div class="selection-grid">
                 <div class="input-box">
                     <label for="patientAge">อายุบริบูรณ์ (ปี)</label>
@@ -1525,12 +1535,12 @@
     <!-- วงล้อพยากรณ์ ไฟล์ promchart.js-->
     <section id="promchartsection" class="main-section" style="display: none;">
         <div class="container">
-            <h2 class="title">ทำนายดวงชะตาตามอายุ (ตำราพรหมชาติ)</h2>
+            <h2 class="title">🎡 ทำนายดวงชะตาตามอายุ (ตำราพรหมชาติ)</h2>
             <div class="calc-box">
             <div class="form-group mb-3">
-                    <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
-                    <select class="form-control bg-black text-black border-gold member-selector-shared"
-                        onchange="autoFillMemberData(this.value);calculatePromchart()"> >
+                    <label>เลือกสมาชิกจากประวัติ:</label>
+                    <select class="form-control member-selector-shared"
+                        onchange="autoFillMemberData(this.value);calculatePromchart()">
                         <option value="">-- เลือกสมาชิก --</option>
                     </select>
             </div>
@@ -1545,7 +1555,7 @@
                     <label>อายุปัจจุบัน (ปี):</label>
                     <input type="number" id="userAgeprom" placeholder="ตัวอย่าง: 25" min="1">
                 </div>
-                <button onclick="calculatePromchart()" class="btn-predict">ทำนายดวงปีนี้</button>
+                <button onclick="calculatePromchart()" class="btn-predict">✨ ทำนายดวงปีนี้</button>
             </div>
             <div id="resultDisplay" class="exportable-result result-container" style="display:none;">
                 <div class="action-buttons">
@@ -2153,6 +2163,33 @@
                 </h2>
                 <p class="text-white text-center mb-4">วิเคราะห์ปีที่ดีสำหรับธุรกิจและการลงทุน</p>
 
+                <div class="row justify-content-center mb-3">
+                    <div class="col-md-8">
+                        <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
+                        <select class="form-control bg-dark text-white border-gold member-selector-shared"
+                            onchange="autoFillMemberData(this.value);displayBusinessFortune()">
+                            <option value="">-- เลือกสมาชิก --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center mb-3">
+                    <div class="col-md-4">
+                        <label class="text-gold">วันเกิด:</label>
+                        <input type="date" id="businessBirthday" class="form-control bg-dark text-gold border-gold"
+                               onchange="displayBusinessFortune()">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="text-gold">เวลาเกิด (ถ้าทราบ):</label>
+                        <input type="time" id="businessBirthTime" class="form-control bg-dark text-gold border-gold"
+                               onchange="displayBusinessFortune()">
+                    </div>
+                </div>
+
+                <div class="text-center mb-3">
+                    <small class="text-white-50">— หรือเลือกปีนักษัตรด้านล่าง —</small>
+                </div>
+
                 <div class="row justify-content-center mb-4">
                     <div class="col-md-6">
                         <label class="text-gold">เลือกปีนักษัตรของคุณ:</label>
@@ -2282,20 +2319,39 @@
         <div id="dashboardContainer"></div>
     </section>
 
-    <!-- ไพ่ยิปซีรายวัน (Tarot) -->
+    <!-- ไพ่ยิปซีเซลติกครอส 10 ใบ (Tarot Celtic Cross) -->
     <section id="tarotPage" class="main-section" style="display: none;">
         <div class="container mt-4">
             <div class="card bg-dark border-gold p-4 shadow-lg">
                 <h2 class="text-gold mb-4 text-center">
-                    <i class="fas fa-layer-group mr-2"></i> ไพ่ยิปซีรายวัน
+                    <i class="fas fa-layer-group mr-2"></i> ทำนายไพ่ยิปซีเซลติกครอส (10 ใบ)
                 </h2>
-                <p class="text-center text-light">เปิดไพ่ยิปซี 1 ใบ เพื่อดูดวงชะตาประจำวันของคุณ</p>
-                <div class="text-center">
-                    <button id="drawTarotBtn" class="btn btn-gold btn-lg mt-3">
-                        <i class="fas fa-hand-sparkles mr-2"></i> จั่วไพ่
+                <p class="text-center text-light">การทำนายแบบเจาะลึก 10 ใบ รวบรวมข้อมูล อดีต ปัจจุบัน อนาคต และสิ่งแวดล้อมรอบตัว</p>
+                
+                <div id="tarotPreDraw" class="text-center">
+                    <p class="text-warning">ทำสมาธิ นึกถึงเรื่องที่ต้องการทราบ แล้วกดปุ่มด้านล่างเพื่อเริ่มเปิดไพ่</p>
+                    <button id="drawCelticCrossBtn" class="btn btn-gold btn-lg mt-3" onclick="drawCelticCross()">
+                        <i class="fas fa-hand-sparkles mr-2"></i> เริ่มเปิดไพ่ 10 ใบ
                     </button>
                 </div>
-                <div id="tarotResult" style="display: none;"></div>
+
+                <div id="tarotResult" style="display: none;">
+                    <!-- พื้นที่จัดเรียงไพ่ 10 ใบ -->
+                    <div class="celtic-cross-layout mt-4 mb-4">
+                        <!-- Card elements will be generated by JS -->
+                    </div>
+                    
+                    <div id="tarotReadingText" class="mt-4 p-4 border-gold rounded" style="background: rgba(0,0,0,0.5);">
+                        <h4 class="text-gold text-center mb-3">คำทำนาย</h4>
+                        <div id="tarotReadingContent" class="text-light"></div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-light" onclick="resetTarotReading()">
+                            <i class="fas fa-redo mr-2"></i> ดูดวงใหม่
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -2702,7 +2758,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="canvas-helpers.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
     <script type="module" src="membermanager.js"></script>
     <script src="auth-enhanced-firebase-fixed.js"></script>
@@ -2735,6 +2791,8 @@
     <script src="canvas-helpers.js"></script>
     <script src="adminContentGenerator.js"></script>
     <script src="adminCarouselFortune.js"></script>
+    <script src="tarot-data.js"></script>
+    <script src="tarot-reading.js"></script>
     <script src="fortune-daily-data.js"></script>
     <script src="fortune-daily.js"></script>
     <script src="adminTarotFortune.js"></script>
@@ -3146,5 +3204,30 @@
 
                 <div id="siamsiImagePreviewContainer" class="text-center mt-3 d-flex justify-content-center" style="display: none !important;"></div>
             </div>
+
+    <!-- Payment Modal Overlay -->
+    <div id="paymentModalOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+        <div class="card p-4 text-center" style="max-width: 400px; width: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background-color: #f8f9fa;">
+            <h4 class="mb-3 font-weight-bold" style="color: #333;">ชำระเงินอัปเกรด</h4>
+            <p class="mb-1" style="color: #555;">แพ็กเกจ: <strong id="payPkgName" style="color: #007bff;"></strong></p>
+            <p class="mb-1" style="color: #555;">ระยะเวลา: <strong id="payPkgPeriod"></strong></p>
+            <h3 class="my-3 font-weight-bold" style="color: #dc3545;">฿<span id="payPrice"></span></h3>
+            
+            <div class="mb-3 d-flex justify-content-center">
+                <img id="promptpayQR" src="" alt="PromptPay QR" style="max-width: 200px; width: 100%; border: 1px solid #ddd; border-radius: 10px; padding: 10px; background: #fff;">
+            </div>
+            <p class="text-muted small mb-3">สแกน QR Code นี้ผ่านแอปธนาคารของคุณเพื่อชำระเงิน</p>
+            
+            <div class="form-group text-left">
+                <label for="slipUpload" class="font-weight-bold mb-1" style="color: #333;">แนบสลิปโอนเงิน:</label>
+                <input type="file" id="slipUpload" class="form-control-file" accept="image/*" style="color: #333;">
+            </div>
+            
+            <div class="d-flex justify-content-between mt-4">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('paymentModalOverlay').style.display='none'">ยกเลิก</button>
+                <button type="button" class="btn btn-primary px-4" onclick="submitPayment()">ยืนยันการชำระเงิน</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

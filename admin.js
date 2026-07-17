@@ -25,17 +25,30 @@ document.addEventListener('DOMContentLoaded', () => {
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${getTypeName(data.type)}</td>
-                    <td class="text-gold font-weight-bold">${data.word}</td>
-                    <td>${data.meaning}</td>
-                    <td><span class="badge badge-info">${data.tags.join(', ')}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-danger" onclick="deleteVocab('${doc.id}')">
-                            <i class="fas fa-trash"></i> ลบ
-                        </button>
-                    </td>
-                `;
+                                  let slipButton = '';
+                  if (data.slipImage) {
+                      slipButton = `
+                      <button class="btn btn-sm btn-info mr-2" onclick="Swal.fire({imageUrl: '${data.slipImage}', imageAlt: 'Slip Image'})">
+                          <i class="fas fa-image"></i> ดูสลิป
+                      </button>`;
+                  }
+
+                  tr.innerHTML = `
+                      <td>${timeStr}</td>
+                      <td class="text-gold">${data.username || '-'}</td>
+                      <td><span class="badge badge-info">${data.package || '-'}</span></td>
+                      <td class="text-success font-weight-bold">฿${data.price || '0'}</td>
+                      <td><span class="badge badge-warning text-dark">รอตรวจสอบ</span></td>
+                      <td style="white-space: nowrap;">
+                          ${slipButton}
+                          <button class="btn btn-sm btn-success mr-2" onclick="approvePayment('${doc.id}', '${data.username}', '${data.package}')">
+                              <i class="fas fa-check"></i> อนุมัติ
+                          </button>
+                          <button class="btn btn-sm btn-danger" onclick="rejectPayment('${doc.id}')">
+                              <i class="fas fa-times"></i> ปฏิเสธ
+                          </button>
+                      </td>
+                  `;
                 vocabTableBody.appendChild(tr);
             });
         }, (error) => {
@@ -164,7 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // 1. อัปเดตสถานะบิลเป็น approved
             await db.collection('payments').doc(paymentId).update({
                 status: 'approved',
-                approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+                approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                slipImage: firebase.firestore.FieldValue.delete()
             });
 
             // 2. ไปอัปเดต Role ผู้ใช้งานใน registered_users (สมมติแพ็กเกจใช้ชื่อเดียวกับ role)
@@ -213,7 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             await db.collection('payments').doc(paymentId).update({
                 status: 'rejected',
-                rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+                rejectedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                slipImage: firebase.firestore.FieldValue.delete()
             });
 
             Swal.fire('ปฏิเสธสำเร็จ', 'เปลี่ยนสถานะบิลเป็นปฏิเสธแล้ว', 'success');

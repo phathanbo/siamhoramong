@@ -317,26 +317,157 @@ function startRitual() {
     });
 }
 
-function downloadRitualImage() {
-    const area = document.getElementById("captureRitualArea");
+async function downloadRitualImage() {
     const btn = event.currentTarget;
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังเตรียมภาพมงคล...';
 
-    html2canvas(area, {
-        backgroundColor: "#121212",
-        scale: 3,
-        onclone: (clonedDoc) => {
-            const el = clonedDoc.getElementById("captureRitualArea");
-            el.style.padding = "50px";
-            el.style.border = "2px solid #d4af37"; // ใส่กรอบทองในรูปให้หรูขึ้น
-        }
-    }).then(canvas => {
+    try {
+        await document.fonts.ready;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1080;
+        canvas.height = 1350;
+
+        // Background
+        ctx.fillStyle = '#121212';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Outer border
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 12;
+        ctx.strokeRect(25, 25, canvas.width - 50, canvas.height - 50);
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([10, 8]);
+        ctx.strokeRect(48, 48, canvas.width - 96, canvas.height - 96);
+        ctx.setLineDash([]);
+
+        // Header
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#d4af37';
+        ctx.font = 'bold 58px "Sarabun", sans-serif';
+        ctx.fillText('✨ ผลพิธีต่อชะตาชีวิต ✨', canvas.width / 2, 80);
+
+        // Divider line
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(100, 165);
+        ctx.lineTo(canvas.width - 100, 165);
+        ctx.stroke();
+
+        // Helper: wrapText
+        const wrapText = (text, x, y, maxWidth, lineHeight) => {
+            if (!text) return y;
+            let lines = [];
+            if (window.Intl && window.Intl.Segmenter) {
+                const seg = new Intl.Segmenter('th', { granularity: 'word' });
+                let curr = '';
+                for (const { segment } of seg.segment(text)) {
+                    if (ctx.measureText(curr + segment).width > maxWidth && curr.trim()) {
+                        lines.push(curr); curr = segment;
+                    } else curr += segment;
+                }
+                lines.push(curr);
+            } else {
+                lines = [text];
+            }
+            for (const line of lines) {
+                ctx.fillText(line, x, y);
+                y += lineHeight;
+            }
+            return y;
+        };
+
+        // Section: Day Power
+        const dayPowerEl = document.getElementById('summaryDayPower');
+        const dayPowerText = dayPowerEl?.innerText || '';
+        let y = 195;
+
+        ctx.font = 'bold 36px "Sarabun", sans-serif';
+        ctx.fillStyle = 'rgba(212, 175, 55, 0.75)';
+        ctx.textAlign = 'left';
+        ctx.fillText('เครื่องบูชาต่อชะตา:', 100, y);
+        y += 55;
+        ctx.font = '34px "Sarabun", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        y = wrapText(dayPowerText, 100, y, canvas.width - 200, 50);
+
+        y += 30;
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(100, y); ctx.lineTo(canvas.width - 100, y); ctx.stroke();
+        y += 30;
+
+        // Section: Prayer
+        const prayerEl = document.getElementById('summaryPrayer');
+        const prayerText = prayerEl?.innerText || '';
+        ctx.font = 'bold 36px "Sarabun", sans-serif';
+        ctx.fillStyle = 'rgba(212, 175, 55, 0.75)';
+        ctx.fillText('บทสวดมงคล:', 100, y);
+        y += 55;
+        ctx.font = '32px "Sarabun", sans-serif';
+        ctx.fillStyle = '#ffd700';
+        y = wrapText(prayerText, 100, y, canvas.width - 200, 48);
+
+        y += 30;
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(100, y); ctx.lineTo(canvas.width - 100, y); ctx.stroke();
+        y += 30;
+
+        // Section: Advice
+        const adviceEl = document.getElementById('extensionAdvice');
+        const adviceText = adviceEl?.innerText || '';
+        ctx.font = 'bold 36px "Sarabun", sans-serif';
+        ctx.fillStyle = 'rgba(212, 175, 55, 0.75)';
+        ctx.fillText('เกณฑ์ชะตาปีนี้:', 100, y);
+        y += 55;
+        ctx.font = '32px "Sarabun", sans-serif';
+        ctx.fillStyle = '#cccccc';
+        y = wrapText(adviceText, 100, y, canvas.width - 200, 48);
+
+        y += 30;
+
+        // Section: Do / Avoid
+        const toDoEl = document.getElementById('toDo');
+        const toAvoidEl = document.getElementById('toAvoid');
+        const toDoText = toDoEl?.innerText || '';
+        const toAvoidText = toAvoidEl?.innerText || '';
+
+        const colW = (canvas.width - 200) / 2 - 20;
+
+        ctx.font = 'bold 34px "Sarabun", sans-serif';
+        ctx.fillStyle = '#28a745';
+        ctx.fillText('✅ สิ่งควรทำ:', 100, y);
+        ctx.fillStyle = '#dc3545';
+        ctx.fillText('⚠️ ควรระวัง:', 100 + colW + 40, y);
+        y += 50;
+
+        ctx.font = '30px "Sarabun", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        wrapText(toDoText, 100, y, colW, 44);
+        wrapText(toAvoidText, 100 + colW + 40, y, colW, 44);
+
+        // Footer watermark
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(212, 175, 55, 0.5)';
+        ctx.font = '28px "Sarabun", sans-serif';
+        ctx.fillText('สยามโหรามงคล 🔮 ประธานโบ้', canvas.width / 2, canvas.height - 100);
+
         const link = document.createElement('a');
         link.download = `ต่อชะตา-สยามโหรามงคล-${new Date().getTime()}.png`;
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL('image/png');
         link.click();
+
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-camera mr-2"></i> บันทึกภาพมงคลนี้';
-    });
-}
+    } catch (e) {
+        console.error('Canvas Error:', e);
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกภาพได้', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-camera mr-2"></i> บันทึกภาพมงคลนี้';
+    }
+}

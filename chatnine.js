@@ -171,20 +171,143 @@ function calculateChatnine() {
     }
 }
 
-// ฟังก์ชันสำหรับบันทึกภาพ (ปรับแต่งให้สวยงาม)
-function downloadChatnineImage() {
-    const displayElement = document.getElementById('chatranineDisplay');
-    if (!displayElement) return;
+async function downloadChatnineImage() {
+    const ageInput = document.getElementById('chatranineAge');
+    const birthDayInput = document.getElementById('chatraninebirthDaySelect');
+    if (!ageInput || !birthDayInput || !ageInput.value) {
+        if(typeof Swal !== 'undefined') Swal.fire('แจ้งเตือน', 'กรุณาคำนวณผลลัพธ์ก่อนบันทึกภาพ', 'warning');
+        else alert('กรุณาคำนวณผลลัพธ์ก่อนบันทึกภาพ');
+        return;
+    }
 
-    html2canvas(displayElement, {
-        backgroundColor: "#121212",
-        scale: 2,
-        logging: false,
-        useCORS: true
-    }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = `สยามโหรามงคล_ฉัตร9ชั้น_${new Date().getTime()}.png`;
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-    });
+    const age = parseInt(ageInput.value);
+    const startDay = parseInt(birthDayInput.value);
+    
+    let steps = (age - 1) % 9;
+    let startIndex = chatraSequence.indexOf(startDay);
+    let finalIndex = (startIndex + steps) % 9;
+    let finalNumber = chatraSequence[finalIndex];
+    const result = chatra9FullData[finalNumber];
+    
+    if (!result) return;
+    
+    const width = 1080;
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = 3000;
+    const ctx = canvas.getContext('2d');
+    
+    await document.fonts.ready;
+    
+    const drawContent = (isMeasure = false) => {
+        let cy = 100;
+        const cx = 80;
+        const maxW = width - 160;
+        
+        if (!isMeasure) {
+            let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, '#1c1c1e');
+            grad.addColorStop(1, '#000000');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, canvas.height);
+            
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 4;
+            if (ctx.roundRect) {
+                ctx.beginPath();
+                ctx.roundRect(40, 40, width - 80, canvas.height - 80, 25);
+                ctx.stroke();
+            } else {
+                ctx.strokeRect(40, 40, width - 80, canvas.height - 80);
+            }
+            
+            ctx.font = '700 60px "Chonburi"';
+            ctx.fillStyle = '#d4af37'; 
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText("ตำราฉัตร 9 ชั้น (หลวงทรงพล)", width/2, cy);
+            
+            ctx.font = '400 36px "Sarabun"';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(`อายุย่าง ${age} ปี`, width/2, cy + 90);
+        }
+        
+        cy += 200;
+        
+        if (!isMeasure) {
+            ctx.font = '700 50px "Sarabun"';
+            ctx.fillStyle = result.color || '#d4af37';
+            ctx.fillText(result.name, width/2, cy);
+        }
+        cy += 80;
+        
+        if (!isMeasure) {
+            ctx.font = '700 40px "Sarabun"';
+            ctx.fillStyle = '#d4af37';
+            ctx.fillText(`💠 ${result.god} 💠`, width/2, cy);
+        }
+        cy += 100;
+        
+        ctx.font = '400 40px "Sarabun"';
+        let text = result.desc;
+        let pLines = [];
+        
+        if (window.Intl && window.Intl.Segmenter) {
+            const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+            const segments = segmenter.segment(text);
+            let currentLine = "";
+            for (const {segment} of segments) {
+                const testLine = currentLine + segment;
+                if (ctx.measureText(testLine).width > maxW && currentLine.trim() !== '') {
+                    pLines.push(currentLine);
+                    currentLine = segment;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            pLines.push(currentLine);
+        } else {
+            let currentLine = "";
+            for (let j = 0; j < text.length; j++) {
+                const char = text[j];
+                const testLine = currentLine + char;
+                if (ctx.measureText(testLine).width > maxW && j > 0) {
+                    pLines.push(currentLine);
+                    currentLine = char;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            pLines.push(currentLine);
+        }
+        
+        for (let l of pLines) {
+            if (!isMeasure) {
+                ctx.fillStyle = '#e8e9f5';
+                ctx.textAlign = 'center';
+                ctx.fillText(l, width/2, cy);
+            }
+            cy += 60;
+        }
+        
+        cy += 80;
+        
+        if (!isMeasure) {
+            ctx.font = '400 30px "Sarabun"';
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fillText("คำพยากรณ์ · สยามโหรามงคล", width/2, cy);
+        }
+        
+        cy += 100;
+        return cy;
+    }
+    
+    let actualHeight = drawContent(true);
+    canvas.height = actualHeight;
+    drawContent(false);
+    
+    const link = document.createElement('a');
+    link.download = `สยามโหรามงคล_ฉัตร9ชั้น_${new Date().getTime()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
 }

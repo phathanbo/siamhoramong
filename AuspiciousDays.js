@@ -350,13 +350,12 @@ function getAuspiciousTime(dayIdx) {
     return timeMatrix[dayIdx] || "09.00-12.00 (เวลามาตรฐาน)";
 }
 
-/* ======================================================
-   ฟังก์ชันดาวน์โหลดภาพฤกษ์มงคล (ปรับปรุงใหม่)
-====================================================== */
-async function downloadAuspiciousImage(element, bgColor) {
-    const area = document.getElementById('captureArea');
-    if (!area) return;
+let currentAuspiciousData = null;
 
+async function downloadAuspiciousImage(element) {
+    if (!currentAuspiciousData) return;
+    const data = currentAuspiciousData;
+    
     let btn = element instanceof HTMLElement ? element : document.querySelector('.btn-share-image');
     const originalText = btn ? btn.innerHTML : "บันทึกรูปภาพ";
 
@@ -366,60 +365,168 @@ async function downloadAuspiciousImage(element, bgColor) {
     }
 
     try {
-        // ดึงข้อมูลข้อความจากหน้าจอเดิมมาเก็บไว้
-        const contentHtml = area.innerHTML;
+        await document.fonts.ready;
+        
+        const width = 1080;
+        const height = 1350; // 4:5 portrait format for socials
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        
+        // Background
+        let grad = ctx.createLinearGradient(0, 0, width, height);
+        grad.addColorStop(0, data.bgColor);
+        grad.addColorStop(1, '#000000');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+        
+        // Title Box
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(80, 80, width - 160, 100, 20);
+        else ctx.rect(80, 80, width - 160, 100);
+        ctx.fill();
+        
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = '700 50px "Sarabun"';
+        ctx.fillStyle = data.bgColor;
+        ctx.fillText(`วัน${data.dayName}ที่ ${data.day} ${data.monthName} ${data.thaiYear}`, width/2, 130);
+        
+        // Content Area
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(80, 220, width - 160, height - 360, 20);
+        else ctx.rect(80, 220, width - 160, height - 360);
+        ctx.fill();
+        
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '400 36px "Sarabun"';
+        
+        let cy = 260;
+        const cx = 130;
+        const maxWidth = width - 260;
+        const lh = 55;
+        
+        function drawLine(text, y, color = '#ffffff', bold = false) {
+            ctx.font = `${bold ? '700' : '400'} 36px "Sarabun"`;
+            ctx.fillStyle = color;
+            ctx.fillText(text, cx, y);
+            return y + lh;
+        }
+        
+        function drawWrappedText(text, y, color = '#ffffff') {
+            ctx.font = '400 36px "Sarabun"';
+            ctx.fillStyle = color;
+            let pLines = [];
+            if (window.Intl && window.Intl.Segmenter) {
+                const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+                const segments = segmenter.segment(text);
+                let currentLine = "";
+                for (const {segment} of segments) {
+                    const testLine = currentLine + segment;
+                    if (ctx.measureText(testLine).width > maxWidth && currentLine.trim() !== '') {
+                        pLines.push(currentLine);
+                        currentLine = segment;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                pLines.push(currentLine);
+            } else {
+                let currentLine = "";
+                for (let j = 0; j < text.length; j++) {
+                    const char = text[j];
+                    const testLine = currentLine + char;
+                    if (ctx.measureText(testLine).width > maxWidth && j > 0) {
+                        pLines.push(currentLine);
+                        currentLine = char;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                pLines.push(currentLine);
+            }
+            
+            for (let l of pLines) {
+                ctx.fillText(l, cx, y);
+                y += lh;
+            }
+            return y;
+        }
 
-        // 1. สร้าง Element ลับขึ้นมานอกจอเพื่อใช้ถ่ายรูปโดยเฉพาะ
-        const offScreenArea = document.createElement('div');
-        offScreenArea.id = "offScreenCapture";
-        // จัดสไตล์ให้เป็นจัตุรัสสวยงาม และอ่านง่าย
-        offScreenArea.style.cssText = `
-            position: absolute;
-            left: -9999px;
-            top: 0;
-            width: 500px;
-            padding: 50px;
-            background: linear-gradient(135deg, ${bgColor} 0%, #000000 120%);
-            color: #ffffff;
-            font-family: 'Sarabun', sans-serif;
-            line-height: 1.6;
-            box-sizing: border-box;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        `;
-
-        // 2. ใส่เนื้อหา และลบปุ่มกดออก (ไม่ให้ติดในรูป)
-        offScreenArea.innerHTML = contentHtml;
-        const btnInClone = offScreenArea.querySelector('button');
-        if (btnInClone) btnInClone.remove();
-
-        // 3. เพิ่ม Footer เกรดพรีเมียม
-        const footer = document.createElement('div');
-        footer.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
-                <div style="font-size: 22px; font-weight: bold; color: #ffd700;">🌌 มหาโหราจักรวาล</div>
-                <div style="font-size: 14px; color: #fff; opacity: 0.8; text-align: right;">วิเคราะห์โดย ประธานโบ้</div>
-            </div>
-        `;
-        offScreenArea.appendChild(footer);
-
-        // นำไปแปะใน body ชั่วคราวเพื่อให้ html2canvas มองเห็น
-        document.body.appendChild(offScreenArea);
-
-        // 4. สั่งถ่ายรูปจาก Element ลับนี้
-        const canvas = await html2canvas(offScreenArea, {
-            backgroundColor: bgColor,
-            scale: 2.5, // ความชัดกำลังดี ไม่หนักเครื่องเกินไป
-            useCORS: true,
-            width: 500,
-            // ลบความสูงที่บังคับออก เพื่อให้ภาพยาวตามเนื้อหาจริงแต่ไม่เกินสัดส่วน
-        });
-
-        // 5. ลบ Element ลับทิ้ง
-        document.body.removeChild(offScreenArea);
-
-        // 6. บันทึกไฟล์
+        cy = drawLine(`🌟 กาลโยค: ${data.kalaStatus}`, cy);
+        cy = drawLine(`🪐 ดาวประจำวัน: ${data.planetName} (${data.planetPower})`, cy);
+        
+        cy += 15;
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(width-cx, cy); ctx.stroke();
+        cy += 30;
+        
+        cy = drawLine(`⏰ ยามมงคลวันนี้:`, cy);
+        cy = drawLine(`${data.auspiciousTime}`, cy, '#f39c12', true);
+        
+        cy += 15;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(width-cx, cy); ctx.stroke();
+        cy += 30;
+        
+        cy = drawLine(`✅ สิ่งที่ควรทำ:`, cy, '#4cd137', true);
+        cy = drawWrappedText(`${data.doList}`, cy, '#4cd137');
+        
+        cy += 15;
+        cy = drawLine(`❌ สิ่งที่ควรเลี่ยง:`, cy, '#e84118', true);
+        cy = drawWrappedText(`${data.dontList}`, cy, '#e84118');
+        
+        cy += 15;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(width-cx, cy); ctx.stroke();
+        cy += 30;
+        
+        cy = drawLine(`💎 คนที่วันเกิดจะโชคดี: วัน${data.luckyDays}`, cy);
+        cy = drawLine(`⚠️ คนที่วันเกิดควรระวัง: วัน${data.unluckyDays}`, cy);
+        
+        cy += 15;
+        ctx.font = '400 36px "Sarabun"';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(`🔢 เลขนำโชค: `, cx, cy);
+        ctx.font = '700 42px "Sarabun"';
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillText(`${data.numbers}`, cx + 220, cy - 4);
+        cy += lh;
+        
+        cy = drawLine(`🧭 ทิศมงคล: ทิศ${data.direction}`, cy);
+        
+        ctx.font = '400 36px "Sarabun"';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(`🎨 สีมงคล: `, cx, cy);
+        ctx.font = '700 36px "Sarabun"';
+        ctx.fillStyle = data.bgColor;
+        ctx.fillText(`${data.luckyColor}`, cx + 180, cy);
+        ctx.font = '400 36px "Sarabun"';
+        ctx.fillStyle = '#ffffff';
+        const luckyW = ctx.measureText(`${data.luckyColor}`).width;
+        ctx.fillText(`(เลี่ยงสี${data.forbiddenColor})`, cx + 180 + luckyW + 20, cy);
+        
+        // Footer
+        const fy = height - 70;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.font = '700 40px "Sarabun"';
+        ctx.fillStyle = '#ffd700';
+        ctx.fillText("🌌 มหาโหราจักรวาล", 80, fy);
+        
+        ctx.textAlign = 'right';
+        ctx.font = '400 24px "Sarabun"';
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.fillText("วิเคราะห์โดย ประธานโบ้", width - 80, fy);
+        
+        // Export
+        const dataUrl = canvas.toDataURL('image/png');
         const link = document.createElement('a');
-        link.href = canvas.toDataURL("image/png");
+        link.href = dataUrl;
         link.download = `มหาโหราจักรวาล_${new Date().getTime()}.png`;
         link.click();
 
@@ -477,6 +584,17 @@ function showDayDetail(day, month, year) {
         6: { lucky: "พุธกลางคืน, ศุกร์", unlucky: "พฤหัสบดี", numbers: "7, 8, 2" }
     };
     const result = dayAnalysis[dayIdx];
+    
+    currentAuspiciousData = {
+        day, monthName: monthNames[month], thaiYear, dayName,
+        kalaStatus: getKalaStatus(dayIdx, kala),
+        planetName: planet.name, planetPower: planet.power,
+        auspiciousTime, doList, dontList,
+        luckyDays: result.lucky, unluckyDays: result.unlucky,
+        numbers: result.numbers, direction: colorInfo.direction,
+        luckyColor: colorInfo.lucky, forbiddenColor: colorInfo.forbidden,
+        bgColor: colorInfo.bg
+    };
 
     const content = `
         <div id="captureArea" style="text-align:left; line-height:1.6; font-size: 15px; background:#fff; padding:20px; border-radius:10px; color:#333;">
@@ -498,7 +616,7 @@ function showDayDetail(day, month, year) {
             <p><strong>🧭 ทิศมงคล:</strong> ทิศ${colorInfo.direction}</p>
             <p><strong>🎨 สีมงคล:</strong> <span style="color:${colorInfo.bg}; font-weight:bold;">${colorInfo.lucky}</span> (เลี่ยงสี${colorInfo.forbidden})</p>
         </div>
-        <button onclick="downloadAuspiciousImage(this, '${colorInfo.bg}')" class="btn btn-primary w-100 mt-3 btn-share-image" style="background:${colorInfo.bg}; border:none;">
+        <button onclick="downloadAuspiciousImage(this)" class="btn btn-primary w-100 mt-3 btn-share-image" style="background:${colorInfo.bg}; border:none;">
             📸 บันทึกเป็นรูปภาพเพื่อแชร์
         </button>
     `;

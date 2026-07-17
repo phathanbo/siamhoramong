@@ -243,21 +243,156 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Download Image
-    btnDownloadImg.addEventListener('click', () => {
+    btnDownloadImg.addEventListener('click', async () => {
         const originalHtml = btnDownloadImg.innerHTML;
         btnDownloadImg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสร้างรูปภาพ...';
         btnDownloadImg.disabled = true;
 
-        // html2canvas config
-        html2canvas(exportImageArea, {
-            scale: 2, // High resolution
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: null
-        }).then(canvas => {
+        try {
+            await document.fonts.ready;
+            
+            const width = 1080;
+            const height = 1080;
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            
+            // 1. Background
+            const bgVal = bgSelect.value;
+            if (bgVal === 'custom') {
+                const bgImgUrl = previewBg.style.backgroundImage;
+                if (bgImgUrl && bgImgUrl !== 'none') {
+                    // Fill black background first
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0, 0, width, height);
+                    
+                    const url = bgImgUrl.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                    const img = new Image();
+                    img.src = url;
+                    await new Promise((resolve, reject) => { 
+                        img.onload = resolve; 
+                        img.onerror = resolve; 
+                    });
+                    
+                    ctx.globalAlpha = 0.3; // Match CSS opacity
+                    
+                    // Cover sizing
+                    const scale = Math.max(width / img.width, height / img.height);
+                    const drawW = img.width * scale;
+                    const drawH = img.height * scale;
+                    const drawX = (width - drawW) / 2;
+                    const drawY = (height - drawH) / 2;
+                    
+                    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                    ctx.globalAlpha = 1.0;
+                } else {
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0, 0, width, height);
+                }
+            } else {
+                const colors = bgVal.match(/#[a-zA-Z0-9]{3,6}/g);
+                let grad = ctx.createLinearGradient(0, 0, width, height);
+                if (colors && colors.length >= 2) {
+                    grad.addColorStop(0, colors[0]);
+                    if(colors.length > 2) {
+                        grad.addColorStop(0.5, colors[1]);
+                        grad.addColorStop(1, colors[2]);
+                    } else {
+                        grad.addColorStop(1, colors[1]);
+                    }
+                } else {
+                    grad.addColorStop(0, '#1a1a2e');
+                    grad.addColorStop(1, '#16213e');
+                }
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, width, height);
+            }
+            
+            // 2. Text layout calculations
+            ctx.font = '400 50px "Sarabun"';
+            const maxWidth = width - 160; // 80px padding each side
+            const textStr = previewText.textContent || '';
+            const lines = textStr.split('\n');
+            let paragraphLinesAll = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                let paragraphLines = [];
+                // Use Intl.Segmenter for proper Thai word wrapping if available
+                if (window.Intl && window.Intl.Segmenter) {
+                    const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+                    const segments = segmenter.segment(lines[i]);
+                    let currentLine = "";
+                    for (const {segment} of segments) {
+                        const testLine = currentLine + segment;
+                        if (ctx.measureText(testLine).width > maxWidth && currentLine.trim() !== '') {
+                            paragraphLines.push(currentLine);
+                            currentLine = segment;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    paragraphLines.push(currentLine);
+                } else {
+                    // Fallback to character wrapping
+                    let currentLine = "";
+                    for (let j = 0; j < lines[i].length; j++) {
+                        const char = lines[i][j];
+                        const testLine = currentLine + char;
+                        if (ctx.measureText(testLine).width > maxWidth && j > 0) {
+                            paragraphLines.push(currentLine);
+                            currentLine = char;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    paragraphLines.push(currentLine);
+                }
+                paragraphLinesAll.push(...paragraphLines);
+            }
+            
+            const titleHeight = 80;
+            const marginTitle = 60;
+            const bodyLineHeight = 75;
+            
+            const totalTextHeight = titleHeight + marginTitle + (paragraphLinesAll.length * bodyLineHeight);
+            let currentY = (height - totalTextHeight) / 2; // Center vertically
+            
+            // 3. Draw Title
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetY = 2;
+            
+            ctx.font = '700 80px "Sarabun"';
+            ctx.fillStyle = titleColor.value;
+            ctx.fillText(previewTitle.textContent, width/2, currentY);
+            
+            currentY += titleHeight + marginTitle;
+            
+            // 4. Draw Body Text
+            ctx.font = '400 50px "Sarabun"';
+            ctx.fillStyle = textColor.value;
+            for(let pLine of paragraphLinesAll) {
+                ctx.fillText(pLine, width/2, currentY);
+                currentY += bodyLineHeight;
+            }
+            
+            // 5. Watermark
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'bottom';
+            ctx.font = '400 36px "Sarabun"';
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.shadowBlur = 0; 
+            ctx.shadowOffsetY = 0;
+            ctx.fillText("เพจ สยามโหรามงคล", width - 40, height - 30);
+            
+            // 6. Export
+            const dataUrl = canvas.toDataURL('image/png');
             const link = document.createElement('a');
             link.download = `siamhora_fb_post_${new Date().getTime()}.png`;
-            link.href = canvas.toDataURL('image/png');
+            link.href = dataUrl;
             link.click();
             
             btnDownloadImg.innerHTML = originalHtml;
@@ -273,7 +408,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 background: '#1e1e1e',
                 color: '#fff'
             });
-        }).catch(err => {
+            
+        } catch (err) {
             console.error('Error generating image:', err);
             btnDownloadImg.innerHTML = originalHtml;
             btnDownloadImg.disabled = false;
@@ -285,6 +421,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 background: '#1e1e1e',
                 color: '#fff'
             });
-        });
+        }
     });
 });

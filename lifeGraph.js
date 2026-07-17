@@ -518,59 +518,180 @@
             btn.disabled = true;
         }
 
-        if (typeof html2canvas === "undefined") {
-            if (typeof Swal !== "undefined") {
-                Swal.fire('เกิดข้อผิดพลาด', 'ระบบสร้างภาพยังไม่พร้อมใช้งาน (html2canvas missing)', 'error');
-            } else {
-                alert('ระบบสร้างภาพยังไม่พร้อมใช้งาน');
-            }
-            if (btn) {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-            return;
-        }
-
-        const brandingHeader = document.createElement('div');
-        brandingHeader.innerHTML = `
-            <div style="text-align: center; margin-bottom: 20px; color: #d4af37;">
-                <h2 style="margin: 0;">📊 กราฟชีวิต 12 รอบ</h2>
-                <p style="font-size: 14px; opacity: 0.8;">สยามโหรามงคล </p>
-            </div>
-        `;
-
-        const footer = document.createElement('div');
-        footer.innerHTML = `
-            <div style="text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(212,175,55,0.3); color: #d4af37;">
-                <div style="font-size: 14px;">🔮 <strong>ตรวจสอบดวงชะตาของคุณได้ทุกวัน</strong></div>
-            </div>
-        `;
-
         try {
-            const originalStyle = area.style.cssText;
+            await document.fonts.ready;
 
-            area.style.width = "550px";
-            area.style.padding = "30px";
-            area.style.background = "#1a1a1a";
-            area.style.color = "#ffffff";
+            // Collect data from the existing Chart instance
+            const points = window.myLifeChart?.data?.datasets?.[0]?.data || [];
+            if (points.length === 0) throw new Error('ไม่พบข้อมูลกราฟ');
 
-            area.insertBefore(brandingHeader, area.firstChild);
-            area.appendChild(footer);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1080;
+            canvas.height = 1450; // Increased height to prevent overlap
 
-            const options = {
-                backgroundColor: '#1a1a1a',
-                scale: 2,
-                useCORS: true,
-                allowTaint: false,
-                scrollY: -window.scrollY,
-                windowWidth: 550
-            };
+            // Background - Beautiful light gradient
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            bgGrad.addColorStop(0, '#fdfaf0'); // Warm light yellow-white
+            bgGrad.addColorStop(0.5, '#ffffff');
+            bgGrad.addColorStop(1, '#f4effa'); // Soft light purple at the bottom
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const canvas = await html2canvas(area, options);
+            // Border
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 10;
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
 
-            area.removeChild(brandingHeader);
-            area.removeChild(footer);
-            area.style.cssText = originalStyle;
+            // Inner dotted border for extra beauty
+            ctx.strokeStyle = '#9370db';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([8, 5]);
+            ctx.strokeRect(36, 36, canvas.width - 72, canvas.height - 72);
+            ctx.setLineDash([]);
+
+            // Header
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillStyle = '#6a0dad';
+            ctx.font = 'bold 65px "Sarabun", sans-serif';
+            ctx.fillText('📊 กราฟชีวิต 12 รอบ', canvas.width / 2, 65);
+            ctx.font = '30px "Sarabun", sans-serif';
+            ctx.fillStyle = '#666666';
+            ctx.fillText('สยามโหรามงคล', canvas.width / 2, 150);
+
+            // Mini bar chart area
+            const chartTop = 230;
+            const chartH = 340;
+            const chartLeft = 80;
+            const chartRight = canvas.width - 80;
+            const chartW = chartRight - chartLeft;
+            const barW = (chartW / LIFE_GRAPH_LABELS.length) * 0.65;
+            const barGap = chartW / LIFE_GRAPH_LABELS.length;
+            const maxVal = 7;
+
+            // Grid lines
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)';
+            ctx.lineWidth = 1;
+            for (let v = 1; v <= maxVal; v++) {
+                const gy = chartTop + chartH - (v / maxVal) * chartH;
+                ctx.beginPath(); ctx.moveTo(chartLeft, gy); ctx.lineTo(chartRight, gy); ctx.stroke();
+            }
+
+            // Bars + labels
+            points.forEach((p, i) => {
+                const label = LIFE_GRAPH_LABELS[i];
+                const isNeg = (label === 'ศัตรู' || label === 'โรคภัย');
+                const isHigh = p >= 5;
+                let barColor;
+                if (isNeg) {
+                    barColor = isHigh ? '#dc3545' : (p <= 2 ? '#28a745' : '#e0a800');
+                } else {
+                    barColor = isHigh ? '#28a745' : (p <= 2 ? '#dc3545' : '#e0a800');
+                }
+
+                const bx = chartLeft + i * barGap + (barGap - barW) / 2;
+                const bh = (p / maxVal) * chartH;
+                const by = chartTop + chartH - bh;
+
+                // Draw bar with slight shadow
+                ctx.shadowColor = 'rgba(0,0,0,0.15)';
+                ctx.shadowBlur = 6;
+                ctx.shadowOffsetY = 3;
+                ctx.fillStyle = barColor;
+                ctx.fillRect(bx, by, barW, bh);
+                
+                // Reset shadow
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetY = 0;
+
+                // Score on top of bar
+                ctx.textAlign = 'center';
+                ctx.font = 'bold 26px "Sarabun", sans-serif';
+                ctx.fillStyle = '#333333';
+                ctx.fillText(p, bx + barW / 2, by - 35);
+
+                // Label below bar
+                ctx.font = '22px "Sarabun", sans-serif';
+                ctx.fillStyle = '#555555';
+                ctx.fillText(label, bx + barW / 2, chartTop + chartH + 15);
+            });
+
+            // Divider
+            const divY = chartTop + chartH + 70;
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(80, divY); ctx.lineTo(canvas.width - 80, divY); ctx.stroke();
+
+            // Summary cards (best/worst)
+            const maxScore = Math.max(...points);
+            const minScore = Math.min(...points);
+            const bestLabel = LIFE_GRAPH_LABELS.find((l, i) => points[i] === maxScore) || '-';
+            const worstLabel = LIFE_GRAPH_LABELS.find((l, i) => points[i] === minScore) || '-';
+
+            ctx.textAlign = 'center';
+            let sy = divY + 40;
+            ctx.font = 'bold 44px "Sarabun", sans-serif';
+            ctx.fillStyle = '#b8860b';
+            ctx.fillText('สรุปดวงชะตา', canvas.width / 2, sy); sy += 65;
+
+            ctx.font = 'bold 34px "Sarabun", sans-serif';
+            ctx.fillStyle = '#1e7e34';
+            ctx.fillText(`🌟 วาสนาโดดเด่น: ${bestLabel} (ระดับ ${maxScore})`, canvas.width / 2, sy); sy += 55;
+            ctx.fillStyle = '#bd2130';
+            ctx.fillText(`⚠️ เคราะห์ควรระวัง: ${worstLabel} (ระดับ ${minScore})`, canvas.width / 2, sy); sy += 75;
+
+            // Fortune score bar
+            const total = points.reduce((a, b) => a + b, 0);
+            const fortuneScore = Math.round((total / (7 * 12)) * 100);
+            ctx.font = 'bold 44px "Sarabun", sans-serif';
+            ctx.fillStyle = '#6a0dad';
+            ctx.fillText(`ดัชนีดวง: ${fortuneScore}/100`, canvas.width / 2, sy); sy += 65;
+
+            // Score progress bar
+            const barBg = 'rgba(0,0,0,0.08)';
+            const barFg = fortuneScore >= 65 ? '#28a745' : (fortuneScore >= 40 ? '#ffc107' : '#dc3545');
+            ctx.fillStyle = barBg;
+            ctx.beginPath(); ctx.roundRect(150, sy, canvas.width - 300, 28, 14); ctx.fill();
+            ctx.fillStyle = barFg;
+            ctx.beginPath(); ctx.roundRect(150, sy, (canvas.width - 300) * (fortuneScore / 100), 28, 14); ctx.fill();
+            sy += 90;
+
+            // 12 house breakdown (2 columns)
+            ctx.textAlign = 'left';
+            ctx.font = 'bold 34px "Sarabun", sans-serif';
+            ctx.fillStyle = '#b8860b';
+            ctx.fillText('เจาะลึก 12 ด้าน', 100, sy); sy += 55;
+
+            const col1x = 100, col2x = canvas.width / 2 + 30;
+            let row1y = sy, row2y = sy;
+            points.forEach((p, i) => {
+                const label = LIFE_GRAPH_LABELS[i];
+                const isNeg = (label === 'ศัตรู' || label === 'โรคภัย');
+                let col = isNeg ? (p >= 5 ? '#dc3545' : (p <= 2 ? '#28a745' : '#d39e00'))
+                                : (p >= 5 ? '#28a745' : (p <= 2 ? '#dc3545' : '#d39e00'));
+                const x = i % 2 === 0 ? col1x : col2x;
+                const cy = i % 2 === 0 ? row1y : row2y;
+                
+                // Draw card background for each item
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.beginPath(); ctx.roundRect(x - 20, cy - 32, (canvas.width / 2) - 100, 50, 10); ctx.fill();
+                
+                ctx.font = 'bold 28px "Sarabun", sans-serif';
+                ctx.fillStyle = '#444444';
+                ctx.fillText(`${label}`, x, cy);
+                ctx.font = '28px "Sarabun", sans-serif';
+                ctx.fillStyle = col;
+                ctx.fillText(` ระดับ ${p}`, x + ctx.measureText(label).width + 10, cy);
+                if (i % 2 === 0) row1y += 60; else row2y += 60;
+            });
+
+            // Footer
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#888888';
+            ctx.font = '26px "Sarabun", sans-serif';
+            ctx.fillText('สยามโหรามงคล - ตรวจสอบดวงชะตาของคุณได้ทุกวัน 🔮', canvas.width / 2, canvas.height - 75);
 
             canvas.toBlob((blob) => {
                 if (!blob) return;
@@ -596,6 +717,7 @@
             }
         }
     }
+
 
     // --- Event Listeners & Global Exposure ---
     document.addEventListener("DOMContentLoaded", () => {

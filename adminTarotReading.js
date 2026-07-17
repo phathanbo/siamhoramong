@@ -1,16 +1,16 @@
 function adjustScale() {
-    const wrapper = document.getElementById('previewWrapper');
-    const canvas = document.getElementById('renderCanvas');
+    const wrapper = currentMode === 3 ? document.getElementById('previewWrapper3') : document.getElementById('previewWrapper1');
+    const canvas = currentMode === 3 ? document.getElementById('renderCanvas') : document.getElementById('tarotRenderCanvas');
     if (!wrapper || !canvas) return;
 
     const wrapperWidth = wrapper.clientWidth;
-    const targetWidth = 1200;
+    const targetWidth = currentMode === 3 ? 1200 : 1080;
     
     let scale = wrapperWidth / targetWidth;
     if (scale > 1) scale = 1;
 
     canvas.style.transform = `scale(${scale})`;
-    wrapper.style.height = `${targetWidth * scale + 40}px`; 
+    wrapper.style.height = `${canvas.scrollHeight * scale + 40}px`; 
 }
 
 window.addEventListener('resize', adjustScale);
@@ -52,64 +52,409 @@ function drawThreeCards() {
     document.getElementById('desc3').innerText = card3.future;
 
     // Auto Summary
-    autoSummary = `จากอิทธิพลของไพ่ ${card1.name} ชี้ให้เห็นว่าพื้นฐานอดีตของคุณมาจาก${card1.past} ในขณะที่สถานการณ์ปัจจุบันไพ่ ${card2.name} บ่งบอกถึง${card2.present} สิ่งสำคัญที่สุดคือทิศทางในอนาคต ไพ่ ${card3.name} แนะนำว่า${card3.future} ขอให้คุณใช้สติและรับมือกับสิ่งที่กำลังจะเกิดขึ้น`;
+    const summary = `จากอิทธิพลของไพ่ ${card1.name} ชี้ให้เห็นว่าพื้นฐานอดีตของคุณมาจาก${card1.past} ในขณะที่สถานการณ์ปัจจุบันไพ่ ${card2.name} บ่งบอกถึง${card2.present} สิ่งสำคัญที่สุดคือทิศทางในอนาคต ไพ่ ${card3.name} แนะนำว่า${card3.future} ขอให้คุณใช้สติและรับมือกับสิ่งที่กำลังจะเกิดขึ้น`;
     
     // Update UI
     const customInput = document.getElementById('customSummaryInput').value;
-    document.getElementById('summaryText').innerText = customInput || autoSummary;
+    document.getElementById('summaryText').innerText = customInput || summary;
+    autoSummary = summary;
+    
+    // Adjust scale now that contents are populated
+    setTimeout(adjustScale, 50);
 }
 
 async function downloadImage() {
-    const canvasEl = document.getElementById('renderCanvas');
-    const wrapper = document.getElementById('previewWrapper');
-
-    // Remove scale trick to ensure high-res sharp capture
-    const originalTransform = canvasEl.style.transform;
-    const originalHeight = wrapper.style.height;
-
-    canvasEl.style.transform = 'none';
-    wrapper.style.height = '1200px';
-    wrapper.style.overflow = 'visible';
-
-    // Give browser a moment to repaint without scale
-    await new Promise(r => setTimeout(r, 100));
-
     Swal.fire({
         title: 'กำลังสร้างภาพ...',
-        text: 'กรุณารอสักครู่ (ภาพอาจมีขนาดใหญ่)',
+        text: 'กรุณารอสักครู่ (ภาพมีความละเอียดสูง)',
         allowOutsideClick: false,
         didOpen: () => { Swal.showLoading(); }
     });
 
     try {
-        const canvas = await html2canvas(canvasEl, {
-            scale: 2, 
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#0f0c29'
-        });
-
-        const image = canvas.toDataURL("image/png", 1.0);
-        const link = document.createElement('a');
+        await document.fonts.ready;
         
+        const width = 1200;
+        
+        // --- DYNAMIC HEIGHT CALCULATION ---
+        const tctx = document.createElement('canvas').getContext('2d');
+        const cols = [
+            { id: 1, cx: 240, posText: 'อดีต (Past)', name: document.getElementById('name1').innerText, desc: document.getElementById('desc1').innerText, imgSrc: document.getElementById('img1').src },
+            { id: 2, cx: 600, posText: 'ปัจจุบัน (Present)', name: document.getElementById('name2').innerText, desc: document.getElementById('desc2').innerText, imgSrc: document.getElementById('img2').src },
+            { id: 3, cx: 960, posText: 'อนาคต (Future)', name: document.getElementById('name3').innerText, desc: document.getElementById('desc3').innerText, imgSrc: document.getElementById('img3').src },
+        ];
+        
+        tctx.font = '400 20px "Sarabun"';
+        let maxLines = 0;
+        for (let col of cols) {
+            const maxW = 310 - 40;
+            let currentLine = "";
+            let pLines = [];
+            for(let j=0; j<col.desc.length; j++) {
+                const char = col.desc[j];
+                const testLine = currentLine + char;
+                if(tctx.measureText(testLine).width > maxW && j > 0) {
+                    pLines.push(currentLine);
+                    currentLine = char;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            pLines.push(currentLine);
+            col.pLines = pLines;
+            if (pLines.length > maxLines) maxLines = pLines.length;
+        }
+        
+        const cardY = 130;
+        const panelY = cardY + 500;
+        const panelH = maxLines * 30 + 40; // 40 is top/bottom padding
+        
+        const summaryW = 1020;
+        const summaryText = document.getElementById('summaryText').innerText;
+        tctx.font = '400 22px "Sarabun"';
+        let sLines = [];
+        if (window.Intl && window.Intl.Segmenter) {
+            const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+            const segments = segmenter.segment(summaryText);
+            let currentLine = "";
+            for (const {segment} of segments) {
+                if (tctx.measureText(currentLine + segment).width > summaryW - 60 && currentLine.trim() !== '') {
+                    sLines.push(currentLine);
+                    currentLine = segment;
+                } else {
+                    currentLine += segment;
+                }
+            }
+            sLines.push(currentLine);
+        } else {
+            let currentLine = "";
+            for(let j=0; j<summaryText.length; j++) {
+                const char = summaryText[j];
+                if(tctx.measureText(currentLine + char).width > summaryW - 60 && j > 0) {
+                    sLines.push(currentLine);
+                    currentLine = char;
+                } else {
+                    currentLine += char;
+                }
+            }
+            sLines.push(currentLine);
+        }
+        
+        const summaryY = panelY + panelH + 40;
+        const summaryH = sLines.length * 35 + 100;
+        const height = summaryY + summaryH + 80; // Footer margin
+        // --- END CALCULATION ---
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        
+        // 1. Background
+        let grad = ctx.createLinearGradient(0, 0, width, height);
+        grad.addColorStop(0, '#0f0c29');
+        grad.addColorStop(0.5, '#302b63');
+        grad.addColorStop(1, '#24243e');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+        
+        // 2. Stars bg
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        for (let i = 0; i < (height/6); i++) {
+            ctx.beginPath();
+            ctx.arc(Math.random() * width, Math.random() * height, Math.random() * 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // 3. Header
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
+        ctx.lineWidth = 1;
+        
+        const bubbleX = 50;
+        const bubbleY = 40;
+        const bubbleW = 400;
+        const bubbleH = 50;
+        const bubbleRadius = 25;
+        
+        ctx.beginPath();
+        if (ctx.roundRect) {
+            ctx.roundRect(bubbleX, bubbleY, bubbleW, bubbleH, bubbleRadius);
+        } else {
+            ctx.moveTo(bubbleX + bubbleRadius, bubbleY);
+            ctx.lineTo(bubbleX + bubbleW - bubbleRadius, bubbleY);
+            ctx.quadraticCurveTo(bubbleX + bubbleW, bubbleY, bubbleX + bubbleW, bubbleY + bubbleRadius);
+            ctx.lineTo(bubbleX + bubbleW, bubbleY + bubbleH - bubbleRadius);
+            ctx.quadraticCurveTo(bubbleX + bubbleW, bubbleY + bubbleH, bubbleX + bubbleW - bubbleRadius, bubbleY + bubbleH);
+            ctx.lineTo(bubbleX + bubbleRadius, bubbleY + bubbleH);
+            ctx.quadraticCurveTo(bubbleX, bubbleY + bubbleH, bubbleX, bubbleY + bubbleH - bubbleRadius);
+            ctx.lineTo(bubbleX, bubbleY + bubbleRadius);
+            ctx.quadraticCurveTo(bubbleX, bubbleY, bubbleX + bubbleRadius, bubbleY);
+            ctx.closePath();
+        }
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = '700 26px "Sarabun"';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText("🃏 ไพ่ยิปซีทำนายดวงชะตา (3 ใบ)", bubbleX + 30, bubbleY + 25);
+        
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 4; ctx.shadowOffsetY = 2;
+        ctx.font = '700 35px "Sarabun"';
+        ctx.fillStyle = '#d4af37';
+        ctx.fillText("สยามโหรามงคล", width - 50, 40);
+        
+        ctx.font = '400 20px "Sarabun"';
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillText("ศาสตร์พยากรณ์", width - 50, 80);
+        ctx.shadowColor = 'transparent';
+
+        // 4. Draw Cards & Columns
+        for(let col of cols) {
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 2; ctx.shadowOffsetY = 1;
+            ctx.fillStyle = '#d4af37';
+            ctx.font = '700 22px "Sarabun"';
+            ctx.fillText(col.posText, col.cx, cardY);
+            
+            ctx.shadowBlur = 4; ctx.shadowOffsetY = 2;
+            ctx.fillStyle = '#fff';
+            ctx.font = '700 32px "Sarabun"';
+            ctx.fillText(col.name, col.cx, cardY + 30);
+            ctx.shadowColor = 'transparent';
+            
+            if (col.imgSrc) {
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.src = col.imgSrc;
+                await new Promise(r => { img.onload=r; img.onerror=r; });
+                
+                const drawH = 380;
+                const drawW = img.width * (drawH / img.height);
+                const drawX = col.cx - drawW/2;
+                const drawY = cardY + 90;
+                
+                ctx.save();
+                ctx.shadowColor = '#e8c97a';
+                ctx.shadowBlur = 50;
+                ctx.fillStyle = '#e8c97a';
+                ctx.globalAlpha = 0.2;
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(drawX, drawY, drawW, drawH, 20);
+                else ctx.rect(drawX, drawY, drawW, drawH);
+                ctx.fill();
+                ctx.restore();
+                
+                ctx.save();
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.shadowBlur = 40;
+                ctx.shadowOffsetY = 15;
+                
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(drawX, drawY, drawW, drawH, 12);
+                else ctx.rect(drawX, drawY, drawW, drawH);
+                ctx.stroke();
+                
+                ctx.clip();
+                ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                ctx.restore();
+            }
+            
+            const panelW = 310;
+            const panelX = col.cx - panelW/2;
+            
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
+            
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(panelX, panelY, panelW, panelH, 15);
+            else ctx.rect(panelX, panelY, panelW, panelH);
+            ctx.fill();
+            ctx.shadowColor = 'transparent';
+            ctx.stroke();
+            
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = '400 20px "Sarabun"';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 2; ctx.shadowOffsetY = 1;
+            
+            let tY = panelY + 20;
+            for(let l of col.pLines) {
+                ctx.fillText(l, panelX + 20, tY);
+                tY += 30;
+            }
+            ctx.restore();
+        }
+        
+        // 5. Summary Box
+        const summaryX = width/2 - summaryW/2;
+        
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 1;
+        ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
+        
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(summaryX, summaryY, summaryW, summaryH, 20);
+        else ctx.rect(summaryX, summaryY, summaryW, summaryH);
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.stroke();
+        
+        ctx.fillStyle = '#d4af37';
+        ctx.font = '700 28px "Sarabun"';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 2; ctx.shadowOffsetY = 1;
+        ctx.fillText("🔮 บทสรุปภาพรวมดวงชะตา", summaryX + 30, summaryY + 30);
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = '400 22px "Sarabun"';
+        
+        let tY = summaryY + 80;
+        for(let l of sLines) {
+            ctx.fillText(l, summaryX + 30, tY);
+            tY += 35;
+        }
+        ctx.restore();
+        
+        // 6. Footer
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.font = '400 18px "Sarabun"';
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillText("© สยามโหรามงคล - ห้ามนำไปดัดแปลงหรือใช้ในเชิงพาณิชย์โดยไม่ได้รับอนุญาต", width/2, height - 20);
+
+        // Export
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
         let dateStr = new Date().toISOString().split('T')[0];
         link.download = `TarotReading_${dateStr}.png`;
-        link.href = image;
+        link.href = dataUrl;
         link.click();
         
         Swal.close();
+
     } catch (error) {
         console.error("Error generating Tarot image:", error);
         Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกภาพได้', 'error');
-    } finally {
-        canvasEl.style.transform = originalTransform;
-        wrapper.style.height = originalHeight;
-        wrapper.style.overflow = 'hidden';
     }
 }
 
 // Draw initial on load
 window.onload = () => {
-    adjustScale();
     drawThreeCards();
+    // adjustScale is now called at the end of drawThreeCards
 };
+
+
+// --- Mode Switching Logic ---
+let currentMode = 3;
+
+function switchMode(mode) {
+    currentMode = mode;
+    
+    // Update Buttons
+    document.getElementById('btnMode1').className = mode === 1 ? 'btn btn-warning active' : 'btn btn-outline-warning';
+    document.getElementById('btnMode3').className = mode === 3 ? 'btn btn-warning active' : 'btn btn-outline-warning';
+    
+    // Update Controls
+    document.getElementById('controlsMode1').style.display = mode === 1 ? 'flex' : 'none';
+    document.getElementById('controlsMode3').style.display = mode === 3 ? 'flex' : 'none';
+    document.getElementById('summaryMode3').style.display = mode === 3 ? 'flex' : 'none';
+    
+    // Update Canvas Wrappers
+    document.getElementById('previewWrapper1').style.display = mode === 1 ? 'flex' : 'none';
+    document.getElementById('previewWrapper3').style.display = mode === 3 ? 'flex' : 'none';
+    
+    // Update Title
+    document.getElementById('pageTitle').innerHTML = mode === 1 
+        ? '<i class="fas fa-layer-group text-warning mr-2"></i>ระบบสร้างภาพไพ่ยิปซี (1 ใบ)' 
+        : '<i class="fas fa-layer-group text-warning mr-2"></i>ระบบสร้างภาพไพ่ยิปซี (3 ใบ)';
+        
+    adjustScale();
+    
+    // Auto draw if empty
+    if (mode === 1 && lastCardIndex === -1) {
+        drawSingleTarot();
+    }
+}
+
+// Check URL Params for mode
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === '1') {
+        switchMode(1);
+    }
+});
+
+// --- 1 Card Mode Logic ---
+let lastCardIndex = -1;
+
+function drawSingleTarot() {
+    if (typeof tarotCards === 'undefined') {
+        Swal.fire('Error', 'ไม่พบข้อมูลไพ่ยิปซี (tarot-data.js)', 'error');
+        return;
+    }
+    
+    let randomIndex;
+    do {
+        randomIndex = Math.floor(Math.random() * tarotCards.length);
+    } while (randomIndex === lastCardIndex && tarotCards.length > 1);
+    
+    lastCardIndex = randomIndex;
+    const card = tarotCards[randomIndex];
+
+    document.getElementById('tarotPreviewImg').src = card.img;
+    document.getElementById('tarotPreviewName').innerText = card.name;
+    document.getElementById('tarotPreviewMeaning').innerText = card.meaning;
+    document.getElementById('tarotPreviewPast').innerText = card.past;
+    document.getElementById('tarotPreviewPresent').innerText = card.present;
+    document.getElementById('tarotPreviewFuture').innerText = card.future;
+    
+    setTimeout(adjustScale, 100);
+}
+
+function downloadSingleTarot() {
+    Swal.fire({ title: 'กำลังประมวลผล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    
+    // Reset scale before capture
+    const canvas = document.getElementById('tarotRenderCanvas');
+    const wrapper = document.getElementById('previewWrapper1');
+    canvas.style.transform = 'none';
+    
+    // Use html2canvas
+    const script = document.createElement('script');
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+    script.onload = () => {
+        html2canvas(canvas, {
+            scale: 2, 
+            useCORS: true,
+            backgroundColor: '#090915'
+        }).then(c => {
+            const link = document.createElement('a');
+            link.download = 'daily-tarot-' + Date.now() + '.png';
+            link.href = c.toDataURL('image/png');
+            link.click();
+            Swal.close();
+            adjustScale(); // restore scale
+        }).catch(err => {
+            console.error(err);
+            Swal.fire('Error', 'ไม่สามารถสร้างภาพได้', 'error');
+            adjustScale();
+        });
+    };
+    document.body.appendChild(script);
+}
