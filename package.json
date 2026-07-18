@@ -9,7 +9,8 @@
     "test": "node unit-tests.js && node audit-all-data.js && node final-test.js && node test-promchart.js && node test-zodiac-promchart.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2"
   }
 }

@@ -784,6 +784,86 @@ async function downloadImage() {
     }
 }
 
+async function postToFacebook() {
+    const category = document.getElementById('categorySelect').value;
+    const dateStr = document.getElementById('dateSelect').value;
+    
+    if (!dateStr) {
+        Swal.fire('ข้อผิดพลาด', 'กรุณาเลือกวันที่', 'error');
+        return;
+    }
+
+    // Make sure we have post text generated
+    const postTextOutput = document.getElementById('postTextOutput');
+    if (!postTextOutput || !postTextOutput.value.trim()) {
+        Swal.fire('ข้อผิดพลาด', 'กรุณากด "สร้างข้อความสำหรับโพสต์" ก่อนโพสต์ลงเพจ', 'warning');
+        return;
+    }
+    const message = postTextOutput.value;
+    
+    Swal.fire({
+        title: 'กำลังโพสต์ลง Facebook...',
+        text: 'โปรดรอสักครู่ ระบบกำลังสร้างรูปภาพและส่งข้อมูล',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    try {
+        await document.fonts.ready;
+        const dateObj = new Date(dateStr);
+        const dateThai = formatDateThai(dateObj);
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = 1080;
+        canvas.height = 1080;
+        const ctx = canvas.getContext('2d');
+
+        if (category === 'zodiac') await drawZodiacCanvas(ctx, dateObj, dateThai);
+        else if (category === 'sevendays') await drawSevendaysCanvas(ctx, dateObj, dateThai);
+        else if (category === 'tarot') await drawTarotCanvas(ctx, dateObj, dateThai);
+        else if (category === 'zodiac_all') await drawZodiacAllCanvas(ctx, dateObj, dateThai);
+        else if (category === 'sevendays_all') await drawSevendaysAllCanvas(ctx, dateObj, dateThai);
+        else if (category === 'thai_ascendant_all') await drawThaiAscendantAllCanvas(ctx, dateObj, dateThai);
+        else if (category === 'thai_animal_all') await drawThaiAnimalAllCanvas(ctx, dateObj, dateThai);
+        else throw new Error("ไม่พบเทมเพลตที่รองรับ");
+
+        const dataUrl = canvas.toDataURL('image/png', 0.9);
+
+        // Send to backend
+        const response = await fetch('http://localhost:3000/api/facebook-post', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                image: dataUrl,
+                message: message
+            })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'โพสต์ลงเพจสำเร็จ!',
+                html: `สามารถตรวจสอบได้ที่หน้า Facebook Page ของคุณ<br><small>Post ID: ${result.post_id}</small>`,
+                background: '#1e1e1e',
+                color: '#fff'
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาดในการโพสต์',
+                text: result.error || 'ไม่สามารถโพสต์ได้',
+                background: '#1e1e1e',
+                color: '#fff'
+            });
+        }
+    } catch (err) {
+        console.error('Error posting to FB:', err);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้: ' + err.message, 'error');
+    }
+}
+
 // ----------------------------------------------------
 // ระบบสร้างข้อความโพสต์อัตโนมัติ (Generate Post Text)
 // ----------------------------------------------------

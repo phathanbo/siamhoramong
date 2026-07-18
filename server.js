@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 
 // จำกัด CORS เฉพาะ origin ที่อนุญาต
 const allowedOrigins = [
@@ -86,6 +87,57 @@ app.post("/api/horoscope", async (req, res) => {
     } catch (error) {
         console.error("API Error:", error);
         res.status(500).json({ error: "Failed to fetch horoscope" });
+    }
+});
+
+app.post("/api/facebook-post", async (req, res) => {
+    const ip = req.ip || req.connection.remoteAddress;
+
+    if (checkRateLimit(ip)) {
+        return res.status(429).json({ error: "Too many requests — กรุณารอสักครู่แล้วลองใหม่" });
+    }
+
+    try {
+        const { image, message } = req.body;
+        
+        if (!image) {
+            return res.status(400).json({ error: "กรุณาส่งข้อมูลรูปภาพ (image)" });
+        }
+
+        const pageId = process.env.FB_PAGE_ID;
+        const accessToken = process.env.FB_PAGE_ACCESS_TOKEN;
+
+        if (!pageId || !accessToken) {
+            return res.status(500).json({ error: "กรุณาตั้งค่า FB_PAGE_ID และ FB_PAGE_ACCESS_TOKEN ในไฟล์ .env" });
+        }
+
+        const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
+        const buffer = Buffer.from(base64Data, "base64");
+        const blob = new Blob([buffer], { type: "image/png" });
+
+        const formData = new FormData();
+        formData.append("source", blob, "post.png");
+        if (message) {
+            formData.append("message", message);
+        }
+        formData.append("access_token", accessToken);
+
+        const response = await fetch(`https://graph.facebook.com/v19.0/${pageId}/photos`, {
+            method: "POST",
+            body: formData,
+        });
+
+        const data = await response.json();
+        
+        if (data.error) {
+            console.error("Facebook API Error:", data.error);
+            return res.status(500).json({ error: "Facebook API Error: " + data.error.message });
+        }
+
+        res.json({ success: true, id: data.id, post_id: data.post_id });
+    } catch (error) {
+        console.error("Facebook API Exception:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 

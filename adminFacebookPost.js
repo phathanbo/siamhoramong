@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnGenerate = document.getElementById('btnGenerate');
     const btnCopyText = document.getElementById('btnCopyText');
     const btnDownloadImg = document.getElementById('btnDownloadImg');
+    const btnPostToFb = document.getElementById('btnPostToFb');
     const postDate = document.getElementById('postDate');
 
     // Set default date to today
@@ -423,4 +424,187 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // Post to Facebook API
+    if (btnPostToFb) {
+        btnPostToFb.addEventListener('click', async () => {
+            const originalHtml = btnPostToFb.innerHTML;
+            btnPostToFb.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังโพสต์...';
+            btnPostToFb.disabled = true;
+
+            try {
+                // Use the same canvas rendering logic as download
+                await document.fonts.ready;
+                const width = 1080;
+                const height = 1080;
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                
+                // --- Copying canvas drawing logic ---
+                const bgVal = bgSelect.value;
+                if (bgVal === 'custom') {
+                    const bgImgUrl = previewBg.style.backgroundImage;
+                    if (bgImgUrl && bgImgUrl !== 'none') {
+                        ctx.fillStyle = '#000';
+                        ctx.fillRect(0, 0, width, height);
+                        const url = bgImgUrl.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                        const img = new Image();
+                        img.src = url;
+                        await new Promise(r => { img.onload = r; img.onerror = r; });
+                        ctx.globalAlpha = 0.3;
+                        const scale = Math.max(width / img.width, height / img.height);
+                        const drawW = img.width * scale;
+                        const drawH = img.height * scale;
+                        const drawX = (width - drawW) / 2;
+                        const drawY = (height - drawH) / 2;
+                        ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                        ctx.globalAlpha = 1.0;
+                    } else {
+                        ctx.fillStyle = '#000';
+                        ctx.fillRect(0, 0, width, height);
+                    }
+                } else {
+                    const colors = bgVal.match(/#[a-zA-Z0-9]{3,6}/g);
+                    let grad = ctx.createLinearGradient(0, 0, width, height);
+                    if (colors && colors.length >= 2) {
+                        grad.addColorStop(0, colors[0]);
+                        if(colors.length > 2) {
+                            grad.addColorStop(0.5, colors[1]);
+                            grad.addColorStop(1, colors[2]);
+                        } else {
+                            grad.addColorStop(1, colors[1]);
+                        }
+                    } else {
+                        grad.addColorStop(0, '#1a1a2e');
+                        grad.addColorStop(1, '#16213e');
+                    }
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(0, 0, width, height);
+                }
+                
+                ctx.font = '400 50px "Sarabun"';
+                const maxWidth = width - 160;
+                const textStr = previewText.textContent || '';
+                const lines = textStr.split('\n');
+                let paragraphLinesAll = [];
+                for (let i = 0; i < lines.length; i++) {
+                    let paragraphLines = [];
+                    if (window.Intl && window.Intl.Segmenter) {
+                        const segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+                        const segments = segmenter.segment(lines[i]);
+                        let currentLine = "";
+                        for (const {segment} of segments) {
+                            const testLine = currentLine + segment;
+                            if (ctx.measureText(testLine).width > maxWidth && currentLine.trim() !== '') {
+                                paragraphLines.push(currentLine);
+                                currentLine = segment;
+                            } else {
+                                currentLine = testLine;
+                            }
+                        }
+                        paragraphLines.push(currentLine);
+                    } else {
+                        let currentLine = "";
+                        for (let j = 0; j < lines[i].length; j++) {
+                            const char = lines[i][j];
+                            const testLine = currentLine + char;
+                            if (ctx.measureText(testLine).width > maxWidth && j > 0) {
+                                paragraphLines.push(currentLine);
+                                currentLine = char;
+                            } else {
+                                currentLine = testLine;
+                            }
+                        }
+                        paragraphLines.push(currentLine);
+                    }
+                    paragraphLinesAll.push(...paragraphLines);
+                }
+                
+                const titleHeight = 80;
+                const marginTitle = 60;
+                const bodyLineHeight = 75;
+                const totalTextHeight = titleHeight + marginTitle + (paragraphLinesAll.length * bodyLineHeight);
+                let currentY = (height - totalTextHeight) / 2;
+                
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.shadowBlur = 10;
+                ctx.shadowOffsetY = 2;
+                
+                ctx.font = '700 80px "Sarabun"';
+                ctx.fillStyle = titleColor.value;
+                ctx.fillText(previewTitle.textContent, width/2, currentY);
+                
+                currentY += titleHeight + marginTitle;
+                
+                ctx.font = '400 50px "Sarabun"';
+                ctx.fillStyle = textColor.value;
+                for(let pLine of paragraphLinesAll) {
+                    ctx.fillText(pLine, width/2, currentY);
+                    currentY += bodyLineHeight;
+                }
+                
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'bottom';
+                ctx.font = '400 36px "Sarabun"';
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.shadowBlur = 0; 
+                ctx.shadowOffsetY = 0;
+                ctx.fillText("เพจ สยามโหรามงคล", width - 40, height - 30);
+                
+                // Get Base64 image
+                const dataUrl = canvas.toDataURL('image/png');
+                const caption = captionInput.value;
+
+                // Send to backend
+                const response = await fetch('http://localhost:3000/api/facebook-post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        image: dataUrl,
+                        message: caption
+                    })
+                });
+
+                const result = await response.json();
+                
+                btnPostToFb.innerHTML = originalHtml;
+                btnPostToFb.disabled = false;
+
+                if (response.ok && result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'โพสต์ลงเพจสำเร็จ!',
+                        html: `สามารถตรวจสอบได้ที่หน้า Facebook Page ของคุณ<br><small>Post ID: ${result.post_id}</small>`,
+                        background: '#1e1e1e',
+                        color: '#fff'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาดในการโพสต์',
+                        text: result.error || 'ไม่สามารถโพสต์ได้',
+                        background: '#1e1e1e',
+                        color: '#fff'
+                    });
+                }
+                
+            } catch (err) {
+                console.error('Error posting to FB:', err);
+                btnPostToFb.innerHTML = originalHtml;
+                btnPostToFb.disabled = false;
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้',
+                    background: '#1e1e1e',
+                    color: '#fff'
+                });
+            }
+        });
+    }
 });
