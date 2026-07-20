@@ -1,0 +1,3449 @@
+        function mod9(num) {
+            const r = num % 9;
+            return r === 0 ? 9 : r;
+        }
+
+        function getMahaBot(num, dayNum) {
+            const idx = (num - dayNum + 7) % 7;
+            return { name: mahaBotNames[idx], meaning: mahaBotMeanings[mahaBotNames[idx]] };
+        }
+
+        function getLifeSummary(rows) {
+            const dayNum = rows?.[0]?.[0];
+            const base4   = rows?.[3]?.[0];
+            if (!dayNum || !base4) {
+                return `<div class="card premium-card-accent"><h3>⚠️ ข้อมูลไม่ครบถ้วน</h3><p>ไม่สามารถวิเคราะห์วาสนาได้ กรุณากรอกข้อมูลดวงชะตาให้สมบูรณ์</p></div>`;
+            }
+            const mb = getMahaBot(base4, dayNum);
+            const base4Meaning = sdMeanings.base4[base4] || "เป็นดวงชะตาที่มีพลังปานกลาง มั่นคงตามลำดับ";
+            return `
+                <div class="card">
+                    <h3><i class="fas fa-seedling text-success"></i> วาสนาพื้นดวงชะตา (Life Path)</h3>
+                    <p style="margin: 0 0 10px 0; font-size:15px; line-height:1.6; color:var(--text);">
+                        คุณเกิดมาพร้อมดาวเด่น <b>ดาว ${dayNum}</b> ในตำแหน่งเกียรติยศมหาบท <b>"${mb.name}"</b> 
+                        <span style="color:var(--muted); font-style:italic;">(${mb.meaning})</span>
+                    </p>
+                    <p style="margin:0; font-size:15px; line-height:1.6; color:var(--text);">
+                        ประกอบกับฐานพลังชีวิตสรุปแถว 4 ได้กำลังกำลังพระเคราะห์ระดับ <b>"${base4}"</b> วิเคราะห์ความหมายหลัก:
+                        <br><strong style="color:var(--gold); font-size:16px;">${base4Meaning}</strong>
+                    </p>
+                </div>
+            `;
+        }
+
+        function getThaksaTransit(birthDayNum, age) {
+            const thaksaCycle = [1, 2, 3, 4, 7, 5, 8, 6];
+            let startIndex = thaksaCycle.indexOf(parseInt(birthDayNum));
+            let transitIndex = (startIndex + (parseInt(age) - 1)) % 8;
+            return {
+                sri: thaksaCycle[(transitIndex + 3) % 8],
+                kali: thaksaCycle[(transitIndex + 7) % 8]
+            };
+        }
+
+        function getYearlySummary(rows, age) {
+            if (!age || age < 1 || !rows || rows.length < 3) return "";
+            const dayNum = rows[0][0];
+            const transit = getThaksaTransit(dayNum, age);
+            
+            const findHouses = (starNum) => {
+                let results = [];
+                for (let r = 0; r < 3; r++) {
+                    for (let c = 0; c < 7; c++) {
+                        if (rows[r][c] == starNum) {
+                            results.push(`ฐานที่ ${r+1} (${posNames[r][c]})`);
+                        }
+                    }
+                }
+                return results.length > 0 ? results.join(', ') : "ไม่ปรากฏใน 3 ฐานหลัก";
+            };
+
+            return `
+                <div class="card premium-card-accent">
+                    <h3><i class="fas fa-calendar-alt text-warning"></i> เจาะลึกวิเคราะห์ปีจรปัจจุบัน (อายุย่าง ${age} ปี)</h3>
+                    <div style="display:flex; gap:15px; margin-bottom:15px;">
+                        <div style="flex:1; text-align:center; padding:10px; background:rgba(46, 204, 113, 0.1); border:1px solid rgba(46, 204, 113, 0.4); border-radius:10px;">
+                            <span style="color:var(--green); font-weight:bold; font-size:12px;">🌟 ดาวศรีส่งเสริมปีนี้</span>
+                            <div style="font-size:24px; font-weight:bold; color:var(--text); margin:5px 0;">ดาว ${transit.sri}</div>
+                            <span style="font-size:12px; color:var(--muted);">ตกตำแหน่ง: ${findHouses(transit.sri)}</span>
+                        </div>
+                        <div style="flex:1; text-align:center; padding:10px; background:rgba(231, 76, 60, 0.1); border:1px solid rgba(231, 76, 60, 0.4); border-radius:10px;">
+                            <span style="color:var(--accent); font-weight:bold; font-size:12px;">🚫 ดาวกาลกิณีควรระวัง</span>
+                            <div style="font-size:24px; font-weight:bold; color:var(--text); margin:5px 0;">ดาว ${transit.kali}</div>
+                            <span style="font-size:12px; color:var(--muted);">ตกตำแหน่ง: ${findHouses(transit.kali)}</span>
+                        </div>
+                    </div>
+                    <p style="margin:0; font-size:13.5px; color:var(--muted); text-align:center; font-style:italic;">
+                        * ตรวจสอบความหมายจุดตกผ่านการคลิกเลือกช่องตารางผังดวง 21 ภูมิ *
+                    </p>
+                </div>
+            `;
+        }
+
+        function getMonthlySummary(age) {
+            const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            const nowThai = new Date().toLocaleString("en-US", { timeZone: "Asia/Bangkok" });
+            const currentMonthIdx = new Date(nowThai).getMonth();
+            const currentYearThai = new Date(nowThai).getFullYear() + 543;
+            const monthTransitCol = (currentMonthIdx + 1) % 7 || 7;
+            const colName = posNames[1][monthTransitCol - 1];
+
+            return `
+                <div class="card">
+                    <h3><i class="fas fa-moon text-info"></i> แนวโน้มชะตาประจำเดือน (Monthly Focus)</h3>
+                    <p style="margin:0; font-size:15px; line-height:1.6; color:var(--text);">
+                        รอบเดือนจรปัจจุบันในเดือน <b>${months[currentMonthIdx]} ${currentYearThai}</b> ดวงตกที่ <b>"เสาพยากรณ์ที่ ${monthTransitCol}"</b>
+                        <br>อิทธิพลดวงชะตาจะเน้นเด่นไปที่เรื่อง: <span style="background:rgba(52, 152, 219, 0.15); color:var(--gold-lt); padding:2px 8px; border-radius:12px; font-weight:bold;">${colName} (${houseMeaning[colName] || ""})</span>
+                        <br><span style="font-size:13.5px; color:var(--muted);">แนะประคองการตัดสินใจ โฟกัสและวางแผนตั้งรับเกี่ยวกับเรื่อง <b>${colName}</b> ในรอบเดือนนี้อย่างมีสติรอบคอบ</span>
+                    </p>
+                </div>
+            `;
+        }
+
+        function analyzeRelationships(rows) {
+            let insights = [];
+            const mainPower = rows[3][0];
+            let strengthText = `🧬 <b>วิเคราะห์กำลังพลังชีวิต:</b> คุณได้กำลังรวมเสาสรุปฐานที่สี่เท่ากับ <b>${mainPower}</b> `;
+            if (mainPower >= 16) strengthText += "จัดว่าเป็นโครงสร้างดวงที่มี 'ตบะบารมี' สูง มีอิทธิพลและสง่าราศีในตัวเองรอบทิศ";
+            else if (mainPower >= 11) strengthText += "อยู่ในขอบข่ายดวง 'มหาโชคลาภ' หยิบจับสิ่งใดมีแนวโน้มได้รับโอกาสและการสนับสนุนที่ดีเด่น";
+            else strengthText += "จัดเป็นดวงชะตาแบบ 'สู้แล้วรวยประสบความสำเร็จด้วยลำแข้งตนเอง' ทุกความก้าวหน้าแลกมาด้วยปัญญาความตั้งใจจริง";
+            insights.push(strengthText);
+
+            let map = {};
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 7; c++) {
+                    let num = rows[r][c];
+                    if (!map[num]) map[num] = [];
+                    map[num].push(posNames[r][c]);
+                }
+            }
+
+            for (let num in map) {
+                let sites = map[num];
+                if (sites.includes("ธนัง") || sites.includes("กดุมภะ")) {
+                    if (sites.includes("ลาภะ")) insights.push(`💰 <b>เส้นทางการเงินเด่น:</b> มีจุดชิ่งดาวเลข <b>${num}</b> ไปตกภพโชคลาภ (ลาภะ) มีเกณฑ์ร่ำรวย โชคดี หรือทำมาหากินคล่องตัวเด่นชัด`);
+                    if (sites.includes("กัมมะ")) insights.push(`🛠️ <b>งานสร้างทรัพย์:</b> จุดชิ่งดาวเลข <b>${num}</b> เชื่อมกับการงาน (กัมมะ) สรุปชะตาทำงานสร้างรายได้ ยิ่งลุยงานยิ่งร่ำรวย`);
+                }
+                if (sites.includes("มัชฌิมา") || sites.includes("ปัตนิ")) {
+                    if (sites.includes("ธนัง") || sites.includes("โภคา")) insights.push(`💍 <b>วาสนาคู่ส่งเสริม:</b> ดาวเลข <b>${num}</b> ชิ่งโยงทรัพย์สิน (ธนัง/โภคา) สรุปมีคู่รักหรือหุ้นส่วนเข้ามาร่วมสร้างฐานะบ้านรถเป็นปึกแผ่น`);
+                    if (sites.includes("หินะ") || sites.includes("อริ")) insights.push(`⚠️ <b>เรื่องความรักควรประคอง:</b> ดาวเลข <b>${num}</b> สัมพันธ์กับจุดอุปสรรค แนะนำต้องอดทนใจเย็น พูดคุยกับคนรักด้วยความเข้าใจเป็นหลัก`);
+                }
+            }
+
+            const formatLi = insights.map(ins => `<li style="margin-bottom:10px; line-height:1.5;">${ins}</li>`).join('');
+            return `
+                <div class="card">
+                    <h3><i class="fas fa-sync-alt text-warning"></i> บทวิเคราะห์การเชื่อมโยงคู่ดาวชิ่งสัมพันธ์ (Linkages)</h3>
+                    <ul style="margin:0; padding-left:20px; font-size:14.5px; color:var(--text);">
+                        ${formatLi || '<li>โครงชะตาค่อนข้างปกติ มุ่งเน้นการปฏิบัติตามสายกลางอย่างเป็นธรรม</li>'}
+                    </ul>
+                </div>
+            `;
+        }
+
+        function analyzeLifeStages(rows) {
+            let stages = [];
+            const earlyNum = rows[0][0];
+            stages.push(`
+                <div class="stage-item" style="border-left: 5px solid #3498db; background: rgba(15, 20, 30, 0.4); padding: 20px; border-radius: 12px; transition: all 0.3s ease; text-align: left; border: 1px solid var(--border);">
+                    <div style="font-size: 17px; font-weight: bold; color: var(--gold-lt); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                        <span>👶 ปฐมวัย</span>
+                        <span style="font-size: 12px; font-weight: normal; background: #3498db; color: #fff; padding: 2px 8px; border-radius: 20px;">วัยเด็ก - 25 ปี</span>
+                    </div>
+                    <p style="margin: 0; line-height: 1.6; font-size: 14.5px; color: var(--text);">
+                        พื้นดวงเริ่มต้นตำแหน่ง อัตตา ด้วยอิทธิพล <b>ดาว ${earlyNum}</b> ส่งผลให้ในวัยเด็กมีลักษณะนิสัยเด่นทางด้าน <em>${starPower[earlyNum]}</em> และชีวิตผูกพันกับบ้านเรือนที่อยู่อาศัย (โภคา)
+                    </p>
+                </div>
+            `);
+
+            const midNum = rows[1][0];
+            const midWork = rows[1][2];
+            stages.push(`
+                <div class="stage-item" style="border-left: 5px solid #e67e22; background: rgba(15, 20, 30, 0.4); padding: 20px; border-radius: 12px; transition: all 0.3s ease; text-align: left; border: 1px solid var(--border);">
+                    <div style="font-size: 17px; font-weight: bold; color: var(--gold-lt); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                        <span>🏃 วัยสร้างตัว</span>
+                        <span style="font-size: 12px; font-weight: normal; background: #e67e22; color: #fff; padding: 2px 8px; border-radius: 20px;">อายุ 26 - 50 ปี</span>
+                    </div>
+                    <p style="margin: 0; line-height: 1.6; font-size: 14.5px; color: var(--text);">
+                        ช่วงเวลาแห่งพลังขับเคลื่อนบุกเบิก นำทางโดย <b>ดาว ${midNum}</b> สรุปความสำเร็จและการงานผ่านทาง <b>${midWork}</b> (เพื่อนฝูง/การติดต่อเดินทาง) และต้องดูแลหุ้นส่วนคู่คิด (ปัตตนิ) ให้ดี
+                    </p>
+                </div>
+            `);
+
+            const lateNum = rows[2][0];
+            stages.push(`
+                <div class="stage-item" style="border-left: 5px solid #2ecc71; background: rgba(15, 20, 30, 0.4); padding: 20px; border-radius: 12px; transition: all 0.3s ease; text-align: left; border: 1px solid var(--border);">
+                    <div style="font-size: 17px; font-weight: bold; color: var(--gold-lt); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                        <span>🏡 วัยบั้นปลาย</span>
+                        <span style="font-size: 12px; font-weight: normal; background: #2ecc71; color: #fff; padding: 2px 8px; border-radius: 20px;">อายุ 51 ปีขึ้นไป</span>
+                    </div>
+                    <p style="margin: 0; line-height: 1.6; font-size: 14.5px; color: var(--text);">
+                        ช่วงแห่งการเก็บเกี่ยวความสงบสุขและความมั่นคง มีกำลัง <b>ดาว ${lateNum}</b> ประคับประคอง มั่นคงพรั่งพร้อมด้วยบารมีและโชคผลประโยชน์ (ลาภะ) ที่สั่งสมมา
+                    </p>
+                </div>
+            `);
+
+            return `
+                <div class="card premium-card-accent" style="grid-column: 1 / -1; margin-bottom: 25px;">
+                    <h3 style="color: var(--gold-lt); border-bottom: 1px dashed var(--border); margin-top: 0; padding-bottom: 12px; display: flex; align-items: center; gap: 10px; text-align: left;">
+                        <i class="fas fa-hourglass-half"></i> การวิเคราะห์เส้นทางดวงชะตา 3 ช่วงอายุ (Life Stages)
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 15px;">
+                        ${stages.join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getTrioSummary(rows) {
+            if (!rows || rows.length < 3) return "";
+            
+            // ฐานที่ 1 (วัน) ตำแหน่งที่ 4 คือ "ปิตา" -> ปาก (เจรจา) -> index 3 ของ rows[0]
+            const pakNum = rows[0][3]; 
+            // ฐานที่ 2 (เดือน) ตำแหน่งที่ 4 คือ "พันธุ" -> ใจ (ความคิด) -> index 3 ของ rows[1]
+            const jaiNum = rows[1][3];
+            // ฐานที่ 3 (ปี) ตำแหน่งที่ 4 คือ "ลาภะ" -> ที่นั่ง (บารมี) -> index 3 ของ rows[2]
+            const teenungNum = rows[2][3];
+
+            const starNames = ["", "อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์", "ราหู", "เกตุ"];
+            const pakStar = starNames[pakNum] || `ดาว ${pakNum}`;
+            const jaiStar = starNames[jaiNum] || `ดาว ${jaiNum}`;
+            const teenungStar = starNames[teenungNum] || `ดาว ${teenungNum}`;
+
+            const pakPrediction = (typeof TRIO_PREDICTIONS !== 'undefined' && TRIO_PREDICTIONS["ปาก"]?.[pakNum]) || "พูดจาอ่อนน้อมเป็นมงคล ค้าขายรุ่งเรืองด้วยวาทศิลป์อันประเสริฐแล";
+            const jaiPrediction = (typeof TRIO_PREDICTIONS !== 'undefined' && TRIO_PREDICTIONS["ใจ"]?.[jaiNum]) || "มีอัธยาศัยดี มีปัญญาพิจารณารอบคอบ ทำบุญกุศลขึ้นนักแล";
+            const teenungPrediction = (typeof TRIO_PREDICTIONS !== 'undefined' && TRIO_PREDICTIONS["ที่นั่ง"]?.[teenungNum]) || "มีหลักฐานบ้านเรือนมั่นคง วาสนาบารมีสูงส่ง มีคนนับถือยำเกรงแล";
+
+            return `
+                <div class="card premium-card-accent" style="grid-column: 1 / -1; margin-bottom: 25px; border-left-color: #d35400 !important;">
+                    <h3 style="color: var(--gold); border-bottom: 1px dashed var(--border); margin-top: 0; padding-bottom: 12px; display: flex; align-items: center; gap: 10px; text-align: left;">
+                        <i class="fas fa-bullhorn text-warning"></i> อิทธิพลจุดพยากรณ์พิเศษ: ปาก ใจ ที่นั่ง (Mouth, Mind, Seat)
+                    </h3>
+                    <p style="margin-top: 0; margin-bottom: 20px; font-size:14.5px; color:var(--muted); line-height:1.6; text-align: left;">
+                        วิเคราะห์ลักษณะอุปนิสัยลึกซึ้ง ความคิดอ่าน การเจรจา และบารมีเกื้อหนุนตามคัมภีร์มหาสัตตเลขโบราณ จากผลคำนวณตำแหน่งพิกัดเฉพาะในแผ่นดวงของท่าน
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        
+                        <!-- ปาก (การเจรจา) -->
+                        <div style="background: rgba(15, 20, 30, 0.6); border: 1.5px solid #f39c12; border-radius: 12px; padding: 20px; text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; border-bottom: 1px dashed rgba(243, 156, 18, 0.3); padding-bottom: 10px;">
+                                <div style="background: #f39c12; color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                                    <i class="fas fa-comment-alt"></i>
+                                </div>
+                                <div>
+                                    <strong style="color: var(--gold-lt); font-size: 15px; display: block;">ปาก (วาทศิลป์และการเจรจา)</strong>
+                                    <span style="font-size: 13px; color: #e67e22; font-weight: bold;">ตกดาว ${pakNum} (${pakStar})</span>
+                                </div>
+                            </div>
+                            <p style="margin: 0; font-size: 14px; line-height: 1.6; color: var(--text); text-align: left;">
+                                ${pakPrediction}
+                            </p>
+                        </div>
+
+                        <!-- ใจ (ความนึกคิดและตัวตนแท้จริง) -->
+                        <div style="background: rgba(15, 20, 30, 0.6); border: 1.5px solid #e74c3c; border-radius: 12px; padding: 20px; text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; border-bottom: 1px dashed rgba(231, 76, 60, 0.3); padding-bottom: 10px;">
+                                <div style="background: #e74c3c; color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div>
+                                    <strong style="color: var(--gold-lt); font-size: 15px; display: block;">ใจ (ความคิดอ่านและอุปนิสัยใจคอ)</strong>
+                                    <span style="font-size: 13px; color: #e74c3c; font-weight: bold;">ตกดาว ${jaiNum} (${jaiStar})</span>
+                                </div>
+                            </div>
+                            <p style="margin: 0; font-size: 14px; line-height: 1.6; color: var(--text); text-align: left;">
+                                ${jaiPrediction}
+                            </p>
+                        </div>
+
+                        <!-- ที่นั่ง (บารมี ที่อยู่อาศัย และเกณฑ์คู่ครอง) -->
+                        <div style="background: rgba(15, 20, 30, 0.6); border: 1.5px solid #9b59b6; border-radius: 12px; padding: 20px; text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; border-bottom: 1px dashed rgba(155, 89, 182, 0.3); padding-bottom: 10px;">
+                                <div style="background: #9b59b6; color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                                    <i class="fas fa-couch"></i>
+                                </div>
+                                <div>
+                                    <strong style="color: var(--gold-lt); font-size: 15px; display: block;">ที่นั่ง (บารมี วาสนา และเกณฑ์คู่)</strong>
+                                    <span style="font-size: 13px; color: #9b59b6; font-weight: bold;">ตกดาว ${teenungNum} (${teenungStar})</span>
+                                </div>
+                            </div>
+                            <p style="margin: 0; font-size: 14px; line-height: 1.6; color: var(--text); text-align: left;">
+                                ${teenungPrediction}
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+        }
+
+        function normalizeHouseName(h) {
+            const map = {
+                "ธนัง": "ธะนัง",
+                "กดุมภะ": "กฎุมภะ",
+                "สหัชชะ": "สุหัชชะ",
+                "ศุภะ": "สุภะ"
+            };
+            return map[h] || h;
+        }
+
+        function showCellDetail(cleanTitle, num, houseMeaning, isBase4) {
+            try {
+                const starTheme = {
+                    1: { name: "อาทิตย์", color: "#FFD700", bg: "#FFF9E6", icon: "fa-sun" },
+                    2: { name: "จันทร์", color: "#C0C0C0", bg: "#F8F8F8", icon: "fa-moon" },
+                    3: { name: "อังคาร", color: "#FF4500", bg: "#FFE9E6", icon: "fa-fire" },
+                    4: { name: "พุธ", color: "#2E8B57", bg: "#E6F4EA", icon: "fa-comment-dots" },
+                    5: { name: "พฤหัสบดี", color: "#DAA520", bg: "#FFF5E6", icon: "fa-graduation-cap" },
+                    6: { name: "ศุกร์", color: "#4682B4", bg: "#E6F2FA", icon: "fa-heart" },
+                    7: { name: "เสาร์", color: "#4B0082", bg: "#F0E6FA", icon: "fa-mountain" },
+                    8: { name: "ราหู", color: "#2F4F4F", bg: "#E6EBEB", icon: "fa-mask" },
+                    9: { name: "เกตุ", color: "#8B4513", bg: "#F5EEE6", icon: "fa-om" }
+                };
+
+                const theme = starTheme[num] || { name: `ดาว ${num}`, color: "#d4af37", bg: "#ffffff", icon: "fa-star" };
+                const currentHouse = cleanTitle.replace(/<br>|\s*\(.*?\)/g, "").trim();
+                
+                const starDescription = isBase4 
+                    ? (sdMeanings.base4[num] || "กำลังพระเคราะห์ปกติ") 
+                    : (starPower[num] || "ความหมายตามหลักโหราศาสตร์สัจจศาสตร์");
+
+                let traditionalDesc = "";
+                if (!isBase4 && typeof POSITION_PREDICTIONS !== 'undefined') {
+                    const normHouse = normalizeHouseName(currentHouse);
+                    traditionalDesc = POSITION_PREDICTIONS[normHouse]?.[num] || "";
+                }
+
+                const daySelect = document.getElementById('birthDay');
+                const ageInput = document.getElementById('currentAge');
+                let transitTag = "";
+                
+                if (daySelect && ageInput && ageInput.value) {
+                    const bDayNum = parseInt(daySelect.value);
+                    const currentAge = parseInt(ageInput.value);
+                    const transitData = getThaksaTransit(bDayNum, currentAge);
+                    if (num === transitData.sri) {
+                        transitTag = `<span class="badge badge-sri badge-transit" style="position:static; margin-left:10px;"><i class="fas fa-gem"></i> ปีนี้เป็นศรีจร</span>`;
+                    } else if (num === transitData.kali) {
+                        transitTag = `<span class="badge badge-kali badge-transit" style="position:static; margin-left:10px;"><i class="fas fa-exclamation-triangle"></i> ปีนี้เป็นกาลีจร</span>`;
+                    }
+                }
+
+                let relationHtml = "";
+                if (!isBase4 && typeof globalRows !== 'undefined' && globalRows.length > 0) {
+                    let relatedHouses = [];
+                    for (let r = 0; r < 3; r++) {
+                        for (let c = 0; c < 7; c++) {
+                            if (globalRows[r][c] == num) {
+                                let hName = posNames[r][c];
+                                if (hName !== currentHouse) relatedHouses.push(hName);
+                            }
+                        }
+                    }
+
+                    const partner = sdMeanings.relations.allies[num];
+                    const rival = sdMeanings.relations.enemies[num];
+                    let uniqueHouses = [...new Set(relatedHouses)];
+                    
+                    let detailTexts = uniqueHouses.map(h => {
+                        let key1 = `${currentHouse}-${h}`;
+                        let key2 = `${h}-${currentHouse}`;
+                        let meaning = linkage[key1] || linkage[key2];
+                        return meaning ? `<li style="margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:6px;"><i class="fas fa-link" style="color:#d4af37; margin-right:8px;"></i><b>${h}:</b> ${meaning}</li>` : "";
+                    }).join('');
+
+                    relationHtml = `
+                        <div style="margin-top: 15px; padding: 15px; text-align: left; background: ${theme.bg}; border: 1px solid ${theme.color}44; border-radius: 12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <strong style="color: ${theme.color}; font-size:14px;"><i class="fas fa-sync-alt"></i> วิเคราะห์คู่ดาวชิ่งสัมพันธ์ (${num})</strong>
+                                <div style="font-size:11px;">
+                                    <span style="background:#e8f8f5; color:#27ae60; padding:2px 6px; border-radius:10px; border:1px solid #2ecc71;">ดาวคู่มิตร: ${partner || '-'}</span>
+                                    <span style="background:#fdedec; color:#c0392b; padding:2px 6px; border-radius:10px; border:1px solid #e74c3c; margin-left:5px;">ดาวศัตรู: ${rival || '-'}</span>
+                                </div>
+                            </div>
+                            <ul style="margin: 0; padding: 0; list-style: none; font-size: 13px; color: #333;">
+                                ${detailTexts || '<li style="color:#666; font-style:italic;">ไม่พบจุดเชื่อมโยงชิ่งในภพอื่นของชะตา</li>'}
+                            </ul>
+                        </div>`;
+                }
+
+                Swal.fire({
+                    title: `<div style="color:${theme.color}; font-size: 1.4rem; font-family:'Sarabun',sans-serif;"><i class="fas ${theme.icon}" style="margin-right:10px;"></i>${isBase4 ? 'ฐานกำลังพยากรณ์' : 'ภพ ' + currentHouse}</div>`,
+                    html: `
+                        <div style="font-family: 'Sarabun', sans-serif;">
+                            <div style="font-size:13.5px; color:var(--muted); font-style:italic; margin-bottom: 15px;">"${houseMeaning || "อิทธิพลของดวงดาวส่งผลต่อชะตา"}"</div>
+                            
+                            <div style="padding:20px; background: linear-gradient(135deg, var(--card) 0%, rgba(15,20,30,0.8) 100%); border: 2px solid ${theme.color}66; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); text-align: left;">
+                                <div style="font-size:28px; font-weight:bold; color: ${theme.color}; margin-bottom: 12px; text-align: center;">
+                                    ดาว ${num} (${theme.name}) ${transitTag}
+                                </div>
+                                <div style="font-size: 14px; color:var(--text); line-height: 1.6;">
+                                    <span style="display:inline-block; background:${theme.color}; color:#fff; padding:2px 8px; border-radius:12px; font-size:11.5px; font-weight:bold; margin-bottom:8px;"><i class="fas fa-sparkles"></i> คุณลักษณะเด่น</span>
+                                    <div style="font-weight: bold; margin-bottom: 12px; font-size: 15px; color: var(--gold-lt);">${starDescription}</div>
+                                    
+                                    ${traditionalDesc ? `
+                                    <span style="display:inline-block; background:var(--gold); color:#111; padding:2px 8px; border-radius:12px; font-size:11.5px; font-weight:bold; margin-bottom:8px;"><i class="fas fa-book-open"></i> คำพยากรณ์โบราณประจำภพ</span>
+                                    <div style="line-height:1.6; text-indent: 20px; color:var(--muted); background:rgba(212, 175, 55, 0.05); padding:10px; border-radius:8px; border-left:3px solid var(--gold);">${traditionalDesc}</div>
+                                    ` : ''}
+                                </div>
+                            </div>
+        
+                            ${relationHtml}
+        
+                            <div style="margin-top: 15px; padding: 10px; background: rgba(15,20,30,0.6); border-radius: 8px; border: 1px solid var(--border); text-align: left;">
+                                <small style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px;">
+                                    <i class="fas fa-info-circle" style="color:var(--gold);"></i> 
+                                    <b>สรุป:</b> ${isBase4 
+                                        ? "ฐานกำลังที่ 4 คอยเสริมส่งกำลังและโอกาสผลสำเร็จหลักในปีจรนี้" 
+                                        : "ตำแหน่งดาว " + theme.name + " ทำนายดวงเดิมชะตาชีวิตในหัวข้อเรื่อง " + currentHouse}
+                                </small>
+                            </div>
+                        </div>`,
+                    confirmButtonText: 'ตกลง',
+                    confirmButtonColor: theme.color,
+                    showCloseButton: true,
+                    customClass: { popup: 'border-gold', confirmButton: 'rounded-pill px-4' }
+                });
+        
+            } catch (err) {
+                console.error("showCellDetail Error:", err);
+            }
+        }
+
+        function promptExportOptions() {
+            const isHoraryMode = document.getElementById('reportArea').innerHTML.trim() === '' && document.getElementById('topReportArea').innerHTML.trim() !== '';
+
+            let optionsHtml = `
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                    <button id="exportTable" class="swal2-confirm swal2-styled" style="background-color: #7b3f00;">ผังดวง 21 ภูมิ</button>
+                    <button id="exportTopReports" class="swal2-confirm swal2-styled" style="background-color: #7b3f00;">${isHoraryMode ? 'คำทำนายยามอัฏฐกาล' : 'คำทำนายสรุป (วาสนา, ปีจร, เดือนจร, ความรัก, การงาน)'}</button>
+                    <button id="exportAll" class="swal2-confirm swal2-styled" style="background-color: #7b3f00;">${isHoraryMode ? 'ผังดวง + คำทำนายยาม' : 'ผังดวง + คำทำนายสรุป'}</button>
+                </div>
+            `;
+
+            Swal.fire({
+                title: 'เลือกส่วนที่ต้องการบันทึก',
+                html: optionsHtml,
+                showCancelButton: true,
+                showConfirmButton: false,
+                cancelButtonText: 'ยกเลิก',
+                didOpen: () => {
+                    const handleExport = (type) => {
+                        Swal.fire({
+                            title: 'เลือกรูปแบบไฟล์',
+                            showDenyButton: true,
+                            showCancelButton: true,
+                            confirmButtonText: 'รูปภาพ (PNG)',
+                            denyButtonText: 'เอกสาร (PDF)',
+                            cancelButtonText: 'ยกเลิก',
+                            customClass: { 
+                                confirmButton: 'swal2-styled border-gold',
+                                denyButton: 'swal2-styled'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                performExport(type, 'png');
+                            } else if (result.isDenied) {
+                                performExport(type, 'pdf');
+                            }
+                        });
+                    };
+
+                    document.getElementById('exportTable').addEventListener('click', () => handleExport('table'));
+                    document.getElementById('exportTopReports').addEventListener('click', () => handleExport('topReports'));
+                    document.getElementById('exportAll').addEventListener('click', () => handleExport('all'));
+                }
+            });
+        }
+
+        function performExport(exportType, format = 'png') {
+            Swal.fire({
+                title: format === 'pdf' ? 'กำลังเตรียมเอกสาร PDF...' : 'กำลังเตรียมบันทึกรูปภาพ...',
+                text: 'กรุณารอสักครู่ ระบบกำลังจัดทำไฟล์ให้คุณ',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            const exportWrapper = document.createElement('div');
+            exportWrapper.id = 'socialMediaExportWrapper';
+
+            // Header
+            const header = document.createElement('div');
+            header.id = 'socialMediaExportHeader';
+            header.innerHTML = `
+                <h1>📜 คัมภีร์มหาทักษาสัตตเลข</h1>
+                <p>โดย สยามโหรามงคล</p>
+            `;
+            exportWrapper.appendChild(header);
+
+            // Content
+            const contentContainer = document.createElement('div');
+            contentContainer.style.display = 'flex';
+            contentContainer.style.flexDirection = 'column';
+            contentContainer.style.gap = '20px'; // Gap between main sections
+
+            const isHoraryMode = document.getElementById('reportArea').innerHTML.trim() === '' && document.getElementById('topReportArea').innerHTML.trim() !== '';
+
+            if (exportType === 'table') {
+                const tableArea = document.getElementById('tableArea');
+                if (tableArea) contentContainer.appendChild(tableArea.cloneNode(true));
+            } else if (exportType === 'topReports') {
+                const topReportArea = document.getElementById('topReportArea');
+                if (topReportArea) {
+                    Array.from(topReportArea.children).forEach(child => {
+                        contentContainer.appendChild(child.cloneNode(true));
+                    });
+                }
+            } else if (exportType === 'all') {
+                const tableArea = document.getElementById('tableArea');
+                if (tableArea) contentContainer.appendChild(tableArea.cloneNode(true));
+
+                const topReportArea = document.getElementById('topReportArea');
+                if (topReportArea) {
+                    Array.from(topReportArea.children).forEach(child => {
+                        contentContainer.appendChild(child.cloneNode(true));
+                    });
+                }
+
+                if (!isHoraryMode) { // Only include reportArea if not in horary mode
+                    const reportArea = document.getElementById('reportArea');
+                    if (reportArea) {
+                        Array.from(reportArea.children).forEach(child => {
+                            contentContainer.appendChild(child.cloneNode(true));
+                        });
+                    }
+                }
+            }
+            exportWrapper.appendChild(contentContainer);
+
+            // Footer
+            const footer = document.createElement('div');
+            footer.id = 'socialMediaExportFooter';
+            footer.innerHTML = `
+                <p>Generated by Siam Horamongkol | ${new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            `;
+            exportWrapper.appendChild(footer);
+
+            document.body.appendChild(exportWrapper);
+            
+            setTimeout(() => {
+                let maxDim = 1280;
+                if (format === 'pdf') maxDim = 2000;
+                const width = exportWrapper.offsetWidth;
+                const height = exportWrapper.offsetHeight;
+                const calculatedScale = Math.min(maxDim / width, maxDim / height);
+
+                html2canvas(exportWrapper, { 
+                    scale: calculatedScale, 
+                    useCORS: true,
+                    backgroundColor: "#ffffff",
+                    scrollX: 0,
+                    scrollY: 0
+                }).then(canvas => {
+                    if (format === 'pdf') {
+                        try {
+                            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                            const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
+                            const pdfWidth = pdf.internal.pageSize.getWidth();
+                            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                            
+                            if (pdfHeight > pdf.internal.pageSize.getHeight()) {
+                                const customPdf = new window.jspdf.jsPDF('p', 'mm', [pdfWidth, pdfHeight]);
+                                customPdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                                customPdf.save('ดวงชะตามหาสัตตเลข_สยามโหรามงคล.pdf');
+                            } else {
+                                pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                                pdf.save('ดวงชะตามหาสัตตเลข_สยามโหรามงคล.pdf');
+                            }
+                        } catch (e) {
+                            console.error("PDF generation failed:", e);
+                            Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่', 'error');
+                        }
+                    } else {
+                        const link = document.createElement('a');
+                        link.download = 'ดวงชะตามหาสัตตเลข_สยามโหรามงคล.png';
+                        link.href = canvas.toDataURL('image/png', 1.0);
+                        link.click();
+                    }
+                    Swal.close();
+                    document.body.removeChild(exportWrapper);
+                }).catch(err => {
+                    console.error("html2canvas error:", err);
+                    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ได้', 'error');
+                    if (document.getElementById('socialMediaExportWrapper')) {
+                        document.body.removeChild(exportWrapper);
+                    }
+                });
+            }, 500);
+        }
+
+        if (!customElements.get('loading-spinner')) {
+            class LoadingSpinner extends HTMLElement {
+                static get observedAttributes() { return ['text', 'is-active']; }
+                connectedCallback() { this.render(); }
+                attributeChangedCallback() { this.render(); }
+                render() {
+                    const text = this.getAttribute('text') || 'กำลังประมวลผลคำทำนาย...';
+                    const isActive = this.getAttribute('is-active') !== 'false';
+                    
+                    this.style.display = isActive ? 'block' : 'none';
+                    this.innerHTML = `
+                        <div style="text-align: center; width: 100%; padding: 3rem 0; animation: fadeIn 0.5s ease;">
+                            <div style="display: inline-block; width: 3rem; height: 3rem; border: 4px solid rgba(212, 175, 55, 0.2); border-top-color: #d4af37; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                            <p style="margin-top: 1rem; color: rgba(212, 175, 55, 0.8); font-weight: 300; letter-spacing: 1px;">${text}</p>
+                        </div>
+                    `;
+                }
+            }
+            customElements.define('loading-spinner', LoadingSpinner);
+        }
+        let globalRows = [];
+
+        // ── Member select helpers ──────────────────────────────────
+        function getSattalekMembers() {
+            const all = JSON.parse(localStorage.getItem('horo_history') || '[]');
+            try {
+                const s = JSON.parse(localStorage.getItem('siamhora_auth_session') || '{}');
+                if (s.role === 'admin') return all;
+            const u = getCurrentUsername();
+                if (!u) return all;
+                return all.filter(m => !m.username || m.username === u);
+            } catch { return all; }
+        }
+
+        function populateSattalekSelect() {
+            const sel = document.getElementById('sattalekMemberSelect');
+            if (!sel) return;
+            const members = getSattalekMembers();
+            sel.innerHTML = `<option value="">— เลือกสมาชิก (${members.length} คน) —</option>`;
+            members.forEach(m => {
+                const name = [m.name, m.lastName].filter(Boolean).join(' ') || 'ไม่มีชื่อ';
+                const opt = document.createElement('option');
+                opt.value = JSON.stringify({ birthdate: m.birthdate, birthtime: m.birthtime, zodiac: m.zodiac });
+                opt.textContent = name + (m.birthdate ? ' — ' + m.birthdate : '');
+                sel.appendChild(opt);
+            });
+        }
+
+        function autoFillSattalek(val) {
+            if (!val) return;
+            try {
+                const m = JSON.parse(val);
+                if (!m.birthdate) return;
+
+                const parsedDate = parseBirthdate(m.birthdate);
+                if (!parsedDate) return;
+                
+                const day = parsedDate.day;
+                const gregMo = parsedDate.month + 1;
+                const dow = parsedDate.dateObj.getDay(); // 0=Sun
+
+                // วันเกิด select (1=อาทิตย์…7=เสาร์)
+                document.getElementById('birthDay').value = dow === 0 ? 1 : dow + 1;
+
+                // วันที่เกิด
+                document.getElementById('birthDateSatta').value = day;
+
+                // เดือนเกิด (Thai lunar: Jan→2, Feb→3,…Dec→1)
+                const thaiMonth = gregMo === 12 ? 1 : gregMo + 1;
+                document.getElementById('birthMonth').value = thaiMonth;
+
+                // ปีนักษัตร — match text of option
+                if (m.zodiac) {
+                    const sel = document.getElementById('birthYear');
+                    for (const opt of sel.options) {
+                        if (opt.text.includes(m.zodiac)) { sel.value = opt.value; break; }
+                    }
+                }
+
+                // อายุย่างปีนี้
+                const currentYear = new Date().getFullYear();
+                document.getElementById('currentAge').value = currentYear - parsedDate.year + 1;
+
+                // เวลาเกิด
+                if (m.birthtime) {
+                    const t = m.birthtime.replace(/\s*น\.?/, '').trim();
+                    if (/^\d{1,2}:\d{2}/.test(t)) {
+                        const [h, mn] = t.split(':');
+                        document.getElementById('birthTime').value =
+                            h.padStart(2,'0') + ':' + mn.padStart(2,'0');
+                    }
+                }
+
+                processDestiny();
+            } catch(e) { console.error('autoFillSattalek:', e); }
+        }
+
+        document.addEventListener('DOMContentLoaded', populateSattalekSelect);
+
+        /* =========================================================
+           21 ภูมิ
+        ========================================================= */
+
+        
+
+
+        /* =========================================================
+           วิเคราะห์ความสัมพันธ์ภพ (ดาวชนภพ)
+        /* =========================================================
+           สร้างคำทำนายจากการชนภพ
+        ========================================================= */
+        function generateRelationReading(house, relation) {
+            if (relation.length === 0 || relation[0] === "ไม่มี") {
+                return `<span style="color:var(--muted);">ส่งผลด้วยตัวเองเป็นหลัก ไม่ค่อยถูกแทรกแซง</span>`;
+            }
+
+            const textbookCollisions = {
+                // อัตตะ
+                "อัตตะ-ตนุ": "เป็นคนเชื่อมั่นในตัวเองสูง อัตตาสูง คิดอะไรก็ลงมือทำแบบนั้น พึ่งพาตัวเองเป็นหลัก (อัตตาหิ อัตตโน นาโถ)",
+                "อัตตะ-กดุมภะ": "ชีวิตมักผูกพันกับเรื่องการหาเงินทอง สร้างฐานะ หรือต้องเหน็ดเหนื่อยเพื่อหาทรัพย์",
+                "อัตตะ-สหัชชะ": "เป็นคนเพื่อนเยอะ สังคมแยะ ชอบการเดินทาง หรือได้ดีเพราะเพื่อนฝูง",
+                "อัตตะ-พันธุ": "ชีวิตผูกพันกับครอบครัว ญาติพี่น้อง หรือเป็นเสาหลักให้ครอบครัว",
+                "อัตตะ-ปุตตะ": "มีความคิดริเริ่มสร้างสรรค์ ชอบความแปลกใหม่ หรือชีวิตผูกพันกับเด็ก/ลูกน้อง",
+                "อัตตะ-อริ": "ชีวิตมักมีอุปสรรคให้ต้องฝ่าฟัน มักมีคนคอยขัดขา หรือมีปัญหาสุขภาพ/หนี้สิน",
+                "อัตตะ-ปัตนิ": "ชีวิตผูกพันกับความรัก ให้ความสำคัญกับคู่ครอง หรือมักต้องทำงานเป็นคู่",
+                "อัตตะ-มรณะ": "มักต้องเดินทางไกล โยกย้ายถิ่นฐาน พลัดพรากจากถิ่นกำเนิด หรือทำงานต่างประเทศ",
+                "อัตตะ-ศุภะ": "มีผู้ใหญ่คอยอุปถัมภ์ค้ำชู สนใจในศาสนา/ความเชื่อ จิตใจใฝ่ดี",
+                "อัตตะ-กัมมะ": "ชีวิตผูกพันกับเรื่องการงาน บ้างาน ชอบทำงาน เกิดมาเพื่อลุยงาน",
+                "อัตตะ-ลาภะ": "มักมีโชคลาภ ทำสิ่งใดมักประสบความสำเร็จได้ง่าย",
+                "อัตตะ-พยายะ": "ชอบอยู่เบื้องหลัง ปิดทองหลังพระ มีความลับ หรือมีโรคประจำตัวแฝงเร้น",
+                "อัตตะ-ทาสา": "ชีวิตต้องเหน็ดเหนื่อยกับการดูแลหรือรับผิดชอบบริวารลูกน้องผู้ชาย",
+                "อัตตะ-ทาสี": "ชีวิตต้องรับภาระหรือดูแลช่วยเหลือบริวารลูกน้องผู้หญิง",
+
+                // หินะ
+                "หินะ-ตนุ": "มักทำอะไรผิดพลาดด้วยตัวเอง พาตัวเองไปเจอความลำบาก",
+                "หินะ-กดุมภะ": "การเงินมักมีปัญหา เก็บเงินไม่อยู่ ทรัพย์สินมักเสียหาย",
+                "หินะ-สหัชชะ": "เพื่อนฝูงมักนำความเดือดร้อนมาให้ หรือพึ่งพาเพื่อนไม่ได้",
+                "หินะ-พันธุ": "ญาติพี่น้องพึ่งไม่ได้ มักมีความขัดแย้งในครอบครัว หรือบ้าน/ที่ดินมีปัญหา",
+                "หินะ-ปุตตะ": "บุตรบริวารมักดื้อรั้น นำความเดือดร้อนมาให้ หรือมีลูกยาก",
+                "หินะ-อริ": "(ภพเสียชนภพเสีย) กลายเป็นดี อุปสรรคจะพ่ายแพ้ไปเอง ศัตรูทำอะไรไม่ได้",
+                "หินะ-ปัตนิ": "คู่ครองมักสร้างปัญหา นำความเดือดร้อนมาให้ หรือได้คู่เป็นหม้าย/มีตำหนิ",
+                "หินะ-มรณะ": "(ภพเสียชนภพเสีย) ลบเจอลบเป็นบวก เรื่องร้ายๆ มักจะผ่านพ้นไปได้ด้วยดี",
+                "หินะ-ศุภะ": "ผู้ใหญ่มักไม่เกื้อหนุน หรือทำความดีไม่ค่อยขึ้น ปิดทองหลังพระ",
+                "หินะ-กัมมะ": "หน้าที่การงานมักมีอุปสรรค มีคนคอยเลื่อยขาเตียง ทำงานผิดพลาดบ่อย",
+                "หินะ-ลาภะ": "โชคลาภมักได้มาแล้วเสียไป หรือกว่าจะสำเร็จต้องเหนื่อยแทบขาดใจ (ทุกขลาภ)",
+                "หินะ-พยายะ": "(ภพเสียชนภพเสีย) แคล้วคลาดปลอดภัยจากภยันตรายแฝงเร้น",
+                "หินะ-ทาสา": "บริวารชายมักสร้างปัญหา ทรยศหักหลัง หรือพึ่งพาไม่ได้",
+                "หินะ-ทาสี": "บริวารหญิงมักสร้างปัญหา เบียดเบียน หรือนำความเดือดร้อนมาให้",
+
+                // ธนัง
+                "ธนัง-ตนุ": "หาเงินด้วยน้ำพักน้ำแรงของตัวเอง สร้างฐานะด้วยตนเอง",
+                "ธนัง-กดุมภะ": "หาเงินเก่งมาก มีสภาพคล่องทางการเงินสูง มีโชคเรื่องทรัพย์",
+                "ธนัง-สหัชชะ": "ได้เงินจากการติดต่อสื่อสาร นายหน้า การเดินทาง หรือเพื่อนฝูงนำช่องทางมาให้",
+                "ธนัง-พันธุ": "ได้ทรัพย์สินจากครอบครัว มรดก หรือมีรายได้จากอสังหาริมทรัพย์/รถยนต์",
+                "ธนัง-ปุตตะ": "ได้เงินจากโปรเจกต์ใหม่ๆ งานบันเทิง หรือบุตรบริวารนำโชคมาให้",
+                "ธนัง-อริ": "หาเงินมาได้ก็ต้องเอาไปใช้หนี้ หรือมีปัญหาขัดแย้งเรื่องการเงิน",
+                "ธนัง-ปัตนิ": "ได้เงินจากคู่ครอง หุ้นส่วน หรือคู่ครองช่วยกันทำมาหากินสร้างฐานะ",
+                "ธนัง-มรณะ": "ทรัพย์สินมักเสียหาย เก็บเงินไม่อยู่ หรือได้เงินจากมรดก/ประกัน/แดนไกล",
+                "ธนัง-ศุภะ": "ผู้ใหญ่คอยอุปถัมภ์เรื่องการเงิน หรือมีรายได้จากความรู้/ต่างประเทศ",
+                "ธนัง-กัมมะ": "รายได้หลักมาจากหน้าที่การงาน ทำงานมากได้เงินมาก",
+                "ธนัง-ลาภะ": "หาเงินคล่องตัวมาก หยิบจับอะไรเป็นเงินเป็นทอง มักมีโชคทางการเงิน",
+                "ธนัง-พยายะ": "มีรายได้ลับๆ หรือต้องเสียเงินไปกับเรื่องที่ไม่คาดคิด/รักษาโรคภัย",
+                "ธนัง-ทาสา": "ได้ทรัพย์หรือผลประโยชน์จากบริวารลูกน้องผู้ชาย",
+                "ธนัง-ทาสี": "ได้ทรัพย์หรือผลประโยชน์จากบริวารลูกน้องผู้หญิง",
+
+                // ปิตา & มาตา
+                "ปิตา-ตนุ": "มีความผูกพันหรือมีลักษณะนิสัยคล้ายบิดา มักได้รับการสนับสนุนจากผู้ใหญ่ชาย",
+                "ปิตา-กัมมะ": "ได้รับการผลักดันเรื่องการงานจากบิดา หรือเจ้านายผู้ชาย",
+                "ปิตา-มรณะ": "บิดามักอยู่ห่างไกล เจ็บป่วย หรือพลัดพรากจากบิดา",
+                "มาตา-ตนุ": "มีความผูกพันหรือมีลักษณะนิสัยคล้ายมารดา มักได้รับการสนับสนุนจากผู้ใหญ่หญิง",
+                "มาตา-กัมมะ": "ได้รับการผลักดันเรื่องการงานจากมารดา หรือเจ้านายผู้หญิง",
+                "มาตา-มรณะ": "มารดามักอยู่ห่างไกล เจ็บป่วย หรือพลัดพรากจากมารดา",
+
+                // โภคา
+                "โภคา-ตนุ": "ชีวิตมุ่งมั่นสร้างความมั่นคง สร้างทรัพย์สมบัติ หวงแหนของของตน",
+                "โภคา-กดุมภะ": "ฐานะการเงินและทรัพย์สินมั่นคง มีบ้านมีรถพร้อม",
+                "โภคา-พันธุ": "มีบ้าน ที่ดิน หรืออสังหาริมทรัพย์เป็นปึกแผ่น มรดกตกทอด",
+                "โภคา-อริ": "ทรัพย์สินมักมีตำหนิ บ้านต้องซ่อมบ่อย หรือมีหนี้สินผูกพันกับอสังหาริมทรัพย์",
+                "โภคา-มรณะ": "มักต้องเสียทรัพย์สิน บ้าน ที่ดิน หรือทรัพย์สมบัติมักวิบัติ/ถูกขายทิ้ง",
+                "โภคา-ศุภะ": "ทรัพย์สมบัติจะเจริญงอกงาม ที่ดินมีราคาสูงขึ้น ผู้ใหญ่มอบทรัพย์ให้",
+
+                // มัชฌิมา
+                "มัชฌิมา-ตนุ": "ทำอะไรแบบสายกลาง ไม่ตึงไม่หย่อนเกินไป รักความสงบ จิตใจมักลังเล",
+                "มัชฌิมา-กัมมะ": "การงานดำเนินไปเรื่อยๆ ไม่หวือหวา แต่มั่นคง",
+                "มัชฌิมา-กดุมภะ": "การเงินอยู่ในระดับปานกลาง พอมีพอกิน ไม่ขัดสน",
+                "มัชฌิมา-ปัตนิ": "ความรักความสัมพันธ์เรื่อยๆ ไม่หวือหวา อยู่กันแบบเพื่อน",
+
+                // ตนุ
+                "ตนุ-กดุมภะ": "คิดแต่เรื่องการหาเงิน หาเงินเก่ง ชีวิตผูกพันกับทรัพย์สิน",
+                "ตนุ-สหัชชะ": "ชอบเดินทาง สมาคมกับเพื่อนฝูง ติดเพื่อน มนุษยสัมพันธ์ดี",
+                "ตนุ-พันธุ": "ชอบสร้างเนื้อสร้างตัว สร้างครอบครัว สร้างบ้าน",
+                "ตนุ-ปุตตะ": "ชอบริเริ่มสิ่งใหม่ๆ ทำโปรเจกต์ใหม่ๆ หรือวุ่นวายเรื่องบุตรบริวาร",
+                "ตนุ-อริ": "ชอบหาเรื่องใส่ตัว มักมีศัตรู หรือต้องคอยตามแก้ปัญหาตลอดเวลา",
+                "ตนุ-ปัตนิ": "ทุ่มเทให้ความรัก เนื้อคู่ หรือมักต้องพึ่งพาหุ้นส่วนเป็นหลัก",
+                "ตนุ-มรณะ": "มักทำอะไรที่เสี่ยงอันตราย หรือมักทิ้งถิ่นฐานบ้านเกิดไปทำงานไกล",
+                "ตนุ-ศุภะ": "แสวงหาความก้าวหน้า เกียรติยศ ชื่อเสียง สนใจการศึกษา/ศาสนา",
+                "ตนุ-กัมมะ": "บ้างาน มุ่งมั่นในหน้าที่การงาน ชีวิตนี้เพื่อสู้และทำงาน",
+                "ตนุ-ลาภะ": "ทำอะไรมักหวังผลกำไร และมักจะประสบความสำเร็จตามที่หวัง",
+                "ตนุ-พยายะ": "ทำอะไรมักมีอุปสรรคแฝงเร้น ทำงานเบื้องหลังจะรุ่งกว่าออกหน้า",
+                "ตนุ-ทาสา": "ชอบช่วยเหลือผู้อื่น หรือต้องคลุกคลีกับบริวารระดับล่างผู้ชาย",
+                "ตนุ-ทาสี": "ชอบช่วยเหลือผู้อื่น หรือต้องคลุกคลีกับบริวารระดับล่างผู้หญิง",
+
+                // กดุมภะ
+                "กดุมภะ-สหัชชะ": "เงินมักหมดไปกับเพื่อนฝูง สังคม หรือการเดินทาง",
+                "กดุมภะ-พันธุ": "เก็บเงินเพื่อสร้างครอบครัว สร้างบ้าน หรือครอบครัวช่วยหาเงิน",
+                "กดุมภะ-ปุตตะ": "หมดเงินไปกับบุตร บริวาร หรือใช้เงินลงทุนกับสิ่งใหม่ๆ",
+                "กดุมภะ-อริ": "เงินเก็บมักรั่วไหลไปกับการใช้หนี้ หรือมักมีคดีความทางการเงิน",
+                "กดุมภะ-ปัตนิ": "คู่ครองช่วยเก็บเงิน สร้างฐานะ หรือต้องเสียเงินให้คู่ครอง",
+                "กดุมภะ-มรณะ": "เก็บเงินไม่อยู่ ได้มาก็มีเหตุให้ต้องจ่ายไป หรือมักได้เงินจากมรดก/ประกัน",
+                "กดุมภะ-ศุภะ": "นำเงินไปต่อยอดความรู้ การศึกษา หรือผู้ใหญ่อุปถัมภ์การเงิน",
+                "กดุมภะ-กัมมะ": "นำเงินไปลงทุนกับการทำงาน ธุรกิจ หรือได้เงินก้อนใหญ่จากงาน",
+                "กดุมภะ-ลาภะ": "หาเงินคล่องตัวมาก หยิบจับอะไรเป็นเงินเป็นทอง มีโชคลาภทางการเงิน",
+                "กดุมภะ-พยายะ": "มีทรัพย์สินซ่อนเร้น เงินเก็บมักถูกปิดบัง หรือสูญเสียเงินแบบลับๆ/โดนโกง",
+                "กดุมภะ-ทาสา": "บริวารชายช่วยหาเงิน หรือเสียเงินเพราะลูกน้องผู้ชาย",
+                "กดุมภะ-ทาสี": "บริวารหญิงช่วยหาเงิน หรือเสียเงินเพราะลูกน้องผู้หญิง",
+
+                // สหัชชะ
+                "สหัชชะ-พันธุ": "เพื่อนฝูงสนิทสนมกลายเป็นครอบครัว ญาติพี่น้องรักใคร่กลมเกลียว",
+                "สหัชชะ-อริ": "เพื่อนฝูงกลายเป็นศัตรู หรือเพื่อนมักนำความเดือดร้อน/หนี้สินมาให้",
+                "สหัชชะ-ปัตนิ": "พบรักจากการเดินทาง หรือเพื่อนฝูงแนะนำคู่ครองให้",
+                "สหัชชะ-มรณะ": "เพื่อนฝูงมักตีจาก อยู่กันคนละที่ หรือเพื่อนมีอันเป็นไป/เพื่อนชาวต่างชาติ",
+                "สหัชชะ-กัมมะ": "เพื่อนฝูงช่วยเหลือเรื่องงาน หรือทำงานที่ต้องเดินทางติดต่อสื่อสารตลอด",
+                "สหัชชะ-ลาภะ": "เพื่อนฝูงมักนำโชคลาภ นำช่องทางรายได้หรือโอกาสดีๆ มาให้",
+
+                // พันธุ
+                "พันธุ-อริ": "ญาติพี่น้องขัดแย้งกัน มักมีปัญหากับครอบครัว หรือบ้าน/รถต้องซ่อมบ่อย",
+                "พันธุ-ปัตนิ": "คู่ครองเป็นคนในเครือญาติ หรือครอบครัวเป็นผู้จัดหา/เห็นชอบคู่ครองให้",
+                "พันธุ-มรณะ": "ไม่ค่อยได้อยู่ติดบ้าน ต้องย้ายบ้านบ่อย หรือไม่ได้อยู่กับพ่อแม่ ญาติพี่น้องห่างเหิน",
+                "พันธุ-กัมมะ": "สืบทอดกิจการครอบครัว หรือใช้บ้านเป็นที่ทำงาน (Home Office)",
+                "พันธุ-ลาภะ": "ครอบครัวนำโชคลาภมาให้ ครอบครัวมีความอุดมสมบูรณ์ มีทรัพย์มาก",
+
+                // ปุตตะ
+                "ปุตตะ-อริ": "ลูกน้องหรือบุตรมักนำปัญหามาให้ เลี้ยงยาก ดื้อรั้น สร้างหนี้สิน",
+                "ปุตตะ-ปัตนิ": "ได้คู่ครองอายุน้อยกว่า มีนิสัยเหมือนเด็ก หรือได้คู่ครองที่มีลูกติด",
+                "ปุตตะ-มรณะ": "มักแท้งบุตร มีลูกยาก บุตรอยู่ห่างไกล หรือลูกน้องมักลาออกบ่อย",
+                "ปุตตะ-กัมมะ": "มีโปรเจกต์งานใหม่ๆ เข้ามาเสมอ ทำงานเกี่ยวกับเด็ก หรืองานบันเทิง",
+                "ปุตตะ-ลาภะ": "บุตรหรือบริวารมักนำโชคลาภมาให้ ได้โชคจากการริเริ่มสิ่งใหม่",
+
+                // อริ
+                "อริ-ปัตนิ": "คู่ครองมักมีปากเสียง ขัดแย้งกันบ่อย หรือได้คู่เปรียบเสมือนศัตรู/คู่แข่ง",
+                "อริ-มรณะ": "(ภพเสียชนภพเสีย) ศัตรูหรืออุปสรรคจะแพ้ภัยตัวเอง หรือมีเกณฑ์หายจากโรคภัยร้ายแรง",
+                "อริ-กัมมะ": "งานมีอุปสรรคเยอะ ต้องตามแก้ปัญหาในการทำงานตลอดเวลา หรืองานช่าง/ซ่อมแซม",
+                "อริ-ลาภะ": "ได้โชคลาภจากการแก้ปัญหา หรือกว่าจะได้ความสำเร็จต้องฟันฝ่าอย่างหนัก (ทุกขลาภ)",
+                "อริ-พยายะ": "(ภพเสียชนภพเสีย) ปัญหาที่ซ่อนเร้นมักคลี่คลายไปได้เอง ศัตรูที่มองไม่เห็นจะแพ้ภัยไป",
+
+                // ปัตนิ
+                "ปัตนิ-มรณะ": "คู่ครองอยู่ไกลกัน มักได้คู่ต่างชาติ/ต่างถิ่น หรือความรักมักมีการพลัดพราก หย่าร้าง",
+                "ปัตนิ-ศุภะ": "ได้คู่ครองที่เป็นผู้ใหญ่ คู่ครองมีคุณธรรม หรือคู่ครองคอยอุปถัมภ์ค้ำชู",
+                "ปัตนิ-กัมมะ": "คู่ครองช่วยกันทำมาหากิน หรือพบรักในสายงานเดียวกัน",
+                "ปัตนิ-ลาภะ": "ได้คู่ครองที่มีฐานะดี คู่ครองนำโชคลาภความสำเร็จมาให้",
+                "ปัตนิ-พยายะ": "แอบคบหาซ่อนเร้น รักซ้อน หรือคู่ครองมีโรคประจำตัว/ความลับปกปิด",
+
+                // มรณะ
+                "มรณะ-ศุภะ": "ผู้ใหญ่ที่เคารพเจ็บป่วย มักสนใจศาสตร์ลี้ลับ หรือเดินทางไปทำบุญไกลๆ",
+                "มรณะ-กัมมะ": "งานที่ทำมักต้องเดินทางไกล งานต่างประเทศ งานไม่ประจำ หรืองานที่เกี่ยวกับความพินาศ",
+                "มรณะ-ลาภะ": "ได้โชคลาภอย่างไม่คาดฝัน โชคลาภจากความสูญเสีย (เช่น มรดก เงินประกัน)",
+                "มรณะ-พยายะ": "(ภพเสียชนภพเสีย) รอดพ้นจากอันตรายหรือวิกฤตการณ์ได้อย่างปาฏิหาริย์ แคล้วคลาด",
+
+                // ศุภะ
+                "ศุภะ-กัมมะ": "มีความก้าวหน้าในหน้าที่การงาน ผู้ใหญ่คอยสนับสนุนผลักดัน เลื่อนขั้น",
+                "ศุภะ-ลาภะ": "ประสบความสำเร็จในชีวิตอย่างมาก ได้รับเกียรติยศชื่อเสียงและโชคลาภ",
+                "ศุภะ-พยายะ": "ผู้ใหญ่เจ็บป่วย หรือผู้ใหญ่มักช่วยเหลือแบบลับๆ ไม่เปิดเผย",
+
+                // กัมมะ
+                "กัมมะ-ลาภะ": "ทำงานแล้วได้ผลตอบแทนดีมาก งานสำเร็จง่าย ได้กำไรดี ธุรกิจก้าวหน้า",
+                "กัมมะ-พยายะ": "ทำงานเบื้องหลัง งานสายลับ ตำรวจสืบสวน หรืองานมักมีอุปสรรคแฝงเร้น",
+
+                // ลาภะ
+                "ลาภะ-พยายะ": "ได้โชคลาภมาแบบลับๆ โชคลาภสีเทา หรือได้ของศักดิ์สิทธิ์ ของลี้ลับ",
+
+                // ปิตา & มาตา
+                "ปิตา-กดุมภะ": "บิดาหรือผู้ใหญ่ชายคอยช่วยเหลือเรื่องการเงิน หรือบิดามีฐานะดี",
+                "ปิตา-สหัชชะ": "บิดามีสังคมเพื่อนฝูงมาก หรือได้เดินทางไปกับบิดาบ่อยๆ",
+                "ปิตา-พันธุ": "บิดาเป็นเสาหลักของครอบครัว บิดาสร้างบ้าน/ทรัพย์สินไว้ให้",
+                "ปิตา-ปุตตะ": "บิดามีบริวารมาก หรือบิดามีความผูกพันกับบุตรหลาน",
+                "ปิตา-อริ": "มักขัดแย้งกับบิดา/ผู้ใหญ่ชาย หรือบิดามีโรคประจำตัว",
+                "ปิตา-ปัตนิ": "บิดาเป็นผู้จัดการเรื่องคู่ครอง หรือมีคู่ครองที่ลักษณะคล้ายบิดา",
+                "ปิตา-ศุภะ": "บิดาหรือผู้ใหญ่ชายอุปถัมภ์ค้ำชูให้เจริญก้าวหน้า",
+                "ปิตา-ลาภะ": "ได้โชคลาภจากบิดา หรือเจ้านายผู้ชายนำโชคมาให้",
+                "ปิตา-พยายะ": "บิดามีโรคประจำตัวแฝง หรือผู้ใหญ่ชายแอบช่วยเหลือลับๆ",
+                "ปิตา-ทาสา": "บิดามีลูกน้องผู้ชายมาก หรือต้องรับผิดชอบดูแลบริวารชายแทนบิดา",
+                "ปิตา-ทาสี": "บิดามีลูกน้องผู้หญิงมาก หรือต้องรับผิดชอบดูแลบริวารหญิงแทนบิดา",
+                "มาตา-กดุมภะ": "มารดาหรือผู้ใหญ่หญิงคอยช่วยเหลือเรื่องการเงิน หรือมารดามีฐานะดี",
+                "มาตา-สหัชชะ": "มารดามีสังคมเพื่อนฝูงมาก หรือได้เดินทางไปกับมารดาบ่อยๆ",
+                "มาตา-พันธุ": "มารดาเป็นเสาหลักของครอบครัว มารดาสร้างบ้าน/ทรัพย์สินไว้ให้",
+                "มาตา-ปุตตะ": "มารดามีบริวารมาก หรือมารดามีความผูกพันกับบุตรหลาน",
+                "มาตา-อริ": "มักขัดแย้งกับมารดา/ผู้ใหญ่หญิง หรือมารดามีโรคประจำตัว",
+                "มาตา-ปัตนิ": "มารดาเป็นผู้จัดการเรื่องคู่ครอง หรือมีคู่ครองที่ลักษณะคล้ายมารดา",
+                "มาตา-ศุภะ": "มารดาหรือผู้ใหญ่หญิงอุปถัมภ์ค้ำชูให้เจริญก้าวหน้า",
+                "มาตา-ลาภะ": "ได้โชคลาภจากมารดา หรือเจ้านายผู้หญิงนำโชคมาให้",
+                "มาตา-พยายะ": "มารดามีโรคประจำตัวแฝง หรือผู้ใหญ่หญิงแอบช่วยเหลือลับๆ",
+                "มาตา-ทาสา": "มารดามีลูกน้องผู้ชายมาก หรือต้องรับผิดชอบดูแลบริวารชายแทนมารดา",
+                "มาตา-ทาสี": "มารดามีลูกน้องผู้หญิงมาก หรือต้องรับผิดชอบดูแลบริวารหญิงแทนมารดา",
+
+                // โภคา
+                "โภคา-สหัชชะ": "ทรัพย์สินได้มาจากการติดต่อเพื่อนฝูง สังคม หรือทรัพย์สินมักต้องแบ่งปัน",
+                "โภคา-ปุตตะ": "นำทรัพย์สินไปลงทุนกับสิ่งใหม่ๆ หรือยกทรัพย์สมบัติให้บุตรบริวาร",
+                "โภคา-ปัตนิ": "ได้ทรัพย์สินจากคู่ครอง หรือคู่ครองช่วยดูแลจัดการทรัพย์สมบัติ",
+                "โภคา-กัมมะ": "ทรัพย์สินได้มาจากน้ำพักน้ำแรงในการทำงาน ธุรกิจเป็นหลัก",
+                "โภคา-ลาภะ": "ทรัพย์สินงอกเงยอย่างรวดเร็ว ได้อสังหาริมทรัพย์มาอย่างง่ายดาย ฟลุคๆ",
+                "โภคา-พยายะ": "มีทรัพย์สินซ่อนเร้นปกปิด หรือทรัพย์สมบัติมักเสียหายโดยไม่คาดคิด",
+                "โภคา-ทาสา": "ได้บริวารชายมาช่วยดูแลทรัพย์สิน หรือนำทรัพย์ไปใช้กับบริวารชาย",
+                "โภคา-ทาสี": "ได้บริวารหญิงมาช่วยดูแลทรัพย์สิน หรือนำทรัพย์ไปใช้กับบริวารหญิง",
+
+                // มัชฌิมา
+                "มัชฌิมา-สหัชชะ": "ความสัมพันธ์กับเพื่อนฝูงอยู่ในระดับปานกลาง ไม่สนิทเกินไป ไม่ห่างเกินไป",
+                "มัชฌิมา-พันธุ": "ครอบครัวมีความเป็นอยู่แบบเรียบง่าย ปานกลาง",
+                "มัชฌิมา-ปุตตะ": "บุตรบริวารเป็นคนเรียบง่าย ไม่สร้างความเดือดร้อน",
+                "มัชฌิมา-อริ": "อุปสรรคและศัตรูมีบ้างประปราย ไม่รุนแรง พอรับมือได้",
+                "มัชฌิมา-มรณะ": "การเปลี่ยนแปลงหรือการพลัดพรากอยู่ในระดับที่ไม่รุนแรง หรือไปต่างถิ่นระยะสั้น",
+                "มัชฌิมา-ศุภะ": "ความเจริญก้าวหน้าดำเนินไปอย่างค่อยเป็นค่อยไป ราบเรียบ",
+                "มัชฌิมา-ลาภะ": "มีโชคลาภเข้ามาเรื่อยๆ ไม่หวือหวาแต่ไม่ขาดมือ",
+                "มัชฌิมา-พยายะ": "โรคภัยไข้เจ็บมีบ้างแต่ไม่หนักหนา หรือมีความลับเรื่องเล็กๆน้อยๆ",
+                "มัชฌิมา-ทาสา": "การรับผิดชอบดูแลบริวารชายอยู่ในเกณฑ์ปานกลาง ควบคุมได้",
+                "มัชฌิมา-ทาสี": "การรับผิดชอบดูแลบริวารหญิงอยู่ในเกณฑ์ปานกลาง ควบคุมได้",
+
+                // สหัชชะ
+                "สหัชชะ-ศุภะ": "เพื่อนฝูงช่วยเหลืออุปถัมภ์ให้เจริญก้าวหน้า ได้คบมิตรที่ดี",
+                "สหัชชะ-พยายะ": "เพื่อนฝูงแอบช่วยเหลือ หรือมักโดนเพื่อนแทงข้างหลัง/ทรยศลับๆ",
+                "สหัชชะ-ทาสา": "เพื่อนฝูงกลายมาเป็นบริวาร หรือต้องเลี้ยงดูเพื่อนเสมือนลูกน้องชาย",
+                "สหัชชะ-ทาสี": "เพื่อนฝูงกลายมาเป็นบริวาร หรือต้องเลี้ยงดูเพื่อนเสมือนลูกน้องหญิง",
+
+                // พันธุ
+                "พันธุ-ศุภะ": "ครอบครัวมีความเจริญรุ่งเรือง วงศ์ตระกูลสูงส่ง อุดมสมบูรณ์",
+                "พันธุ-พยายะ": "มีปัญหาปกปิดซ่อนเร้นในครอบครัว หรือครอบครัวมักมีโรคภัยไข้เจ็บแฝง",
+                "พันธุ-ทาสา": "ครอบครัวมีบริวารผู้ชายมาก หรือต้องรับผิดชอบดูแลบริวารชายในบ้าน",
+                "พันธุ-ทาสี": "ครอบครัวมีบริวารผู้หญิงมาก หรือต้องรับผิดชอบดูแลบริวารหญิงในบ้าน",
+
+                // ปุตตะ
+                "ปุตตะ-ศุภะ": "บุตรบริวารมีความเจริญก้าวหน้า ได้ลูกดี อุปถัมภ์ค้ำชู",
+                "ปุตตะ-พยายะ": "บุตรบริวารมักมีโรคประจำตัว หรือนำปัญหาซ่อนเร้นมาให้ปวดหัว",
+                "ปุตตะ-ทาสา": "บริวารเป็นชายเสียส่วนใหญ่ และต้องรับผิดชอบดูแลอย่างใกล้ชิด",
+                "ปุตตะ-ทาสี": "บริวารเป็นหญิงเสียส่วนใหญ่ และต้องรับผิดชอบดูแลอย่างใกล้ชิด",
+
+                // อริ
+                "อริ-ศุภะ": "ผู้ใหญ่มักเพ่งเล็ง ขัดแข้งขัดขา หรือต้องฟันฝ่าอุปสรรคจึงจะเจริญก้าวหน้า",
+                "อริ-ทาสา": "บริวารผู้ชายทำตัวเป็นศัตรู แข็งข้อ หรือสร้างอุปสรรคให้",
+                "อริ-ทาสี": "บริวารผู้หญิงทำตัวเป็นศัตรู แข็งข้อ หรือสร้างอุปสรรคให้",
+
+                // ปัตนิ
+                "ปัตนิ-ทาสา": "คู่ครองมักต้องพึ่งพาเรา หรือคู่ครองชอบทำตัวเสมือนเป็นบริวาร (ยอมเรา)",
+                "ปัตนิ-ทาสี": "คู่ครองมักต้องพึ่งพาเรา หรือคู่ครองเป็นคนเอาใจเก่งเสมือนคอยรับใช้"
+            };
+
+            let specialReadings = [];
+            let normalRelations = [];
+
+            relation.forEach(h => {
+                let pair1 = `${house}-${h}`;
+                let pair2 = `${h}-${house}`;
+                
+                if (textbookCollisions[pair1]) {
+                    specialReadings.push(`<b>${house} ชน ${h}:</b> <span style="color:var(--text);">${textbookCollisions[pair1]}</span>`);
+                } else if (textbookCollisions[pair2]) {
+                    specialReadings.push(`<b>${house} ชน ${h}:</b> <span style="color:var(--text);">${textbookCollisions[pair2]}</span>`);
+                } else {
+                    normalRelations.push(h);
+                }
+            });
+
+            let sentence = "";
+
+            if (specialReadings.length > 0) {
+                // เติมการเว้นบรรทัดระหว่างคู่ดาว
+                sentence += specialReadings.join('<br>') + (normalRelations.length > 0 ? '<br>' : '');
+            }
+
+            if (normalRelations.length > 0) {
+                const badHouses = ["หินะ", "อริ", "มรณะ", "พยายะ"];
+                const wealthHouses = ["ธนัง", "โภคา", "กดุมภะ", "ลาภะ"];
+
+                let hasBad = normalRelations.some(h => badHouses.includes(h));
+                let hasWealth = normalRelations.some(h => wealthHouses.includes(h));
+
+                let baseMeaning = houseMeaning[house] ? houseMeaning[house].split(' ')[0] : house;
+                let relatedWords = normalRelations.map(h => houseMeaning[h] ? houseMeaning[h].split(' ')[0] : h).join(' และ ');
+
+                sentence += `<span style="color:var(--muted);"><b>${house} ชน ${normalRelations.join(', ')}:</b> เรื่องของ <b>${baseMeaning}</b> มักจะไปเกี่ยวข้องหรือส่งผลถึง <b>${relatedWords}</b></span>`;
+
+                if (hasBad && !badHouses.includes(house)) {
+                    sentence += `<br><span style="color:var(--accent); font-size:12px;">⚠️ ระวังปัญหา อุปสรรค หรือความเสียหายที่เกิดจากกลุ่มนี้</span>`;
+                }
+                if (hasWealth && !wealthHouses.includes(house)) {
+                    sentence += `<br><span style="color:var(--green); font-size:12px;">💰 มีเกณฑ์ส่งเสริมให้เกิดรายได้หรือผลประโยชน์จากกลุ่มนี้</span>`;
+                }
+            }
+
+            return sentence;
+        }
+
+        /* =========================================================
+           วิเคราะห์ความสัมพันธ์ภพ (ดาวชนภพ)
+        ========================================================= */
+
+        function analyzeHouseRelations(matrix) {
+
+            let result = [];
+            let numberToHouses = {};
+
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 7; c++) {
+                    let num = matrix[r][c];
+                    if (!numberToHouses[num]) {
+                        numberToHouses[num] = [];
+                    }
+                    numberToHouses[num].push(houses[r][c].name);
+                }
+            }
+
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 7; c++) {
+                    let house = houses[r][c].name;
+                    let value = matrix[r][c];
+                    let relation = numberToHouses[value].filter(h => h !== house);
+
+                    if (relation.length === 0) {
+                        relation = ["ไม่มี"];
+                    }
+
+                    result.push({
+                        house,
+                        value,
+                        meaning: houseMeaning[house],
+                        relation,
+                        reading: generateRelationReading(house, relation)
+                    });
+                }
+            }
+
+            return result;
+
+        }
+
+        const zodiacs = [
+            { name: "เมษ", icon: "♈", desc: "กล้าหาญ กระตือรือร้น รักอิสระ และชอบความท้าทาย", element: "ธาตุไฟ" },
+            { name: "พฤษภ", icon: "♉", desc: "หนักแน่น อดทน มั่นคง รักความสวยงาม และมีรสนิยมที่ดี", element: "ธาตุดิน" },
+            { name: "เมถุน", icon: "♊", desc: "มีไหวพริบ ปรับตัวเก่ง สื่อสารดี และรักการเรียนรู้สิ่งใหม่", element: "ธาตุลม" },
+            { name: "กรกฎ", icon: "♋", desc: "อ่อนโยน รักครอบครัว เมตตากรุณา และมีสัญชาตญาณสูง", element: "ธาตุน้ำ" },
+            { name: "สิงห์", icon: "♌", desc: "สง่างาม มั่นใจในตนเอง มีความเป็นผู้นำ และชอบช่วยเหลือผู้อื่น", element: "ธาตุไฟ" },
+            { name: "กันย์", icon: "♍", desc: "ละเอียดรอบคอบ มีระเบียบวินัย เก่งวิเคราะห์ และเป็นระเบียบ", element: "ธาตุดิน" },
+            { name: "ตุลย์", icon: "♎", desc: "รักความยุติธรรม มีเสน่ห์ เข้ากับผู้อื่นได้ดี และรักศิลปะความงาม", element: "ธาตุลม" },
+            { name: "พิจิก", icon: "♏", desc: "มีความมุ่งมั่นสูง ลึกลับ มีเสน่ห์ที่ลึกซึ้ง และมีพลังความตั้งใจแน่วแน่", element: "ธาตุน้ำ" },
+            { name: "ธนู", icon: "♐", desc: "มองโลกในแง่ดี รักอิสระ ชอบผจญภัย ซื่อสัตย์ และมีคุณธรรม", element: "ธาตุไฟ" },
+            { name: "มังกร", icon: "♑", desc: "มีความรับผิดชอบสูง มุ่งมั่นความสำเร็จ มีความอดทน และรักความมั่นคง", element: "ธาตุดิน" },
+            { name: "กุมภ์", icon: "♒", desc: "รักความถูกต้อง มีนวัตกรรม เป็นตัวของตัวเองสูง และรักเพื่อนฝูง", element: "ธาตุลม" },
+            { name: "มีน", icon: "♓", desc: "อ่อนโยน เห็นอกเห็นใจ มีจินตนาการสูง และชอบเสียสละเพื่อผู้อื่น", element: "ธาตุน้ำ" }
+        ];
+
+        /* =========================================================
+           ดาว
+        ========================================================= */
+
+        const planets = {
+
+            1: {
+                name: "อาทิตย์",
+                career: "ราชการ ผู้บริหาร งานที่มีเกียรติ",
+                health: "หัวใจ ความดัน สายตา",
+                trait: "มีความเป็นผู้นำสูง รักศักดิ์ศรี ใจร้อน เด็ดขาด มั่นใจในตัวเอง"
+            },
+
+            8: {
+                name: "ราหู",
+                career: "งานกลางคืน งานสีเทา ออนไลน์ ต่างประเทศ",
+                health: "ระบบขับถ่าย ช่องท้อง โรคแฝงเร้น",
+                trait: "ใจใหญ่ กล้าได้กล้าเสีย พลิกแพลงเก่ง มีเล่ห์เหลี่ยม"
+            },
+
+            2: {
+                name: "จันทร์",
+                career: "บริการ อาหาร ความงาม งานที่ต้องดูแลคน",
+                health: "กระเพาะ น้ำเหลือง มดลูก",
+                trait: "อ่อนโยน มีเสน่ห์ ช่างเอาใจใส่ อารมณ์อ่อนไหวง่าย จินตนาการสูง"
+            },
+
+            3: {
+                name: "อังคาร",
+                career: "ทหาร ตำรวจ วิศวกร ช่าง กีฬา",
+                health: "เลือด อุบัติเหตุ ผ่าตัด กระดูก",
+                trait: "กล้าหาญ ขยันขันแข็ง ชอบการแข่งขัน ตัดสินใจไว บางครั้งใจร้อนวู่วาม"
+            },
+
+            4: {
+                name: "พุธ",
+                career: "ค้าขาย นักพูด พิธีกร นักเขียน IT",
+                health: "ระบบประสาท ปาก ฟัน ลำไส้",
+                trait: "เจรจาเก่ง มีไหวพริบสติปัญญาดี เรียนรู้เร็ว ปรับตัวเก่ง ช่างเจรจา"
+            },
+
+            5: {
+                name: "พฤหัส",
+                career: "ครูอาจารย์ นักวิชาการ แพทย์ นักกฎหมาย ผู้พิพากษา",
+                health: "ตับ ลำไส้ สมอง",
+                trait: "มีเหตุผล รักความยุติธรรม มีคุณธรรม ใฝ่รู้ ชอบสั่งสอนหรือแนะนำผู้อื่น"
+            },
+
+            6: {
+                name: "ศุกร์",
+                career: "ศิลปิน นักแสดง วงการบันเทิง การเงิน ของสวยงาม",
+                health: "ไต ฮอร์โมน ระบบสืบพันธุ์ คอ",
+                trait: "รักสวยรักงาม มีรสนิยม รักศิลปะ มีเสน่ห์ดึงดูด ชอบความสุนทรีย์"
+            },
+
+            7: {
+                name: "เสาร์",
+                career: "ก่อสร้าง อสังหาริมทรัพย์ เกษตรกรรม อุตสาหกรรมหนัก",
+                health: "กระดูก ข้อต่อ ปวดเมื่อย เส้นเอ็น",
+                trait: "อดทนสูง จริงจัง รอบคอบ แบกรับภาระเก่ง เก็บความรู้สึก บางครั้งคิดมาก"
+            }
+
+        };
+
+        /* =========================================================
+           กำลังพระเคราะห์ (ฐาน 4)
+        ========================================================= */
+
+        const base4Powers = {
+            3: { name: "อังคารเล็ก", meaning: "เหนื่อยยาก อุปสรรคเล็กน้อย" },
+            4: { name: "พุธเล็ก", meaning: "เจรจาติดต่อ แก้ปัญหาเฉพาะหน้า" },
+            5: { name: "พฤหัสเล็ก", meaning: "เรียนรู้ ผู้ใหญ่เมตตา" },
+            6: { name: "กำลังอาทิตย์", meaning: "เกียรติยศ ความสำเร็จ ชื่อเสียง" },
+            7: { name: "เสาร์เล็ก", meaning: "ล่าช้า กดดัน ต้องอดทน" },
+            8: { name: "กำลังอังคาร", meaning: "ขยัน หงุดหงิด ใจร้อน" },
+            9: { name: "ดาวเกตุ", meaning: "สิ่งศักดิ์สิทธิ์ ลางสังหรณ์" },
+            10: { name: "กำลังเสาร์", meaning: "หนักแน่น อุปสรรคที่ต้องฝ่าฟัน" },
+            11: { name: "ราชาโชค", meaning: "โชคลาภ สำเร็จง่าย ผู้ใหญ่อุปถัมภ์" },
+            12: { name: "กำลังราหู", meaning: "พลิกแพลง ลุ่มหลง ระวังถูกหลอก" },
+            13: { name: "มหาอุจจ์", meaning: "ยิ่งใหญ่ มั่นคง พลิกจากร้ายเป็นดี" },
+            14: { name: "จักรพรรดิ", meaning: "สำเร็จยิ่งใหญ่ เกียรติยศระดับสูง" },
+            15: { name: "กำลังจันทร์", meaning: "เสน่ห์ โชคลาภจากการพูด บริการ" },
+            16: { name: "โสฬส", meaning: "สำเร็จสมบูรณ์ ทรัพย์สินมั่งคั่ง" },
+            17: { name: "กำลังพุธ", meaning: "ปัญญาเฉียบแหลม สำเร็จด้วยคำพูด" },
+            18: { name: "มหาจักร", meaning: "อำนาจบารมีสูงส่ง เป็นที่ยำเกรง" },
+            19: { name: "กำลังพฤหัส", meaning: "ผู้ใหญ่หนุนหลัง สำเร็จด้วยคุณธรรม" },
+            20: { name: "เสาร์ใหญ่", meaning: "ภาระหนัก เหน็ดเหนื่อยก่อนสำเร็จ" },
+            21: { name: "กำลังศุกร์", meaning: "สุขสมบูรณ์ สมหวังความรักและทรัพย์" }
+        };
+
+        /* =========================================================
+           คู่มิตร
+        ========================================================= */
+
+        const friendPairs = {
+
+            1: [2, 5, 6],
+            2: [1, 4, 5],
+            3: [6, 7],
+            4: [2, 5],
+            5: [1, 2, 4],
+            6: [1, 3],
+            7: [3]
+
+        };
+
+        /* =========================================================
+           คู่ศัตรู
+        ========================================================= */
+
+        const enemyPairs = {
+
+            1: [7],
+            2: [3],
+            3: [2],
+            4: [6],
+            5: [7],
+            6: [4],
+            7: [1]
+
+        };
+
+        /* =========================================================
+           คู่ธาตุ
+        ========================================================= */
+
+        const elementPairs = {
+            1: [7],
+            2: [5],
+            3: [8],
+            4: [6],
+            5: [2],
+            6: [4],
+            7: [1],
+            8: [3]
+        };
+
+        /* =========================================================
+           คู่สมพล
+        ========================================================= */
+
+        const powerPairs = {
+            1: [6],
+            2: [8],
+            3: [5],
+            4: [7],
+            5: [3],
+            6: [1],
+            7: [4],
+            8: [2]
+        };
+
+        /* =========================================================
+           เลขเศรษฐี
+        ========================================================= */
+
+        const wealthNumbers = {
+
+            24: "หาเงินเก่ง",
+            36: "ค้าขายเด่น",
+            42: "โชคลาภแรง",
+            45: "วาสนาใหญ่",
+            54: "ทรัพย์มั่นคง"
+
+        };
+
+        /* =========================================================
+           เลขอุบัติเหตุ
+        ========================================================= */
+
+        const accidentNumbers = [
+            13,
+            17,
+            31,
+            37,
+            73
+        ];
+
+        /* =========================================================
+           เลขบาปเคราะห์
+        ========================================================= */
+
+        const badNumbers = [
+            13,
+            18,
+            31,
+            38,
+            44,
+            66
+        ];
+
+        /* =========================================================
+           เลขราชาโชค
+        ========================================================= */
+
+        const kingNumbers = [
+            19,
+            24,
+            42,
+            45,
+            55
+        ];
+
+        /* =========================================================
+           MODULO
+        ========================================================= */
+        function thaiModulo(n, mod = 7) {
+            if (n === 0) return mod;
+            let r = n % mod;
+            if (r <= 0) r += mod;
+            return r;
+        }
+
+        /* =========================================================
+           ถอดเลข
+        ========================================================= */
+
+        function reduceNumber(n) {
+
+            while (n > 9) {
+
+                n = n
+                    .toString()
+                    .split('')
+                    .reduce((a, b) => a + parseInt(b), 0);
+
+            }
+
+            return n;
+
+        }
+
+        /* =========================================================
+           ฐานเลขไม่ซ้ำ
+        ========================================================= */
+
+        function generateUniqueBase(start) {
+
+            let row = [];
+
+            for (let i = 0; i < 7; i++) {
+
+                let value =
+                    ((start - 1 + i) % 7) + 1;
+
+                row.push(value);
+
+            }
+
+            return row;
+
+        }
+
+        /* =========================================================
+           เลขโยค
+        ========================================================= */
+
+        function calculateYoga(a, b) {
+
+            return reduceNumber(a + b);
+
+        }
+
+        /* =========================================================
+           คู่มิตร
+        ========================================================= */
+
+        function isFriendly(a, b) {
+
+            return friendPairs[a]
+                ?.includes(b);
+
+        }
+
+        /* =========================================================
+           คู่ศัตรู
+        ========================================================= */
+
+        function isEnemy(a, b) {
+
+            return enemyPairs[a]
+                ?.includes(b);
+
+        }
+
+        /* =========================================================
+           คู่ธาตุ
+        ========================================================= */
+
+        function isElementPair(a, b) {
+
+            return elementPairs[a]
+                ?.includes(b);
+
+        }
+
+        /* =========================================================
+           คู่สมพล
+        ========================================================= */
+
+        function isPowerPair(a, b) {
+
+            return powerPairs[a]
+                ?.includes(b);
+
+        }
+
+        /* =========================================================
+           เลขแตก
+        ========================================================= */
+
+        function getBrokenNumberFull(n) {
+
+            let str = n.toString();
+
+            let result = [];
+
+            for (let i = 0; i < str.length; i++) {
+
+                result.push(
+                    parseInt(str[i])
+                );
+
+            }
+
+            return {
+
+                digits: result,
+                total: result.reduce((a, b) => a + b, 0)
+
+            };
+
+        }
+
+        /* =========================================================
+           มหาอุจ
+        ========================================================= */
+
+        function calculateMahaUtScore(matrix) {
+
+            let score = 0;
+
+            matrix[3].forEach(n => {
+
+                if (n >= 7) {
+                    score += 2;
+                }
+
+                if (n >= 15) {
+                    score += 3;
+                }
+
+                if (n >= 20) {
+                    score += 5;
+                }
+
+            });
+
+            return score;
+
+        }
+
+        /* =========================================================
+           วัยจร
+        ========================================================= */
+
+        function calculateTransit(age, birthDay) {
+
+            let cycle =
+                (age + birthDay) % 7;
+
+            if (cycle === 0) {
+                cycle = 7;
+            }
+
+            return cycle;
+
+        }
+
+        /* =========================================================
+           คะแนนดวงรวม
+        ========================================================= */
+
+        function calculateLifeScore(matrix) {
+
+            let total = 0;
+
+            matrix[3].forEach(n => {
+
+                total += n;
+
+            });
+
+            return total;
+
+        }
+
+        /* =========================================================
+           สร้างดวง
+        ========================================================= */
+
+        function processDestiny(showLoading = false) {
+
+            let d = parseInt(document.getElementById('birthDay').value) || 1;
+            let birthDateNum = parseInt(document.getElementById('birthDateSatta').value) || 1;
+            let m = parseInt(document.getElementById('birthMonth').value) || 1;
+            let y = parseInt(document.getElementById('birthYear').value) || 1;
+            let targetMonthNum = parseInt(document.getElementById('targetMonth').value) || 1;
+            let targetDateNum = parseInt(document.getElementById('targetDate').value) || 1;
+            let age = parseInt(document.getElementById('currentAge').value) || 1;
+
+            let ageIndex = (age - 1) % 21;
+
+            let diffMonth = targetMonthNum - m;
+            if (diffMonth < 0) diffMonth += 12;
+            let monthIndex = (ageIndex + diffMonth) % 21;
+
+            let diffDay = targetDateNum - birthDateNum;
+            if (diffDay < 0) diffDay += 30; // 30-day lunar month assumption
+            let dayIndex = (monthIndex + diffDay) % 21;
+
+            const runCalc = () => {
+                let matrix = [[], [], [], []];
+
+                /* =====================================================
+                   ฐาน 1
+                ===================================================== */
+                matrix[0] = generateUniqueBase(d);
+
+                /* =====================================================
+                   ฐาน 2
+                ===================================================== */
+                matrix[1] = generateUniqueBase(m);
+
+                /* =====================================================
+                   ฐาน 3
+                ===================================================== */
+                matrix[2] = generateUniqueBase(y);
+
+                /* =====================================================
+                   ฐาน 4
+                ===================================================== */
+                for (let i = 0; i < 7; i++) {
+                    matrix[3][i] = matrix[0][i] + matrix[1][i] + matrix[2][i];
+                }
+
+                /* =====================================================
+                   แสดงผล
+                ===================================================== */
+                globalRows = matrix;
+
+                renderMatrix(matrix, d, ageIndex, monthIndex, dayIndex);
+                generateReport(
+                    matrix, d, age, ageIndex, monthIndex, dayIndex, targetMonthNum, targetDateNum
+                );
+                renderAuspiciousCalendar(currentCalendarYear, currentCalendarMonth);
+
+                // ซ่อน Spinner และแสดงผลลัพธ์เมื่อโหลดเสร็จ
+                const spinner = document.getElementById('calcSpinner');
+                const captureArea = document.getElementById('captureArea');
+                const btnExport = document.getElementById('btnExport');
+                
+                if (spinner) spinner.setAttribute('is-active', 'false');
+                if (captureArea) captureArea.style.display = 'block';
+                if (btnExport) btnExport.style.display = 'inline-flex';
+            };
+
+            if (showLoading === true) {
+                const spinner = document.getElementById('calcSpinner');
+                const captureArea = document.getElementById('captureArea');
+                const btnExport = document.getElementById('btnExport');
+                
+                if (captureArea) captureArea.style.display = 'none';
+                if (btnExport) btnExport.style.display = 'none';
+                if (spinner) spinner.setAttribute('is-active', 'true');
+                
+                setTimeout(runCalc, 800); // แสดง Spinner 0.8 วินาที
+            } else {
+                runCalc(); // หากพิมพ์เปลี่ยนข้อมูลในฟอร์ม ให้คำนวณแบบ Real-time เลยเพื่อความรวดเร็ว
+            }
+
+        }
+
+        /* =========================================================
+           ระบบปฏิทินวันมงคลเฉพาะบุคคล (Personal Auspicious Calendar)
+        ========================================================= */
+        let currentCalendarYear = new Date().getFullYear();
+        let currentCalendarMonth = new Date().getMonth() + 1;
+
+        function changeCalendarMonth(offset) {
+            currentCalendarMonth += offset;
+            let oldYear = currentCalendarYear;
+            if (currentCalendarMonth > 12) {
+                currentCalendarMonth = 1;
+                currentCalendarYear += 1;
+            } else if (currentCalendarMonth < 1) {
+                currentCalendarMonth = 12;
+                currentCalendarYear -= 1;
+            }
+            renderAuspiciousCalendar(currentCalendarYear, currentCalendarMonth);
+            
+            // Synchronize year change to Yearly Kaliyoke search tool
+            if (currentCalendarYear !== oldYear) {
+                const karayokInput = document.getElementById("yearkarayokInput");
+                if (karayokInput) {
+                    karayokInput.value = currentCalendarYear + 543;
+                    displayKaliyoke();
+                }
+            }
+        }
+
+        function getDayYamaPlanets(dayOfWeek, isDaytime) {
+            let startNum = dayOfWeek;
+            if (!isDaytime) {
+                startNum = ((dayOfWeek + 2) % 7) + 1;
+            }
+            let list = [];
+            let currentNum = startNum;
+            for (let i = 0; i < 8; i++) {
+                list.push(currentNum);
+                currentNum = currentNum - 2;
+                if (currentNum <= 0) currentNum += 7;
+            }
+            return list;
+        }
+
+        function getDayYamaReport(dayOfWeek, thaksaMap) {
+            let daytimePlanets = getDayYamaPlanets(dayOfWeek, true);
+            let nighttimePlanets = getDayYamaPlanets(dayOfWeek, false);
+            
+            let daytimeRanges = [
+                "06:00 - 07:30 น.", "07:30 - 09:00 น.", "09:00 - 10:30 น.", "10:30 - 12:00 น.",
+                "12:00 - 13:30 น.", "13:30 - 15:00 น.", "15:00 - 16:30 น.", "16:30 - 18:00 น."
+            ];
+            
+            let nighttimeRanges = [
+                "18:00 - 19:30 น.", "19:30 - 21:00 น.", "21:00 - 22:30 น.", "22:30 - 00:00 น.",
+                "00:00 - 01:30 น.", "01:30 - 03:00 น.", "03:00 - 04:30 น.", "04:30 - 06:00 น."
+            ];
+            
+            let goodYamas = [];
+            let badYamas = [];
+            
+            // Process Daytime yamas
+            for (let i = 0; i < 8; i++) {
+                let pNum = daytimePlanets[i];
+                let role = thaksaMap[pNum];
+                let pName = planets[pNum]?.name || "";
+                if (role === "ศรี") {
+                    goodYamas.push(`ยามที่ ${i+1} (${daytimeRanges[i]}) • ดาว${pName} (เลข ${pNum}) [⭐ มงคลยิ่ง]`);
+                } else if (role === "เดช" || role === "มนตรี") {
+                    goodYamas.push(`ยามที่ ${i+1} (${daytimeRanges[i]}) • ดาว${pName} (เลข ${pNum}) [📈 ส่งเสริม (${role})]`);
+                } else if (role === "กาลกิณี") {
+                    badYamas.push(`ยามที่ ${i+1} (${daytimeRanges[i]}) • ดาว${pName} (เลข ${pNum}) [⚠️ กาลกิณี]`);
+                }
+            }
+            
+            // Process Nighttime yamas
+            for (let i = 0; i < 8; i++) {
+                let pNum = nighttimePlanets[i];
+                let role = thaksaMap[pNum];
+                let pName = planets[pNum]?.name || "";
+                if (role === "ศรี") {
+                    goodYamas.push(`ยามที่ ${i+1} (${nighttimeRanges[i]}) • ดาว${pName} (เลข ${pNum}) [⭐ มงคลยิ่ง]`);
+                } else if (role === "เดช" || role === "มนตรี") {
+                    goodYamas.push(`ยามที่ ${i+1} (${nighttimeRanges[i]}) • ดาว${pName} (เลข ${pNum}) [📈 ส่งเสริม (${role})]`);
+                } else if (role === "กาลกิณี") {
+                    badYamas.push(`ยามที่ ${i+1} (${nighttimeRanges[i]}) • ดาว${pName} (เลข ${pNum}) [⚠️ กาลกิณี]`);
+                }
+            }
+            
+            return { goodYamas, badYamas };
+        }
+
+        /* =========================================================
+           ระบบปฏิทินสองมุมมอง (ดวงชะตาส่วนบุคคล vs กาลโยคสากล)
+        ========================================================= */
+        let calendarMode = 'personalized'; // 'personalized' or 'general'
+
+        function setCalendarMode(mode) {
+            calendarMode = mode;
+            renderAuspiciousCalendar(currentCalendarYear, currentCalendarMonth);
+        }
+
+        function getKanayok(yearCE) {
+            let beYear = yearCE + 543;
+            
+            // Map exact published Thai Kanayok days:
+            // 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday
+            if (beYear === 2569) {
+                return {
+                    thongchai: 1, // Monday (วันจันทร์)
+                    athipadi: 6,  // Saturday (วันเสาร์)
+                    ubabat: 0,    // Sunday (วันอาทิตย์)
+                    lokawinas: 1  // Monday (วันจันทร์)
+                };
+            } else if (beYear === 2568) {
+                return {
+                    thongchai: 3, // Wednesday (วันพุธ)
+                    athipadi: 2,  // Tuesday (วันอังคาร)
+                    ubabat: 4,    // Thursday (วันพฤหัสบดี)
+                    lokawinas: 0  // Sunday (วันอาทิตย์)
+                };
+            } else if (beYear === 2567) {
+                return {
+                    thongchai: 2, // Tuesday (วันอังคาร)
+                    athipadi: 4,  // Thursday (วันพฤหัสบดี)
+                    ubabat: 1,    // Monday (วันจันทร์)
+                    lokawinas: 6  // Saturday (วันเสาร์)
+                };
+            }
+            
+            // Fallback CS formula for other historical years
+            let cs = yearCE - 638;
+            let thongchai = (cs * 10 + 3) % 7; 
+            let athipadi = (cs * 5 + 2) % 7;
+            let ubabat = (cs * 10 + 2) % 7;
+            let lokawinas = (cs * 10 + 6) % 7;
+            
+            const csToWeekday = {
+                1: 0, // Sunday
+                2: 1, // Monday
+                3: 2, // Tuesday
+                4: 3, // Wednesday
+                5: 4, // Thursday
+                6: 5, // Friday
+                0: 6  // Saturday
+            };
+            
+            return {
+                thongchai: csToWeekday[thongchai],
+                athipadi: csToWeekday[athipadi],
+                ubabat: csToWeekday[ubabat],
+                lokawinas: csToWeekday[lokawinas]
+            };
+        }
+
+        function getGeneralYamaReport(dayOfWeek) {
+            let daytimePlanets = getDayYamaPlanets(dayOfWeek, true);
+            let nighttimePlanets = getDayYamaPlanets(dayOfWeek, false);
+            
+            let daytimeRanges = [
+                "06:00 - 07:30 น.", "07:30 - 09:00 น.", "09:00 - 10:30 น.", "10:30 - 12:00 น.",
+                "12:00 - 13:30 น.", "13:30 - 15:00 น.", "15:00 - 16:30 น.", "16:30 - 18:00 น."
+            ];
+            
+            let nighttimeRanges = [
+                "18:00 - 19:30 น.", "19:30 - 21:00 น.", "21:00 - 22:30 น.", "22:30 - 00:00 น.",
+                "00:00 - 01:30 น.", "01:30 - 03:00 น.", "03:00 - 04:30 น.", "04:30 - 06:00 น."
+            ];
+            
+            let goodYamas = [];
+            let badYamas = [];
+            
+            function processPlanet(pNum, rangeStr, isDay) {
+                let pName = planets[pNum]?.name || "";
+                let prefix = isDay ? "☀️" : "🌙";
+                if (pNum === 4 || pNum === 5 || pNum === 6) {
+                    goodYamas.push(`${prefix} ${rangeStr} • ดาว${pName} (เลข ${pNum}) [💚 ยามปลอด/แคล้วคลาดดีเลิศ]`);
+                } else if (pNum === 3 || pNum === 7 || pNum === 8) {
+                    badYamas.push(`${prefix} ${rangeStr} • ดาว${pName} (เลข ${pNum}) [⚠️ ยามร้าย/อุปสรรคขัดแย้ง]`);
+                } else if (pNum === 1) {
+                    badYamas.push(`${prefix} ${rangeStr} • ดาว${pName} (เลข ${pNum}) [🔥 ยามร้อนรน/เหนื่อยยาก]`);
+                } else {
+                    goodYamas.push(`${prefix} ${rangeStr} • ดาว${pName} (เลข ${pNum}) [⚪ ยามปานกลาง/มีเสน่ห์]`);
+                }
+            }
+            
+            for (let i = 0; i < 8; i++) processPlanet(daytimePlanets[i], `ยามที่ ${i+1} (${daytimeRanges[i]})`, true);
+            for (let i = 0; i < 8; i++) processPlanet(nighttimePlanets[i], `ยามที่ ${i+1} (${nighttimeRanges[i]})`, false);
+            
+            return { goodYamas, badYamas };
+        }
+
+        function renderAuspiciousCalendar(year, month) {
+            let birthDay = parseInt(document.getElementById('birthDay').value) || 1;
+            let thaksaMap = getThaksaMap(birthDay);
+            let kanayok = getKanayok(year);
+
+            // Get first day of month (0 = Sunday, 1 = Monday, ...)
+            let firstDay = new Date(year, month - 1, 1).getDay();
+            // Get total days in month
+            let totalDays = new Date(year, month, 0).getDate();
+
+            let calendarArea = document.getElementById('auspiciousCalendarArea');
+            if (!calendarArea) return;
+
+            let cellsHTML = "";
+
+            // Empty cells for alignment before first day of month
+            for (let i = 0; i < firstDay; i++) {
+                cellsHTML += `<div class="calendar-day-cell empty-cell"></div>`;
+            }
+
+            // Standard Day of week to Sattalek planet map
+            const weekdayToPlanet = {
+                0: 1, // Sunday -> 1
+                1: 2, // Monday -> 2
+                2: 3, // Tuesday -> 3
+                3: 4, // Wednesday -> 4
+                4: 5, // Thursday -> 5
+                5: 6, // Friday -> 6
+                6: 7  // Saturday -> 7
+            };
+
+            for (let day = 1; day <= totalDays; day++) {
+                let dateObj = new Date(year, month - 1, day);
+                let weekday = dateObj.getDay(); // 0-6
+                let planetNum = weekdayToPlanet[weekday];
+                let dayOfWeek = weekday === 0 ? 1 : weekday + 1;
+
+                let statusClass = "status-neutral";
+                let badgeText = "⚪ ทั่วไป";
+                let desc = "เป็นวันธรรมดาปานกลาง สามารถประกอบกิจกรรมต่างๆ ได้ตามปกติ";
+
+                if (calendarMode === 'personalized') {
+                    let role = thaksaMap[planetNum] || "ทั่วไป";
+                    if (role === "ศรี") {
+                        statusClass = "status-auspicious-great";
+                        badgeText = "⭐ มงคลยิ่ง";
+                        desc = `ตรงกับดาวศรีของท่าน (ดาว${planets[planetNum]?.name}) วันแห่งโชคลาภ เสน่ห์เมตตา ความเจริญรุ่งเรือง เหมาะสำหรับเริ่มธุรกิจ เจรจาค้าขาย หรือจัดงานมงคล`;
+                    } else if (role === "เดช" || role === "มนตรี") {
+                        statusClass = "status-auspicious-good";
+                        badgeText = role === "เดช" ? "📈 ส่งเสริม (เดช)" : "📈 ส่งเสริม (มนตรี)";
+                        desc = `ตรงกับดาว${role}ของท่าน (ดาว${planets[planetNum]?.name}) วันแห่งอำนาจ บารมี เกียรติยศ หรือมีผู้อุปถัมภ์ช่วยเหลือส่งเสริมดีเลิศ`;
+                    } else if (role === "กาลกิณี") {
+                        statusClass = "status-inauspicious";
+                        badgeText = "⚠️ กาลกิณี";
+                        desc = `ตรงกับดาวกาลกิณีของท่าน (ดาว${planets[planetNum]?.name}) วันแห่งอุปสรรค ปัญหาขัดแย้ง และเรื่องไม่คาดคิด ควรเลี่ยงการตัดสินใจเรื่องใหญ่ หลีกเลี่ยงงานมงคลทุกชนิด`;
+                    }
+                } else {
+                    // General Mode: Kanayok criteria
+                    if (weekday === kanayok.thongchai) {
+                        statusClass = "status-auspicious-great";
+                        badgeText = "⭐ วันธงชัย";
+                        desc = "<b>วันธงชัยสากล</b>: วันแห่งชัยชนะ โชคลาภ และความสำเร็จสูงสุดในตำรา เหมาะแก่การเริ่มทำธุรกิจ เปิดสาขาใหม่ จัดการงานมงคลสมรส หรือขึ้นบ้านใหม่";
+                    } else if (weekday === kanayok.athipadi) {
+                        statusClass = "status-auspicious-good";
+                        badgeText = "📈 วันอธิบดี";
+                        desc = "<b>วันอธิบดีสากล</b>: วันแห่งความเป็นใหญ่ มีอำนาจบารมี และการปกปักรักษาดีเยี่ยม เหมาะสำหรับเข้าหาผู้ใหญ่ ขอความอุปถัมภ์ ติดต่อหน่วยงานราชการ หรือเริ่มงานตำแหน่งใหม่";
+                    } else if (weekday === kanayok.ubabat) {
+                        statusClass = "status-inauspicious";
+                        badgeText = "⚠️ วันอุบาทว์";
+                        desc = "<b>วันอุบาทว์สากล</b>: วันแห่งโชคร้าย เคราะห์หามยามร้าย และความขัดแย้งขัดติดขัดง่าย ควรเลี่ยงการริเริ่มประกอบพิธีมงคลหรือทำการเจรจาธุรกิจสำคัญ";
+                    } else if (weekday === kanayok.lokawinas) {
+                        statusClass = "status-inauspicious";
+                        badgeText = "⚠️ โลกาวินาศ";
+                        desc = "<b>วันโลกาวินาศสากล</b>: วันแห่งความสูญเสีย ความหายนะวิบัติ และความวุ่นวายขัดแย้ง ห้ามจัดงานมงคลทุกชนิด ห้ามโอนย้ายทรัพย์สิน หรือทำสัญญาตกลงใดๆ ทั้งสิ้น";
+                    }
+                }
+
+                // Add date info for tooltip on click
+                let escapedDesc = desc.replace(/'/g, "\\'");
+                let escapedBadge = badgeText.replace(/'/g, "\\'");
+                let dayName = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"][weekday];
+
+                cellsHTML += `
+                <div class="calendar-day-cell ${statusClass}" id="cal-day-${day}"
+                     onclick="selectCalendarDay(this, '${dayName}', ${day}, '${escapedBadge}', '${escapedDesc}', ${dayOfWeek})">
+                    <span class="calendar-day-number">${day}</span>
+                    <span class="calendar-day-status-badge">${badgeText}</span>
+                </div>
+                `;
+            }
+
+            let calendarTitle = calendarMode === 'personalized' 
+                ? 'ปฏิทินวันมงคลเฉพาะบุคคล (ทักษาจรรายวัน)' 
+                : 'ปฏิทินวันดี-วันมงคลสากล (เกณฑ์กาลโยคประจำปี)';
+
+            let calendarHTML = `
+            <div class="calendar-card">
+                <div class="calendar-header">
+                    <h3><span>📅</span> ${calendarTitle}</h3>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        
+                        <!-- Segmented Mode Controller -->
+                        <div style="display: flex; gap: 4px; background: #f2edf5; padding: 4px; border-radius: 20px; border: 1px solid rgba(142,68,173,0.15); margin-right: 10px;">
+                            <button onclick="setCalendarMode('personalized')" style="background: ${calendarMode === 'personalized' ? '#8e44ad' : 'transparent'}; color: ${calendarMode === 'personalized' ? '#fff' : '#8e44ad'}; border: none; padding: 6px 12px; border-radius: 15px; cursor: pointer; font-size: 12.5px; font-weight: bold; transition: all 0.2s;">
+                                👤 ส่วนบุคคล
+                            </button>
+                            <button onclick="setCalendarMode('general')" style="background: ${calendarMode === 'general' ? '#8e44ad' : 'transparent'}; color: ${calendarMode === 'general' ? '#fff' : '#8e44ad'}; border: none; padding: 6px 12px; border-radius: 15px; cursor: pointer; font-size: 12.5px; font-weight: bold; transition: all 0.2s;">
+                                🌍 กาลโยคสากล
+                            </button>
+                        </div>
+
+                        <button class="calendar-nav-btn" onclick="changeCalendarMonth(-1)">◀️</button>
+                        <span class="calendar-month-title">${getMonthNameThai(month)} ${year + 543}</span>
+                        <button class="calendar-nav-btn" onclick="changeCalendarMonth(1)">▶️</button>
+                    </div>
+                </div>
+
+                <p style="font-size: 14px; color:#555; margin-top:0; margin-bottom: 18px; line-height:1.6;">
+                    ${calendarMode === 'personalized' 
+                        ? 'ปฏิทินตรวจเช็ก <b>ฤกษ์มงคลเฉพาะบุคคล</b> วิเคราะห์ตามคัมภีร์มหาทักษาเดิมของคุณ โดยตรวจเช็กวันเกิดในสัปดาห์เทียบกับดาวเสวยยามของคุณแบบรายวัน' 
+                        : 'ปฏิทินตรวจเช็ก <b>ฤกษ์มงคลสากล (เกณฑ์กาลโยคประจำปี)</b> วิเคราะห์ตามวันธงชัย วันอธิบดี วันอุบาทว์ และวันโลกาวินาศทั่วไปของปีนั้นๆ'
+                    }
+                    <span style="color: #8e44ad; font-weight: bold;">(คลิกเลือกวันที่บนปฏิทินเพื่อล็อคผลและแสดงช่วงยามมงคล/กาลกิณีประจำวัน)</span>
+                </p>
+
+                <div class="calendar-grid-weekdays">
+                    <div style="color:#c0392b;">อา.</div>
+                    <div>จ.</div>
+                    <div style="color:#d35400;">อ.</div>
+                    <div style="color:#27ae60;">พ.</div>
+                    <div style="color:#f39c12;">พฤ.</div>
+                    <div style="color:#2980b9;">ศ.</div>
+                    <div style="color:#aaaaaa;">ส.</div>
+                </div>
+
+                <div class="calendar-grid-days">
+                    ${cellsHTML}
+                </div>
+
+                <div class="calendar-tooltip-area" id="calendarTooltipArea" style="align-items: flex-start; display: flex; flex-direction: column; min-height: 100px;">
+                    <div style="display:flex; align-items: center; gap: 12px; width: 100%; border-bottom: 1px dashed rgba(142,68,173,0.15); padding-bottom:10px; margin-bottom: 10px;">
+                        <div style="font-size: 32px;" id="tooltipIcon">👉</div>
+                        <div>
+                            <div style="font-size: 16px; font-weight: bold; color: #e0e0e0; margin-bottom: 3px;" id="tooltipTitle">
+                                คลิกเลือกวันที่ต้องการดูบนปฏิทิน
+                            </div>
+                            <div style="font-size: 13.5px; color: #8e44ad; font-weight: bold;" id="tooltipBadge">
+                                เพื่อแสดงข้อมูลวันจรและช่วงเวลากลางวัน-กลางคืน
+                            </div>
+                        </div>
+                    </div>
+                    <div style="font-size: 14px; color: #555; line-height: 1.6; width: 100%;" id="tooltipContent">
+                        คำแนะนำในการประกอบพิธีกรรมทางโหราศาสตร์ สัญญาค้าขาย หรือกิจกรรมมงคล พร้อมการจัดลำดับยามมงคลและยามร้ายของวันนั้นๆ จะแสดงผลค้างไว้ตรงนี้ ช่วยให้เลื่อนลงมาอ่านได้อย่างสะดวก
+                    </div>
+                </div>
+            </div>
+            `;
+
+            calendarArea.innerHTML = calendarHTML;
+        }
+
+        function selectCalendarDay(element, dayName, dateNum, badgeText, desc, dayOfWeek) {
+            // Highlight selected cell
+            document.querySelectorAll('.calendar-day-cell').forEach(el => el.classList.remove('selected-day'));
+            element.classList.add('selected-day');
+
+            let goodYamasHTML = "";
+            let badYamasHTML = "";
+
+            if (calendarMode === 'personalized') {
+                let birthDay = parseInt(document.getElementById('birthDay').value) || 1;
+                let thaksaMap = getThaksaMap(birthDay);
+                let yamaReport = getDayYamaReport(dayOfWeek, thaksaMap);
+
+                goodYamasHTML = yamaReport.goodYamas.length > 0 
+                    ? yamaReport.goodYamas.map(y => `<div style="font-size:13px; color:#2e7d32; margin-bottom:5px; font-weight: 500;">🟢 ${y}</div>`).join('') 
+                    : '<div style="font-size:13px; color:#777;">ไม่มีช่วงยามมงคลพิเศษในวันนี้</div>';
+                    
+                badYamasHTML = yamaReport.badYamas.length > 0 
+                    ? yamaReport.badYamas.map(y => `<div style="font-size:13px; color:#c62828; margin-bottom:5px; font-weight: 500;">🔴 ${y}</div>`).join('') 
+                    : '<div style="font-size:13px; color:#777;">ไม่มีช่วงยามกาลกิณีในวันนี้</div>';
+            } else {
+                let yamaReport = getGeneralYamaReport(dayOfWeek);
+
+                goodYamasHTML = yamaReport.goodYamas.length > 0 
+                    ? yamaReport.goodYamas.map(y => `<div style="font-size:13px; color:#2e7d32; margin-bottom:5px; font-weight: 500;">🟢 ${y}</div>`).join('') 
+                    : '<div style="font-size:13px; color:#777;">ไม่มีช่วงยามมงคลสากลในวันนี้</div>';
+                    
+                badYamasHTML = yamaReport.badYamas.length > 0 
+                    ? yamaReport.badYamas.map(y => `<div style="font-size:13px; color:#c62828; margin-bottom:5px; font-weight: 500;">🔴 ${y}</div>`).join('') 
+                    : '<div style="font-size:13px; color:#777;">ไม่มีช่วงยามร้ายสากลในวันนี้</div>';
+            }
+
+            let tooltipIcon = badgeText.includes("⭐") ? "⭐" : badgeText.includes("📈") ? "📈" : badgeText.includes("⚠️") ? "⚠️" : "⚪";
+            
+            document.getElementById('tooltipIcon').innerHTML = tooltipIcon;
+            document.getElementById('tooltipTitle').innerHTML = `${dayName}ที่ ${dateNum}`;
+            document.getElementById('tooltipBadge').innerHTML = badgeText;
+            
+            let htmlContent = `
+            <p style="margin: 0 0 15px 0; font-size: 14.5px; color:#e0e0e0; line-height: 1.6;">${desc}</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; border-top: 1px dashed rgba(142,68,173,0.18); padding-top: 15px; width: 100%;">
+                <div style="background: rgba(46, 204, 113, 0.05); border: 1px solid rgba(46, 204, 113, 0.18); padding: 12px; border-radius: 8px;">
+                    <h5 style="margin: 0 0 8px 0; color: #27ae60; font-size: 14px; font-weight: bold;">
+                        ${calendarMode === 'personalized' ? '🟢 ยามมงคลประจำวัน (ดาวศรี / เดช / มนตรี)' : '🟢 ช่วงยามปลอด/แคล้วคลาดดีเลิศ (เกณฑ์สากล)'}
+                    </h5>
+                    ${goodYamasHTML}
+                </div>
+                <div style="background: rgba(231, 76, 60, 0.05); border: 1px solid rgba(231, 76, 60, 0.18); padding: 12px; border-radius: 8px;">
+                    <h5 style="margin: 0 0 8px 0; color: #e74c3c; font-size: 14px; font-weight: bold;">
+                        ${calendarMode === 'personalized' ? '🔴 ยามที่ควรหลีกเลี่ยง (ดาวกาลกิณี)' : '🔴 ช่วงยามร้าย/ร้อนรนควรหลีกเลี่ยง (เกณฑ์สากล)'}
+                    </h5>
+                    ${badYamasHTML}
+                </div>
+            </div>
+            `;
+            
+            document.getElementById('tooltipContent').innerHTML = htmlContent;
+
+            let tooltipBg = badgeText.includes("⭐") ? "#e8f8f5" : badgeText.includes("📈") ? "#eaf2f8" : badgeText.includes("⚠️") ? "#fdf2e9" : "#fdfefe";
+            let tooltipBorder = badgeText.includes("⭐") ? "rgba(46, 204, 113, 0.4)" : badgeText.includes("📈") ? "rgba(52, 152, 219, 0.4)" : badgeText.includes("⚠️") ? "rgba(231, 76, 60, 0.4)" : "rgba(142, 68, 173, 0.15)";
+            
+            let tooltipArea = document.getElementById('calendarTooltipArea');
+            if (tooltipArea) {
+                tooltipArea.style.backgroundColor = tooltipBg;
+                tooltipArea.style.borderColor = tooltipBorder;
+            }
+        }
+
+        /* =========================================================
+           มหาทักษา
+        ========================================================= */
+
+        const thaksaRoles = ["บริวาร", "อายุ", "เดช", "ศรี", "มูละ", "อุตสาหะ", "มนตรี", "กาลกิณี"];
+        const thaksaPlanets = [1, 2, 3, 4, 7, 5, 8, 6];
+
+        function getThaksaMap(birthDayNum) {
+            let map = {};
+            let startIndex = thaksaPlanets.indexOf(birthDayNum);
+            if (startIndex === -1) startIndex = 0; // Default to Sunday
+            for (let i = 0; i < 8; i++) {
+                let p = thaksaPlanets[(startIndex + i) % 8];
+                map[p] = thaksaRoles[i];
+            }
+            return map;
+        }
+
+        /* =========================================================
+           ตาราง
+        ========================================================= */
+
+        function renderMatrix(matrix, birthDay, ageIndex, monthIndex, dayIndex, highlightNum = -1) {
+            let thaksaMap = getThaksaMap(birthDay);
+
+            let html = `
+
+<h2>ผังดวง 21 ภูมิ</h2>
+
+<table>
+
+<tr>
+
+<th>ฐาน</th>
+
+<th>หลัก 1</th>
+<th>หลัก 2</th>
+<th>หลัก 3</th>
+<th>หลัก 4</th>
+<th>หลัก 5</th>
+<th>หลัก 6</th>
+<th>หลัก 7</th>
+
+</tr>
+
+`;
+
+            const labels = [
+
+                "ฐานที่ 1",
+                "ฐานที่ 2",
+                "ฐานที่ 3",
+                "ฐานที่ 4"
+
+            ];
+
+            for (let r = 0; r < 4; r++) {
+
+                html += `<tr>`;
+
+                html += `
+<td>
+<b>${labels[r]}</b>
+</td>
+`;
+
+                for (let c = 0; c < 7; c++) {
+
+                    let isAgeCell = (r < 3) && ((r * 7 + c) === ageIndex);
+                    let isMonthCell = (r < 3) && ((r * 7 + c) === monthIndex);
+                    let isDayCell = (r < 3) && ((r * 7 + c) === dayIndex);
+                    let isHighlight = (matrix[r][c] === highlightNum);
+
+                    let bgStyle = isAgeCell ? "background-color: rgba(243, 156, 18, 0.2); outline: 2px solid #f39c12; outline-offset: -2px;" : "";
+                    if (isHighlight) {
+                        bgStyle = "background-color: rgba(142, 68, 173, 0.2); outline: 2px solid #8e44ad; outline-offset: -2px;";
+                    }
+                    
+                    let onclickAction = r < 3 
+                        ? `highlightRelation(${matrix[r][c]}); showCellDetail('${houses[r][c].name}', ${matrix[r][c]}, '${houseMeaning[houses[r][c].name] || ""}', false)`
+                        : `highlightRelation(${matrix[r][c]}); showCellDetail('${base4Powers[matrix[r][c]]?.name || "ฐานกำลังที่ 4"}', ${matrix[r][c]}, '${base4Powers[matrix[r][c]]?.meaning || "กำลังพระเคราะห์หลัก"}', true)`;
+
+                    html += `
+
+<td onclick="${onclickAction}" style="cursor:pointer; position:relative; transition: background 0.3s; ${bgStyle}" title="คลิกเพื่อดูความสัมพันธ์ของดาว ${matrix[r][c]}" onmouseover="this.style.background='rgba(212, 175, 55, 0.2)'" onmouseout="this.style.background='${isAgeCell ? 'rgba(243, 156, 18, 0.2)' : isHighlight ? 'rgba(142, 68, 173, 0.2)' : ''}'">
+
+${r < 3 ? `<div style="position:absolute; top:4px; right:6px; font-size:11px; font-weight:bold; color: ${thaksaMap[matrix[r][c]] === 'กาลกิณี' ? '#c62828' : thaksaMap[matrix[r][c]] === 'ศรี' ? '#2e7d32' : '#1976d2'};">${thaksaMap[matrix[r][c]]}</div>` : ''}
+<div style="position:absolute; bottom:2px; left:2px; display:flex; flex-direction:column; gap:2px; z-index:10; align-items:flex-start;">
+${isAgeCell ? `<span style="font-size:10px; font-weight:bold; color:#d35400; background:#fff; border:1px solid #d35400; padding:0 3px; border-radius:3px; box-shadow: 1px 1px 2px rgba(0,0,0,0.1);">📍 ปี</span>` : ''}
+${isMonthCell ? `<span style="font-size:10px; font-weight:bold; color:#2980b9; background:#fff; border:1px solid #2980b9; padding:0 3px; border-radius:3px; box-shadow: 1px 1px 2px rgba(0,0,0,0.1);">🌙 เดือน</span>` : ''}
+${isDayCell ? `<span style="font-size:10px; font-weight:bold; color:#27ae60; background:#fff; border:1px solid #27ae60; padding:0 3px; border-radius:3px; box-shadow: 1px 1px 2px rgba(0,0,0,0.1);">☀️ วัน</span>` : ''}
+${isHighlight && !isAgeCell && !isMonthCell && !isDayCell ? `<span style="font-size:10px; font-weight:bold; color:#8e44ad; background:#fff; border:1px solid #8e44ad; padding:0 3px; border-radius:3px; box-shadow: 1px 1px 2px rgba(0,0,0,0.1);">🔮 ยาม</span>` : ''}
+</div>
+
+<div class="big">
+${matrix[r][c]}
+</div>
+
+<div class="house">
+
+${r < 3
+
+                            ?
+
+                            `
+${houses[r][c].name}
+<br>
+(${houses[r][c].num})
+`
+
+                            :
+
+                            `
+<b style="font-size:12px; color:var(--gold-lt);">${base4Powers[matrix[r][c]]?.name || ""}</b><br>
+<span style="font-size:11px; color:var(--muted); line-height:1.2; display:inline-block; margin-top:2px;">${base4Powers[matrix[r][c]]?.meaning || ""}</span>
+`
+                        }
+
+</div>
+
+</td>
+
+`;
+
+                }
+
+                html += `</tr>`;
+
+            }
+
+            html += `</table>`;
+
+            document.getElementById('tableArea')
+                .innerHTML = html;
+
+        }
+
+        /* =========================================================
+           ไฮไลท์ความสัมพันธ์
+        ========================================================= */
+
+        function highlightRelation(num) {
+
+            document.querySelectorAll('.relation-row').forEach(row => {
+                row.style.backgroundColor = '';
+            });
+
+            const matchingRows = document.querySelectorAll('.relation-num-' + num);
+
+            let first = true;
+            matchingRows.forEach(row => {
+                row.style.backgroundColor = 'rgba(212, 175, 55, 0.3)'; // ไฮไลท์สีทองแบบโปร่ง
+                if (first) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    first = false;
+                }
+            });
+
+        }
+
+        /* =========================================================
+           รายงาน
+        ========================================================= */
+
+        function generateReport(
+            matrix,
+            birthDay,
+            age,
+            ageIndex,
+            monthIndex,
+            dayIndex,
+            targetMonthNum,
+            targetDateNum
+        ) {
+
+            let topReport = '';
+            let report = '';
+
+            /* =====================================================
+               อิทธิพลดวงดาวสำคัญ
+            ===================================================== */
+
+            let attaPlanetNum = matrix[0][0]; // อัตตะ (ตัวตน)
+            let kammaPlanetNum = matrix[2][2]; // กัมมะ (การงาน)
+
+            let attaPlanet = planets[attaPlanetNum];
+            let kammaPlanet = planets[kammaPlanetNum];
+
+            let birthTimeVal = document.getElementById("birthTime")?.value || "06:00";
+            const [hours, mins] = birthTimeVal.split(':').map(Number);
+            const totalMinutes = (hours * 60) + mins;
+
+            let adjustedMinutes = totalMinutes - 360; // เริ่มนับจาก 06:00 น.
+            if (adjustedMinutes < 0) adjustedMinutes += 1440; // กรณีเกิดหลังเที่ยงคืน
+
+            // ราศีหนึ่งใช้เวลาประมาณ 120 นาที (2 ชม.)
+            let zodiacIndex = Math.floor(adjustedMinutes / 120);
+            zodiacIndex = Math.min(Math.max(zodiacIndex, 0), 11);
+            const ascendantZodiac = zodiacs[zodiacIndex];
+
+            topReport += `
+
+<div class="card" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+
+    <div>
+        <h3 style="margin-top:0;">🌟 ดาวประจำตัว (อัตตะ)</h3>
+        <p style="font-size:18px; color:var(--gold-lt);"><b>ดาว${attaPlanet.name} (เลข ${attaPlanetNum})</b></p>
+        <p><b>นิสัยโดดเด่น:</b> ${attaPlanet.trait}</p>
+        <p><b>จุดอ่อนสุขภาพ:</b> ${attaPlanet.health}</p>
+    </div>
+
+    <div style="border-left: 2px dashed var(--border); padding-left: 20px;">
+        <h3 style="margin-top:0;">🔮 ลัคนาราศีเกิด</h3>
+        <p style="font-size:18px; color:var(--gold-lt);"><b>ราศี${ascendantZodiac.name} ${ascendantZodiac.icon} (${ascendantZodiac.element})</b></p>
+        <p><b>พื้นดวงลัคนา:</b> ${ascendantZodiac.desc}</p>
+        <p style="font-size:13px; color:var(--muted);">(คำนวณจากเวลาเกิด: ${birthTimeVal} น.)</p>
+    </div>
+
+    <div style="border-left: 2px dashed var(--border); padding-left: 20px;">
+        <h3 style="margin-top:0;">💼 ดาวการงาน (กัมมะ)</h3>
+        <p style="font-size:18px; color:var(--green);"><b>ดาว${kammaPlanet.name} (เลข ${kammaPlanetNum})</b></p>
+        <p><b>สายอาชีพที่ถูกโฉลก:</b> ${kammaPlanet.career}</p>
+        <p><b>สไตล์การทำงาน:</b> อาศัยพลังของดาว${kammaPlanet.name} ${attaPlanetNum === kammaPlanetNum ? "(ดาวเดียวกับตัวตน คุณจึงทุ่มเทกับงานมาก)" : "เป็นตัวขับเคลื่อนความสำเร็จ"}</p>
+    </div>
+
+</div>
+
+`;
+
+            const houseNames12 = [
+                "ตนุ (ตัวตน/ลัคนา)", "กดุมพะ (การเงิน)", "สหัชชะ (เพื่อน/สังคม)", 
+                "พันธุ (ครอบครัว/บ้าน)", "ปุตตะ (บุตร/บริวาร)", "อริ (อุปสรรค/ศัตรู)", 
+                "ปัตนิ (คู่ครอง/หุ้นส่วน)", "มรณะ (ความสูญเสีย/มรดก)", "ศุภะ (ความสำเร็จ/ความเจริญ)", 
+                "กัมมะ (การงาน/หน้าที่)", "ลาภะ (โชคลาภ/ลาภลอย)", "วินาศ (ความลับ/ความเสียหาย)"
+            ];
+
+            let houses12HTML = "";
+            for (let i = 0; i < 12; i++) {
+                const zIndex = (zodiacIndex + i) % 12;
+                const z = zodiacs[zIndex];
+                houses12HTML += `
+                <div style="background:rgba(15, 20, 30, 0.6); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border); padding-bottom: 5px; margin-bottom: 8px;">
+                        <span style="font-size:14px; font-weight:bold; color:var(--text);">${houseNames12[i]}</span>
+                        <span style="font-size:18px;">${z.icon}</span>
+                    </div>
+                    <div>
+                        <div style="font-size:15px; font-weight:bold; color:var(--gold-lt); margin-bottom:3px;">ราศี${z.name} <span style="font-size:12px; color:var(--muted); font-weight:normal;">(${z.element})</span></div>
+                        <div style="font-size:13px; color:var(--text); line-height:1.4;">${z.desc}</div>
+                    </div>
+                </div>
+                `;
+            }
+
+            topReport += `
+<div class="card" style="grid-column: 1 / -1; border-left: 5px solid var(--gold) !important; margin-top: 10px;">
+    <h3 style="margin-top:0; color:var(--gold-lt); display:flex; align-items:center; gap: 8px;">
+        <span>🪐</span> พื้นดวงชะตา 12 ภพเรือน (ลัคนาเวียนราศี)
+    </h3>
+    <p style="font-size: 14px; color:var(--muted); margin-top:0; margin-bottom: 15px; line-height:1.5;">
+        วิเคราะห์การกระจายตัวของทั้ง 12 ราศีในภพเรือนต่าง ๆ ของดวงชะตา โดยมีลัคนาราศีเกิด (ราศี${ascendantZodiac.name}) ของคุณเสวยเป็นภพตนุหลัก
+    </p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">
+        ${houses12HTML}
+    </div>
+</div>
+`;
+
+            /* =====================================================
+               ทักษา
+            ===================================================== */
+            let thaksaMap = getThaksaMap(birthDay);
+            let sriPlanet = Object.keys(thaksaMap).find(k => thaksaMap[k] === "ศรี");
+            let kalakiniPlanet = Object.keys(thaksaMap).find(k => thaksaMap[k] === "กาลกิณี");
+
+            topReport += `
+<div class="card">
+    <h3 style="margin-top:0;">🎡 มหาทักษาประจำตัว</h3>
+    <p style="color:var(--green);">
+        <b>ดาวศรี (โชคลาภ/สิริมงคล):</b> ดาว${planets[sriPlanet]?.name || 'ราหู'} (เลข ${sriPlanet})<br>
+        <span style="font-size:13px; color:var(--muted);">(หากตกในภพใด ภพนั้นจะนำโชคลาภและความรุ่งเรืองมาให้)</span>
+    </p>
+    <p style="color:var(--accent);">
+        <b>ดาวกาลกิณี (อุปสรรค/ศัตรู):</b> ดาว${planets[kalakiniPlanet]?.name || 'ราหู'} (เลข ${kalakiniPlanet})<br>
+        <span style="font-size:13px; color:var(--muted);">(ระวังปัญหา ความขัดแย้ง หรือความยุ่งยากจากภพที่ดาวดวงนี้สถิตอยู่)</span>
+    </p>
+</div>
+`;
+
+            /* =====================================================
+               คำทำนายปีนี้ (อายุจร)
+            ===================================================== */
+
+            // ageIndex is passed as argument
+            let ageRow = Math.floor(ageIndex / 7);
+            let ageCol = ageIndex % 7;
+
+            let ageHouseName = houses[ageRow][ageCol].name;
+            let ageHouseNum = matrix[ageRow][ageCol];
+            let ageHouseMeaning = houseMeaning[ageHouseName];
+
+            // หาสายสัมพันธ์ดาวจรปี
+            let numberToHousesList = {};
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 7; c++) {
+                    let num = matrix[r][c];
+                    if (!numberToHousesList[num]) {
+                        numberToHousesList[num] = [];
+                    }
+                    numberToHousesList[num].push(houses[r][c].name);
+                }
+            }
+            let ageRelation = numberToHousesList[ageHouseNum].filter(h => h !== ageHouseName);
+            if (ageRelation.length === 0) ageRelation = ["ไม่มี"];
+
+            let ageReading = generateRelationReading(ageHouseName, ageRelation);
+
+            let transit = calculateTransit(age, birthDay);
+
+            topReport += `
+<div class="card" style="border-left: 5px solid #f39c12 !important;">
+    <h3 style="color:var(--gold); margin-top:0;">📅 ดวงชะตาปีนี้ (อายุย่าง ${age} ปี)</h3>
+    <p>
+        <b>จุดอายุตกที่ภพ:</b> ${ageHouseName} (ตกเลข ${ageHouseNum} ดาว${planets[ageHouseNum].name})<br>
+        <span style="font-size:13px; color:var(--muted);">(ความหมายภพหลัก: ${ageHouseMeaning})</span>
+    </p>
+    <div style="background:rgba(15,20,30,0.6); padding:15px; border-radius:8px; border:1px solid var(--border); margin-top:10px;">
+        <p style="margin-top:0;"><b>🔥 สิ่งที่จะเกิดขึ้นและโฟกัสหลักในปีนี้:</b></p>
+        <div style="font-size:15px;">${ageReading}</div>
+    </div>
+    <p style="margin-top:15px; border-top:1px dashed var(--border); padding-top:10px;">
+        <b>อิทธิพลแฝง (ดาววัยจรทักษา):</b> ดาว${planets[transit].name} (เลข ${transit})<br>
+        <span style="font-size:13px; color:var(--muted);">(สิ่งแวดล้อมมักจะชักนำไปสู่: ${planets[transit].career})</span>
+    </p>
+</div>
+`;
+
+            const lunarMonthNames = [
+                "", "เดือน 1 (ธันวาคม)", "เดือน 2 (มกราคม)", "เดือน 3 (กุมภาพันธ์)", "เดือน 4 (มีนาคม)",
+                "เดือน 5 (เมษายน)", "เดือน 6 (พฤษภาคม)", "เดือน 7 (มิถุนายน)", "เดือน 8 (กรกฎาคม)",
+                "เดือน 9 (สิงหาคม)", "เดือน 10 (กันยายน)", "เดือน 11 (ตุลาคม)", "เดือน 12 (พฤศจิกายน)"
+            ];
+
+            let monthRow = Math.floor(monthIndex / 7);
+            let monthCol = monthIndex % 7;
+            let monthHouseName = houses[monthRow][monthCol].name;
+            let monthHouseNum = matrix[monthRow][monthCol];
+            let monthHouseMeaning = houseMeaning[monthHouseName];
+
+            let monthRelation = numberToHousesList[monthHouseNum].filter(h => h !== monthHouseName);
+            if (monthRelation.length === 0) monthRelation = ["ไม่มี"];
+            let monthReading = generateRelationReading(monthHouseName, monthRelation);
+
+            topReport += `
+<div class="card" style="border-left: 5px solid #2980b9 !important;">
+    <h3 style="color:var(--gold-lt); margin-top:0;">🌙 ดวงชะตารายเดือน (${lunarMonthNames[targetMonthNum] || 'เดือนที่ ' + targetMonthNum})</h3>
+    <p>
+        <b>จุดอายุเดือนตกที่ภพ:</b> ${monthHouseName} (ตกเลข ${monthHouseNum} ดาว${planets[monthHouseNum].name})<br>
+        <span style="font-size:13px; color:var(--muted);">(ความหมายภพหลัก: ${monthHouseMeaning})</span>
+    </p>
+    <div style="background:rgba(15,20,30,0.6); padding:15px; border-radius:8px; border:1px solid var(--border); margin-top:10px;">
+        <p style="margin-top:0;"><b>🔥 สิ่งที่จะเกิดขึ้นในเดือนนี้:</b></p>
+        <div style="font-size:15px;">${monthReading}</div>
+    </div>
+</div>
+`;
+
+            let dayRow = Math.floor(dayIndex / 7);
+            let dayCol = dayIndex % 7;
+            let dayHouseName = houses[dayRow][dayCol].name;
+            let dayHouseNum = matrix[dayRow][dayCol];
+            let dayHouseMeaning = houseMeaning[dayHouseName];
+
+            let dayRelation = numberToHousesList[dayHouseNum].filter(h => h !== dayHouseName);
+            if (dayRelation.length === 0) dayRelation = ["ไม่มี"];
+            let dayReading = generateRelationReading(dayHouseName, dayRelation);
+
+            topReport += `
+<div class="card" style="border-left: 5px solid #27ae60 !important;">
+    <h3 style="color:var(--green); margin-top:0;">☀️ ดวงชะตารายวัน (วันที่ ${targetDateNum})</h3>
+    <p>
+        <b>จุดอายุวันตกที่ภพ:</b> ${dayHouseName} (ตกเลข ${dayHouseNum} ดาว${planets[dayHouseNum].name})<br>
+        <span style="font-size:13px; color:var(--muted);">(ความหมายภพหลัก: ${dayHouseMeaning})</span>
+    </p>
+    <div style="background:rgba(15,20,30,0.6); padding:15px; border-radius:8px; border:1px solid var(--border); margin-top:10px;">
+        <p style="margin-top:0;"><b>🔥 สิ่งที่จะเกิดขึ้นในวันนี้:</b></p>
+        <div style="font-size:15px;">${dayReading}</div>
+    </div>
+</div>
+`;
+
+            /* =====================================================
+               วิเคราะห์ความรักและเนื้อคู่ (ปัตนิ)
+            ===================================================== */
+            let pattaniPlanetNum = matrix[1][6]; // ภพปัตนิ (ตนุ-ปัตนิ) หรือแถว 2 คอลัมน์ 7
+            let pattaniPlanet = planets[pattaniPlanetNum];
+            let pattaniThaksa = thaksaMap[pattaniPlanetNum];
+
+            let partnerTraits = {
+                1: "มีความเป็นผู้นำสูง ดูดีมีสง่าราศี มียศถาบรรดาศักดิ์ หรือทำงานราชการ/ผู้บริหาร",
+                2: "หน้าตาดี อ่อนโยน เอาใจเก่ง ชอบดูแลเทคแคร์ หรือทำงานด้านบริการ",
+                3: "ขยันขันแข็ง จริงจัง ใจร้อน กล้าหาญ มักเกี่ยวข้องกับเครื่องแบบ หรือช่าง",
+                4: "พูดจาดี มีไหวพริบ ค้าขายเก่ง เจรจาต่อรองเก่ง หรืออาจอายุน้อยกว่า",
+                5: "เป็นผู้ใหญ่ มีเหตุผล ใจดี มีคุณธรรม เป็นที่ปรึกษาได้ หรืออายุมากกว่า",
+                6: "ร่าเริง รักสวยรักงาม มีเสน่ห์ดึงดูด ชอบศิลปะ หรือทำงานสายบันเทิง/ความงาม",
+                7: "ผู้ใหญ่กว่ามาก จริงจัง อดทน แบกภาระเก่ง หรืออาจเป็นคนต่างชาติต่างถิ่น/แดนไกล"
+            };
+
+            let isPattaniFriend = isFriendly(attaPlanetNum, pattaniPlanetNum);
+            let isPattaniEnemy = isEnemy(attaPlanetNum, pattaniPlanetNum);
+            let isPattaniElement = isElementPair(attaPlanetNum, pattaniPlanetNum);
+            let isPattaniPower = isPowerPair(attaPlanetNum, pattaniPlanetNum);
+
+            let relationText = [];
+            if (isPattaniFriend) relationText.push("เป็นคู่มิตร (ส่งเสริมเกื้อหนุนกันดีมาก เข้าใจกัน)");
+            if (isPattaniEnemy) relationText.push("เป็นคู่ศัตรู (มักมีความคิดเห็นไม่ตรงกัน มีปากเสียงง่าย)");
+            if (isPattaniElement) relationText.push("เป็นคู่ธาตุ (มั่นคง เป็นปึกแผ่น ยากจะแยกจากกัน)");
+            if (isPattaniPower) relationText.push("เป็นคู่สมพล (ช่วยกันทำมาหากิน มีพลังขับเคลื่อนสูง)");
+
+            if (relationText.length === 0) relationText.push("มีความสัมพันธ์แบบกลางๆ (ไม่ชนคู่มิตรหรือศัตรู)");
+
+            topReport += `
+<div class="card" style="border-left: 5px solid #e84393 !important;">
+    <h3 style="color:var(--gold-lt); margin-top:0;">💖 วิเคราะห์ความรัก & เนื้อคู่ (ภพปัตนิ)</h3>
+    <p style="margin-top:0;">
+        <b>ดวงดาวตัวแทนคู่ครอง:</b> ดาว${pattaniPlanet.name} (ตกเลข ${pattaniPlanetNum})<br><br>
+        <b>👤 ลักษณะเนื้อคู่:</b> ${partnerTraits[pattaniPlanetNum]}<br>
+        <b>🎡 ทักษาของคู่ครอง:</b> ตกภูมิ "${pattaniThaksa}" 
+        <span style="font-size:13px; color:${pattaniThaksa === 'กาลกิณี' ? 'var(--accent)' : 'var(--green)'};">
+        ${pattaniThaksa === 'ศรี' || pattaniThaksa === 'มนตรี' || pattaniThaksa === 'เดช' ? '(คู่ครองส่งเสริมดีมาก นำโชคลาภ/บารมี/ผู้ใหญ่อุปถัมภ์มาให้)' : 
+          pattaniThaksa === 'กาลกิณี' ? '(ระวัง! คู่ครองอาจสร้างปัญหา หรือมีความขัดแย้งนำเรื่องปวดหัวมาให้)' : '(คู่ครองอยู่ในเกณฑ์มาตรฐานทั่วไป)'}
+        </span><br>
+        <b>💞 ความสัมพันธ์ต่อตัวคุณ:</b> ${relationText.join(' และ ')}
+    </p>
+</div>
+`;
+
+            /* =====================================================
+               วิเคราะห์บุตรและบริวาร (ปุตตะ)
+            ===================================================== */
+            let puttaPlanetNum = matrix[1][4]; // ภพปุตตะ (ตนุ-ปุตตะ)
+            let puttaPlanet = planets[puttaPlanetNum];
+            let puttaThaksa = thaksaMap[puttaPlanetNum];
+
+            let puttaTraits = {
+                1: "เก่ง กล้าหาญ มีความเป็นผู้นำ แต่อาจจะดื้อรั้น ไม่ค่อยยอมใคร",
+                2: "น่ารัก อ่อนโยน ขี้อ้อน ว่านอนสอนง่าย แต่อาจจะอ่อนไหวง่าย",
+                3: "ซุกซน พลังเยอะ ชอบกิจกรรมโลดโผน อาจจะดื้อดึงหรือใจร้อน",
+                4: "พูดเก่ง ฉลาด มีไหวพริบ เรียนรู้เร็ว ช่างเจรจาต่อรอง",
+                5: "เป็นเด็กดี มีเหตุผล รักการเรียน มีความเป็นผู้ใหญ่เกินตัว",
+                6: "ร่าเริง อารมณ์ดี รักสวยรักงาม มีพรสวรรค์ด้านศิลปะหรือดนตรี",
+                7: "เลี้ยงยากในตอนแรก หรือมีความคิดเป็นผู้ใหญ่สูง มีความรับผิดชอบแบกภาระได้ดี"
+            };
+
+            topReport += `
+<div class="card" style="border-left: 5px solid #f39c12 !important;">
+    <h3 style="color:var(--gold); margin-top:0;">👨‍👩‍👧 วิเคราะห์บุตร & บริวาร (ภพปุตตะ)</h3>
+    <p style="margin-top:0;">
+        <b>ดวงดาวตัวแทนบุตร/บริวาร:</b> ดาว${puttaPlanet.name} (ตกเลข ${puttaPlanetNum})<br><br>
+        <b>👶 ลักษณะบุตร/บริวาร:</b> ${puttaTraits[puttaPlanetNum]}<br>
+        <b>🎡 ทักษาของบุตร/บริวาร:</b> ตกภูมิ "${puttaThaksa}" 
+        <span style="font-size:13px; color:${puttaThaksa === 'กาลกิณี' ? 'var(--accent)' : 'var(--green)'};">
+        ${puttaThaksa === 'ศรี' || puttaThaksa === 'มนตรี' || puttaThaksa === 'เดช' ? '(บุตร/บริวารส่งเสริมดีมาก นำโชคลาภ/พึ่งพาได้ดี)' : 
+          puttaThaksa === 'กาลกิณี' ? '(ระวัง! บุตร/บริวารอาจดื้อรั้น หรือนำเรื่องปวดหัว/เสียเงินมาให้บ่อย)' : '(อยู่ในเกณฑ์มาตรฐานทั่วไป)'}
+        </span>
+    </p>
+</div>
+`;
+
+            /* =====================================================
+               วิเคราะห์ทรัพย์สินและโชคลาภ (ธนัง & ลาภะ)
+            ===================================================== */
+            let thanangPlanetNum = matrix[0][2]; // ภพธนัง (อัตตะ-ธนัง) รายได้หลัก
+            let laphaPlanetNum = matrix[2][3]; // ภพลาภะ (มรณะ-ลาภะ) โชคลาภความสำเร็จ
+
+            let wealthStyles = {
+                1: "งานราชการ ตำแหน่งหน้าที่การบริหาร หรือผู้ใหญ่คอยสนับสนุน",
+                2: "งานบริการ การดูแลเอาใจใส่ ของสวยงาม หรือผู้หญิงให้โชค",
+                3: "น้ำพักน้ำแรง ความขยันขันแข็ง การแข่งขัน หรือสายช่าง/อุตสาหกรรม",
+                4: "การเจรจาติดต่อ ค้าขาย นายหน้า ตัวแทน หรือการสื่อสารประสานงาน",
+                5: "วิชาความรู้ การสอน การแพทย์ ที่ปรึกษา หรือผู้ใหญ่เมตตาอุปถัมภ์",
+                6: "งานศิลปะ ความสวยงาม บันเทิง หรือโชคลาภเสน่หา (คนรักให้โชค)",
+                7: "อสังหาริมทรัพย์ เกษตรกรรม อุตสาหกรรมหนัก หรือได้เงินก้อนใหญ่แต่อาจช้า"
+            };
+
+            topReport += `
+<div class="card" style="border-left: 5px solid #2ecc71 !important;">
+    <h3 style="color:var(--green); margin-top:0;">💰 วิเคราะห์ทรัพย์สิน & โชคลาภ (ธนัง-ลาภะ)</h3>
+    <p style="margin-top:0;">
+        <b>💵 ดาวการเงินหลัก (ภพธนัง):</b> ดาว${planets[thanangPlanetNum].name} (เลข ${thanangPlanetNum})<br>
+        <span style="font-size:14px; color:var(--muted);"><i>ที่มาของรายได้หลักมักมาจาก: ${wealthStyles[thanangPlanetNum]}</i></span><br><br>
+        
+        <b>🎁 ดาวโชคลาภ/ความสำเร็จ (ภพลาภะ):</b> ดาว${planets[laphaPlanetNum].name} (เลข ${laphaPlanetNum})<br>
+        <span style="font-size:14px; color:var(--muted);"><i>โชคลาภฟลุคๆ หรือช่องทางรวยมักเกิดจาก: ${wealthStyles[laphaPlanetNum]}</i></span><br><br>
+
+        <b>🎡 ทักษาการเงิน:</b> ดาวการเงินตกภูมิ "${thaksaMap[thanangPlanetNum]}" / ดาวโชคลาภตกภูมิ "${thaksaMap[laphaPlanetNum]}"<br>
+        <span style="font-size:13px; color:var(--muted);">
+        ${thaksaMap[thanangPlanetNum] === 'ศรี' || thaksaMap[laphaPlanetNum] === 'ศรี' ? '⭐ <b>ข่าวดี:</b> มีดาวตกตำแหน่งโชคลาภ/สิริมงคล (ศรี) จับหยิบอะไรเป็นเงินเป็นทองง่าย!' : 
+          thaksaMap[thanangPlanetNum] === 'กาลกิณี' || thaksaMap[laphaPlanetNum] === 'กาลกิณี' ? '⚠️ <b>ข้อควรระวัง:</b> มีดาวตกกาลกิณีเรื่องเงิน ระวังเก็บเงินไม่อยู่ โดนโกง หรือรายจ่ายบานปลาย' : 'หาเงินได้เรื่อยๆ ตามกำลังความสามารถ'}
+        </span>
+    </p>
+</div>
+`;
+
+            /* =====================================================
+               แจ้งเตือนสุขภาพและโรคภัย (หินะ, อริ, มรณะ, พยายะ)
+            ===================================================== */
+            let badHouseMeanings = {
+                "หินะ": "ความเสื่อมโทรม ตำหนิ อุบัติเหตุเล็กน้อย",
+                "อริ": "โรคฉับพลัน โรคที่สร้างความรำคาญใจ",
+                "มรณะ": "โรคเรื้อรัง การผ่าตัด อุบัติเหตุร้ายแรง",
+                "พยายะ": "โรคแฝงเร้น โรคเวรกรรม หาสาเหตุยาก"
+            };
+
+            let badHousePlanets = {};
+            let badHousesList = ["หินะ", "อริ", "มรณะ", "พยายะ"];
+            
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 7; c++) {
+                    let hName = houses[r][c].name;
+                    if (badHousesList.includes(hName)) {
+                        let val = matrix[r][c];
+                        if (!badHousePlanets[val]) {
+                            badHousePlanets[val] = [];
+                        }
+                        badHousePlanets[val].push(hName);
+                    }
+                }
+            }
+
+            let healthDetailsHTML = "";
+            for (let num in badHousePlanets) {
+                let pInfo = planets[num];
+                let housesArr = badHousePlanets[num];
+                let houseDetails = housesArr.map(h => `<b>${h}</b> <span style="font-size:12px; color:var(--muted);">(${badHouseMeanings[h]})</span>`).join('<br> • ');
+
+                healthDetailsHTML += `
+                    <div style="background: rgba(15, 20, 30, 0.6); padding: 12px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; border-left: 4px solid #e67e22;">
+                        <div style="margin-bottom: 5px;">
+                            <span style="font-size:15px; font-weight:bold; color:var(--gold);">ดาว${pInfo.name} (เลข ${num})</span><br>
+                            <span style="font-size:13px; color:var(--muted);">จุดกำเนิดโรคภัยมาจากภพ:<br> • ${houseDetails}</span>
+                        </div>
+                        <div style="color:var(--accent); font-size:14px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border);">
+                            🩺 <b>อวัยวะ/โรคที่ควรระวัง:</b> ${pInfo.health}
+                        </div>
+                    </div>
+                `;
+            }
+
+            topReport += `
+<div class="card" style="border-left: 5px solid #e67e22 !important;">
+    <h3 style="color:var(--gold); margin-top:0;">🩺 แจ้งเตือนสุขภาพและจุดอ่อนร่างกาย</h3>
+    <p style="font-size: 14px; color:var(--muted); margin-top:0; margin-bottom: 15px; line-height:1.5;">
+        วิเคราะห์จากดวงดาวที่ตกใน <b>"ภพเสีย"</b> (หินะ, อริ, มรณะ, พยายะ) เพื่อประเมินจุดอ่อนของร่างกาย อวัยวะที่ควรดูแลเป็นพิเศษ หรือลักษณะของโรคภัยที่อาจแฝงอยู่
+    </p>
+    ${healthDetailsHTML}
+</div>
+`;
+
+            /* =====================================================
+               เจาะลึกอาชีพที่ใช่ และทิศทางรวย (กัมมะ & ฐาน 4)
+            ===================================================== */
+            let kammaBaseNum = matrix[3][2];
+            
+            let base4Career = {
+                3: "งานที่ต้องใช้ความอดทน งานลุย งานช่างเทคนิค หรือพนักงานระดับปฏิบัติการ",
+                4: "งานที่ใช้การพูด เจรจา ค้าขายทั่วไป งานเอกสาร ธุรการ ประสานงาน",
+                5: "งานวิชาการ ให้คำปรึกษา งานที่ต้องใช้ความรู้ความน่าเชื่อถือระดับเบื้องต้น",
+                6: "กำลังพระอาทิตย์: งานราชการ รัฐวิสาหกิจ งานบริหาร หรือการเป็นผู้นำองค์กร",
+                7: "งานด้านการเกษตร อุตสาหกรรม หรือการแบกรับภาระโปรเจกต์ยากๆ",
+                8: "กำลังพระอังคาร: ทหาร ตำรวจ วิศวกร งานช่าง หรือเกี่ยวกับเครื่องจักรกล",
+                9: "พระเกตุ: งานสายไอที เทคโนโลยี สิ่งศักดิ์สิทธิ์ โหราศาสตร์ หรืองานต่างประเทศ",
+                10: "กำลังพระเสาร์: รับเหมาก่อสร้าง อสังหาริมทรัพย์ โรงงานอุตสาหกรรมขนาดใหญ่",
+                11: "ราชาโชค: งานบริการระดับพรีเมียม งานที่มักมีผู้ใหญ่อุปถัมภ์ สำเร็จง่าย",
+                12: "กำลังพระราหู: งานออนไลน์ ธุรกิจสีเทา กลางคืน งานบันเทิง โซเชียลมีเดีย",
+                13: "มหาอุจ: งานที่ต้องแข่งขันสูง งานประมูล หรืองานที่ต้องก้าวขึ้นเป็นเบอร์หนึ่ง",
+                14: "จักรพรรดิ: โครงการขนาดใหญ่ งานระดับชาติ หรือการบริหารคนจำนวนมาก",
+                15: "กำลังพระจันทร์: งานบริการ อาหาร เครื่องดื่ม ความงาม แฟชั่น หรือการดูแลผู้คน",
+                16: "โสฬสมงคล: งานด้านการเงิน บัญชี การวางแผนกลยุทธ์ ที่ปรึกษาด้านการลงทุน",
+                17: "กำลังพระพุธ: งานด้านสื่อสารมวลชน ครีเอทีฟ มาร์เก็ตติ้ง งานขาย โลจิสติกส์",
+                18: "มหาจักร: งานที่ต้องเดินทางบ่อย งานต่างแดน หรือการบุกเบิกตลาดใหม่ๆ",
+                19: "กำลังพระพฤหัส: ระดับผู้เชี่ยวชาญ แพทย์ นักกฎหมาย ที่ปรึกษาอาวุโส นักวิชาการระดับสูง",
+                20: "กำลังเสาร์กำลังสอง: โปรเจกต์ระยะยาว อสังหาฯ ขนาดใหญ่ งานที่ต้องใช้ความพยายามสูง",
+                21: "กำลังพระศุกร์: วงการบันเทิง ศิลปะ ของสวยหรู ธุรกิจความงาม ธุรกิจการเงิน"
+            };
+
+            let kammaRelation = numberToHousesList[kammaPlanetNum].filter(h => h !== "กัมมะ");
+            if (kammaRelation.length === 0) kammaRelation = ["ไม่มี"];
+            let kammaReading = generateRelationReading("กัมมะ", kammaRelation);
+
+            let kammaThaksa = thaksaMap[kammaPlanetNum];
+            let kammaThaksaColor = (kammaThaksa === 'กาลกิณี') ? '#c0392b' : (kammaThaksa === 'ศรี' || kammaThaksa === 'เดช' || kammaThaksa === 'มนตรี') ? '#27ae60' : '#2980b9';
+
+            topReport += `
+<div class="card" style="border-left: 5px solid #34495e !important;">
+    <h3 style="color:var(--gold-lt); margin-top:0;">💼 เจาะลึกอาชีพที่ใช่ และทิศทางรวย</h3>
+    <p style="font-size: 14px; color:var(--muted); margin-top:0; margin-bottom: 15px; line-height:1.5;">
+        วิเคราะห์จากภพ <b>"กัมมะ"</b> (การงาน) ผนวกกับ <b>"ฐาน 4"</b> (สิ่งแวดล้อม/อุตสาหกรรม) เพื่อค้นหาสายอาชีพที่ทำแล้วจะส่งเสริมให้เจริญรุ่งเรืองที่สุด
+    </p>
+    
+    <div style="background: rgba(15,20,30,0.6); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px;">
+        <h4 style="margin-top:0; color:var(--gold-lt);">🌟 ทักษะเด่นตามดาวอาชีพ (ดาว${kammaPlanet.name} ตกเลข ${kammaPlanetNum})</h4>
+        <p style="margin-top:5px; margin-bottom:0; font-size:14px;"><b>ทักษะที่เหมาะ:</b> ${kammaPlanet.career}</p>
+        <p style="margin-top:8px; margin-bottom:0; font-size:13px; color:${kammaThaksaColor};">
+            <b>ทักษาการงาน:</b> ตกภูมิ "${kammaThaksa}" ${kammaThaksa === 'กาลกิณี' ? '(เหนื่อย อุปสรรคเยอะ ระวังความขัดแย้งในที่ทำงาน)' : (kammaThaksa === 'ศรี' || kammaThaksa === 'มนตรี') ? '(งานรุ่งเรืองมาก ผู้ใหญ่เมตตา ประสบความสำเร็จง่าย)' : ''}
+        </p>
+    </div>
+
+    <div style="background: rgba(15,20,30,0.6); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px;">
+        <h4 style="margin-top:0; color:var(--gold-lt);">🏭 อุตสาหกรรม/สภาพแวดล้อมที่ส่งเสริม (ฐานรองรับเลข ${kammaBaseNum})</h4>
+        <p style="margin-top:5px; margin-bottom:0; font-size:14px; color:#16a085;"><b>แนวทาง:</b> ${base4Career[kammaBaseNum] || "งานทั่วไป"}</p>
+    </div>
+
+    <div style="background: rgba(15,20,30,0.6); padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
+        <h4 style="margin-top:0; color:var(--gold-lt);">🔗 ความสัมพันธ์กับการเงินและชีวิต (กัมมะชนภพ)</h4>
+        <p style="margin-top:5px; margin-bottom:0; font-size:14px; color:var(--muted); line-height:1.5;">
+            ${kammaReading}
+        </p>
+    </div>
+</div>
+`;
+
+            /* =====================================================
+               เลขโยค
+            ===================================================== */
+
+            let yoga =
+                calculateYoga(
+                    matrix[0][0],
+                    matrix[1][0]
+                );
+
+            report += `
+
+<div class="card">
+
+<h3>🔮 เลขโยค</h3>
+
+<p>
+เลขโยคสำคัญ:
+<b>${yoga}</b>
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> ผลรวมของฐาน 1 และฐาน 2 ตำแหน่งแรก (อัตตะ + ตนุ) บอกถึงวาสนาตั้งต้น หรือพื้นดวงแต่กำเนิดว่าชีวิตจะมุ่งไปทางใด<br>
+    <b>วิธีดู:</b> ดูความหมายของเลขที่ได้ (1-9) เพื่อดูเป้าหมายหลัก หรือวิถีชีวิตดั้งเดิม
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               เลขแตก
+            ===================================================== */
+
+            let broken =
+                getBrokenNumberFull(
+                    matrix[3][0]
+                );
+
+            report += `
+
+<div class="card">
+
+<h3>🧩 เลขแตก</h3>
+
+<p>
+เลขแตก:
+${broken.digits.join(' + ')}
+</p>
+
+<p>
+รวม:
+${broken.total}
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> การนำตัวเลขตัวแรกในฐาน 4 มาแยกหลักแล้วบวกกัน เพื่อหาเลขศาสตร์แฝง หรือจุดอ่อนที่ซ่อนอยู่<br>
+    <b>วิธีดู:</b> ถ้ารวมได้เลขเสีย ต้องระวังอุปสรรคที่เกิดจากตัวเอง หรือปัญหาสุขภาพแอบแฝง
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               มหาอุจ
+            ===================================================== */
+
+            let maha =
+                calculateMahaUtScore(matrix);
+
+            report += `
+
+<div class="card">
+
+<h3>👑 มหาอุจ</h3>
+
+<p class="${maha >= 20
+                    ? 'good'
+                    : 'warn'
+                }">
+คะแนน:
+${maha}
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> ดาวที่มีกำลังสูงส่งในฐาน 4 (กำลังพระเคราะห์) หากได้คะแนนรวม 20 ขึ้นไป ถือว่าดวงแข็ง<br>
+    <b>วิธีดู:</b> ยิ่งคะแนนสูง ยิ่งตกน้ำไม่ไหลตกไฟไม่ไหม้ ฝ่าฟันอุปสรรคและพลิกฟื้นสถานการณ์ได้ดี
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               คะแนนดวง
+            ===================================================== */
+
+            let life =
+                calculateLifeScore(matrix);
+
+            report += `
+
+<div class="card">
+
+<h3>📈 คะแนนดวงรวม</h3>
+
+<p>
+${life}
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> ผลรวมของตัวเลขในฐาน 4 ทั้ง 7 หลัก สะท้อนถึงพลังงานชีวิตโดยรวม<br>
+    <b>วิธีดู:</b> ปกติจะอยู่ราวๆ 70-120 ยิ่งคะแนนมาก แสดงถึงต้นทุนชีวิต หรือพลังในการขับเคลื่อนอุปสรรคที่สูง
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               ดึงคู่เลขทั้งหมด (แนวตั้ง 7 หลัก + ฐาน 4)
+            ===================================================== */
+            let allNumbersToCheck = [...matrix[3]];
+            for(let c=0; c<7; c++){
+                let p1 = parseInt(matrix[0][c].toString() + matrix[1][c].toString());
+                let p2 = parseInt(matrix[1][c].toString() + matrix[0][c].toString());
+                let p3 = parseInt(matrix[1][c].toString() + matrix[2][c].toString());
+                let p4 = parseInt(matrix[2][c].toString() + matrix[1][c].toString());
+                allNumbersToCheck.push(p1, p2, p3, p4);
+            }
+            allNumbersToCheck = [...new Set(allNumbersToCheck)]; // ลบตัวซ้ำ
+
+            /* =====================================================
+               เลขเศรษฐี
+            ===================================================== */
+
+            let wealthText = '';
+
+            allNumbersToCheck.forEach(n => {
+
+                let result =
+                    wealthNumbers[n];
+
+                if (result) {
+
+                    wealthText += `
+คู่เลข ${n}
+: ${result}<br>
+`;
+
+                }
+
+            });
+
+            report += `
+
+<div class="card">
+
+<h3>💰 เลขเศรษฐี</h3>
+
+<p class="${wealthText
+                    ? 'good'
+                    : 'warn'
+                }">
+${wealthText
+                    ? wealthText
+                    : 'ไม่พบ'
+                }
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> คู่เลขมงคล (เช่น 24, 36, 42, 45, 54) บ่งบอกถึงพรสวรรค์ในการหาเงิน หรือโชคลาภ<br>
+    <b>วิธีดู:</b> หากพบเลขเหล่านี้เรียงกันในแนวตั้ง หรือเป็นผลรวมฐาน 4 มักจะมีช่องทางหาเงินเก่ง หยิบจับอะไรเป็นเงินเป็นทอง หรือมีคนคอยสนับสนุนเรื่องการเงิน
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               บาปเคราะห์
+            ===================================================== */
+
+            let bad = false;
+
+            allNumbersToCheck.forEach(n => {
+
+                if (badNumbers.includes(n)) {
+                    bad = true;
+                }
+
+            });
+
+            report += `
+
+<div class="card">
+
+<h3>⚠️ บาปเคราะห์</h3>
+
+<p class="${bad ? 'bad' : 'good'
+                }">
+${bad
+                    ? 'พบเลขบาปเคราะห์'
+                    : 'ไม่พบ'
+                }
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> คู่เลขที่มักส่งผลเสีย (เช่น 13, 18, 31, 38) บ่งบอกถึงอุปสรรค ศัตรู หรือภาระหนัก<br>
+    <b>วิธีดู:</b> หากพบเรียงกันในแนวตั้ง หรือในฐาน 4 ให้ระวังเรื่องที่เกี่ยวข้องกับความใจร้อน การแตกหัก ทะเลาะเบาะแว้ง หรือการถูกหักหลัง
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               อุบัติเหตุ
+            ===================================================== */
+
+            let accident = false;
+
+            allNumbersToCheck.forEach(n => {
+
+                if (accidentNumbers.includes(n)) {
+                    accident = true;
+                }
+
+            });
+
+            report += `
+
+<div class="card">
+
+<h3>🚨 อุบัติเหตุ</h3>
+
+<p class="${accident ? 'bad' : 'good'
+                }">
+${accident
+                    ? 'มีเกณฑ์อุบัติเหตุ'
+                    : 'ปกติ'
+                }
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> คู่เลขที่มักเกี่ยวข้องกับอุบัติเหตุ การผ่าตัด เลือดตกยางออก (เช่น 13, 17, 31, 37, 73)<br>
+    <b>วิธีดู:</b> หากพบเรียงกันในแนวตั้ง หรือในฐาน 4 ควรใช้ชีวิตด้วยความไม่ประมาท อาจแก้เคล็ดด้วยการบริจาคเลือด ทำฟัน หรือทำบุญโลงศพ
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               ราชาโชค
+            ===================================================== */
+
+            let king = false;
+
+            allNumbersToCheck.forEach(n => {
+
+                if (kingNumbers.includes(n)) {
+                    king = true;
+                }
+
+            });
+
+            report += `
+
+<div class="card">
+
+<h3>👑 ราชาโชค</h3>
+
+<p class="${king ? 'good' : 'warn'
+                }">
+${king
+                    ? 'มีเกณฑ์ราชาโชค'
+                    : 'ยังไม่เด่น'
+                }
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> คู่เลขที่ส่งเสริมให้ได้รับความช่วยเหลือ หรือได้โชคลาภมาง่ายๆ (เช่น 19, 24, 42, 45, 55)<br>
+    <b>วิธีดู:</b> หากพบเรียงกันในแนวตั้ง หรือในฐาน 4 บ่งบอกว่ามักมีผู้ใหญ่อุปถัมภ์ มีบุญเก่าคอยหนุนนำ ทำให้ตกน้ำไม่ไหลตกไฟไม่ไหม้
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               คู่มิตร
+            ===================================================== */
+
+            let friend =
+                isFriendly(
+                    matrix[0][0],
+                    matrix[1][0]
+                );
+
+            report += `
+
+<div class="card">
+
+<h3>🤝 คู่มิตร</h3>
+
+<p class="${friend
+                    ? 'good'
+                    : 'warn'
+                }">
+${friend
+                    ? 'ดาวส่งเสริมกัน'
+                    : 'ดาวไม่ส่งเสริม'
+                }
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> ดาวตัวตน (อัตตะ) และดาวการกระทำ (ตนุ) เป็นมิตรกัน<br>
+    <b>วิธีดู:</b> หากเป็นมิตร ทำอะไรมักจะราบรื่น คิดและทำไปในทิศทางเดียวกัน มักมีผู้คอยช่วยเหลือ
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               คู่ศัตรู
+            ===================================================== */
+
+            let enemy =
+                isEnemy(
+                    matrix[0][0],
+                    matrix[1][0]
+                );
+
+            report += `
+
+<div class="card">
+
+<h3>⚔️ คู่ศัตรู</h3>
+
+<p class="${enemy
+                    ? 'bad'
+                    : 'good'
+                }">
+${enemy
+                    ? 'มีแรงปะทะ'
+                    : 'ไม่มีปัญหารุนแรง'
+                }
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> ดาวตัวตน (อัตตะ) และดาวการกระทำ (ตนุ) เป็นศัตรูกัน<br>
+    <b>วิธีดู:</b> หากเป็นศัตรู มักมีความขัดแย้งในตัวเอง หรือเจออุปสรรคขัดขวางบ่อยครั้ง ต้องใช้ความพยายามมากกว่าปกติ
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               คู่ธาตุ
+            ===================================================== */
+
+            let elementP =
+                isElementPair(
+                    matrix[0][0],
+                    matrix[1][0]
+                );
+
+            report += `
+
+<div class="card">
+
+<h3>🔥 คู่ธาตุ</h3>
+
+<p class="${elementP
+                    ? 'good'
+                    : 'warn'
+                }">
+${elementP
+                    ? 'มั่นคง หนุนนำ'
+                    : 'ไม่มีอิทธิพลเด่น'
+                }
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> ดาวตัวตน (อัตตะ) และดาวการกระทำ (ตนุ) เป็นธาตุเดียวกัน<br>
+    <b>วิธีดู:</b> หากเป็นคู่ธาตุ จะมีความมั่นคง หนุนนำให้เกิดความเจริญก้าวหน้า พื้นฐานชีวิตแน่นหนา ไม่ล้มง่าย
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               คู่สมพล
+            ===================================================== */
+
+            let powerP =
+                isPowerPair(
+                    matrix[0][0],
+                    matrix[1][0]
+                );
+
+            report += `
+
+<div class="card">
+
+<h3>💪 คู่สมพล</h3>
+
+<p class="${powerP
+                    ? 'good'
+                    : 'warn'
+                }">
+${powerP
+                    ? 'มีพลังขับเคลื่อนสูง สำเร็จไว'
+                    : 'ไม่มีอิทธิพลเด่น'
+                }
+</p>
+
+<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+    <b>ความหมาย:</b> ดาวตัวตน (อัตตะ) และดาวการกระทำ (ตนุ) รวมกำลังพระเคราะห์ได้ 27 ถือเป็นคู่สมพล<br>
+    <b>วิธีดู:</b> หากเป็นคู่สมพล จะมีพลังขับเคลื่อนในชีวิตสูง ประสบความสำเร็จไว มีอิทธิพลและบารมีต่อคนรอบข้าง
+</div>
+
+</div>
+
+`;
+
+            /* =====================================================
+               รายงานความสัมพันธ์ภพ
+            ===================================================== */
+
+            let relations =
+                analyzeHouseRelations(matrix);
+
+            let relationHTML = `
+<div style="overflow-x:auto;">
+<table>
+    <tr>
+        <th style="width: 15%;">ภพ (เลข)</th>
+        <th style="width: 30%;">ความหมาย</th>
+        <th style="width: 55%;">คำทำนายการเชื่อมโยง</th>
+    </tr>
+`;
+
+            // จัดกลุ่มความสัมพันธ์ตามเลขดาว (1-7)
+            let groupedRelations = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [] };
+            relations.forEach(item => {
+                groupedRelations[item.value].push(item);
+            });
+
+            for (let v = 1; v <= 7; v++) {
+                let group = groupedRelations[v];
+                if (group.length > 0) {
+                    for (let i = 0; i < group.length; i++) {
+                        let item = group[i];
+                        if (i === 0) {
+                            relationHTML += `
+    <tr class="relation-row relation-num-${item.value}" style="transition: background-color 0.3s; border-top: 1px solid var(--border);">
+        <td style="border-right: 1px dashed var(--border);">
+            <b>${item.house}</b>
+            <span style="color:var(--gold-lt); font-weight:bold;">(${item.value})</span>
+        </td>
+        <td style="font-size:14px; text-align:left; border-right: 1px dashed var(--border);">
+            ${item.meaning}
+        </td>
+        <td rowspan="${group.length}" style="font-size:13px; text-align:left; background-color:rgba(15, 20, 30, 0.4); vertical-align:top; padding-top:12px;">
+            ${item.reading}
+        </td>
+    </tr>`;
+                        } else {
+                            relationHTML += `
+    <tr class="relation-row relation-num-${item.value}" style="transition: background-color 0.3s;">
+        <td style="border-right: 1px dashed var(--border); border-top: none;">
+            <b>${item.house}</b>
+            <span style="color:var(--gold-lt); font-weight:bold;">(${item.value})</span>
+        </td>
+        <td style="font-size:14px; text-align:left; border-right: 1px dashed var(--border); border-top: none;">
+            ${item.meaning}
+        </td>
+    </tr>`;
+                        }
+                    }
+                }
+            }
+
+            relationHTML += `</table></div>`;
+
+            let premiumHTML = `
+                <div class="card" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; background: none; border: none; padding: 0; box-shadow: none; margin-bottom: 25px;">
+                    ${getLifeSummary(matrix)}
+                    ${getYearlySummary(matrix, age)}
+                    ${getMonthlySummary(age)}
+                    ${analyzeRelationships(matrix)}
+                </div>
+                ${analyzeLifeStages(matrix)}
+                ${getTrioSummary(matrix)}
+            `;
+
+            report = premiumHTML + report;
+
+            report += `
+
+<div class="card" style="grid-column: 1 / -1;">
+
+<h3>
+🔗 ความสัมพันธ์ภพภูมิ (ดาวชนภพ)
+</h3>
+
+${relationHTML}
+
+</div>
+
+`;
+
+            document.getElementById('topReportArea').innerHTML = topReport;
+            document.getElementById('reportArea').innerHTML = report;
+
+        }
+
+        function getYama(dayOfWeek, hour, minute) {
+            let isDaytime = hour >= 6 && hour < 18;
+            
+            let totalMinutes;
+            if (isDaytime) {
+                totalMinutes = (hour - 6) * 60 + minute;
+            } else {
+                let h = hour >= 18 ? hour - 18 : hour + 6;
+                totalMinutes = h * 60 + minute;
+            }
+
+            let yamaIndex = Math.floor(totalMinutes / 90);
+            if (yamaIndex > 7) yamaIndex = 7;
+            
+            let startNum = dayOfWeek; 
+            if (!isDaytime) {
+                startNum = ((dayOfWeek + 2) % 7) + 1;
+            }
+
+            let currentNum = startNum;
+            for (let i = 0; i < yamaIndex; i++) {
+                currentNum = currentNum - 2;
+                if (currentNum <= 0) currentNum += 7;
+            }
+
+            return currentNum;
+        }
+
+        function processHoraryNow() {
+            // บังคับใช้ Timezone ประเทศไทย (UTC+7) เสมอ
+            let thaiDateStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Bangkok" });
+            runHorary(new Date(thaiDateStr));
+        }
+        
+        function processHoraryCustom() {
+            let timeStr = document.getElementById("horaryTime").value;
+            if (!timeStr) {
+                alert("กรุณาระบุเวลา");
+                return;
+            }
+            
+            // ใช้เวลาปัจจุบันของประเทศไทยเป็นฐาน แล้วปรับชั่วโมง/นาทีตามที่ระบุ
+            let thaiDateStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Bangkok" });
+            let d = new Date(thaiDateStr);
+            
+            let parts = timeStr.split(":");
+            d.setHours(parseInt(parts[0], 10));
+            d.setMinutes(parseInt(parts[1], 10));
+            runHorary(d);
+        }
+
+        function runHorary(dateObj) {
+            let h = dateObj.getHours();
+            let m = dateObj.getMinutes();
+            
+            let adjustedDate = new Date(dateObj);
+            if (h < 6) {
+                adjustedDate.setDate(adjustedDate.getDate() - 1);
+            }
+
+            let jsDay = adjustedDate.getDay();
+            let dayNum = jsDay === 0 ? 1 : jsDay + 1;
+
+            let monthNum = adjustedDate.getMonth() + 1;
+            if (monthNum > 12) monthNum = monthNum % 12;
+
+            let currentYearAnimal = ((adjustedDate.getFullYear() + 543) + 6) % 12; 
+            if(currentYearAnimal === 0) currentYearAnimal = 12;
+            let yearNum = currentYearAnimal > 7 ? currentYearAnimal - 7 : currentYearAnimal;
+
+            let yamaNum = getYama(dayNum, h, m);
+            let matrix = [[], [], [], []];
+            matrix[0] = generateUniqueBase(dayNum);
+            matrix[1] = generateUniqueBase(monthNum);
+            matrix[2] = generateUniqueBase(yearNum);
+            for (let i = 0; i < 7; i++) {
+                matrix[3][i] = matrix[0][i] + matrix[1][i] + matrix[2][i];
+            }
+
+            renderHoraryReport(matrix, yamaNum, dateObj, dayNum, monthNum, yearNum);
+        }
+
+        function renderHoraryReport(matrix, yamaNum, dateObj, dayNum, monthNum, yearNum) {
+            renderMatrix(matrix, dayNum, -1, -1, -1, yamaNum);
+            
+            // Calculate yama index and time ranges
+            let isDaytime = dateObj.getHours() >= 6 && dateObj.getHours() < 18;
+            let totalMinutes;
+            let h = dateObj.getHours();
+            let m = dateObj.getMinutes();
+            if (isDaytime) {
+                totalMinutes = (h - 6) * 60 + m;
+            } else {
+                let hNight = h >= 18 ? h - 18 : h + 6;
+                totalMinutes = hNight * 60 + m;
+            }
+            let yamaIdx = Math.floor(totalMinutes / 90);
+            if (yamaIdx > 7) yamaIdx = 7;
+
+            const daytimeRanges = [
+                "06:00 - 07:30 น.", "07:30 - 09:00 น.", "09:00 - 10:30 น.", "10:30 - 12:00 น.",
+                "12:00 - 13:30 น.", "13:30 - 15:00 น.", "15:00 - 16:30 น.", "16:30 - 18:00 น."
+            ];
+
+            const nighttimeRanges = [
+                "18:00 - 19:30 น.", "19:30 - 21:00 น.", "21:00 - 22:30 น.", "22:30 - 00:00 น.",
+                "00:00 - 01:30 น.", "01:30 - 03:00 น.", "03:00 - 04:30 น.", "04:30 - 06:00 น."
+            ];
+
+            let yamaTimeRange = isDaytime ? daytimeRanges[yamaIdx] : nighttimeRanges[yamaIdx];
+            let yamaPeriodName = `ยามที่ ${yamaIdx + 1} (${isDaytime ? 'กลางวัน' : 'กลางคืน'})`;
+            
+            let yamaHouses = [];
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 7; c++) {
+                    if (matrix[r][c] === yamaNum) {
+                        yamaHouses.push(houses[r][c].name);
+                    }
+                }
+            }
+            
+            let reading = generateRelationReading(yamaHouses[0], yamaHouses.slice(1));
+            if (!reading || yamaHouses.length < 2) {
+                reading = "เหตุการณ์ทรงตัว ไม่มีจุดเชื่อมโยงที่ชัดเจน อาจหมายถึงสถานการณ์กำลังหยุดนิ่ง";
+            }
+
+            let timeString = dateObj.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+            
+            const horaryPlanets = {
+                1: { name: "อาทิตย์" }, 2: { name: "จันทร์" }, 3: { name: "อังคาร" },
+                4: { name: "พุธ" }, 5: { name: "พฤหัส" }, 6: { name: "ศุกร์" }, 7: { name: "เสาร์" }
+            };
+
+            let badHouses = ["หินะ", "อริ", "มรณะ", "พยายะ"];
+            let goodHouses = ["ธนัง", "โภคา", "ศุภะ", "ลาภะ", "มัชฌิมา"];
+            
+            let hasBad = yamaHouses.some(h => badHouses.includes(h));
+            let hasGood = yamaHouses.some(h => goodHouses.includes(h));
+
+            let summary = "⚡ สถานการณ์ทั่วไป ดำเนินไปตามปกติ ไม่หวือหวา";
+            let summaryColor = "var(--muted)";
+            
+            if (hasBad && !hasGood) {
+                summary = "⚠️ สถานการณ์มีอุปสรรค หรือทิศทางไม่ค่อยดีนัก ระวังความขัดแย้ง ความสูญเสีย หรือปัญหาที่แก้ได้ยาก (แนะนำให้ชะลอการตัดสินใจสำคัญ)";
+                summaryColor = "var(--accent)";
+            } else if (hasGood && !hasBad) {
+                summary = "⭐ สถานการณ์มีทิศทางที่ดีมาก จะได้รับความสำเร็จ โชคลาภ หรือความช่วยเหลืออย่างง่ายดาย (ลุยได้เลย!)";
+                summaryColor = "var(--green)";
+            } else if (hasBad && hasGood) {
+                summary = "⚖️ สถานการณ์มีทั้งดีและร้ายปะปนกัน (ทุกขลาภ) อาจต้องเหนื่อยหรือแก้ปัญหาก่อนจึงจะสำเร็จในภายหลัง";
+                summaryColor = "var(--gold)";
+            }
+
+            let horaryHTML = `
+            <div class="card" style="background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); margin-bottom: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;">
+                    <h2 style="color: var(--gold-lt); margin:0; font-size: 24px; display: flex; align-items: center; gap: 10px;">
+                        <span>🔮</span> คำทำนายดวงยามอัฏฐกาล
+                    </h2>
+                    <span style="background: var(--gold); color: var(--deep); padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                        ${timeString} น.
+                    </span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: rgba(15, 20, 30, 0.6); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
+                        <div style="font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 5px;">ดาวตัวแทนยาม</div>
+                        <div style="font-size: 18px; font-weight: bold; color: var(--text);">${yamaNum} (ดาว${horaryPlanets[yamaNum]?.name})</div>
+                    </div>
+                    <div style="background: rgba(15, 20, 30, 0.6); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
+                        <div style="font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 5px;">ช่วงเวลายาม</div>
+                        <div style="font-size: 18px; font-weight: bold; color: var(--text);">${yamaPeriodName}</div>
+                        <div style="font-size: 13px; color: var(--muted); font-weight: 500; margin-top: 2px;">⏱️ ${yamaTimeRange}</div>
+                    </div>
+                    <div style="background: rgba(15, 20, 30, 0.6); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
+                        <div style="font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 5px;">ฐานตั้งดวง</div>
+                        <div style="font-size: 18px; font-weight: bold; color: var(--text);">${dayNum} / ${monthNum} / ${yearNum}</div>
+                    </div>
+                </div>
+
+                <div style="background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -10px; right: -10px; font-size: 60px; opacity: 0.05; color: var(--gold); transform: rotate(15deg);">🔗</div>
+                    <h4 style="margin-top:0; color: var(--gold-lt); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px;">
+                        🔗 การเชื่อมโยงภพภูมิ (ดาวชนภพ)
+                    </h4>
+                    <div style="font-size: 18px; font-weight: 600; color: var(--gold); margin-bottom: 10px;">
+                        ${yamaHouses.join(' <span style="color: var(--muted);">➔</span> ')}
+                    </div>
+                    <p style="margin:0; font-size:16px; line-height: 1.7; color: var(--text);">
+                        ${reading}
+                    </p>
+                </div>
+
+                <div style="background: var(--surface); color: var(--text); padding: 20px; border-radius: 12px; border-left: 5px solid ${summaryColor}; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <h4 style="margin-top:0; color: var(--gold-lt); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">📌 บทสรุปสถานการณ์</h4>
+                    <p style="margin:5px 0 0 0; font-size:18px; font-weight:bold; line-height: 1.5;">
+                        ${summary}
+                    </p>
+                </div>
+            </div>
+            `;
+
+            document.getElementById("topReportArea").innerHTML = horaryHTML;
+            document.getElementById("reportArea").innerHTML = "";
+        }
+
+        /* =========================================================
+           เครื่องมือวิเคราะห์กาลโยครายปี (Yearly Kaliyoke Analyser)
+        ========================================================= */
+        const safeIndex = (arr, index) => arr[index] ?? "-";
+
+        function calculateKaliyoke(yearBE) {
+            if (!Number.isInteger(yearBE) || yearBE < 1182 || yearBE > 3000) {
+                return `<div style="grid-column: 1/-1; color: #c0392b; text-align: center; font-weight: bold; padding: 20px; background: #fdf2e9; border-radius: 12px; border: 1px solid #f5b7b1;">
+                    ปี พ.ศ. ไม่ถูกต้อง (กรุณากรอกระหว่าง 1182 - 3000)
+                </div>`;
+            }
+
+            const cs = yearBE - 1181;
+
+            const days = ["", "อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
+
+            const yarms = [
+                "",
+                "06.01 - 07.30","07.31 - 09.00","09.01 - 10.30","10.31 - 12.00",
+                "12.01 - 13.30","13.31 - 15.00","15.01 - 16.30","16.31 - 18.00",
+                "18.01 - 19.30","19.31 - 21.00","21.01 - 22.30","22.31 - 24.00",
+                "00.01 - 01.30","01.31 - 03.00","03.01 - 04.30","04.31 - 06.00"
+            ];
+
+            const reuks = ["", "อัศวินี", "ภรณี", "กฤติกา", "โรหิณี", "มฤคศิร", "อารทรา", "ปุนีพสุ", "บุษย", "อาศเลษา", "มาฆ", "บุรพผลคุนี", "อุตรผลคุนี", "หัสต", "จิตรา", "สวาติ", "วิศาขา", "อนุราธา", "เชษฐา", "มูลา", "บุรพษาฒ", "อุตราษาฒ", "ศรวณะ", "ธนิษฐา", "ศตภิษัช", "บุรพภัทรบท", "อุตรภัทรบท", "เรวดี"];
+
+            const rasris = ["เมษ", "พฤษภ", "เมถุน", "กรกฎ", "สิงห์", "กันย์", "ตุล", "พิจิก", "ธนู", "มังกร", "กุมภ์", "มีน"];
+
+            const dithis = ["", "ขึ้น 1 ค่ำ", "ขึ้น 2 ค่ำ", "ขึ้น 3 ค่ำ", "ขึ้น 4 ค่ำ", "ขึ้น 5 ค่ำ", "ขึ้น 6 ค่ำ", "ขึ้น 7 ค่ำ", "ขึ้น 8 ค่ำ", "ขึ้น 9 ค่ำ", "ขึ้น 10 ค่ำ", "ขึ้น 11 ค่ำ", "ขึ้น 12 ค่ำ", "ขึ้น 13 ค่ำ", "ขึ้น 14 ค่ำ", "ขึ้น 15 ค่ำ", "แรม 1 ค่ำ", "แรม 2 ค่ำ", "แรม 3 ค่ำ", "แรม 4 ค่ำ", "แรม 5 ค่ำ", "แรม 6 ค่ำ", "แรม 7 ค่ำ", "แรม 8 ค่ำ", "แรม 9 ค่ำ", "แรม 10 ค่ำ", "แรม 11 ค่ำ", "แรม 12 ค่ำ", "แรม 13 ค่ำ", "แรม 14 ค่ำ", "แรม 15 ค่ำ"];
+
+            const getRem = (val, mod) => {
+                const r = val % mod;
+                return r === 0 ? mod : r;
+            };
+
+            const createCard = (base, type, title) => {
+                const dIdx = getRem(base, 7);
+                const yIdx = getRem(base, 16);
+                const rsIdx = getRem(base, 12);
+                const dtIdx = getRem(base, 30);
+                const rkIdx = getRem(base, 27);
+
+                let reukValue = safeIndex(reuks, rkIdx);
+                let dithiValue = safeIndex(dithis, dtIdx);
+
+                return `
+                <div class="kaliyoke-card ${type}">
+                    <h4 style="margin: 0 0 12px 0; font-size: 17px; font-weight: bold; display: flex; align-items: center; gap: 6px;">${title}</h4>
+                    <div style="font-size: 13.5px; line-height: 1.6; color: #e0e0e0;">
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(0,0,0,0.06); padding: 5px 0;">
+                            <span style="color:#aaaaaa; font-weight: 500;">📅 วัน:</span>
+                            <span style="font-weight: bold; color: #e0e0e0;">วัน${days[dIdx]}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(0,0,0,0.06); padding: 5px 0;">
+                            <span style="color:#aaaaaa; font-weight: 500;">⏱️ ยาม:</span>
+                            <span style="font-weight: bold; color: #e0e0e0;">${safeIndex(yarms, yIdx)} น.</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(0,0,0,0.06); padding: 5px 0;">
+                            <span style="color:#aaaaaa; font-weight: 500;">🪐 ราศี:</span>
+                            <span style="font-weight: bold; color: #e0e0e0;">ราศี${safeIndex(rasris, rsIdx - 1)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(0,0,0,0.06); padding: 5px 0;">
+                            <span style="color:#aaaaaa; font-weight: 500;">🌙 ดิถี:</span>
+                            <span style="font-weight: bold; color: #e0e0e0;">${dithiValue}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="color:#aaaaaa; font-weight: 500;">✨ ฤกษ์:</span>
+                            <span style="font-weight: bold; color: #e0e0e0;">${reukValue}</span>
+                        </div>
+                    </div>
+                </div>`;
+            };
+
+            // สูตรตามคัมภีร์
+            const thongchaiBase = (cs * 10) + 3;
+            const athibadiBase = getRem(cs, 498);
+            const ubatBase = (cs * 10) + 2;
+            const lokawinasBase = cs + 1120;
+
+            return [
+                createCard(thongchaiBase, 'thongchai', '🚩 ธงชัยสากล'),
+                createCard(athibadiBase, 'athibadi', '👑 อธิบดีสากล'),
+                createCard(ubatBase, 'ubat', '💀 อุบาทว์สากล'),
+                createCard(lokawinasBase, 'lokawinas', '🏚️ โลกาวินาศสากล')
+            ].join('');
+        }
+
+        function debounce(fn, delay = 200) {
+            let t;
+            return (...args) => {
+                clearTimeout(t);
+                t = setTimeout(() => fn(...args), delay);
+            };
+        }
+
+        function displayKaliyoke() {
+            const inputEl = document.getElementById('yearkarayokInput');
+            const resultArea = document.getElementById('kaliyoke-resultArea');
+
+            if (!inputEl || !resultArea) return;
+
+            const year = Number(inputEl.value.trim());
+
+            if (!year) {
+                resultArea.innerHTML = "";
+                return;
+            }
+
+            resultArea.innerHTML = calculateKaliyoke(year);
+
+            // Synchronize year back to the Auspicious Calendar
+            if (year >= 1182 && year <= 3000) {
+                let targetCE = year - 543;
+                if (currentCalendarYear !== targetCE) {
+                    currentCalendarYear = targetCE;
+                    renderAuspiciousCalendar(currentCalendarYear, currentCalendarMonth);
+                }
+            }
+        }
+
+        const debouncedDisplay = debounce(displayKaliyoke, 150);
+
+        (function init() {
+            const today = new Date();
+            
+            // Set current date/month defaults for target inputs
+            document.getElementById("targetDate").value = today.getDate();
+            document.getElementById("targetMonth").value = today.getMonth() + 1;
+            
+            // Set birth date/month defaults
+            document.getElementById("birthDateSatta").value = today.getDate();
+            document.getElementById("birthMonth").value = today.getMonth() + 1;
+            
+            // Set birth time default
+            let hoursVal = String(today.getHours()).padStart(2, '0');
+            let minutesVal = String(today.getMinutes()).padStart(2, '0');
+            document.getElementById("birthTime").value = `${hoursVal}:${minutesVal}`;
+            
+            // Set birth day select to current day of the week
+            let currentDayNum = today.getDay() === 0 ? 1 : today.getDay() + 1;
+            document.getElementById("birthDay").value = currentDayNum;
+
+            // Set birth year select based on current CE year mapped to zodiac
+            let currentYearAnimal = ((today.getFullYear() + 543) + 6) % 12;
+            if (currentYearAnimal === 0) currentYearAnimal = 12;
+            let yearNum = currentYearAnimal > 7 ? currentYearAnimal - 7 : currentYearAnimal;
+            document.getElementById("birthYear").value = yearNum;
+
+            // Set current year default for Yearly Kaliyoke tool
+            let currentBE = today.getFullYear() + 543;
+            const karayokInput = document.getElementById("yearkarayokInput");
+            if (karayokInput) {
+                karayokInput.value = currentBE;
+                displayKaliyoke();
+                
+                karayokInput.addEventListener('input', debouncedDisplay);
+                karayokInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') displayKaliyoke();
+                });
+            }
+
+            // Run destiny calculation on page load
+            processDestiny();
+        })();
+

@@ -1,0 +1,9 @@
+﻿        .mode-tabs {
+            display: flex; gap: 10px; margin-bottom: 20px;
+        }
+        .mode-tab {
+            flex: 1; text-align: center; padding: 10px; background: #2a2a2a; border-radius: 6px; cursor: pointer; color: #888; font-weight: bold; transition: 0.3s;
+        }
+        .mode-tab.active {
+            background: #d4af37; color: #000;
+        }

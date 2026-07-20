@@ -138,8 +138,6 @@ async function renderElementToCanvas(elementId, options = {}) {
     const ctx = tempCanvas.getContext('2d');
 
     const bgColor = options.backgroundColor || '#0d0a1a';
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
     let currentY = options.paddingTop || 40;
     const paddingX = options.paddingX || 40;
@@ -204,9 +202,29 @@ async function renderElementToCanvas(elementId, options = {}) {
                     });
                     
                     const availableW = drawWidth - (x - paddingX);
-                    const imgW = Math.min(img.width, availableW);
-                    const ratio = imgW / img.width;
-                    const imgH = img.height * ratio;
+                    
+                    let targetH = parseFloat(style.height);
+                    let targetW = parseFloat(style.width);
+                    let imgW, imgH;
+
+                    if (targetH && targetW) {
+                        imgH = targetH;
+                        imgW = targetW;
+                    } else if (targetH) {
+                        imgH = targetH;
+                        imgW = targetH * (img.width / img.height);
+                    } else if (targetW) {
+                        imgW = targetW;
+                        imgH = targetW * (img.height / img.width);
+                    } else {
+                        imgW = Math.min(img.width, availableW);
+                        imgH = img.height * (imgW / img.width);
+                    }
+                    
+                    if (imgW > availableW) {
+                         imgH = imgH * (availableW / imgW);
+                         imgW = availableW;
+                    }
                     
                     // center image
                     const imgX = x + (availableW - imgW) / 2;
@@ -281,9 +299,17 @@ async function renderElementToCanvas(elementId, options = {}) {
 
             // Draw background if any block element had one
             if (bgColor && tag !== 'table' && tag !== 'img' && tag !== 'canvas' && tag !== 'br') {
+                let fillH = childY - startY;
+                const fixedH = parseFloat(style.height);
+                if (fixedH && fixedH > fillH) {
+                    fillH = fixedH;
+                }
+                if (style.position === 'absolute' && style.top === '0px' && style.bottom === '0px') {
+                    fillH = parseFloat(window.getComputedStyle(root).height) || options.height || 1080;
+                }
                 ctx.globalCompositeOperation = "destination-over";
                 ctx.fillStyle = bgColor;
-                ctx.fillRect(x, startY, drawWidth - (x - paddingX), childY - startY);
+                ctx.fillRect(x, startY, drawWidth - (x - paddingX), fillH);
                 ctx.globalCompositeOperation = "source-over";
             }
 
@@ -304,12 +330,40 @@ async function renderElementToCanvas(elementId, options = {}) {
     currentY += await drawNode(root, paddingX, currentY, '#ffffff');
     currentY += (options.paddingBottom || 40);
 
-    // Crop to actual height
+    // Crop to actual height or fixed height
+    const finalHeight = options.height || currentY;
     const finalCanvas = document.createElement('canvas');
     finalCanvas.width = canvasWidth;
-    finalCanvas.height = currentY;
+    finalCanvas.height = finalHeight;
     const finalCtx = finalCanvas.getContext('2d');
     
-    finalCtx.drawImage(tempCanvas, 0, 0, canvasWidth, currentY, 0, 0, canvasWidth, currentY);
+    // Center vertically if fixed height is provided and content is smaller
+    let destY = 0;
+    if (options.height && options.height > currentY) {
+        destY = (options.height - currentY) / 2;
+    }
+    
+    // Fill background
+    finalCtx.fillStyle = bgColor;
+    finalCtx.fillRect(0, 0, canvasWidth, finalHeight);
+
+    // Draw root background image if exists
+    const rootStyle = window.getComputedStyle(root);
+    const rootBgImg = rootStyle.backgroundImage;
+    if (rootBgImg && rootBgImg !== 'none' && rootBgImg.startsWith('url(')) {
+        const bgUrl = rootBgImg.slice(4, -1).replace(/['"]/g, '');
+        try {
+            const bgImg = new Image();
+            bgImg.crossOrigin = "Anonymous";
+            bgImg.src = bgUrl;
+            await new Promise((resolve) => {
+                bgImg.onload = resolve;
+                bgImg.onerror = resolve;
+            });
+            finalCtx.drawImage(bgImg, 0, 0, canvasWidth, finalHeight);
+        } catch(e) {}
+    }
+    
+    finalCtx.drawImage(tempCanvas, 0, 0, canvasWidth, currentY, 0, destY, canvasWidth, currentY);
     return finalCanvas;
 }

@@ -33,11 +33,7 @@ function initAdminQuickTools() {
                     <span style="font-weight: bold;">ภาพดวงรายวัน<br>(แผ่นเดียว)</span>
                 </button>
                 
-                <!-- ดวงรายวัน (อัลบั้ม) -->
-                <button class="btn btn-dark shadow" onclick="openCarouselFortuneModal()" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #2c3e50, #000000); color: #d4af37; border: 1px solid #d4af37; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-images" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">ภาพดวงรายวัน<br>(แบบอัลบั้ม)</span>
-                </button>
+
                                
                 <!-- ไพ่ยิปซี  - Navigate to external page -->
                 <button class="btn btn-dark shadow" onclick="window.location.href='adminTarotReading.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #141e30, #243b55); color: #fff; border: 1px solid #243b55; height: 100%; transition: transform 0.2s;">
@@ -81,10 +77,10 @@ function initAdminQuickTools() {
                     <span style="font-weight: bold; color: #f1c40f;">สร้างโพสต์เลขเด็ด<br><small style="font-weight: normal; font-size: 0.95rem; color: #fff;">(คำนวณตามหลักทักษา)</small></span>
                 </button>
                 
-                <!-- สร้างภาพดวงอัตโนมัติ -->
-                <button class="btn shadow" onclick="window.location.href='adminAutoPost.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #ff9a9e, #fecfef); color: #111; border: 1px solid #ff9a9e; height: 100%; transition: transform 0.2s;">
+                <!-- สร้างภาพดวงรายวัน (NEW COMBINED) -->
+                <button class="btn shadow" onclick="window.location.href='adminZodiacAutoCarousel.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #ff9a9e, #fecfef); color: #111; border: 1px solid #ff9a9e; height: 100%; transition: transform 0.2s;">
                     <i class="fas fa-magic" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">สร้างภาพดวงอัตโนมัติ<br><small style="font-weight: normal; font-size: 0.95rem; color: #555;">(ดึงจากฐานข้อมูลจริง)</small></span>
+                    <span style="font-weight: bold;">สร้างภาพดวงรายวัน<br><small style="font-weight: normal; font-size: 0.95rem; color: #555;">(แผ่นเดียว / อัลบั้ม 9 ภาพ)</small></span>
                 </button>
                 
                 <!-- สร้างภาพดวงอัตโนมัติ (NEW) -->

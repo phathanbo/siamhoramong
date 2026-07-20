@@ -63,7 +63,7 @@ function drawThreeCards() {
     setTimeout(adjustScale, 50);
 }
 
-async function downloadImage() {
+async function downloadImage(action = 'download') {
     Swal.fire({
         title: 'กำลังสร้างภาพ...',
         text: 'กรุณารอสักครู่ (ภาพมีความละเอียดสูง)',
@@ -339,6 +339,12 @@ async function downloadImage() {
 
         // Export
         const dataUrl = canvas.toDataURL('image/png');
+        
+        if (action === 'post') {
+            Swal.close();
+            return dataUrl;
+        }
+
         const link = document.createElement('a');
         let dateStr = new Date().toISOString().split('T')[0];
         link.download = `TarotReading_${dateStr}.png`;
@@ -427,7 +433,8 @@ function drawSingleTarot() {
     setTimeout(adjustScale, 100);
 }
 
-function downloadSingleTarot() {
+function downloadSingleTarot(action = 'download') {
+    return new Promise((resolve) => {
     Swal.fire({ title: 'กำลังประมวลผล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
     
     // Reset scale before capture
@@ -444,17 +451,189 @@ function downloadSingleTarot() {
             useCORS: true,
             backgroundColor: '#090915'
         }).then(c => {
+            const dataUrl = c.toDataURL('image/png');
+            if (action === 'post') {
+                Swal.close();
+                adjustScale();
+                resolve(dataUrl);
+                return;
+            }
             const link = document.createElement('a');
             link.download = 'daily-tarot-' + Date.now() + '.png';
-            link.href = c.toDataURL('image/png');
+            link.href = dataUrl;
             link.click();
             Swal.close();
             adjustScale(); // restore scale
+            resolve();
         }).catch(err => {
             console.error(err);
             Swal.fire('Error', 'ไม่สามารถสร้างภาพได้', 'error');
             adjustScale();
+            resolve();
         });
     };
     document.body.appendChild(script);
+    });
+}
+
+// --- Facebook Posting Logic ---
+async function postToFacebook() {
+    try {
+        const dataUrl = await downloadImage('post');
+        if (!dataUrl) return;
+        
+        const summaryText = document.getElementById('summaryText').innerText || "ดูดวงไพ่ยิปซี 3 ใบ กับสยามโหรามงคล";
+        
+        // Preview Modal
+        const confirmResult = await Swal.fire({
+            title: 'ยืนยันการโพสต์',
+                        html: `
+                <div style="background: #ffffff; color: #1c1e21; border-radius: 12px; width: 100%; text-align: left; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;">
+                    <div style="display: flex; padding: 12px 16px; gap: 10px; align-items: center;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #ccc; overflow: hidden;">
+                            <img src="https://ui-avatars.com/api/?name=Siam&background=4F46E5&color=fff" style="width: 100%; height: 100%;">
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-weight: 600; font-size: 15px; color: #050505;">สยามโหรามงคล</span>
+                            <span style="font-size: 13px; color: #65676b;">เพิ่งครู่ · 🌎</span>
+                        </div>
+                    </div>
+                    <div style="padding: 4px 16px 16px 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; color: #050505; max-height: 200px; overflow-y: auto;">${summaryText}</div>
+                    <img src="${dataUrl}" style="width: 100%; display: block; border-top: 1px solid #eee;">
+                </div>
+                <div style="margin-top: 20px; text-align: left; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid #333;">
+                    <h4 style="margin: 0 0 10px 0; font-size: 15px; color: #d4af37;"><i class="fas fa-cog"></i> ตั้งค่าเพิ่มเติม (Optional)</h4>
+                    <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">ตั้งเวลาโพสต์ล่วงหน้า (ถ้ามี):</label>
+                    <input type="datetime-local" id="swalScheduleTime" style="width: 95%; padding: 10px; margin-bottom: 15px; border-radius: 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; font-family: inherit; font-size: 14px;">
+                    <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">เช็คอินสถานที่ (รหัส Place ID):</label>
+                    <input type="text" id="swalPlaceId" placeholder="เช่น 108398189188044 (Bangkok)" style="width: 95%; padding: 10px; border-radius: 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; font-family: inherit; font-size: 14px;">
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: '<i class="fas fa-paper-plane"></i> ยืนยันโพสต์',
+            cancelButtonText: 'ยกเลิก',
+            background: '#1e1e1e',
+            color: '#fff',
+            width: '600px',
+            preConfirm: () => {
+                return {
+                    scheduleTime: document.getElementById('swalScheduleTime') ? document.getElementById('swalScheduleTime').value : '',
+                    placeId: document.getElementById('swalPlaceId') ? document.getElementById('swalPlaceId').value.trim() : ''
+                };
+            }
+        });
+
+        if (!confirmResult.isConfirmed) {
+            return;
+        }
+
+        let scheduledPublishTime = null;
+        if (confirmResult.value && confirmResult.value.scheduleTime) {
+            scheduledPublishTime = Math.floor(new Date(confirmResult.value.scheduleTime).getTime() / 1000);
+        }
+        let place = (confirmResult.value && confirmResult.value.placeId) ? confirmResult.value.placeId : null;
+
+        Swal.fire({
+            title: 'กำลังโพสต์ลงเพจ...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        const res = await fetch('http://127.0.0.1:3000/api/facebook-post', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: summaryText, image: dataUrl , scheduledPublishTime: scheduledPublishTime, place: place })
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+            Swal.fire('สำเร็จ!', 'โพสต์ลงเพจ Facebook เรียบร้อยแล้ว', 'success');
+        } else {
+            Swal.fire('ข้อผิดพลาด', data.error || 'ไม่สามารถโพสต์ได้', 'error');
+        }
+    } catch (err) {
+        console.error(err);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้: ' + err.message, 'error');
+    }
+}
+
+async function postSingleToFacebook() {
+    try {
+        const dataUrl = await downloadSingleTarot('post');
+        if (!dataUrl) return;
+        
+        const cardName = document.getElementById('tarotPreviewName').innerText;
+        const msg = `ดวงไพ่ยิปซีประจำวัน: ${cardName}\n\n${document.getElementById('tarotPreviewMeaning').innerText}`;
+        
+        // Preview Modal
+        const confirmResult = await Swal.fire({
+            title: 'ยืนยันการโพสต์',
+            html: `
+                <div style="background: #ffffff; color: #1c1e21; border-radius: 12px; width: 100%; text-align: left; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;">
+                    <div style="display: flex; padding: 12px 16px; gap: 10px; align-items: center;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #ccc; overflow: hidden;">
+                            <img src="https://ui-avatars.com/api/?name=Siam&background=4F46E5&color=fff" style="width: 100%; height: 100%;">
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-weight: 600; font-size: 15px; color: #050505;">สยามโหรามงคล</span>
+                            <span style="font-size: 13px; color: #65676b;">เพิ่งครู่ · 🌎</span>
+                        </div>
+                    </div>
+                    <div style="padding: 4px 16px 16px 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; color: #050505; max-height: 200px; overflow-y: auto;">${msg}</div>
+                    <img src="${dataUrl}" style="width: 100%; display: block; border-top: 1px solid #eee;">
+                </div>
+                <div style="margin-top: 20px; text-align: left; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid #333;">
+                    <h4 style="margin: 0 0 10px 0; font-size: 15px; color: #d4af37;"><i class="fas fa-cog"></i> ตั้งค่าเพิ่มเติม (Optional)</h4>
+                    <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">ตั้งเวลาโพสต์ล่วงหน้า (ถ้ามี):</label>
+                    <input type="datetime-local" id="swalScheduleTime" style="width: 95%; padding: 10px; margin-bottom: 15px; border-radius: 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; font-family: inherit; font-size: 14px;">
+                    <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">เช็คอินสถานที่ (รหัส Place ID):</label>
+                    <input type="text" id="swalPlaceId" placeholder="เช่น 108398189188044 (Bangkok)" style="width: 95%; padding: 10px; border-radius: 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; font-family: inherit; font-size: 14px;">
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: '<i class="fas fa-paper-plane"></i> ยืนยันโพสต์',
+            cancelButtonText: 'ยกเลิก',
+            background: '#1e1e1e',
+            color: '#fff',
+            width: '600px',
+            preConfirm: () => {
+                return {
+                    scheduleTime: document.getElementById('swalScheduleTime') ? document.getElementById('swalScheduleTime').value : '',
+                    placeId: document.getElementById('swalPlaceId') ? document.getElementById('swalPlaceId').value.trim() : ''
+                };
+            }
+        });
+
+        if (!confirmResult.isConfirmed) {
+            return;
+        }
+
+        let scheduledPublishTime = null;
+        if (confirmResult.value && confirmResult.value.scheduleTime) {
+            scheduledPublishTime = Math.floor(new Date(confirmResult.value.scheduleTime).getTime() / 1000);
+        }
+        let place = (confirmResult.value && confirmResult.value.placeId) ? confirmResult.value.placeId : null;
+
+        Swal.fire({
+            title: 'กำลังโพสต์ลงเพจ...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        const res = await fetch('http://127.0.0.1:3000/api/facebook-post', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg, image: dataUrl , scheduledPublishTime: scheduledPublishTime, place: place })
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+            Swal.fire('สำเร็จ!', 'โพสต์ลงเพจ Facebook เรียบร้อยแล้ว', 'success');
+        } else {
+            Swal.fire('ข้อผิดพลาด', data.error || 'ไม่สามารถโพสต์ได้', 'error');
+        }
+    } catch (err) {
+        console.error(err);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้: ' + err.message, 'error');
+    }
 }

@@ -11,7 +11,7 @@ import {
 
 // 2. การตั้งค่า Firebase (นำข้อมูลจาก Firebase Console ของคุณมาใส่ที่นี่)
 const firebaseConfig = {
-    apiKey: "AIzaSyCAXqUv97g4THeV_bKqVHGg7Ka0q3umvwA",
+    apiKey: "AIzaSyAXf-p2Wo5Ush1BP57ehCaYIZLoHV3CeCE",
     authDomain: "siamhora-c6b27.firebaseapp.com",
     projectId: "siamhora-c6b27",
     storageBucket: "siamhora-c6b27.firebasestorage.app",

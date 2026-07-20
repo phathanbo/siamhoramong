@@ -70,10 +70,18 @@
                     <input type="text" id="adminCartomancyCustomText" class="form-control bg-dark text-white border-secondary" placeholder="เช่น แด่คุณลูกค้า VIP">
                 </div>
                 
+                <div class="form-group mb-3">
+                    <label class="text-gold">วันที่:</label>
+                    <input type="date" id="adminCartomancyDate" class="form-control bg-dark text-white border-secondary">
+                </div>
+                
                 <hr class="border-secondary my-4">
                 
                 <button class="btn btn-warning btn-block py-3" style="font-weight: bold; border-radius: 10px; background: linear-gradient(135deg, #f1c40f, #d4af37); color: #000; border: none;" onclick="downloadAdminCartomancyImagePage()">
                     <i class="fas fa-download mr-2"></i> ดาวน์โหลดรูปภาพ
+                </button>
+                <button class="btn btn-primary btn-block py-3 mt-2" style="font-weight: bold; border-radius: 10px; background: linear-gradient(45deg, #1877F2, #3b5998); border: none;" onclick="postToFacebook()">
+                    <i class="fa-brands fa-facebook mr-2"></i> โพสต์ลงเพจ
                 </button>
                 <small class="text-muted mt-2 d-block text-center">ภาพจะถูกบันทึกเป็น PNG ความคมชัดสูง</small>
             </div>
@@ -102,8 +110,21 @@
             }
         });
         
+        document.getElementById('adminCartomancyDate').addEventListener('input', function(e) {
+            if (window.lastDrawnCards) {
+                renderCanvas(document.getElementById('drawType').value, window.lastDrawnCards);
+            }
+        });
+        
         // Initial drawing (empty state)
         window.onload = function() {
+            // Set default date to today
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('adminCartomancyDate').value = `${yyyy}-${mm}-${dd}`;
+            
             renderEmptyCanvas();
         };
     </script>

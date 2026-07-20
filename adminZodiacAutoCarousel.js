@@ -1,10 +1,37 @@
-/**
- * adminAutoPost.js
- * จัดการการสร้างภาพดวงอัตโนมัติ (12 ราศี, 7 วัน, ไพ่ยิปซี) 
- */
+// --- Combined Logic for adminZodiacAutoCarousel ---
 
-const THAI_MONTHS = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-const THAI_DAYS_LONG = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
+function switchMode(mode) {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    
+    if(mode === 'single') {
+        document.getElementById('tabSingle').classList.add('active');
+        document.getElementById('singleControls').style.display = 'block';
+        document.getElementById('carouselControls').style.display = 'none';
+        
+        document.getElementById('captureArea').style.display = 'flex';
+        document.getElementById('singlePreviewBtns').style.display = 'block';
+        document.getElementById('cfPreviewWrapper').style.display = 'none';
+        document.getElementById('previewTitle').innerText = 'ภาพตัวอย่าง (ขนาด 1080x1080)';
+    } else {
+        document.getElementById('tabCarousel').classList.add('active');
+        document.getElementById('singleControls').style.display = 'none';
+        document.getElementById('carouselControls').style.display = 'block';
+        
+        document.getElementById('captureArea').style.display = 'none';
+        document.getElementById('singlePreviewBtns').style.display = 'none';
+        document.getElementById('cfPreviewWrapper').style.display = 'flex';
+        document.getElementById('previewTitle').innerText = 'ภาพตัวอย่างอัลบั้ม 9 ภาพ (เลื่อนลงเพื่อดูทั้งหมด)';
+        
+        const dateInput = document.getElementById('cfDate');
+        if (!dateInput.value) {
+            dateInput.value = new Date().toISOString().split('T')[0];
+        }
+    }
+}
+
+// ข้อมูลคงที่
+const THAI_DAYS_LONG = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+const THAI_MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
 
 const ZODIAC_LIST = [
     { id: '1', name: 'ราศีเมษ', dateRange: '13 เม.ย. - 13 พ.ค.', icon: '♈' },
@@ -44,6 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSubOptions();
 });
 
+document.getElementById('categorySelect').addEventListener('change', () => {
+    updateSubOptions();
+});
+
 function updateSubOptions() {
     const category = document.getElementById('categorySelect').value;
     const targetSelect = document.getElementById('targetSelect');
@@ -65,7 +96,6 @@ function updateSubOptions() {
             targetSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`;
         });
     } else {
-        // 'tarot', 'zodiac_all', 'sevendays_all', 'thai_ascendant_all', 'thai_animal_all'
         targetGroup.style.display = 'none';
     }
 }
@@ -241,8 +271,7 @@ function generateTarotTemplate(dateObj, dateThai, container) {
         <div class="tarot-content-wrapper" style="padding: ${gap}px 0;">
             <div class="tarot-header" style="margin-bottom: ${gap}px; font-size: 40px;">ไพ่ยิปซีประจำวัน<br><span style="font-size:26px; color:#aaa;">${dateThai}</span></div>
             
-            <div class="tarot-card-img" style="background-image: url('${cardImgUrl}'); height: ${imgSize}px; width: ${imgSize * 0.6}px; background-size: cover; margin-bottom: 0;">
-            </div>
+            <img src="${cardImgUrl}" class="tarot-card-img" style="height: ${imgSize}px; margin: 0 auto; display: block; border-radius: 10px; border: 2px solid #d4af37; margin-bottom: 0;" crossorigin="anonymous" />
             
             <h2 style="font-size: ${nameSize}px; color: #fff; margin-bottom: ${gap}px; margin-top: ${gap}px; font-weight: bold; text-shadow: 0 5px 15px rgba(0,0,0,0.5);">${card.name}</h2>
             
@@ -504,7 +533,7 @@ async function drawSevendaysCanvas(ctx, dateObj, dateThai) {
 }
 
 async function drawTarotCanvas(ctx, dateObj, dateThai) {
-    const card = tarotCards[Math.floor(Math.random() * tarotCards.length)];
+    const card = window.currentDrawnCard || tarotCards[Math.floor(Math.random() * tarotCards.length)];
     const bgImg = new Image(); bgImg.src = 'assets/tarot_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
@@ -737,7 +766,7 @@ async function drawThaiAnimalAllCanvas(ctx, dateObj, dateThai) {
     }
 }
 
-async function downloadImage() {
+async function generateAllCarouselDataUrls() {
     const category = document.getElementById('categorySelect').value;
     const dateStr = document.getElementById('dateSelect').value;
     
@@ -759,81 +788,497 @@ async function downloadImage() {
         const dateThai = formatDateThai(dateObj);
         
         const canvas = document.createElement('canvas');
-        canvas.width = 1080;
-        canvas.height = 1080;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
         const ctx = canvas.getContext('2d');
 
-        if (category === 'zodiac') await drawZodiacCanvas(ctx, dateObj, dateThai);
-        else if (category === 'sevendays') await drawSevendaysCanvas(ctx, dateObj, dateThai);
-        else if (category === 'tarot') await drawTarotCanvas(ctx, dateObj, dateThai);
-        else if (category === 'zodiac_all') await drawZodiacAllCanvas(ctx, dateObj, dateThai);
-        else if (category === 'sevendays_all') await drawSevendaysAllCanvas(ctx, dateObj, dateThai);
-        else if (category === 'thai_ascendant_all') await drawThaiAscendantAllCanvas(ctx, dateObj, dateThai);
-        else if (category === 'thai_animal_all') await drawThaiAnimalAllCanvas(ctx, dateObj, dateThai);
-        else throw new Error("ไม่พบเทมเพลตที่รองรับ");
+        // โหลดภาพพื้นหลัง AI
+        const bgImage = await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => {
+                console.warn('Failed to load AI background image, using fallback gradient');
+                resolve(null);
+            };
+            img.src = 'images/carousel_bg.png';
+        });
 
-        const link = document.createElement('a');
-        link.download = `siamhora_${category}_${dateStr}.png`;
-        link.href = canvas.toDataURL('image/png', 0.9);
-        link.click();
+        function drawSpaceBg() {
+            if (bgImage) {
+                ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
+            } else {
+                // Fallback gradient
+                const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
+                bgGrad.addColorStop(0, '#0f0c29');
+                bgGrad.addColorStop(0.5, '#302b63');
+                bgGrad.addColorStop(1, '#24243e');
+                ctx.fillStyle = bgGrad;
+                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            }
+
+            // เพิ่มความมืดด้านบนและล่างเล็กน้อยเพื่อให้ตัวหนังสือชัดเจน
+            const shadowGrad = ctx.createLinearGradient(0, 0, 0, 1080);
+            shadowGrad.addColorStop(0, 'rgba(0,0,0,0.5)');
+            shadowGrad.addColorStop(0.2, 'rgba(0,0,0,0)');
+            shadowGrad.addColorStop(0.8, 'rgba(0,0,0,0)');
+            shadowGrad.addColorStop(1, 'rgba(0,0,0,0.6)');
+            ctx.fillStyle = shadowGrad;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            ctx.textAlign = 'right';
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.font = 'bold 20px "Sarabun", sans-serif';
+            ctx.fillText('🔮 สยามโหรามงคล (Siamhora)', 1040, 1040);
+        }
+
+        function drawCard(x, y, w, h, icon, title, text, accentColor) {
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetY = 10;
+            
+            ctx.fillStyle = 'rgba(15, 15, 25, 0.75)';
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, 20);
+            ctx.fill();
+            
+            ctx.strokeStyle = 'rgba(212,175,55,0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.shadowColor = 'transparent';
+
+            if (accentColor) {
+                ctx.fillStyle = accentColor;
+                ctx.beginPath();
+                ctx.roundRect(x, y, w, 8, [20, 20, 0, 0]);
+                ctx.fill();
+            }
+
+            ctx.textAlign = 'left';
+            ctx.font = 'bold 30px "Sarabun", sans-serif';
+            ctx.fillStyle = '#d4af37';
+            ctx.fillText(icon + ' ' + title, x + 30, y + 60);
+
+            ctx.font = '24px "Sarabun", sans-serif';
+            ctx.fillStyle = '#f0f0f0';
+            if (typeof text === 'string') {
+                wrapText(ctx, text, x + 30, y + 110, w - 60, 36);
+            } else {
+                let currentY = y + 110;
+                text.forEach(item => {
+                    ctx.font = 'bold 22px "Sarabun", sans-serif';
+                    ctx.fillStyle = '#d4af37';
+                    ctx.fillText(item.label, x + 30, currentY);
+                    
+                    ctx.font = '22px "Sarabun", sans-serif';
+                    ctx.fillStyle = '#e0e0e0';
+                    wrapText(ctx, item.val, x + 100, currentY, w - 130, 32);
+                    currentY += 45;
+                });
+            }
+        }
+
+        let images = [];
+        for (let i = 0; i < 9; i++) {
+            Swal.update({ html: 'เรนเดอร์ภาพ ' + (i+1) + ' / 9' });
+            await new Promise(r => setTimeout(r, 50));
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            drawSpaceBg();
+
+            if (i === 0) { 
+                ctx.shadowColor = 'rgba(0,0,0,0.6)';
+                ctx.shadowBlur = 40;
+                ctx.shadowOffsetY = 15;
+                ctx.fillStyle = 'rgba(15,15,25,0.85)';
+                ctx.beginPath();
+                ctx.roundRect(140, 250, 800, 550, 30);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.shadowColor = 'transparent';
+                
+                ctx.strokeStyle = 'rgba(212,175,55,0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.roundRect(155, 265, 770, 520, 20); ctx.stroke();
+
+                ctx.textAlign = 'center';
+                ctx.font = 'bold 80px "Sarabun", sans-serif';
+                ctx.fillStyle = '#d4af37';
+                ctx.fillText('ดวงรายวัน', 540, 390);
+                
+                ctx.font = 'bold 50px "Sarabun", sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText('แม่นๆ มาแล้วจ้า!', 540, 480);
+                
+                ctx.fillStyle = 'rgba(212,175,55,0.15)';
+                ctx.beginPath(); ctx.roundRect(240, 540, 600, 70, 35); ctx.fill();
+                ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 2; ctx.stroke();
+                
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 30px "Sarabun", sans-serif';
+                ctx.fillText('ประจำวัน' + dayNameStr + 'ที่ ' + dateTitle, 540, 587);
+                
+                ctx.font = '32px "Sarabun", sans-serif';
+                ctx.fillStyle = '#d4af37';
+                ctx.fillText('เช็คดวงด่วนๆ ก่อนเริ่มวันใหม่!', 540, 700);
+                
+                const btnGrad = ctx.createLinearGradient(140, 0, 940, 0);
+                btnGrad.addColorStop(0, '#b8860b');
+                btnGrad.addColorStop(1, '#f1c40f');
+                
+                ctx.shadowColor = 'rgba(241,196,15,0.4)';
+                ctx.shadowBlur = 25;
+                ctx.fillStyle = btnGrad;
+                ctx.beginPath(); ctx.roundRect(140, 850, 800, 80, 40); ctx.fill();
+                ctx.shadowColor = 'transparent';
+                
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 24px "Sarabun", sans-serif';
+                ctx.fillText('เตรียมรับมือกับการงาน การเงิน ความรัก และทริคเสริมดวงฉบับรวบรัด 👉', 540, 898);
+
+            } else if (i === 1) {
+                ctx.textAlign = 'center';
+                ctx.font = 'bold 46px "Sarabun", sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText('อัปเดตฐานดวง: ใครดวงปัง ใครต้องระวัง?', 540, 150);
+                
+                let badDayTxt = kala ? 'วัน' + CF_DAY_NAMES[kala.ubart] : 'วันอาทิตย์';
+                let bestDayTxt = kala ? 'วัน' + CF_DAY_NAMES[kala.thongChai] : 'วันจันทร์';
+                let powerDayTxt = kala ? 'วัน' + CF_DAY_NAMES[kala.athibadi] : 'วันเสาร์';
+
+                const panels = [
+                    {x: 70, color: '#ff4757', t1: badDayTxt, t2: "เกณฑ์ 'อุบาทว์'", desc: 'ระวังเรื่องหงุดหงิดใจเป็นพิเศษ ควบคุมอารมณ์ให้ดี', icon: '⚠️'},
+                    {x: 390, color: '#2ed573', t1: bestDayTxt, t2: "เกณฑ์ 'วันธงชัย'", desc: 'ดวงแข็งเป็นพิเศษ! ทำการใหญ่มีโอกาสสำเร็จสูง', icon: '🚩'},
+                    {x: 710, color: '#9b59b6', t1: powerDayTxt, t2: "เกณฑ์ 'วันอธิบดี'", desc: 'ดวงมีเกณฑ์ได้เป็นใหญ่ ผู้คนเกรงใจและให้เกียรติ', icon: '👑'}
+                ];
+
+                panels.forEach(p => {
+                    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                    ctx.shadowBlur = 20;
+                    ctx.fillStyle = 'rgba(15,15,25,0.8)';
+                    ctx.beginPath(); ctx.roundRect(p.x, 260, 300, 520, 25); ctx.fill();
+                    ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1; ctx.stroke();
+                    ctx.shadowColor = 'transparent';
+                    
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath(); ctx.roundRect(p.x, 260, 300, 8, [25, 25, 0, 0]); ctx.fill();
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                    ctx.beginPath(); ctx.arc(p.x + 150, 360, 60, 0, Math.PI*2); ctx.fill();
+                    ctx.strokeStyle = p.color; ctx.lineWidth = 4; ctx.stroke();
+                    ctx.font = '50px sans-serif';
+                    ctx.fillText(p.icon, p.x + 150, 375);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 30px "Sarabun", sans-serif';
+                    ctx.fillText(p.t1, p.x + 150, 480);
+                    
+                    ctx.fillStyle = p.color;
+                    ctx.font = 'bold 26px "Sarabun", sans-serif';
+                    ctx.fillText(p.t2, p.x + 150, 530);
+                    
+                    ctx.fillStyle = '#dcdde1';
+                    ctx.font = '22px "Sarabun", sans-serif';
+                    wrapText(ctx, p.desc, p.x + 150, 600, 240, 32);
+                });
+
+            } else {
+                const dayIdx = i - 2;
+                const seed = dateSeedBase + dayIdx;
+                
+                let wText = '', fText = '', rawLove = '';
+                if (typeof DAILY_FORTUNE_DB !== 'undefined') {
+                    wText = getRandomFromDB(DAILY_FORTUNE_DB.work, seed + 1);
+                    fText = getRandomFromDB(DAILY_FORTUNE_DB.finance, seed + 2);
+                    rawLove = getRandomFromDB(DAILY_FORTUNE_DB.love, seed + 3);
+                }
+                
+                let lText = 'เสน่ห์แรง มีคนเข้ามาให้ความสนใจ';
+                let coupleText = 'ความรักราบรื่น ดูแลเอาใจใส่กันดี';
+                if (rawLove.includes('คนมีคู่:')) {
+                    let parts = rawLove.split('คนมีคู่:');
+                    lText = parts[0].replace('คนโสด:', '').trim();
+                    coupleText = parts[1].trim();
+                }
+                wText = wText.replace(/✨|💼|🧱|🌟|🗣️|🚶‍♂️|🤝|จ้า|กันเลย/g, '').trim().substring(0, 100);
+                fText = fText.replace(/✨|💼|🧱|🌟|🗣️|🚶‍♂️|🤝|จ้า|กันเลย/g, '').trim().substring(0, 100);
+                lText = lText.replace(/✨|💼|🧱|🌟|🗣️|🚶‍♂️|🤝|จ้า|กันเลย/g, '').trim().substring(0, 80);
+                coupleText = coupleText.replace(/✨|💼|🧱|🌟|🗣️|🚶‍♂️|🤝|จ้า|กันเลย/g, '').trim().substring(0, 80);
+
+                let dColor = CF_DAY_COLORS[dayIdx];
+                if (dColor === '#000000') dColor = '#7f8c8d';
+                
+                const luckyNum = '' + Math.floor(seededRandom(seed + 4) * 10) + Math.floor(seededRandom(seed + 5) * 10);
+                let colorStr = '-';
+                if (typeof DASH_DAY_COLORS !== 'undefined' && DASH_DAY_COLORS[CF_DAY_NAMES[dayIdx]]) {
+                    const colors = DASH_DAY_COLORS[CF_DAY_NAMES[dayIdx]].colors;
+                    if(colors && colors.length > 0) colorStr = colors.join(', ');
+                }
+
+                ctx.shadowColor = 'rgba(0,0,0,0.4)';
+                ctx.shadowBlur = 20;
+                ctx.fillStyle = 'rgba(15,15,25,0.85)';
+                ctx.beginPath(); ctx.roundRect(290, 80, 500, 80, 40); ctx.fill();
+                ctx.strokeStyle = 'rgba(212,175,55,0.4)'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.shadowColor = 'transparent';
+                
+                ctx.beginPath(); ctx.arc(340, 120, 20, 0, Math.PI*2); ctx.fillStyle = dColor; ctx.fill();
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 44px "Sarabun", sans-serif';
+                ctx.fillText('คนเกิดวัน' + CF_DAY_NAMES[dayIdx], 380, 133);
+
+                drawCard(90, 210, 900, 170, '💼', 'การงาน', wText, dColor);
+                drawCard(90, 410, 900, 170, '💰', 'การเงิน', fText, dColor);
+                
+                const loveData = [
+                    { label: 'โสด:', val: lText },
+                    { label: 'มีคู่:', val: coupleText }
+                ];
+                drawCard(90, 610, 900, 200, '❤️', 'ความรัก', loveData, dColor);
+
+                ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                ctx.shadowBlur = 15;
+                ctx.fillStyle = 'rgba(15,15,25,0.85)';
+                ctx.beginPath(); ctx.roundRect(90, 850, 900, 90, 25); ctx.fill();
+                ctx.strokeStyle = 'rgba(212,175,55,0.3)'; ctx.stroke();
+                ctx.shadowColor = 'transparent';
+                
+                ctx.fillStyle = dColor;
+                ctx.font = 'bold 26px "Sarabun", sans-serif';
+                ctx.fillText('✨ ทริคเสริมดวง', 130, 905);
+                
+                ctx.fillStyle = '#dcdde1';
+                ctx.font = '24px "Sarabun", sans-serif';
+                ctx.fillText('เลขมงคล: ' + luckyNum, 360, 905);
+                ctx.fillText('สีมงคล: ' + colorStr, 600, 905);
+            }
+
+            images.push(canvas.toDataURL('image/png', 0.8));
+        }
         
-        Swal.fire('สำเร็จ', 'บันทึกรูปภาพเรียบร้อยแล้ว', 'success');
-    } catch (err) {
-        console.error(err);
-        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้: ' + err.message, 'error');
+        Swal.close();
+        return images;
+    } catch (error) {
+        console.error(error);
+        Swal.fire('ข้อผิดพลาด', 'เกิดปัญหาขณะสร้างภาพอัลบั้ม', 'error');
+        return null;
     }
 }
 
-async function postToFacebook() {
-    const category = document.getElementById('categorySelect').value;
-    const dateStr = document.getElementById('dateSelect').value;
+
+function renderCarouselPreview() {
+    const area = document.getElementById('cfPreviewWrapper');
+    if (!area) return;
+
+    const dateStr = document.getElementById('cfDate').value;
+    const dateObj = new Date(dateStr);
     
-    if (!dateStr) {
-        Swal.fire('ข้อผิดพลาด', 'กรุณาเลือกวันที่', 'error');
-        return;
+    const dayNameStr = CF_DAY_NAMES[dateObj.getDay()];
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    let dateTitle = dateObj.toLocaleDateString('th-TH', options);
+
+    let kala = null;
+    if (typeof calculateKalaYok === 'function') {
+        kala = calculateKalaYok(dateObj);
+    }
+    
+    const dateSeedBase = parseInt(dateStr.replace(/-/g, ''));
+    function seededRandom(seed) {
+        var x = Math.sin(seed++) * 10000;
+        return x - Math.floor(x);
     }
 
-    // Make sure we have post text generated
-    const postTextOutput = document.getElementById('postTextOutput');
-    if (!postTextOutput || !postTextOutput.value.trim()) {
-        Swal.fire('ข้อผิดพลาด', 'กรุณากด "สร้างข้อความสำหรับโพสต์" ก่อนโพสต์ลงเพจ', 'warning');
-        return;
+    function getRandomFromDB(arr, seed) {
+        if (!arr || arr.length === 0) return "-";
+        const idx = Math.floor(seededRandom(seed) * arr.length);
+        return arr[idx];
     }
-    const message = postTextOutput.value;
+
+    // CSS สำหรับ Background อวกาศโทนเข้ม หรูหรา
+    const spaceBg = `
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    `;
     
-    Swal.fire({
-        title: 'กำลังเตรียมข้อมูล...',
-        text: 'โปรดรอสักครู่ ระบบกำลังสร้างรูปภาพตัวอย่าง',
-        allowOutsideClick: false,
-        didOpen: () => { Swal.showLoading(); }
+    // CSS สำหรับวงแหวนดาราศาสตร์
+    const astroRings = `
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:700px; height:700px; border-radius:50%; border:1.5px solid rgba(212,175,55,0.1); box-sizing:border-box;"></div>
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:1000px; height:1000px; border-radius:50%; border:1.5px solid rgba(212,175,55,0.1); box-sizing:border-box;"></div>
+    `;
+
+    // 1. หน้าปก (Cover)
+    let slidesHtml = `
+        <div class="cf-slide" id="cf-slide-0" style="width: 1080px; height: 1080px; position: relative; font-family: 'Sarabun', 'Prompt', sans-serif !important; overflow: hidden; ${spaceBg}">
+            \
+            <div style="position:absolute; bottom:20px; right:30px; font-size:18px; color:rgba(255,255,255,0.3); font-weight:bold;">🔮 สยามโหรามงคล (Siamhora)</div>
+            
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:800px; height:550px; background:rgba(20,20,35,0.85); border-radius:30px; box-shadow:0 15px 40px rgba(0,0,0,0.6); display:flex; flex-direction:column; justify-content:center; align-items:center; padding:40px; border:3px solid #d4af37;">
+                <h1 style="color:#d4af37; font-size:80px; font-weight:bold; margin-bottom:10px; text-align:center;">
+                    ดวงรายวัน
+                </h1>
+                <h2 style="color:#ffffff; font-size:50px; font-weight:bold; margin-top:0;">แม่นๆ มาแล้วจ้า!</h2>
+                <div style="background:rgba(212,175,55,0.15); border-radius:35px; border:2px solid #d4af37; padding:15px 50px; margin:30px 0;">
+                    <span style="color:#fff; font-size:30px; font-weight:bold;">ประจำวัน${dayNameStr}ที่ ${dateTitle}</span>
+                </div>
+                <h2 style="color:#d4af37; font-size:32px; margin-top:10px;">เช็คดวงด่วนๆ ก่อนเริ่มวันใหม่!</h2>
+            </div>
+            
+            <div style="position:absolute; bottom:150px; left:50%; transform:translateX(-50%); background:linear-gradient(90deg, #b8860b, #f1c40f); padding:25px 60px; border-radius:40px; box-shadow:0 10px 25px rgba(241,196,15,0.4);">
+                <span style="color:#000; font-size:24px; font-weight:bold;">เตรียมรับมือกับการงาน การเงิน ความรัก และทริคเสริมดวงฉบับรวบรัด 👉</span>
+            </div>
+        </div>
+    `;
+
+    // 2. สไลด์กาลโยค (KalaYok)
+    let badDayTxt = kala ? `วัน${CF_DAY_NAMES[kala.ubart]}` : 'วันอาทิตย์';
+    let bestDayTxt = kala ? `วัน${CF_DAY_NAMES[kala.thongChai]}` : 'วันจันทร์';
+    let powerDayTxt = kala ? `วัน${CF_DAY_NAMES[kala.athibadi]}` : 'วันเสาร์';
+
+    slidesHtml += `
+        <div class="cf-slide" id="cf-slide-1" style="width: 1080px; height: 1080px; position: relative; font-family: 'Sarabun', 'Prompt', sans-serif !important; overflow: hidden; ${spaceBg}">
+            \
+            <div style="position:absolute; bottom:20px; right:30px; font-size:18px; color:rgba(255,255,255,0.3); font-weight:bold;">🔮 สยามโหรามงคล (Siamhora)</div>
+            
+            <div style="position:absolute; top:100px; left:0; width:100%; text-align:center;">
+                <h2 style="color:#ffffff; font-size:46px; font-weight:bold;">
+                    อัปเดตฐานดวง: ใครดวงปัง ใครต้องระวัง?
+                </h2>
+            </div>
+
+            <div style="position:absolute; top:260px; left:70px; width:300px; height:520px; background:rgba(20,20,35,0.7); border:1px solid rgba(255,255,255,0.1); border-radius:25px; box-shadow:0 15px 20px rgba(0,0,0,0.5); display:flex; flex-direction:column; align-items:center;">
+                <div style="width:100%; height:8px; background:#ff4757; border-radius:25px 25px 0 0;"></div>
+                <div style="width:120px; height:120px; border-radius:50%; border:4px solid #ff4757; background:rgba(255,255,255,0.05); display:flex; justify-content:center; align-items:center; margin-top:20px; font-size:50px;">⚠️</div>
+                <h3 style="color:#ffffff; font-size:30px; font-weight:bold; margin:20px 0 5px 0;">${badDayTxt}</h3>
+                <h4 style="color:#ff4757; font-size:26px; font-weight:bold; margin:0 0 15px 0;">เกณฑ์ 'อุบาทว์'</h4>
+                <p style="color:#dcdde1; font-size:22px; text-align:center; padding:0 20px;">ระวังเรื่องหงุดหงิดใจเป็นพิเศษ ควบคุมอารมณ์ให้ดี</p>
+            </div>
+
+            <div style="position:absolute; top:260px; left:390px; width:300px; height:520px; background:rgba(20,20,35,0.7); border:1px solid rgba(255,255,255,0.1); border-radius:25px; box-shadow:0 15px 20px rgba(0,0,0,0.5); display:flex; flex-direction:column; align-items:center;">
+                <div style="width:100%; height:8px; background:#2ed573; border-radius:25px 25px 0 0;"></div>
+                <div style="width:120px; height:120px; border-radius:50%; border:4px solid #2ed573; background:rgba(255,255,255,0.05); display:flex; justify-content:center; align-items:center; margin-top:20px; font-size:50px;">🚩</div>
+                <h3 style="color:#ffffff; font-size:30px; font-weight:bold; margin:20px 0 5px 0;">${bestDayTxt}</h3>
+                <h4 style="color:#2ed573; font-size:26px; font-weight:bold; margin:0 0 15px 0;">เกณฑ์ 'วันธงชัย'</h4>
+                <p style="color:#dcdde1; font-size:22px; text-align:center; padding:0 20px;">ดวงแข็งเป็นพิเศษ! ทำการใหญ่มีโอกาสสำเร็จสูง</p>
+            </div>
+
+            <div style="position:absolute; top:260px; left:710px; width:300px; height:520px; background:rgba(20,20,35,0.7); border:1px solid rgba(255,255,255,0.1); border-radius:25px; box-shadow:0 15px 20px rgba(0,0,0,0.5); display:flex; flex-direction:column; align-items:center;">
+                <div style="width:100%; height:8px; background:#9b59b6; border-radius:25px 25px 0 0;"></div>
+                <div style="width:120px; height:120px; border-radius:50%; border:4px solid #9b59b6; background:rgba(255,255,255,0.05); display:flex; justify-content:center; align-items:center; margin-top:20px; font-size:50px;">👑</div>
+                <h3 style="color:#ffffff; font-size:30px; font-weight:bold; margin:20px 0 5px 0;">${powerDayTxt}</h3>
+                <h4 style="color:#9b59b6; font-size:26px; font-weight:bold; margin:0 0 15px 0;">เกณฑ์ 'วันอธิบดี'</h4>
+                <p style="color:#dcdde1; font-size:22px; text-align:center; padding:0 20px;">ดวงมีเกณฑ์ได้เป็นใหญ่ ผู้คนเกรงใจและให้เกียรติ</p>
+            </div>
+        </div>
+    `;
+
+    // 3. ดวง 7 วัน (7 Slides)
+    for (let i = 0; i < 7; i++) {
+        const seed = dateSeedBase + i;
+        
+        let wText = '', fText = '', rawLove = '';
+        if (typeof DAILY_FORTUNE_DB !== 'undefined') {
+            wText = getRandomFromDB(DAILY_FORTUNE_DB.work, seed + 1);
+            fText = getRandomFromDB(DAILY_FORTUNE_DB.finance, seed + 2);
+            rawLove = getRandomFromDB(DAILY_FORTUNE_DB.love, seed + 3);
+        }
+        
+        let lText = 'เสน่ห์แรง มีคนเข้ามาให้ความสนใจ';
+        let coupleText = 'ความรักราบรื่น ดูแลเอาใจใส่กันดี';
+        if (rawLove.includes('คนมีคู่:')) {
+            let parts = rawLove.split('คนมีคู่:');
+            lText = parts[0].replace('คนโสด:', '').trim();
+            coupleText = parts[1].trim();
+        }
+        wText = wText.replace(/✨|💼|🧱|🌟|🗣️|🚶‍♂️|🤝|จ้า|กันเลย/g, '').trim().substring(0, 100);
+        fText = fText.replace(/✨|💼|🧱|🌟|🗣️|🚶‍♂️|🤝|จ้า|กันเลย/g, '').trim().substring(0, 100);
+        lText = lText.replace(/✨|💼|🧱|🌟|🗣️|🚶‍♂️|🤝|จ้า|กันเลย/g, '').trim().substring(0, 80);
+        coupleText = coupleText.replace(/✨|💼|🧱|🌟|🗣️|🚶‍♂️|🤝|จ้า|กันเลย/g, '').trim().substring(0, 80);
+
+        let dColor = CF_DAY_COLORS[i];
+        if (dColor === '#000000') dColor = '#7f8c8d';
+
+        const luckyNum = '' + Math.floor(seededRandom(seed + 4) * 10) + Math.floor(seededRandom(seed + 5) * 10);
+        let colorStr = '-';
+        if (typeof DASH_DAY_COLORS !== 'undefined' && DASH_DAY_COLORS[CF_DAY_NAMES[i]]) {
+            const colors = DASH_DAY_COLORS[CF_DAY_NAMES[i]].colors;
+            if(colors && colors.length > 0) colorStr = colors.join(', ');
+        }
+
+        slidesHtml += `
+            <div class="cf-slide" id="cf-slide-${i+2}" style="width: 1080px; height: 1080px; position: relative; font-family: 'Sarabun', 'Prompt', sans-serif !important; overflow: hidden; ${spaceBg}">
+                \
+                <div style="position:absolute; bottom:20px; right:30px; font-size:18px; color:rgba(255,255,255,0.3); font-weight:bold;">🔮 สยามโหรามงคล (Siamhora)</div>
+                
+                <div style="position:absolute; top:80px; left:290px; width:500px; height:80px; background:rgba(20,20,35,0.85); border:2px solid rgba(212,175,55,0.4); border-radius:40px; box-shadow:0 15px 20px rgba(0,0,0,0.4); display:flex; align-items:center; padding:0 30px;">
+                    <div style="width:40px; height:40px; border-radius:50%; background:${dColor}; margin-right:20px;"></div>
+                    <h2 style="color:#ffffff; font-size:44px; font-weight:bold; margin:0;">คนเกิดวัน${CF_DAY_NAMES[i]}</h2>
+                </div>
+
+                <div style="position:absolute; top:210px; left:90px; width:900px; height:170px; background:rgba(20,20,35,0.7); border:2px solid rgba(212,175,55,0.3); border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.5);">
+                    <div style="width:100%; height:8px; background:${dColor}; border-radius:20px 20px 0 0;"></div>
+                    <div style="padding: 25px 30px;">
+                        <div style="color:#d4af37; font-size:30px; font-weight:bold; margin-bottom:15px;">💼 การงาน</div>
+                        <div style="color:#f0f0f0; font-size:24px;">${wText}</div>
+                    </div>
+                </div>
+
+                <div style="position:absolute; top:410px; left:90px; width:900px; height:170px; background:rgba(20,20,35,0.7); border:2px solid rgba(212,175,55,0.3); border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.5);">
+                    <div style="width:100%; height:8px; background:${dColor}; border-radius:20px 20px 0 0;"></div>
+                    <div style="padding: 25px 30px;">
+                        <div style="color:#d4af37; font-size:30px; font-weight:bold; margin-bottom:15px;">💰 การเงิน</div>
+                        <div style="color:#f0f0f0; font-size:24px;">${fText}</div>
+                    </div>
+                </div>
+
+                <div style="position:absolute; top:610px; left:90px; width:900px; height:200px; background:rgba(20,20,35,0.7); border:2px solid rgba(212,175,55,0.3); border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.5);">
+                    <div style="width:100%; height:8px; background:${dColor}; border-radius:20px 20px 0 0;"></div>
+                    <div style="padding: 25px 30px;">
+                        <div style="color:#d4af37; font-size:30px; font-weight:bold; margin-bottom:15px;">❤️ ความรัก</div>
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <div><span style="color:#d4af37; font-size:22px; font-weight:bold;">โสด:</span> <span style="color:#e0e0e0; font-size:22px;">${lText}</span></div>
+                            <div><span style="color:#d4af37; font-size:22px; font-weight:bold;">มีคู่:</span> <span style="color:#e0e0e0; font-size:22px;">${coupleText}</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="position:absolute; top:850px; left:90px; width:900px; height:90px; background:rgba(20,20,35,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:25px; box-shadow:0 10px 15px rgba(0,0,0,0.3); display:flex; align-items:center; padding:0 40px;">
+                    <div style="color:${dColor}; font-size:26px; font-weight:bold; flex:1;">✨ ทริคเสริมดวง</div>
+                    <div style="color:#dcdde1; font-size:24px; flex:1;">เลขมงคล: ${luckyNum}</div>
+                    <div style="color:#dcdde1; font-size:24px; flex:1;">สีมงคล: ${colorStr}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    area.innerHTML = slidesHtml;
+    const containerWidth = area.parentElement.clientWidth;
+    const scale = (containerWidth - 20) / 1080;
+    const slides = document.querySelectorAll('.cf-slide');
+    slides.forEach(s => {
+        s.style.transform = `scale(${scale})`;
+        s.style.transformOrigin = 'top left';
+        s.style.marginBottom = `-${1080 * (1 - scale) - 20}px`;
     });
+}
 
+
+async function postCarouselToFacebook() {
     try {
-        await document.fonts.ready;
-        const dateObj = new Date(dateStr);
-        const dateThai = formatDateThai(dateObj);
+        const images = await generateAllCarouselDataUrls();
+        if (!images || images.length === 0) return;
         
-        const canvas = document.createElement('canvas');
-        canvas.width = 1080;
-        canvas.height = 1080;
-        const ctx = canvas.getContext('2d');
-
-        if (category === 'zodiac') await drawZodiacCanvas(ctx, dateObj, dateThai);
-        else if (category === 'sevendays') await drawSevendaysCanvas(ctx, dateObj, dateThai);
-        else if (category === 'tarot') await drawTarotCanvas(ctx, dateObj, dateThai);
-        else if (category === 'zodiac_all') await drawZodiacAllCanvas(ctx, dateObj, dateThai);
-        else if (category === 'sevendays_all') await drawSevendaysAllCanvas(ctx, dateObj, dateThai);
-        else if (category === 'thai_ascendant_all') await drawThaiAscendantAllCanvas(ctx, dateObj, dateThai);
-        else if (category === 'thai_animal_all') await drawThaiAnimalAllCanvas(ctx, dateObj, dateThai);
-        else throw new Error("ไม่พบเทมเพลตที่รองรับ");
-
-        const dataUrl = canvas.toDataURL('image/png', 0.9);
+        const dateStr = document.getElementById('cfDate').value;
+        const msg = '🔮 ดวงรายวันประจำวันที่ ' + dateStr + '\n\nพร้อมเสิร์ฟดวง 7 วัน เกิดปัง เกิดปิ๊ง แค่ไหน เช็คเลย! 👉\n\n#สยามโหรามงคล #ดวงรายวัน #ดูดวง';
         
-        Swal.close();
-
+        let imagesHtml = '';
+        images.forEach((img) => {
+            imagesHtml += `<img src="${img}" style="width: 48%; margin: 1%; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.3); display: inline-block;">`;
+        });
+        
         // Preview Modal
         const confirmResult = await Swal.fire({
-            title: 'ยืนยันการโพสต์',
+            title: 'ยืนยันการโพสต์อัลบั้ม',
                         html: `
                 <div style="background: #ffffff; color: #1c1e21; border-radius: 12px; width: 100%; text-align: left; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;">
                     <div style="display: flex; padding: 12px 16px; gap: 10px; align-items: center;">
@@ -845,7 +1290,212 @@ async function postToFacebook() {
                             <span style="font-size: 13px; color: #65676b;">เพิ่งครู่ · 🌎</span>
                         </div>
                     </div>
-                    <div style="padding: 4px 16px 16px 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; color: #050505; max-height: 200px; overflow-y: auto;">${message}</div>
+                    <div style="padding: 4px 16px 16px 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; color: #050505; max-height: 200px; overflow-y: auto;">${msg}</div>
+                    <div style="max-height: 300px; overflow-y: auto; text-align: center; border-top: 1px solid #eee; background: #f0f2f5; padding: 5px;">
+                        ${imagesHtml}
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: left; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid #333;">
+                    <h4 style="margin: 0 0 10px 0; font-size: 15px; color: #d4af37;"><i class="fas fa-cog"></i> ตั้งค่าเพิ่มเติม (Optional)</h4>
+                    <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">ตั้งเวลาโพสต์ล่วงหน้า (ถ้ามี):</label>
+                    <input type="datetime-local" id="swalScheduleTime" style="width: 95%; padding: 10px; margin-bottom: 15px; border-radius: 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; font-family: inherit; font-size: 14px;">
+                    <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">เช็คอินสถานที่ (รหัส Place ID):</label>
+                    <input type="text" id="swalPlaceId" placeholder="เช่น 108398189188044 (Bangkok)" style="width: 95%; padding: 10px; border-radius: 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; font-family: inherit; font-size: 14px;">
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: '<i class="fas fa-paper-plane"></i> ยืนยันโพสต์อัลบั้ม',
+            cancelButtonText: 'ยกเลิก',
+            background: '#1e1e1e',
+            color: '#fff',
+            width: '600px',
+            preConfirm: () => {
+                return {
+                    scheduleTime: document.getElementById('swalScheduleTime') ? document.getElementById('swalScheduleTime').value : '',
+                    placeId: document.getElementById('swalPlaceId') ? document.getElementById('swalPlaceId').value.trim() : ''
+                };
+            }
+        });
+
+        if (!confirmResult.isConfirmed) {
+            return;
+        }
+
+        let scheduledPublishTime = null;
+        if (confirmResult.value && confirmResult.value.scheduleTime) {
+            scheduledPublishTime = Math.floor(new Date(confirmResult.value.scheduleTime).getTime() / 1000);
+        }
+        let place = (confirmResult.value && confirmResult.value.placeId) ? confirmResult.value.placeId : null;
+
+        Swal.fire({
+            title: 'กำลังอัปโหลดโพสต์อัลบั้มลงเพจ...',
+            text: 'กรุณารอสักครู่...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        const res = await fetch('http://127.0.0.1:3000/api/facebook-post-multi', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg, images: images , scheduledPublishTime: scheduledPublishTime, place: place })
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+            Swal.fire('สำเร็จ!', 'โพสต์ลงเพจ Facebook เรียบร้อยแล้ว', 'success');
+        } else {
+            Swal.fire('ข้อผิดพลาด', data.error || 'ไม่สามารถโพสต์ได้', 'error');
+        }
+    } catch (err) {
+        console.error(err);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้: ' + err.message, 'error');
+    }
+}
+
+async function downloadCarouselImages() {
+    const images = await generateAllCarouselDataUrls();
+    if (!images || images.length === 0) return;
+    
+    images.forEach((dataUrl, idx) => {
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = `carousel_image_${idx + 1}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+}
+
+
+
+// -----------------------------------------------------
+// NATIVE SINGLE CANVAS GENERATOR
+// -----------------------------------------------------
+async function generateSingleNativeCanvas() {
+    const category = document.getElementById('categorySelect').value;
+    const dateStr = document.getElementById('dateSelect').value;
+    const targetId = document.getElementById('targetSelect').value;
+    
+    if (!dateStr) {
+        throw new Error('กรุณาเลือกวันที่');
+    }
+    
+    await document.fonts.ready;
+    const dateObj = new Date(dateStr);
+    const dateThai = formatDateThai(dateObj);
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1080;
+    const ctx = canvas.getContext('2d');
+    
+    const bgImage = await new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = 'images/carousel_bg.png';
+    });
+    
+    function drawSpaceBg() {
+        if (bgImage) {
+            ctx.drawImage(bgImage, 0, 0, 1080, 1080);
+        } else {
+            const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
+            bgGrad.addColorStop(0, '#0f0c29');
+            bgGrad.addColorStop(0.5, '#302b63');
+            bgGrad.addColorStop(1, '#24243e');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, 1080, 1080);
+        }
+
+        const shadowGrad = ctx.createLinearGradient(0, 0, 0, 1080);
+        shadowGrad.addColorStop(0, 'rgba(0,0,0,0.5)');
+        shadowGrad.addColorStop(0.2, 'rgba(0,0,0,0)');
+        shadowGrad.addColorStop(0.8, 'rgba(0,0,0,0)');
+        shadowGrad.addColorStop(1, 'rgba(0,0,0,0.6)');
+        ctx.fillStyle = shadowGrad;
+        ctx.fillRect(0, 0, 1080, 1080);
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.font = 'bold 20px "Sarabun", sans-serif';
+        ctx.fillText('🔮 สยามโหรามงคล (Siamhora)', 1040, 1040);
+    }
+    
+    if (category === 'zodiac') {
+        if (typeof generateDailyZodiacFortunes !== 'function') throw new Error("ไม่พบฟังก์ชันดึงข้อมูล 12 ราศี");
+        const predictions = generateDailyZodiacFortunes(dateObj);
+        const pred = predictions.find(p => p.id == targetId);
+        if (!pred) throw new Error("ไม่พบข้อมูลราศีที่เลือก");
+        drawSpaceBg();
+        await drawZodiacCanvas(ctx, dateObj, dateThai);
+    } else if (category === 'sevendays') {
+        drawSpaceBg();
+        await drawSevendaysCanvas(ctx, dateObj, dateThai);
+    } else if (category === 'tarot') {
+        await drawTarotCanvas(ctx, dateObj, dateThai);
+    } else if (category === 'zodiac_all') {
+        await drawZodiacAllCanvas(ctx, dateObj, dateThai);
+    } else if (category === 'sevendays_all') {
+        await drawSevendaysAllCanvas(ctx, dateObj, dateThai);
+    } else if (category === 'thai_ascendant_all') {
+        await drawThaiAscendantAllCanvas(ctx, dateObj, dateThai);
+    } else if (category === 'thai_animal_all') {
+        await drawThaiAnimalAllCanvas(ctx, dateObj, dateThai);
+    }
+    
+    return canvas;
+}
+
+async function downloadImage() {
+    try {
+        Swal.fire({
+            title: 'กำลังสร้างรูปภาพ...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+        const canvas = await generateSingleNativeCanvas();
+        const dataUrl = canvas.toDataURL('image/png', 0.9);
+        Swal.close();
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = `preview_image.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    } catch (err) {
+        console.error(err);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถสร้างภาพได้: ' + err.message, 'error');
+    }
+}
+
+async function postSingleToFacebook() {
+    try {
+        Swal.fire({
+            title: 'กำลังสร้างรูปภาพ...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+        const canvas = await generateSingleNativeCanvas();
+        const dataUrl = canvas.toDataURL('image/png', 0.9);
+        Swal.close();
+        
+        const msg = `ดวงอัตโนมัติประจำวัน\nฝากติดตามเพจ สยามโหรามงคล ด้วยนะครับ`;
+        
+        const confirmResult = await Swal.fire({
+            title: 'ยืนยันการโพสต์ (ภาพเดียว)',
+            html: `
+                <div style="background: #ffffff; color: #1c1e21; border-radius: 12px; width: 100%; text-align: left; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;">
+                    <div style="display: flex; padding: 12px 16px; gap: 10px; align-items: center;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #ccc; overflow: hidden;">
+                            <img src="https://ui-avatars.com/api/?name=Siam&background=4F46E5&color=fff" style="width: 100%; height: 100%;">
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-weight: 600; font-size: 15px; color: #050505;">สยามโหรามงคล</span>
+                            <span style="font-size: 13px; color: #65676b;">เพิ่งครู่ · 🌎</span>
+                        </div>
+                    </div>
+                    <div style="padding: 4px 16px 16px 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; color: #050505;">${msg}</div>
                     <img src="${dataUrl}" style="width: 100%; display: block; border-top: 1px solid #eee;">
                 </div>
                 <div style="margin-top: 20px; text-align: left; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid #333;">
@@ -870,9 +1520,7 @@ async function postToFacebook() {
             }
         });
 
-        if (!confirmResult.isConfirmed) {
-            return;
-        }
+        if (!confirmResult.isConfirmed) return;
 
         let scheduledPublishTime = null;
         if (confirmResult.value && confirmResult.value.scheduleTime) {
@@ -881,50 +1529,29 @@ async function postToFacebook() {
         let place = (confirmResult.value && confirmResult.value.placeId) ? confirmResult.value.placeId : null;
 
         Swal.fire({
-            title: 'กำลังโพสต์ลง Facebook...',
-            text: 'โปรดรอสักครู่ ระบบกำลังส่งข้อมูล',
+            title: 'กำลังโพสต์ลงเพจ...',
             allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading(); }
+            didOpen: () => Swal.showLoading()
         });
 
-        // Send to backend
-        const response = await fetch('http://127.0.0.1:3000/api/facebook-post', {
+        const res = await fetch('http://127.0.0.1:3000/api/facebook-post', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                image: dataUrl,
-                message: message
-            , scheduledPublishTime: scheduledPublishTime, place: place })
+            body: JSON.stringify({ message: msg, image: dataUrl , scheduledPublishTime: scheduledPublishTime, place: place })
         });
-
-        const result = await response.json();
         
-        if (response.ok && result.success) {
-            Swal.fire({
-                icon: 'success',
-                title: 'โพสต์ลงเพจสำเร็จ!',
-                html: `สามารถตรวจสอบได้ที่หน้า Facebook Page ของคุณ<br><small>Post ID: ${result.post_id}</small>`,
-                background: '#1e1e1e',
-                color: '#fff'
-            });
+        const data = await res.json();
+        if (data.success) {
+            Swal.fire('สำเร็จ!', 'โพสต์ลงเพจ Facebook เรียบร้อยแล้ว', 'success');
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'เกิดข้อผิดพลาดในการโพสต์',
-                text: result.error || 'ไม่สามารถโพสต์ได้',
-                background: '#1e1e1e',
-                color: '#fff'
-            });
+            Swal.fire('ข้อผิดพลาด', data.error || 'ไม่สามารถโพสต์ได้', 'error');
         }
     } catch (err) {
-        console.error('Error posting to FB:', err);
+        console.error(err);
         Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้: ' + err.message, 'error');
     }
 }
 
-// ----------------------------------------------------
-// ระบบสร้างข้อความโพสต์อัตโนมัติ (Generate Post Text)
-// ----------------------------------------------------
 function generatePostText() {
     const category = document.getElementById('categorySelect').value;
     const dateVal = document.getElementById('dateSelect').value;
@@ -937,6 +1564,21 @@ function generatePostText() {
     let hashtags = "#ดูดวง #ดวงวันนี้ #สยามโหรามงคล #ดูดวงแม่นๆ ";
 
     switch(category) {
+        case 'zodiac':
+            title = "✨ ดวงราศีประจำ" + dateThai + " ✨";
+            content = "ดวงของคุณวันนี้จะเป็นอย่างไร? เช็คดวงด่วนๆ ได้ในภาพเลยครับ! 👇";
+            hashtags += "#ดวงราศี #ราศี";
+            break;
+        case 'sevendays':
+            title = "🌟 ดวงคนเกิด 7 วัน ประจำ" + dateThai + " 🌟";
+            content = "คนเกิดวันไหนกำลังดวงขึ้น? เช็คดวงของคุณวันนี้ได้เลยครับ! 👇";
+            hashtags += "#ดวงคนเกิด7วัน #ดวงรายวัน";
+            break;
+        case 'tarot':
+            title = "🎴 ไพ่ยิปซีประจำ" + dateThai + " 🎴";
+            content = "ไพ่ยิปซีบอกอะไรกับคุณบ้าง? มาดูคำทำนายจากไพ่กันครับ 👇";
+            hashtags += "#ไพ่ยิปซี #ดูดวงไพ่ยิปซี";
+            break;
         case 'zodiac_all':
             title = "✨ สรุปดวง 12 ราศี ประจำ" + dateThai + " ✨";
             content = "ดวงของคุณวันนี้จะเป็นอย่างไร? ราศีไหนมีเกณฑ์รับโชคใหญ่ หรือต้องระวังเรื่องอะไรเป็นพิเศษ \nเช็คดวงด่วนๆ ได้ในภาพเลยครับ! 👇";
@@ -947,30 +1589,15 @@ function generatePostText() {
             content = "คนเกิดวันไหนกำลังดวงขึ้น? วันไหนมีเกณฑ์รับโชค หรือต้องระวังเรื่องอะไรบ้าง \nเช็คดวงของคุณวันนี้ได้เลยครับ! 👇";
             hashtags += "#ดวงคนเกิด7วัน #ดวงรายวัน";
             break;
-        case 'zodiac_animal_all':
-            title = "🐲 สรุปดวง 12 ปีนักษัตร ประจำ" + dateThai + " 🐲";
-            content = "ปีนักษัตรไหนกำลังจะรวย? ปีไหนมีเกณฑ์พ้นเคราะห์ \nเช็คดวงชะตาของแต่ละปีนักษัตรประจำวันนี้กันครับ 👇";
-            hashtags += "#ดวง12ปีนักษัตร #ปีนักษัตร";
-            break;
         case 'thai_ascendant_all':
             title = "🔮 สรุปดวง 12 ลัคนาราศี ประจำ" + dateThai + " 🔮";
             content = "ลัคนาราศีไหนจะดวงปังสุดๆ ในวันนี้? ใครมีเกณฑ์ได้ลาภก้อนโต \nเช็คดวงตามหลักโหราศาสตร์ไทยได้ที่นี่เลยครับ 👇";
             hashtags += "#ดวง12ลัคนา #โหราศาสตร์ไทย";
             break;
-        case 'daily_12zodiac':
-            title = "🔮 ดวงรายวัน 12 ราศี ประจำ" + dateThai + " 🔮";
-            content = "ดวงประจำวันของทั้ง 12 ราศีมาแล้วครับ เช็คดวงการงาน การเงิน ความรัก ได้เลย! 👇";
-            hashtags += "#ดวง12ราศี";
-            break;
-        case 'tarot_daily':
-            title = "🎴 ไพ่ยิปซีทำนายดวง ประจำ" + dateThai + " 🎴";
-            content = "ไพ่ยิปซีประจำวันบอกอะไรกับคุณบ้าง? มาดูคำทำนายจากไพ่กันครับ 👇";
-            hashtags += "#ไพ่ยิปซี #ดูดวงไพ่ยิปซี";
-            break;
-        case 'esiimsi_daily':
-            title = "🏮 เซียมซีทำนายโชค ประจำ" + dateThai + " 🏮";
-            content = "เซียมซีประจำวันนี้บอกอะไรเกี่ยวกับดวงชะตาของคุณ? มาอ่านคำทำนายกันครับ 👇";
-            hashtags += "#เซียมซี #เสี่ยงทาย";
+        case 'thai_animal_all':
+            title = "🐲 สรุปดวง 12 ปีนักษัตร ประจำ" + dateThai + " 🐲";
+            content = "ปีนักษัตรไหนกำลังจะรวย? ปีไหนมีเกณฑ์พ้นเคราะห์ \nเช็คดวงชะตาของแต่ละปีนักษัตรประจำวันนี้กันครับ 👇";
+            hashtags += "#ดวง12ปีนักษัตร #ปีนักษัตร";
             break;
         default:
             title = "✨ สรุปดวงประจำ" + dateThai + " ✨";
