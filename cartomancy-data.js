@@ -383,18 +383,79 @@ const CARTOMANCY_DATA = {
     }
 };
 
-// สุ่มไพ่แบบ 1 ใบ
+// 32-Card Standard subset (Removing cards 2-6)
+let CARTOMANCY_DATA_32 = {};
+Object.entries(CARTOMANCY_DATA).forEach(([key, val]) => {
+    const rank = key.split('_')[1];
+    if (!['2', '3', '4', '5', '6'].includes(rank)) {
+        CARTOMANCY_DATA_32[key] = val;
+    }
+});
+
+// Active dataset defaults to the 32-card textbook set
+let ACTIVE_CARTOMANCY_DATA = CARTOMANCY_DATA_32;
+
+// Function to synchronize meanings with Firestore cartomancy_db_32 collection (Supports Firebase v8 & v9)
+function syncCartomancyWithFirestore() {
+    const firestoreDb = typeof window !== 'undefined' ? window.firebaseDb : null;
+    if (firestoreDb) {
+        // v8 Compatibility (Traditional API)
+        if (typeof firestoreDb.collection === 'function') {
+            firestoreDb.collection("cartomancy_db_32").get().then((snapshot) => {
+                if (!snapshot.empty) {
+                    const onlineData = {};
+                    snapshot.forEach((doc) => {
+                        onlineData[doc.id] = doc.data();
+                    });
+                    ACTIVE_CARTOMANCY_DATA = onlineData;
+                    console.log("Cartomancy 32-card deck successfully synced with Firestore online database (v8).");
+                }
+            }).catch((err) => {
+                console.warn("Could not sync with Firestore v8 (using local fallback dataset):", err);
+            });
+        } 
+        // v9 Compatibility (Modular API)
+        else if (typeof window.collection === 'function' && typeof window.getDocs === 'function') {
+            try {
+                const colRef = window.collection(firestoreDb, "cartomancy_db_32");
+                window.getDocs(colRef).then((snapshot) => {
+                    if (!snapshot.empty) {
+                        const onlineData = {};
+                        snapshot.forEach((doc) => {
+                            onlineData[doc.id] = doc.data();
+                        });
+                        ACTIVE_CARTOMANCY_DATA = onlineData;
+                        console.log("Cartomancy 32-card deck successfully synced with Firestore online database (v9).");
+                    }
+                }).catch((err) => {
+                    console.warn("Could not sync with Firestore v9 (using local fallback dataset):", err);
+                });
+            } catch (e) {
+                console.warn("Error setting up Firestore v9 queries:", e);
+            }
+        }
+    }
+}
+
+// Automatically sync when loaded in browser
+if (typeof window !== 'undefined') {
+    window.addEventListener('load', () => {
+        setTimeout(syncCartomancyWithFirestore, 600);
+    });
+}
+
+// สุ่มไพ่แบบ 1 ใบ (จาก 32 ใบ)
 function drawSingleCartomancy() {
-    const keys = Object.keys(CARTOMANCY_DATA);
+    const keys = Object.keys(ACTIVE_CARTOMANCY_DATA);
     const randomKey = keys[Math.floor(Math.random() * keys.length)];
-    const cardData = Object.assign({}, CARTOMANCY_DATA[randomKey]);
+    const cardData = Object.assign({}, ACTIVE_CARTOMANCY_DATA[randomKey]);
     cardData.id = randomKey;
     return cardData;
 }
 
-// สุ่มไพ่แบบ 3 ใบ (ไม่ซ้ำกัน)
+// สุ่มไพ่แบบ 3 ใบ (จาก 32 ใบ ไม่ซ้ำกัน)
 function drawThreeCartomancy() {
-    const keys = Object.keys(CARTOMANCY_DATA);
+    const keys = Object.keys(ACTIVE_CARTOMANCY_DATA);
     let drawn = [];
     while (drawn.length < 3) {
         const randomKey = keys[Math.floor(Math.random() * keys.length)];
@@ -403,7 +464,7 @@ function drawThreeCartomancy() {
         }
     }
     return drawn.map(key => {
-        const cardData = Object.assign({}, CARTOMANCY_DATA[key]);
+        const cardData = Object.assign({}, ACTIVE_CARTOMANCY_DATA[key]);
         cardData.id = key;
         return cardData;
     });
@@ -411,5 +472,5 @@ function drawThreeCartomancy() {
 
 // นำออกให้ใช้งาน
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { CARTOMANCY_DATA, drawSingleCartomancy, drawThreeCartomancy };
+    module.exports = { CARTOMANCY_DATA, drawSingleCartomancy, drawThreeCartomancy, ACTIVE_CARTOMANCY_DATA, syncCartomancyWithFirestore };
 }

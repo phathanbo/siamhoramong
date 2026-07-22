@@ -653,8 +653,11 @@
                 // ปีนักษัตร — match text of option
                 if (m.zodiac) {
                     const sel = document.getElementById('birthYear');
-                    for (const opt of sel.options) {
-                        if (opt.text.includes(m.zodiac)) { sel.value = opt.value; break; }
+                    for (let i = 0; i < sel.options.length; i++) {
+                        if (sel.options[i].text.includes(m.zodiac)) {
+                            sel.selectedIndex = i;
+                            break;
+                        }
                     }
                 }
 
@@ -2172,7 +2175,7 @@ ${houses[r][c].name}
                 const zIndex = (zodiacIndex + i) % 12;
                 const z = zodiacs[zIndex];
                 houses12HTML += `
-                <div style="background:rgba(15, 20, 30, 0.6); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="background:rgba(241, 241, 241, 1); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;">
                     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border); padding-bottom: 5px; margin-bottom: 8px;">
                         <span style="font-size:14px; font-weight:bold; color:var(--text);">${houseNames12[i]}</span>
                         <span style="font-size:18px;">${z.icon}</span>
@@ -2268,59 +2271,6 @@ ${houses[r][c].name}
 </div>
 `;
 
-            const lunarMonthNames = [
-                "", "เดือน 1 (ธันวาคม)", "เดือน 2 (มกราคม)", "เดือน 3 (กุมภาพันธ์)", "เดือน 4 (มีนาคม)",
-                "เดือน 5 (เมษายน)", "เดือน 6 (พฤษภาคม)", "เดือน 7 (มิถุนายน)", "เดือน 8 (กรกฎาคม)",
-                "เดือน 9 (สิงหาคม)", "เดือน 10 (กันยายน)", "เดือน 11 (ตุลาคม)", "เดือน 12 (พฤศจิกายน)"
-            ];
-
-            let monthRow = Math.floor(monthIndex / 7);
-            let monthCol = monthIndex % 7;
-            let monthHouseName = houses[monthRow][monthCol].name;
-            let monthHouseNum = matrix[monthRow][monthCol];
-            let monthHouseMeaning = houseMeaning[monthHouseName];
-
-            let monthRelation = numberToHousesList[monthHouseNum].filter(h => h !== monthHouseName);
-            if (monthRelation.length === 0) monthRelation = ["ไม่มี"];
-            let monthReading = generateRelationReading(monthHouseName, monthRelation);
-
-            topReport += `
-<div class="card" style="border-left: 5px solid #2980b9 !important;">
-    <h3 style="color:var(--gold-lt); margin-top:0;">🌙 ดวงชะตารายเดือน (${lunarMonthNames[targetMonthNum] || 'เดือนที่ ' + targetMonthNum})</h3>
-    <p>
-        <b>จุดอายุเดือนตกที่ภพ:</b> ${monthHouseName} (ตกเลข ${monthHouseNum} ดาว${planets[monthHouseNum].name})<br>
-        <span style="font-size:13px; color:var(--muted);">(ความหมายภพหลัก: ${monthHouseMeaning})</span>
-    </p>
-    <div style="background:rgba(15,20,30,0.6); padding:15px; border-radius:8px; border:1px solid var(--border); margin-top:10px;">
-        <p style="margin-top:0;"><b>🔥 สิ่งที่จะเกิดขึ้นในเดือนนี้:</b></p>
-        <div style="font-size:15px;">${monthReading}</div>
-    </div>
-</div>
-`;
-
-            let dayRow = Math.floor(dayIndex / 7);
-            let dayCol = dayIndex % 7;
-            let dayHouseName = houses[dayRow][dayCol].name;
-            let dayHouseNum = matrix[dayRow][dayCol];
-            let dayHouseMeaning = houseMeaning[dayHouseName];
-
-            let dayRelation = numberToHousesList[dayHouseNum].filter(h => h !== dayHouseName);
-            if (dayRelation.length === 0) dayRelation = ["ไม่มี"];
-            let dayReading = generateRelationReading(dayHouseName, dayRelation);
-
-            topReport += `
-<div class="card" style="border-left: 5px solid #27ae60 !important;">
-    <h3 style="color:var(--green); margin-top:0;">☀️ ดวงชะตารายวัน (วันที่ ${targetDateNum})</h3>
-    <p>
-        <b>จุดอายุวันตกที่ภพ:</b> ${dayHouseName} (ตกเลข ${dayHouseNum} ดาว${planets[dayHouseNum].name})<br>
-        <span style="font-size:13px; color:var(--muted);">(ความหมายภพหลัก: ${dayHouseMeaning})</span>
-    </p>
-    <div style="background:rgba(15,20,30,0.6); padding:15px; border-radius:8px; border:1px solid var(--border); margin-top:10px;">
-        <p style="margin-top:0;"><b>🔥 สิ่งที่จะเกิดขึ้นในวันนี้:</b></p>
-        <div style="font-size:15px;">${dayReading}</div>
-    </div>
-</div>
-`;
 
             /* =====================================================
                วิเคราะห์ความรักและเนื้อคู่ (ปัตนิ)
@@ -2563,9 +2513,9 @@ ${houses[r][c].name}
                     matrix[1][0]
                 );
 
-            report += `
+report += `
 
-<div class="card">
+<div class="card" data-pdf-new-page="true">
 
 <h3>🔮 เลขโยค</h3>
 
@@ -2574,7 +2524,7 @@ ${houses[r][c].name}
 <b>${yoga}</b>
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> ผลรวมของฐาน 1 และฐาน 2 ตำแหน่งแรก (อัตตะ + ตนุ) บอกถึงวาสนาตั้งต้น หรือพื้นดวงแต่กำเนิดว่าชีวิตจะมุ่งไปทางใด<br>
     <b>วิธีดู:</b> ดูความหมายของเลขที่ได้ (1-9) เพื่อดูเป้าหมายหลัก หรือวิถีชีวิตดั้งเดิม
 </div>
@@ -2608,7 +2558,7 @@ ${broken.digits.join(' + ')}
 ${broken.total}
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> การนำตัวเลขตัวแรกในฐาน 4 มาแยกหลักแล้วบวกกัน เพื่อหาเลขศาสตร์แฝง หรือจุดอ่อนที่ซ่อนอยู่<br>
     <b>วิธีดู:</b> ถ้ารวมได้เลขเสีย ต้องระวังอุปสรรคที่เกิดจากตัวเอง หรือปัญหาสุขภาพแอบแฝง
 </div>
@@ -2638,7 +2588,7 @@ ${broken.total}
 ${maha}
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> ดาวที่มีกำลังสูงส่งในฐาน 4 (กำลังพระเคราะห์) หากได้คะแนนรวม 20 ขึ้นไป ถือว่าดวงแข็ง<br>
     <b>วิธีดู:</b> ยิ่งคะแนนสูง ยิ่งตกน้ำไม่ไหลตกไฟไม่ไหม้ ฝ่าฟันอุปสรรคและพลิกฟื้นสถานการณ์ได้ดี
 </div>
@@ -2664,7 +2614,7 @@ ${maha}
 ${life}
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> ผลรวมของตัวเลขในฐาน 4 ทั้ง 7 หลัก สะท้อนถึงพลังงานชีวิตโดยรวม<br>
     <b>วิธีดู:</b> ปกติจะอยู่ราวๆ 70-120 ยิ่งคะแนนมาก แสดงถึงต้นทุนชีวิต หรือพลังในการขับเคลื่อนอุปสรรคที่สูง
 </div>
@@ -2724,7 +2674,7 @@ ${wealthText
                 }
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> คู่เลขมงคล (เช่น 24, 36, 42, 45, 54) บ่งบอกถึงพรสวรรค์ในการหาเงิน หรือโชคลาภ<br>
     <b>วิธีดู:</b> หากพบเลขเหล่านี้เรียงกันในแนวตั้ง หรือเป็นผลรวมฐาน 4 มักจะมีช่องทางหาเงินเก่ง หยิบจับอะไรเป็นเงินเป็นทอง หรือมีคนคอยสนับสนุนเรื่องการเงิน
 </div>
@@ -2761,7 +2711,7 @@ ${bad
                 }
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> คู่เลขที่มักส่งผลเสีย (เช่น 13, 18, 31, 38) บ่งบอกถึงอุปสรรค ศัตรู หรือภาระหนัก<br>
     <b>วิธีดู:</b> หากพบเรียงกันในแนวตั้ง หรือในฐาน 4 ให้ระวังเรื่องที่เกี่ยวข้องกับความใจร้อน การแตกหัก ทะเลาะเบาะแว้ง หรือการถูกหักหลัง
 </div>
@@ -2798,7 +2748,7 @@ ${accident
                 }
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> คู่เลขที่มักเกี่ยวข้องกับอุบัติเหตุ การผ่าตัด เลือดตกยางออก (เช่น 13, 17, 31, 37, 73)<br>
     <b>วิธีดู:</b> หากพบเรียงกันในแนวตั้ง หรือในฐาน 4 ควรใช้ชีวิตด้วยความไม่ประมาท อาจแก้เคล็ดด้วยการบริจาคเลือด ทำฟัน หรือทำบุญโลงศพ
 </div>
@@ -2835,7 +2785,7 @@ ${king
                 }
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> คู่เลขที่ส่งเสริมให้ได้รับความช่วยเหลือ หรือได้โชคลาภมาง่ายๆ (เช่น 19, 24, 42, 45, 55)<br>
     <b>วิธีดู:</b> หากพบเรียงกันในแนวตั้ง หรือในฐาน 4 บ่งบอกว่ามักมีผู้ใหญ่อุปถัมภ์ มีบุญเก่าคอยหนุนนำ ทำให้ตกน้ำไม่ไหลตกไฟไม่ไหม้
 </div>
@@ -2870,7 +2820,7 @@ ${friend
                 }
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> ดาวตัวตน (อัตตะ) และดาวการกระทำ (ตนุ) เป็นมิตรกัน<br>
     <b>วิธีดู:</b> หากเป็นมิตร ทำอะไรมักจะราบรื่น คิดและทำไปในทิศทางเดียวกัน มักมีผู้คอยช่วยเหลือ
 </div>
@@ -2905,7 +2855,7 @@ ${enemy
                 }
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> ดาวตัวตน (อัตตะ) และดาวการกระทำ (ตนุ) เป็นศัตรูกัน<br>
     <b>วิธีดู:</b> หากเป็นศัตรู มักมีความขัดแย้งในตัวเอง หรือเจออุปสรรคขัดขวางบ่อยครั้ง ต้องใช้ความพยายามมากกว่าปกติ
 </div>
@@ -2940,7 +2890,7 @@ ${elementP
                 }
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> ดาวตัวตน (อัตตะ) และดาวการกระทำ (ตนุ) เป็นธาตุเดียวกัน<br>
     <b>วิธีดู:</b> หากเป็นคู่ธาตุ จะมีความมั่นคง หนุนนำให้เกิดความเจริญก้าวหน้า พื้นฐานชีวิตแน่นหนา ไม่ล้มง่าย
 </div>
@@ -2975,7 +2925,7 @@ ${powerP
                 }
 </p>
 
-<div style="font-size:12px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+<div class="satta-subnote">
     <b>ความหมาย:</b> ดาวตัวตน (อัตตะ) และดาวการกระทำ (ตนุ) รวมกำลังพระเคราะห์ได้ 27 ถือเป็นคู่สมพล<br>
     <b>วิธีดู:</b> หากเป็นคู่สมพล จะมีพลังขับเคลื่อนในชีวิตสูง ประสบความสำเร็จไว มีอิทธิพลและบารมีต่อคนรอบข้าง
 </div>
@@ -3022,7 +2972,7 @@ ${powerP
         <td style="font-size:14px; text-align:left; border-right: 1px dashed var(--border);">
             ${item.meaning}
         </td>
-        <td rowspan="${group.length}" style="font-size:13px; text-align:left; background-color:rgba(15, 20, 30, 0.4); vertical-align:top; padding-top:12px;">
+        <td rowspan="${group.length}" style="font-size:13px; text-align:left; background-color:rgba(255, 255, 255, 0.4); vertical-align:top; padding-top:12px;">
             ${item.reading}
         </td>
     </tr>`;
@@ -3048,10 +2998,11 @@ ${powerP
                 <div class="card" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; background: none; border: none; padding: 0; box-shadow: none; margin-bottom: 25px;">
                     ${getLifeSummary(matrix)}
                     ${getYearlySummary(matrix, age)}
-                    ${getMonthlySummary(age)}
-                    ${analyzeRelationships(matrix)}
                 </div>
-                ${analyzeLifeStages(matrix)}
+                <div data-pdf-weight="4" style="background:none; border:none; padding:0; box-shadow:none;">
+                    ${analyzeRelationships(matrix)}
+                    ${analyzeLifeStages(matrix)}
+                </div>
                 ${getTrioSummary(matrix)}
             `;
 
@@ -3073,6 +3024,49 @@ ${relationHTML}
 
             document.getElementById('topReportArea').innerHTML = topReport;
             document.getElementById('reportArea').innerHTML = report;
+
+            /* =====================================================
+               ระบบทำนายดวงจร 12 เดือน (สำหรับ VIP PDF)
+            ===================================================== */
+            const lunarMonthNames = [
+                "", "เดือน 1 (ธันวาคม)", "เดือน 2 (มกราคม)", "เดือน 3 (กุมภาพันธ์)", "เดือน 4 (มีนาคม)",
+                "เดือน 5 (เมษายน)", "เดือน 6 (พฤษภาคม)", "เดือน 7 (มิถุนายน)", "เดือน 8 (กรกฎาคม)",
+                "เดือน 9 (สิงหาคม)", "เดือน 10 (กันยายน)", "เดือน 11 (ตุลาคม)", "เดือน 12 (พฤศจิกายน)"
+            ];
+
+            window.vip12MonthForecasts = [];
+            let m = parseInt(document.getElementById('birthMonth').value) || 1;
+            for (let i = 1; i <= 12; i++) {
+                let mDiff = i - m;
+                if (mDiff < 0) mDiff += 12;
+                let mIndex = (ageIndex + mDiff) % 21;
+                
+                let mRow = Math.floor(mIndex / 7);
+                let mCol = mIndex % 7;
+                let mHouseName = houses[mRow][mCol].name;
+                let mHouseNum = matrix[mRow][mCol];
+                let mHouseMeaning = houseMeaning[mHouseName];
+
+                let mRelation = numberToHousesList[mHouseNum].filter(h => h !== mHouseName);
+                if (mRelation.length === 0) mRelation = ["ไม่มี"];
+                let mReading = generateRelationReading(mHouseName, mRelation);
+                
+                let mHtml = `
+                    <div class="card" style="border-left: 5px solid #2980b9 !important; margin-bottom: 20px;">
+                        <h3 style="color:var(--gold-lt); margin-top:0;">🌙 ดวงชะตารายเดือน (${lunarMonthNames[i] || 'เดือนที่ ' + i})</h3>
+                        <p>
+                            <b>จุดอายุเดือนตกที่ภพ:</b> ${mHouseName} (ตกเลข ${mHouseNum} ดาว${planets[mHouseNum].name})<br>
+                            <span style="font-size:13px; color:var(--muted);">(ความหมายภพหลัก: ${mHouseMeaning})</span>
+                        </p>
+                        <div style="background:rgba(15,20,30,0.6); padding:15px; border-radius:8px; border:1px solid var(--border); margin-top:10px;">
+                            <p style="margin-top:0;"><b>🔥 สิ่งที่จะเกิดขึ้นในเดือนนี้:</b></p>
+                            <div style="font-size:15px; line-height: 1.6;">${mReading}</div>
+                        </div>
+                    </div>
+                `;
+                window.vip12MonthForecasts.push(mHtml);
+            }
+
 
         }
 
@@ -3446,4 +3440,4 @@ ${relationHTML}
             // Run destiny calculation on page load
             processDestiny();
         })();
-
+

@@ -269,6 +269,13 @@ function renderTwelveHouses() {
     </div>`;
 
   el.innerHTML = html;
+
+  // เพิ่มปุ่มโพสต์ Facebook สำหรับ Admin
+  if (typeof window.addFacebookPostButtonsForAdmin === 'function') {
+      window.addFacebookPostButtonsForAdmin("twHContent", () => {
+          return `🏛️ ผลวิเคราะห์ชะตาชีวิต 12 ภพ (ลัคนาราศีเกิด) จากสยามโหรามงคล\nวิเคราะห์และพยากรณ์โครงสร้างพื้นดวงชะตาทั้ง 12 ด้านของชีวิต ทั้งตัวตน การงาน การเงิน คู่ครอง และอุปสรรคอย่างละเอียด`;
+      });
+  }
 }
 
 function fillTWHFromMember(val) {
@@ -340,8 +347,10 @@ function showTwelveHousesPage() {
       </div>
     </div>`;
 
-  if (window.autoFillMemberData) {
-      window.autoFillMemberData(''); // Trigger population of .member-selector-shared if available
+  // อัปเดตรายชื่อสมาชิกในดรอปดาวน์ทันทีที่แสดงผลหน้า 12 ภพ
+  if (typeof window.updateAllMemberSelectors === "function") {
+    const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
+    window.updateAllMemberSelectors(allHistory);
   }
   
   if (dispDate && birthTime) setTimeout(renderTwelveHouses, 80);

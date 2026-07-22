@@ -247,7 +247,7 @@ tr:hover td {
 /* --------------------------------------------------------------------------
    9. OVERRIDE WHITE CONTAINERS & HIGH CONTRAST TEXT (แก้ปัญหาพื้นหลังและตัวหนังสือกลมกลืนกัน)
    -------------------------------------------------------------------------- */
-.zodiac-card-main, .prediction-card, .compatibility-container, .article-container, .weekly-card, .taksa-card, .book-page, .tab-content, .calc-form-zodiac, .main-section > .container, .dashboard-card {
+.zodiac-card-main, .prediction-card, .compatibility-container, .article-container, .weekly-card, .taksa-card, .book-page, .tab-content, .calc-form-zodiac, .main-section > .container {
     background: rgba(10, 15, 29, 0.88) !important;
     backdrop-filter: blur(24px) !important;
     -webkit-backdrop-filter: blur(24px) !important;

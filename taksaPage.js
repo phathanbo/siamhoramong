@@ -556,6 +556,13 @@ function renderTaksaResult(taksa, age, gender) {
         resultEl.innerHTML     = html;
         resultEl.style.display = 'block';
 
+        // เพิ่มปุ่มโพสต์ Facebook สำหรับ Admin
+        if (typeof window.addFacebookPostButtonsForAdmin === 'function') {
+            window.addFacebookPostButtonsForAdmin("taksaResult", () => {
+                return `✨ ผลผูกดวงทักษาพยากรณ์ จากสยามโหรามงคล\nพยากรณ์ชะตาชีวิตและดาวเสวยอายุประจำปีช่วงอายุย่าง ${age} ปี\n\n• บทสรุปดวงชะตาประจำปี:\n` + (document.querySelector('#taksaResult .summary-text')?.innerText || "คำทำนายดวงชะตาประจำปีของคุณ");
+            });
+        }
+
         // animate cards
         setTimeout(() => {
             resultEl.querySelectorAll('.taksa-card').forEach((el, i) => {

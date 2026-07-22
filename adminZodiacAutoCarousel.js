@@ -1,5 +1,18 @@
 // --- Combined Logic for adminZodiacAutoCarousel ---
 
+function changeCarouselDate(offset) {
+    const input = document.getElementById('cfDate');
+    if (!input || !input.value) return;
+    const d = new Date(input.value);
+    d.setDate(d.getDate() + offset);
+    input.value = d.toISOString().split('T')[0];
+    
+    // อัปเดตการแสดงผลพรีวิว
+    if (typeof renderCarouselPreview === 'function') {
+        renderCarouselPreview();
+    }
+}
+
 function switchMode(mode) {
     document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
     
@@ -30,23 +43,55 @@ function switchMode(mode) {
 }
 
 // ข้อมูลคงที่
-const THAI_DAYS_LONG = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
-const THAI_MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+if (typeof THAI_DAYS_LONG === 'undefined') { var THAI_DAYS_LONG = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์']; }
+if (typeof CF_DAY_NAMES === 'undefined') { var CF_DAY_NAMES = THAI_DAYS_LONG; }
+if (typeof CF_DAY_COLORS === 'undefined') { var CF_DAY_COLORS = ['#e74c3c', '#f1c40f', '#e84393', '#2ecc71', '#e67e22', '#3498db', '#9b59b6']; }
+if (typeof THAI_MONTHS === 'undefined') { var THAI_MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']; }
 
-const ZODIAC_LIST = [
-    { id: '1', name: 'ราศีเมษ', dateRange: '13 เม.ย. - 13 พ.ค.', icon: '♈' },
-    { id: '2', name: 'ราศีพฤษภ', dateRange: '14 พ.ค. - 13 มิ.ย.', icon: '♉' },
-    { id: '3', name: 'ราศีเมถุน', dateRange: '14 มิ.ย. - 14 ก.ค.', icon: '♊' },
-    { id: '4', name: 'ราศีกรกฎ', dateRange: '15 ก.ค. - 16 ส.ค.', icon: '♋' },
-    { id: '5', name: 'ราศีสิงห์', dateRange: '17 ส.ค. - 16 ก.ย.', icon: '♌' },
-    { id: '6', name: 'ราศีกันย์', dateRange: '17 ก.ย. - 16 ต.ค.', icon: '♍' },
-    { id: '7', name: 'ราศีตุลย์', dateRange: '17 ต.ค. - 15 พ.ย.', icon: '♎' },
-    { id: '8', name: 'ราศีพิจิก', dateRange: '16 พ.ย. - 15 ธ.ค.', icon: '♏' },
-    { id: '9', name: 'ราศีธนู', dateRange: '16 ธ.ค. - 13 ม.ค.', icon: '♐' },
-    { id: '10', name: 'ราศีมังกร', dateRange: '14 ม.ค. - 12 ก.พ.', icon: '♑' },
-    { id: '11', name: 'ราศีกุมภ์', dateRange: '13 ก.พ. - 13 มี.ค.', icon: '♒' },
-    { id: '12', name: 'ราศีมีน', dateRange: '14 มี.ค. - 12 เม.ย.', icon: '♓' }
-];
+if (typeof DEFAULT_DAILY_FORTUNE_DB === 'undefined') {
+    var DEFAULT_DAILY_FORTUNE_DB = {
+        work: [
+            "วันนี้มีเกณฑ์ได้รับข่าวดีเรื่องงาน โปรเจกต์ที่ทำอยู่จะประสบความสำเร็จเกินคาด 💼✨",
+            "เป็นวันที่ต้องใช้ความอดทนสูง อาจมีอุปสรรคเล็กน้อย แต่จะผ่านไปได้ด้วยดี 🧱",
+            "ผู้ใหญ่ให้การสนับสนุน หรือมีเกณฑ์ได้แสดงฝีมือให้เป็นที่ประจักษ์ 🌟",
+            "งานล้นมือ ต้องจัดสรรเวลาให้ดี ระวังการสื่อสารผิดพลาดกับเพื่อนร่วมงาน 🗣️",
+            "มีเกณฑ์ชีพจรลงเท้า ต้องเดินทางเรื่องงาน หรือรับผิดชอบงานนอกสถานที่ 🚶‍♂️",
+            "เจรจาต่อรองประสบความสำเร็จ ลูกค้าหรือพาร์ทเนอร์ตอบรับข้อเสนอเป็นอย่างดี 🤝"
+        ],
+        finance: [
+            "มีโชคลาภลอยแบบไม่คาดฝัน หรือได้เงินคืนจากลูกหนี้เก่า 💰💸",
+            "การเงินสะพัด แต่ก็มีรายจ่ายจุกจิกเข้ามาตลอดวัน ระวังการใช้จ่ายตามอารมณ์ 💳",
+            "มีเกณฑ์ได้ทรัพย์สินชิ้นใหญ่ หรือการลงทุนเริ่มผลิดอกออกผล 📈",
+            "ระวังคนแปลกหน้ามาหยิบยืมเงิน หรือทำของมีค่าสูญหาย ⚠️",
+            "ได้รับโชคจากผู้ใหญ่ หรือเพศตรงข้ามนำความโชคดีมาให้ 🎁",
+            "การเงินมั่นคง แต่อาจต้องเสียเงินเพื่อสุขภาพหรือซ่อมแซมยานพาหนะ 🛠️"
+        ],
+        love: [
+            "คนโสด: มีโอกาสพบเจอคนถูกใจจากการทำงาน หรือคนรู้จักแนะนำให้ ❤️\nคนมีคู่: ความรักหวานชื่น เข้าอกเข้าใจกันดี",
+            "คนโสด: ยังต้องโฟกัสเรื่องงานไปก่อน รักไม่ยุ่งมุ่งแต่รวย 💼\nคนมีคู่: ระวังคำพูดที่ตรงเกินไปจนผิดใจกัน 🤐",
+            "คนโสด: เสน่ห์แรงเป็นพิเศษ มีคนเข้ามาให้ความสนใจหลายคน 🌹\nคนมีคู่: มีเกณฑ์ได้เดินทางท่องเที่ยว หรือใช้เวลาดีๆ ร่วมกัน ✈️",
+            "คนโสด: ระวังเจอคนมีเจ้าของเข้ามาพัวพัน เช็คให้ดีก่อนสานต่อ 🕵️‍♀️\nคนมีคู่: อาจมีเรื่องงอนกันเล็กๆ น้อยๆ แต่เคลียร์กันได้ 💖",
+            "คนโสด: คนรักเก่าอาจวนเวียนกลับมา หรือนึกถึงความทรงจำเก่าๆ 🕰️\nคนมีคู่: ดูแลเอาใจใส่กันเป็นพิเศษ ความรักมั่นคงดี 🥰"
+        ]
+    };
+}
+
+if (typeof ZODIAC_LIST === 'undefined') {
+    var ZODIAC_LIST = [
+        { id: '1', name: 'ราศีเมษ', dateRange: '13 เม.ย. - 13 พ.ค.', icon: '♈' },
+        { id: '2', name: 'ราศีพฤษภ', dateRange: '14 พ.ค. - 13 มิ.ย.', icon: '♉' },
+        { id: '3', name: 'ราศีเมถุน', dateRange: '14 มิ.ย. - 14 ก.ค.', icon: '♊' },
+        { id: '4', name: 'ราศีกรกฎ', dateRange: '15 ก.ค. - 16 ส.ค.', icon: '♋' },
+        { id: '5', name: 'ราศีสิงห์', dateRange: '17 ส.ค. - 16 ก.ย.', icon: '♌' },
+        { id: '6', name: 'ราศีกันย์', dateRange: '17 ก.ย. - 16 ต.ค.', icon: '♍' },
+        { id: '7', name: 'ราศีตุลย์', dateRange: '17 ต.ค. - 15 พ.ย.', icon: '♎' },
+        { id: '8', name: 'ราศีพิจิก', dateRange: '16 พ.ย. - 15 ธ.ค.', icon: '♏' },
+        { id: '9', name: 'ราศีธนู', dateRange: '16 ธ.ค. - 13 ม.ค.', icon: '♐' },
+        { id: '10', name: 'ราศีมังกร', dateRange: '14 ม.ค. - 12 ก.พ.', icon: '♑' },
+        { id: '11', name: 'ราศีกุมภ์', dateRange: '13 ก.พ. - 13 มี.ค.', icon: '♒' },
+        { id: '12', name: 'ราศีมีน', dateRange: '14 มี.ค. - 12 เม.ย.', icon: '♓' }
+    ];
+}
 
 const SEVEN_DAYS_LIST = [
     { id: '0', name: 'วันอาทิตย์ (สีแดง)', color: '#FF0000', bg: '#ffe5e5', border: '#ff4d4d' },
@@ -987,12 +1032,13 @@ async function generateAllCarouselDataUrls() {
                 const dayIdx = i - 2;
                 const seed = dateSeedBase + dayIdx;
                 
-                let wText = '', fText = '', rawLove = '';
-                if (typeof DAILY_FORTUNE_DB !== 'undefined') {
-                    wText = getRandomFromDB(DAILY_FORTUNE_DB.work, seed + 1);
-                    fText = getRandomFromDB(DAILY_FORTUNE_DB.finance, seed + 2);
-                    rawLove = getRandomFromDB(DAILY_FORTUNE_DB.love, seed + 3);
-                }
+                const dbWork = (typeof DAILY_FORTUNE_DB !== 'undefined' && DAILY_FORTUNE_DB.work) ? DAILY_FORTUNE_DB.work : DEFAULT_DAILY_FORTUNE_DB.work;
+                const dbFinance = (typeof DAILY_FORTUNE_DB !== 'undefined' && DAILY_FORTUNE_DB.finance) ? DAILY_FORTUNE_DB.finance : DEFAULT_DAILY_FORTUNE_DB.finance;
+                const dbLove = (typeof DAILY_FORTUNE_DB !== 'undefined' && DAILY_FORTUNE_DB.love) ? DAILY_FORTUNE_DB.love : DEFAULT_DAILY_FORTUNE_DB.love;
+
+                let wText = getRandomFromDB(dbWork, seed + 1);
+                let fText = getRandomFromDB(dbFinance, seed + 2);
+                let rawLove = getRandomFromDB(dbLove, seed + 3);
                 
                 let lText = 'เสน่ห์แรง มีคนเข้ามาให้ความสนใจ';
                 let coupleText = 'ความรักราบรื่น ดูแลเอาใจใส่กันดี';
@@ -1096,92 +1142,121 @@ function renderCarouselPreview() {
         return arr[idx];
     }
 
-    // CSS สำหรับ Background อวกาศโทนเข้ม หรูหรา
+    // CSS สำหรับ Background อวกาศโทนเข้ม ยิ่งใหญ่ หรูหราทรงคุณค่า
     const spaceBg = `
-        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        background: radial-gradient(circle at 50% 25%, #25124b 0%, #110a29 55%, #06030e 100%);
     `;
     
-    // CSS สำหรับวงแหวนดาราศาสตร์
+    // CSS สำหรับวงแหวนดาราศาสตร์เรืองแสงทอง
     const astroRings = `
-        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:700px; height:700px; border-radius:50%; border:1.5px solid rgba(212,175,55,0.1); box-sizing:border-box;"></div>
-        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:1000px; height:1000px; border-radius:50%; border:1.5px solid rgba(212,175,55,0.1); box-sizing:border-box;"></div>
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:720px; height:720px; border-radius:50%; border:1.5px solid rgba(212,175,55,0.18); box-shadow:0 0 40px rgba(212,175,55,0.08); box-sizing:border-box;"></div>
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:960px; height:960px; border-radius:50%; border:1.5px solid rgba(212,175,55,0.12); box-sizing:border-box;"></div>
+        <div style="position:absolute; top:0; left:0; width:100%; height:100%; border:12px solid rgba(212,175,55,0.15); box-sizing:border-box; pointer-events:none;"></div>
+        <div style="position:absolute; top:25px; left:25px; right:25px; bottom:25px; border:2px solid rgba(212,175,55,0.3); box-sizing:border-box; pointer-events:none;"></div>
     `;
 
     // 1. หน้าปก (Cover)
     let slidesHtml = `
         <div class="cf-slide" id="cf-slide-0" style="width: 1080px; height: 1080px; position: relative; font-family: 'Sarabun', 'Prompt', sans-serif !important; overflow: hidden; ${spaceBg}">
-            \
-            <div style="position:absolute; bottom:20px; right:30px; font-size:18px; color:rgba(255,255,255,0.3); font-weight:bold;">🔮 สยามโหรามงคล (Siamhora)</div>
+            ${astroRings}
+            <div style="position:absolute; bottom:25px; right:35px; font-size:20px; color:rgba(212,175,55,0.6); font-weight:bold; letter-spacing:1px;">🔮 สยามโหรามงคล (Siamhora.com)</div>
             
-            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:800px; height:550px; background:rgba(20,20,35,0.85); border-radius:30px; box-shadow:0 15px 40px rgba(0,0,0,0.6); display:flex; flex-direction:column; justify-content:center; align-items:center; padding:40px; border:3px solid #d4af37;">
-                <h1 style="color:#d4af37; font-size:80px; font-weight:bold; margin-bottom:10px; text-align:center;">
-                    ดวงรายวัน
-                </h1>
-                <h2 style="color:#ffffff; font-size:50px; font-weight:bold; margin-top:0;">แม่นๆ มาแล้วจ้า!</h2>
-                <div style="background:rgba(212,175,55,0.15); border-radius:35px; border:2px solid #d4af37; padding:15px 50px; margin:30px 0;">
-                    <span style="color:#fff; font-size:30px; font-weight:bold;">ประจำวัน${dayNameStr}ที่ ${dateTitle}</span>
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:860px; height:600px; background:rgba(18,14,35,0.88); border-radius:35px; box-shadow:0 20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(212,175,55,0.25); display:flex; flex-direction:column; justify-content:center; align-items:center; padding:50px; border:3px solid #d4af37;">
+                <div style="background:linear-gradient(135deg, #d4af37, #fff3a8, #aa7c11); padding:6px 30px; border-radius:20px; margin-bottom:20px; box-shadow:0 4px 15px rgba(212,175,55,0.4);">
+                    <span style="color:#0f0c29; font-size:22px; font-weight:bold; letter-spacing:2px;">✨ มหาจักรพรรดิพยากรณ์ • สยามโหรามงคล ✨</span>
                 </div>
-                <h2 style="color:#d4af37; font-size:32px; margin-top:10px;">เช็คดวงด่วนๆ ก่อนเริ่มวันใหม่!</h2>
+                
+                <h1 style="color:#d4af37; font-size:90px; font-weight:900; margin-bottom:10px; text-align:center; text-shadow:0 0 35px rgba(212,175,55,0.8), 0 0 70px rgba(212,175,55,0.3); font-family:'Sarabun', sans-serif;">
+                    ดวงชะตาประจำวัน
+                </h1>
+                <h2 style="color:#ffffff; font-size:48px; font-weight:bold; margin-top:0; text-shadow:0 2px 10px rgba(0,0,0,0.8);">วิเคราะห์ลึกซึ้ง คนเกิดทั้ง 7 วัน</h2>
+                
+                <div style="background:rgba(212,175,55,0.12); border-radius:40px; border:2px solid #d4af37; padding:18px 55px; margin:25px 0; box-shadow:0 0 20px rgba(212,175,55,0.2);">
+                    <span style="color:#fff; font-size:32px; font-weight:bold; text-shadow:0 0 10px rgba(255,255,255,0.5);">ประจำวัน${dayNameStr}ที่ ${dateTitle}</span>
+                </div>
+                
+                <h3 style="color:#e0e0e0; font-size:28px; margin-top:10px; opacity:0.9;">เช็คดวงการงาน การเงิน ความรัก และทริคเสริมดวงก่อนเริ่มวันใหม่!</h3>
             </div>
             
-            <div style="position:absolute; bottom:150px; left:50%; transform:translateX(-50%); background:linear-gradient(90deg, #b8860b, #f1c40f); padding:25px 60px; border-radius:40px; box-shadow:0 10px 25px rgba(241,196,15,0.4);">
-                <span style="color:#000; font-size:24px; font-weight:bold;">เตรียมรับมือกับการงาน การเงิน ความรัก และทริคเสริมดวงฉบับรวบรัด 👉</span>
+            <div style="position:absolute; bottom:130px; left:50%; transform:translateX(-50%); background:linear-gradient(90deg, #aa7c11, #f1c40f, #aa7c11); padding:22px 65px; border-radius:50px; box-shadow:0 12px 30px rgba(241,196,15,0.5); border:2px solid #fff;">
+                <span style="color:#000; font-size:26px; font-weight:bold; letter-spacing:0.5px;">🔮 ปัดไปทางซ้าย เพื่อดูดวงประจำวันเกิดของคุณ 👉</span>
             </div>
         </div>
     `;
 
-    // 2. สไลด์กาลโยค (KalaYok)
+    // 2. สไลด์กาลโยค (KalaYok 3 Pillars)
     let badDayTxt = kala ? `วัน${CF_DAY_NAMES[kala.ubart]}` : 'วันอาทิตย์';
     let bestDayTxt = kala ? `วัน${CF_DAY_NAMES[kala.thongChai]}` : 'วันจันทร์';
     let powerDayTxt = kala ? `วัน${CF_DAY_NAMES[kala.athibadi]}` : 'วันเสาร์';
 
     slidesHtml += `
         <div class="cf-slide" id="cf-slide-1" style="width: 1080px; height: 1080px; position: relative; font-family: 'Sarabun', 'Prompt', sans-serif !important; overflow: hidden; ${spaceBg}">
-            \
-            <div style="position:absolute; bottom:20px; right:30px; font-size:18px; color:rgba(255,255,255,0.3); font-weight:bold;">🔮 สยามโหรามงคล (Siamhora)</div>
+            ${astroRings}
+            <div style="position:absolute; bottom:25px; right:35px; font-size:20px; color:rgba(212,175,55,0.6); font-weight:bold;">🔮 สยามโหรามงคล (Siamhora.com)</div>
             
-            <div style="position:absolute; top:100px; left:0; width:100%; text-align:center;">
-                <h2 style="color:#ffffff; font-size:46px; font-weight:bold;">
+            <div style="position:absolute; top:90px; left:0; width:100%; text-align:center;">
+                <div style="display:inline-block; background:rgba(212,175,55,0.15); border:1px solid #d4af37; padding:6px 25px; border-radius:20px; color:#d4af37; font-size:20px; font-weight:bold; margin-bottom:10px;">
+                    ✨ ปฏิทินกาลโยคมหาทักษาประจำวัน
+                </div>
+                <h2 style="color:#ffffff; font-size:50px; font-weight:bold; text-shadow:0 0 20px rgba(255,255,255,0.3); margin:0;">
                     อัปเดตฐานดวง: ใครดวงปัง ใครต้องระวัง?
                 </h2>
             </div>
 
-            <div style="position:absolute; top:260px; left:70px; width:300px; height:520px; background:rgba(20,20,35,0.7); border:1px solid rgba(255,255,255,0.1); border-radius:25px; box-shadow:0 15px 20px rgba(0,0,0,0.5); display:flex; flex-direction:column; align-items:center;">
-                <div style="width:100%; height:8px; background:#ff4757; border-radius:25px 25px 0 0;"></div>
-                <div style="width:120px; height:120px; border-radius:50%; border:4px solid #ff4757; background:rgba(255,255,255,0.05); display:flex; justify-content:center; align-items:center; margin-top:20px; font-size:50px;">⚠️</div>
-                <h3 style="color:#ffffff; font-size:30px; font-weight:bold; margin:20px 0 5px 0;">${badDayTxt}</h3>
-                <h4 style="color:#ff4757; font-size:26px; font-weight:bold; margin:0 0 15px 0;">เกณฑ์ 'อุบาทว์'</h4>
-                <p style="color:#dcdde1; font-size:22px; text-align:center; padding:0 20px;">ระวังเรื่องหงุดหงิดใจเป็นพิเศษ ควบคุมอารมณ์ให้ดี</p>
+            <!-- เสาที่ 1: วันอุบาทว์ -->
+            <div style="position:absolute; top:250px; left:60px; width:310px; height:580px; background:rgba(22,14,35,0.85); border:2px solid #ff4757; border-radius:30px; box-shadow:0 15px 35px rgba(255,71,87,0.3); display:flex; flex-direction:column; align-items:center; overflow:hidden;">
+                <div style="width:100%; height:12px; background:linear-gradient(90deg, #ff4757, #ff6b81);"></div>
+                <div style="width:130px; height:130px; border-radius:50%; border:4px solid #ff4757; background:rgba(255,71,87,0.1); display:flex; justify-content:center; align-items:center; margin-top:25px; font-size:55px; box-shadow:0 0 20px rgba(255,71,87,0.4);">⚠️</div>
+                <h3 style="color:#ffffff; font-size:34px; font-weight:bold; margin:20px 0 5px 0;">${badDayTxt}</h3>
+                <div style="background:#ff4757; color:#fff; padding:6px 20px; border-radius:15px; font-size:22px; font-weight:bold; margin-bottom:20px;">เกณฑ์ 'อุบาทว์'</div>
+                <p style="color:#e0e0e0; font-size:23px; text-align:center; padding:0 25px; line-height:1.6;">ระวังเรื่องหงุดหงิดใจเป็นพิเศษ ควบคุมอารมณ์และสติให้ดี</p>
             </div>
 
-            <div style="position:absolute; top:260px; left:390px; width:300px; height:520px; background:rgba(20,20,35,0.7); border:1px solid rgba(255,255,255,0.1); border-radius:25px; box-shadow:0 15px 20px rgba(0,0,0,0.5); display:flex; flex-direction:column; align-items:center;">
-                <div style="width:100%; height:8px; background:#2ed573; border-radius:25px 25px 0 0;"></div>
-                <div style="width:120px; height:120px; border-radius:50%; border:4px solid #2ed573; background:rgba(255,255,255,0.05); display:flex; justify-content:center; align-items:center; margin-top:20px; font-size:50px;">🚩</div>
-                <h3 style="color:#ffffff; font-size:30px; font-weight:bold; margin:20px 0 5px 0;">${bestDayTxt}</h3>
-                <h4 style="color:#2ed573; font-size:26px; font-weight:bold; margin:0 0 15px 0;">เกณฑ์ 'วันธงชัย'</h4>
-                <p style="color:#dcdde1; font-size:22px; text-align:center; padding:0 20px;">ดวงแข็งเป็นพิเศษ! ทำการใหญ่มีโอกาสสำเร็จสูง</p>
+            <!-- เสาที่ 2: วันธงชัย -->
+            <div style="position:absolute; top:250px; left:385px; width:310px; height:580px; background:rgba(22,14,35,0.85); border:2px solid #2ed573; border-radius:30px; box-shadow:0 15px 35px rgba(46,213,115,0.3); display:flex; flex-direction:column; align-items:center; overflow:hidden;">
+                <div style="width:100%; height:12px; background:linear-gradient(90deg, #2ed573, #7bed9f);"></div>
+                <div style="width:130px; height:130px; border-radius:50%; border:4px solid #2ed573; background:rgba(46,213,115,0.1); display:flex; justify-content:center; align-items:center; margin-top:25px; font-size:55px; box-shadow:0 0 20px rgba(46,213,115,0.4);">🚩</div>
+                <h3 style="color:#ffffff; font-size:34px; font-weight:bold; margin:20px 0 5px 0;">${bestDayTxt}</h3>
+                <div style="background:#2ed573; color:#000; padding:6px 20px; border-radius:15px; font-size:22px; font-weight:bold; margin-bottom:20px;">เกณฑ์ 'วันธงชัย'</div>
+                <p style="color:#e0e0e0; font-size:23px; text-align:center; padding:0 25px; line-height:1.6;">ดวงแข็งเป็นพิเศษ! ทำการใหญ่ เจรจาค้าขาย มีโอกาสสำเร็จสูงมาก</p>
             </div>
 
-            <div style="position:absolute; top:260px; left:710px; width:300px; height:520px; background:rgba(20,20,35,0.7); border:1px solid rgba(255,255,255,0.1); border-radius:25px; box-shadow:0 15px 20px rgba(0,0,0,0.5); display:flex; flex-direction:column; align-items:center;">
-                <div style="width:100%; height:8px; background:#9b59b6; border-radius:25px 25px 0 0;"></div>
-                <div style="width:120px; height:120px; border-radius:50%; border:4px solid #9b59b6; background:rgba(255,255,255,0.05); display:flex; justify-content:center; align-items:center; margin-top:20px; font-size:50px;">👑</div>
-                <h3 style="color:#ffffff; font-size:30px; font-weight:bold; margin:20px 0 5px 0;">${powerDayTxt}</h3>
-                <h4 style="color:#9b59b6; font-size:26px; font-weight:bold; margin:0 0 15px 0;">เกณฑ์ 'วันอธิบดี'</h4>
-                <p style="color:#dcdde1; font-size:22px; text-align:center; padding:0 20px;">ดวงมีเกณฑ์ได้เป็นใหญ่ ผู้คนเกรงใจและให้เกียรติ</p>
+            <!-- เสาที่ 3: วันอธิบดี -->
+            <div style="position:absolute; top:250px; left:710px; width:310px; height:580px; background:rgba(22,14,35,0.85); border:2px solid #9b59b6; border-radius:30px; box-shadow:0 15px 35px rgba(155,89,182,0.3); display:flex; flex-direction:column; align-items:center; overflow:hidden;">
+                <div style="width:100%; height:12px; background:linear-gradient(90deg, #9b59b6, #be2edd);"></div>
+                <div style="width:130px; height:130px; border-radius:50%; border:4px solid #9b59b6; background:rgba(155,89,182,0.1); display:flex; justify-content:center; align-items:center; margin-top:25px; font-size:55px; box-shadow:0 0 20px rgba(155,89,182,0.4);">👑</div>
+                <h3 style="color:#ffffff; font-size:34px; font-weight:bold; margin:20px 0 5px 0;">${powerDayTxt}</h3>
+                <div style="background:#9b59b6; color:#fff; padding:6px 20px; border-radius:15px; font-size:22px; font-weight:bold; margin-bottom:20px;">เกณฑ์ 'วันอธิบดี'</div>
+                <p style="color:#e0e0e0; font-size:23px; text-align:center; padding:0 25px; line-height:1.6;">ดวงมีบารมีเป็นใหญ่ ผู้คนเกรงใจ ให้เกียรติ และพร้อมช่วยเหลือ</p>
+            </div>
+
+            <div style="position:absolute; bottom:110px; left:50%; transform:translateX(-50%); background:rgba(212,175,55,0.15); border:1.5px solid #d4af37; padding:15px 50px; border-radius:30px; text-align:center;">
+                <span style="color:#d4af37; font-size:24px; font-weight:bold;">เลื่อนสไลด์ต่อไป เพื่ออ่านดวงเจาะลึกคนเกิดทั้ง 7 วัน 👉</span>
             </div>
         </div>
     `;
 
     // 3. ดวง 7 วัน (7 Slides)
+    const DAY_GRADIENTS = [
+        'linear-gradient(135deg, #ff4e50, #f9d423)', // Sunday Red/Gold
+        'linear-gradient(135deg, #f1c40f, #f39c12)', // Monday Yellow
+        'linear-gradient(135deg, #ff758c, #ff7eb3)', // Tuesday Pink
+        'linear-gradient(135deg, #11998e, #38ef7d)', // Wednesday Green
+        'linear-gradient(135deg, #ff9966, #ff5e62)', // Thursday Orange
+        'linear-gradient(135deg, #3a7bd5, #3a6073)', // Friday Blue
+        'linear-gradient(135deg, #8e2de2, #4a00e0)'  // Saturday Purple
+    ];
+
     for (let i = 0; i < 7; i++) {
         const seed = dateSeedBase + i;
         
-        let wText = '', fText = '', rawLove = '';
-        if (typeof DAILY_FORTUNE_DB !== 'undefined') {
-            wText = getRandomFromDB(DAILY_FORTUNE_DB.work, seed + 1);
-            fText = getRandomFromDB(DAILY_FORTUNE_DB.finance, seed + 2);
-            rawLove = getRandomFromDB(DAILY_FORTUNE_DB.love, seed + 3);
-        }
+        const dbWork = (typeof DAILY_FORTUNE_DB !== 'undefined' && DAILY_FORTUNE_DB.work) ? DAILY_FORTUNE_DB.work : DEFAULT_DAILY_FORTUNE_DB.work;
+        const dbFinance = (typeof DAILY_FORTUNE_DB !== 'undefined' && DAILY_FORTUNE_DB.finance) ? DAILY_FORTUNE_DB.finance : DEFAULT_DAILY_FORTUNE_DB.finance;
+        const dbLove = (typeof DAILY_FORTUNE_DB !== 'undefined' && DAILY_FORTUNE_DB.love) ? DAILY_FORTUNE_DB.love : DEFAULT_DAILY_FORTUNE_DB.love;
+
+        let wText = getRandomFromDB(dbWork, seed + 1);
+        let fText = getRandomFromDB(dbFinance, seed + 2);
+        let rawLove = getRandomFromDB(dbLove, seed + 3);
         
         let lText = 'เสน่ห์แรง มีคนเข้ามาให้ความสนใจ';
         let coupleText = 'ความรักราบรื่น ดูแลเอาใจใส่กันดี';
@@ -1197,9 +1272,19 @@ function renderCarouselPreview() {
 
         let dColor = CF_DAY_COLORS[i];
         if (dColor === '#000000') dColor = '#7f8c8d';
+        const dayGrad = DAY_GRADIENTS[i];
 
         const luckyNum = '' + Math.floor(seededRandom(seed + 4) * 10) + Math.floor(seededRandom(seed + 5) * 10);
-        let colorStr = '-';
+        const defaultColorsMap = {
+            'อาทิตย์': 'แดง, ชมพู, ทอง',
+            'จันทร์': 'เหลือง, เขียว, ขาว',
+            'อังคาร': 'ชมพู, ม่วง, แดง',
+            'พุธ': 'เขียว, ส้ม, เทา',
+            'พฤหัสบดี': 'ส้ม, แดง, ฟ้า',
+            'ศุกร์': 'ฟ้า, ชมพู, ขาว',
+            'เสาร์': 'ม่วง, น้ำเงิน, ดำ'
+        };
+        let colorStr = defaultColorsMap[CF_DAY_NAMES[i]] || 'แดง, ทอง';
         if (typeof DASH_DAY_COLORS !== 'undefined' && DASH_DAY_COLORS[CF_DAY_NAMES[i]]) {
             const colors = DASH_DAY_COLORS[CF_DAY_NAMES[i]].colors;
             if(colors && colors.length > 0) colorStr = colors.join(', ');
@@ -1207,45 +1292,62 @@ function renderCarouselPreview() {
 
         slidesHtml += `
             <div class="cf-slide" id="cf-slide-${i+2}" style="width: 1080px; height: 1080px; position: relative; font-family: 'Sarabun', 'Prompt', sans-serif !important; overflow: hidden; ${spaceBg}">
-                \
-                <div style="position:absolute; bottom:20px; right:30px; font-size:18px; color:rgba(255,255,255,0.3); font-weight:bold;">🔮 สยามโหรามงคล (Siamhora)</div>
+                ${astroRings}
+                <div style="position:absolute; bottom:25px; right:35px; font-size:20px; color:rgba(212,175,55,0.6); font-weight:bold;">🔮 สยามโหรามงคล (Siamhora.com)</div>
                 
-                <div style="position:absolute; top:80px; left:290px; width:500px; height:80px; background:rgba(20,20,35,0.85); border:2px solid rgba(212,175,55,0.4); border-radius:40px; box-shadow:0 15px 20px rgba(0,0,0,0.4); display:flex; align-items:center; padding:0 30px;">
-                    <div style="width:40px; height:40px; border-radius:50%; background:${dColor}; margin-right:20px;"></div>
-                    <h2 style="color:#ffffff; font-size:44px; font-weight:bold; margin:0;">คนเกิดวัน${CF_DAY_NAMES[i]}</h2>
+                <!-- หัวข้อประจำวัน -->
+                <div style="position:absolute; top:75px; left:50%; transform:translateX(-50%); width:600px; height:90px; background:rgba(18,14,35,0.9); border:2px solid #d4af37; border-radius:50px; box-shadow:0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(212,175,55,0.3); display:flex; align-items:center; justify-content:center; padding:0 30px;">
+                    <div style="width:45px; height:45px; border-radius:50%; background:${dayGrad}; margin-right:20px; box-shadow:0 0 15px ${dColor}; flex-shrink:0;"></div>
+                    <h2 style="color:#ffffff; font-size:46px; font-weight:bold; margin:0; text-shadow:0 0 15px rgba(255,255,255,0.4);">คนเกิดวัน${CF_DAY_NAMES[i]}</h2>
                 </div>
 
-                <div style="position:absolute; top:210px; left:90px; width:900px; height:170px; background:rgba(20,20,35,0.7); border:2px solid rgba(212,175,55,0.3); border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.5);">
-                    <div style="width:100%; height:8px; background:${dColor}; border-radius:20px 20px 0 0;"></div>
-                    <div style="padding: 25px 30px;">
-                        <div style="color:#d4af37; font-size:30px; font-weight:bold; margin-bottom:15px;">💼 การงาน</div>
-                        <div style="color:#f0f0f0; font-size:24px;">${wText}</div>
+                <!-- การงาน -->
+                <div style="position:absolute; top:200px; left:80px; width:920px; height:185px; background:rgba(18,14,35,0.85); border:2px solid rgba(212,175,55,0.4); border-radius:24px; box-shadow:0 15px 30px rgba(0,0,0,0.6); overflow:hidden;">
+                    <div style="width:12px; height:100%; background:${dayGrad}; position:absolute; left:0; top:0;"></div>
+                    <div style="padding: 25px 30px 25px 45px;">
+                        <div style="color:#d4af37; font-size:32px; font-weight:bold; margin-bottom:12px; display:flex; align-items:center;">
+                            <span style="margin-right:12px;">💼</span> การงานและการดำเนินชีวิต
+                        </div>
+                        <div style="color:#f0f0f0; font-size:25px; line-height:1.5;">${wText}</div>
                     </div>
                 </div>
 
-                <div style="position:absolute; top:410px; left:90px; width:900px; height:170px; background:rgba(20,20,35,0.7); border:2px solid rgba(212,175,55,0.3); border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.5);">
-                    <div style="width:100%; height:8px; background:${dColor}; border-radius:20px 20px 0 0;"></div>
-                    <div style="padding: 25px 30px;">
-                        <div style="color:#d4af37; font-size:30px; font-weight:bold; margin-bottom:15px;">💰 การเงิน</div>
-                        <div style="color:#f0f0f0; font-size:24px;">${fText}</div>
+                <!-- การเงิน -->
+                <div style="position:absolute; top:410px; left:80px; width:920px; height:185px; background:rgba(18,14,35,0.85); border:2px solid rgba(212,175,55,0.4); border-radius:24px; box-shadow:0 15px 30px rgba(0,0,0,0.6); overflow:hidden;">
+                    <div style="width:12px; height:100%; background:${dayGrad}; position:absolute; left:0; top:0;"></div>
+                    <div style="padding: 25px 30px 25px 45px;">
+                        <div style="color:#d4af37; font-size:32px; font-weight:bold; margin-bottom:12px; display:flex; align-items:center;">
+                            <span style="margin-right:12px;">💰</span> การเงินและโชคลาภ
+                        </div>
+                        <div style="color:#f0f0f0; font-size:25px; line-height:1.5;">${fText}</div>
                     </div>
                 </div>
 
-                <div style="position:absolute; top:610px; left:90px; width:900px; height:200px; background:rgba(20,20,35,0.7); border:2px solid rgba(212,175,55,0.3); border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.5);">
-                    <div style="width:100%; height:8px; background:${dColor}; border-radius:20px 20px 0 0;"></div>
-                    <div style="padding: 25px 30px;">
-                        <div style="color:#d4af37; font-size:30px; font-weight:bold; margin-bottom:15px;">❤️ ความรัก</div>
-                        <div style="display:flex; flex-direction:column; gap:10px;">
-                            <div><span style="color:#d4af37; font-size:22px; font-weight:bold;">โสด:</span> <span style="color:#e0e0e0; font-size:22px;">${lText}</span></div>
-                            <div><span style="color:#d4af37; font-size:22px; font-weight:bold;">มีคู่:</span> <span style="color:#e0e0e0; font-size:22px;">${coupleText}</span></div>
+                <!-- ความรัก -->
+                <div style="position:absolute; top:620px; left:80px; width:920px; height:210px; background:rgba(18,14,35,0.85); border:2px solid rgba(212,175,55,0.4); border-radius:24px; box-shadow:0 15px 30px rgba(0,0,0,0.6); overflow:hidden;">
+                    <div style="width:12px; height:100%; background:${dayGrad}; position:absolute; left:0; top:0;"></div>
+                    <div style="padding: 25px 30px 25px 45px;">
+                        <div style="color:#d4af37; font-size:32px; font-weight:bold; margin-bottom:12px; display:flex; align-items:center;">
+                            <span style="margin-right:12px;">❤️</span> ความรักและความสัมพันธ์
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            <div><span style="color:#ff79c6; font-size:24px; font-weight:bold;">• คนโสด:</span> <span style="color:#e0e0e0; font-size:24px;">${lText}</span></div>
+                            <div><span style="color:#ffb86c; font-size:24px; font-weight:bold;">• คนมีคู่:</span> <span style="color:#e0e0e0; font-size:24px;">${coupleText}</span></div>
                         </div>
                     </div>
                 </div>
 
-                <div style="position:absolute; top:850px; left:90px; width:900px; height:90px; background:rgba(20,20,35,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:25px; box-shadow:0 10px 15px rgba(0,0,0,0.3); display:flex; align-items:center; padding:0 40px;">
-                    <div style="color:${dColor}; font-size:26px; font-weight:bold; flex:1;">✨ ทริคเสริมดวง</div>
-                    <div style="color:#dcdde1; font-size:24px; flex:1;">เลขมงคล: ${luckyNum}</div>
-                    <div style="color:#dcdde1; font-size:24px; flex:1;">สีมงคล: ${colorStr}</div>
+                <!-- ทริคเสริมดวง -->
+                <div style="position:absolute; top:855px; left:80px; width:920px; height:100px; background:rgba(18,14,35,0.92); border:2px solid #d4af37; border-radius:30px; box-shadow:0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(212,175,55,0.2); display:flex; align-items:center; padding:0 45px; justify-content:space-between;">
+                    <div style="color:#d4af37; font-size:28px; font-weight:bold; display:flex; align-items:center;">
+                        <span style="margin-right:10px;">✨</span> ทริคเสริมดวงประจำวัน
+                    </div>
+                    <div style="background:rgba(212,175,55,0.15); border:1px solid #d4af37; padding:8px 25px; border-radius:20px; color:#ffffff; font-size:24px; font-weight:bold;">
+                        เลขมงคล: <span style="color:#f1c40f;">${luckyNum}</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); padding:8px 25px; border-radius:20px; color:#ffffff; font-size:24px; font-weight:bold;">
+                        สีมงคล: <span style="color:#54a0ff;">${colorStr}</span>
+                    </div>
                 </div>
             </div>
         `;
@@ -1269,7 +1371,11 @@ async function postCarouselToFacebook() {
         if (!images || images.length === 0) return;
         
         const dateStr = document.getElementById('cfDate').value;
-        const msg = '🔮 ดวงรายวันประจำวันที่ ' + dateStr + '\n\nพร้อมเสิร์ฟดวง 7 วัน เกิดปัง เกิดปิ๊ง แค่ไหน เช็คเลย! 👉\n\n#สยามโหรามงคล #ดวงรายวัน #ดูดวง';
+        const dateObj = new Date(dateStr);
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const dateThai = dateObj.toLocaleDateString('th-TH', options);
+
+        const msg = `🔮 มหาจักรพรรดิพยากรณ์ • ดวงรายวันประจำวัน${dateThai} 🌟\n\nอัปเดตดวงชะตาชีวิตคนเกิดทั้ง 7 วัน และเกณฑ์กาลโยคมหาทักษาประจำวัน! มาเช็คกันด่วนๆ ว่าวันเกิดของคุณวันนี้จะดวงพุ่งปังขนาดไหน 💼💰❤️\n\nปัดสไลด์ไปทางซ้ายเพื่ออ่านคำทำนายเจาะลึกวันเกิดของคุณได้เลยครับ 👇\n\nอย่าลืมพิมพ์ "สาธุ" และกดแชร์เพื่อเปิดดวงรับโชคใหญ่วันนี้นะครับ 🙏✨\n\n#สยามโหรามงคล #ดูดวง #ดวงรายวัน #ดวงวันนี้ #ดวงคนเกิด7วัน #กาลโยค #เลขมงคล`;
         
         let imagesHtml = '';
         images.forEach((img) => {
@@ -1480,7 +1586,12 @@ async function postSingleToFacebook() {
         const dataUrl = canvas.toDataURL('image/png', 0.9);
         Swal.close();
         
-        const msg = `ดวงอัตโนมัติประจำวัน\nฝากติดตามเพจ สยามโหรามงคล ด้วยนะครับ`;
+        const dateVal = document.getElementById('dateSelect') ? document.getElementById('dateSelect').value : new Date().toISOString().split('T')[0];
+        const dateObj = new Date(dateVal);
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const dateThai = dateObj.toLocaleDateString('th-TH', options);
+
+        const msg = `✨ พยากรณ์ดวงชะตาประจำวัน${dateThai} ✨\n\nพร้อมเสิร์ฟคำทำนายแม่นๆ ต้อนรับวันใหม่! มาเช็คดวงการงาน การเงิน ความรัก และเลขมงคลเสริมโชคของคุณวันนี้กันครับ 🔮💫\n\nกดปุ่ม ไลก์ & แชร์ เพื่อเป็นพลังบุญรับโชคลาภและความปังตลอดทั้งวันนะครับ 🙏\n\n#สยามโหรามงคล #ดูดวง #ดวงรายวัน #ดวงวันนี้ #เช็คดวง #เลขมงคล`;
         
         const confirmResult = await Swal.fire({
             title: 'ยืนยันการโพสต์ (ภาพเดียว)',

@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    เธชเธขเธฒเธกเนเธซเธฃเธฒเธกเธเธเธฅ โ€” style.css (cleaned)
    เธเธฑเธ”เธซเธกเธงเธ”เธซเธกเธนเน: 1.Fonts 2.Variables 3.Base 4.Layout 5.Header
                 6.Cards 7.Buttons 8.Forms 9.Tables 10.Sections
@@ -4644,4 +4644,13 @@ label.text-dark:not(.bg-white):not(.bg-light) {
 #thaiHoraContainer .aspect-item,
 #thaiHoraContainer .aspect-item * {
     color: #f8f9fa !important;
+}
+
+/* Satta subnote helper to replace repetitive inline styles */
+.satta-subnote {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    border-top: 1px dashed var(--border);
+    padding-top: 10px;
 }

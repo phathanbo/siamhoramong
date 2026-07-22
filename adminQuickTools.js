@@ -65,6 +65,12 @@ function initAdminQuickTools() {
                     <span style="font-weight: bold;">ภาพไพ่ป๊อก<br>(1 ใบ / 3 ใบ)</span>
                 </button>
                 
+                <!-- ฐานข้อมูลไพ่ป๊อก 32 ใบ -->
+                <button class="btn shadow" onclick="window.location.href='adminCartomancyDb.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #2c3e50, #1a252f); color: #fff; border: 1px solid #d4af37; height: 100%; transition: transform 0.2s;">
+                    <i class="fas fa-database" style="font-size: 3.5rem; color: #d4af37;"></i> 
+                    <span style="font-weight: bold;">ฐานข้อมูลไพ่ป๊อก<br><small style="font-weight: normal; font-size: 0.95rem; color: #d4af37;">(ตำรา 32 ใบ)</small></span>
+                </button>
+                
                 <!-- สร้างโพสต์ Facebook -->
                 <button class="btn shadow" onclick="window.location.href='adminFacebookPost.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #1877f2, #0c438c); color: #fff; border: 1px solid #1877f2; height: 100%; transition: transform 0.2s;">
                     <i class="fa-brands fa-facebook" style="font-size: 3.5rem;"></i> 

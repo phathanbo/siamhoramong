@@ -3,130 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สร้างภาพไพ่ป๊อก - สยามโหรามงคล</title>
+    <title>ระบบสร้างภาพไพ่ป๊อกพยากรณ์ 3 ใบ (Admin)</title>
     
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="cartomancy.css">
     <style>
-        body { font-family: 'Sarabun', sans-serif; background-color: #121212; color: #fff; }
-        .control-panel { background: #1a1a1a; padding: 20px; border-right: 1px solid #333; height: 100vh; position: sticky; top: 0; overflow-y: auto; }
-        .preview-panel { padding: 40px; background: #0a0a0a; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f4f6f9; }
+        .admin-header { background: #5a0909; color: #fff; padding: 20px; text-align: center; }
+        .btn-gold { background: linear-gradient(135deg, #f1c40f, #d4af37); color: #000; border: none; font-weight: bold; }
+        .btn-gold:hover { background: linear-gradient(135deg, #d4af37, #b8860b); color: #000; }
         
-        #adminCartomancyCaptureArea {
-            width: 900px;
-            background: linear-gradient(135deg, #1a0831 0%, #0d041a 100%);
-            border: 4px solid #e9b64c;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            font-family: 'Sarabun', sans-serif;
-            position: relative;
-        }
-        
-        .card-container-3 {
+        #previewWrapper {
+            width: 100%;
+            overflow: hidden;
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 40px;
+            background: #e9ecef;
+            border: 1px dashed #ccc;
+            padding: 20px 0;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        #renderCanvas {
+            width: 1200px;
+            min-height: 1200px;
+            position: relative;
+            overflow: hidden;
+            transform-origin: top center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #1f0505, #4a0c0c, #140303);
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+            padding: 40px 0 80px 0;
+        }
+
+        .stars-bg {
+            position:absolute; top:0; left:0; width:100%; height:100%; opacity:0.5; 
+            background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 4px), 
+                              radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 3px), 
+                              radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
+            background-size: 550px 550px, 350px 350px, 250px 250px; 
+            background-position: 0 0, 40px 60px, 130px 270px;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Playing Card Style */
+        .playing-card-ui {
+            width: 220px;
+            height: 330px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #111, #222);
+            border: 4px solid #d4af37;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 20px rgba(212,175,55,0.2);
+            position: relative;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
         }
         
-        .meaning-box-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+        .playing-card-ui::before {
+            content: '';
+            position: absolute;
+            top: 6px; left: 6px; right: 6px; bottom: 6px;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 9px;
+            pointer-events: none;
+        }
+
+        .card-corner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+            font-family: Arial, sans-serif;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .card-corner.top-left {
+            align-self: flex-start;
+        }
+        
+        .card-corner.bottom-right {
+            align-self: flex-end;
+            transform: rotate(180deg);
+        }
+
+        .card-center-symbol {
+            font-size: 90px;
+            line-height: 1;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .card-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 350px;
+            text-align: center;
+        }
+
+        .card-img-wrap {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .card-position {
+            color: #d4af37; font-size: 1.4rem; font-weight: bold; margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .card-name {
+            color: #fff; font-size: 2rem; font-weight: bold; margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .card-desc {
+            color: #e0e0e0; font-size: 1.15rem; line-height: 1.6; text-align: left;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+        
+        .suit-red {
+            color: #ff3b30 !important;
+            text-shadow: 0 0 10px rgba(255,59,48,0.4);
+        }
+        
+        .suit-black {
+            color: #d4af37 !important;
+            text-shadow: 0 0 10px rgba(212,175,55,0.4);
         }
     </style>
 </head>
 <body>
 
-    <div class="container-fluid p-0">
-        <div class="row m-0">
-            <!-- Left: Controls -->
-            <div class="col-md-4 col-lg-3 control-panel shadow">
-                <button class="btn btn-outline-light btn-block mb-4" onclick="window.location.href='admin.html'">
-                    <i class="fas fa-arrow-left"></i> กลับไประบบหลังบ้าน
-                </button>
+    <div class="admin-header">
+        <h2 id="pageTitle"><i class="fas fa-heart text-warning mr-2"></i>ระบบทำนายดวงไพ่ป๊อก (ตำรา 32 ใบ)</h2>
+        <p class="mb-0 text-white-50">สำหรับผู้ดูแลระบบ - สร้างคอนเทนต์ดูดวงไพ่ป๊อกรายวัน / 3 ใบ</p>
+    </div>
+
+    <!-- Mode Switcher -->
+    <div class="container-fluid mt-3 text-center">
+        <div class="btn-group shadow-sm" role="group" aria-label="Cartomancy Mode Switcher">
+            <button type="button" id="btnMode1" class="btn btn-outline-warning" onclick="switchMode(1)">ดวงรายวัน (1 ใบ)</button>
+            <button type="button" id="btnMode3" class="btn btn-warning active" onclick="switchMode(3)">ทำนายทั่วไป (3 ใบ)</button>
+        </div>
+    </div>
+
+    <div class="container-fluid mt-4 mb-5">
+        <div class="row mb-3" id="controlsMode3">
+            <div class="col-12 text-center">
+                <a href="admin.html" class="btn btn-secondary mr-2"><i class="fas fa-arrow-left"></i> กลับหน้า Admin</a>
+                <button class="btn btn-gold px-4 py-2" onclick="drawThreeCards()"><i class="fas fa-random mr-2"></i> สุ่มไพ่ 3 ใบ (Draw)</button>
+                <button class="btn btn-dark px-4 py-2 ml-2" onclick="downloadImage()"><i class="fas fa-download mr-2"></i> ดาวน์โหลดภาพ (PNG)</button>
+                <button class="btn btn-primary px-4 py-2 ml-2" onclick="postToFacebook()" style="background: linear-gradient(45deg, #1877F2, #3b5998); border: none;"><i class="fa-brands fa-facebook mr-2"></i> โพสต์ลงเพจ</button>
+            </div>
+        </div>
+
+        <div class="row mb-3" id="controlsMode1" style="display: none;">
+            <div class="col-12 text-center">
+                <a href="admin.html" class="btn btn-secondary mr-2"><i class="fas fa-arrow-left"></i> กลับหน้า Admin</a>
+                <button class="btn btn-gold px-4 py-2" onclick="drawSingleCard()"><i class="fas fa-random mr-2"></i> สุ่มไพ่ 1 ใบ (Draw)</button>
+                <button class="btn btn-dark px-4 py-2 ml-2" onclick="downloadImage()"><i class="fas fa-download mr-2"></i> ดาวน์โหลดภาพ (PNG)</button>
+                <button class="btn btn-primary px-4 py-2 ml-2" onclick="postToFacebook()" style="background: linear-gradient(45deg, #1877F2, #3b5998); border: none;"><i class="fa-brands fa-facebook mr-2"></i> โพสต์ลงเพจ</button>
+            </div>
+        </div>
+
+        <!-- Custom Summary Input -->
+        <div class="row mb-4 justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body bg-light rounded">
+                        <label for="customSummaryInput" class="font-weight-bold text-dark"><i class="fas fa-edit text-primary mr-1"></i> ปรับแต่งบทสรุปภาพรวม (แสดงด้านล่างภาพ):</label>
+                        <textarea id="customSummaryInput" class="form-control" rows="3" placeholder="พิมพ์บทสรุปของคุณที่นี่... (หากเว้นว่างไว้ ระบบจะสร้างบทสรุปให้อัตโนมัติ)" oninput="updateSummaryText(this.value)"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Preview Container -->
+        <div id="previewWrapper">
+            <div id="renderCanvas">
+                <!-- Stars Background -->
+                <div class="stars-bg"></div>
                 
-                <h4 class="text-gold mb-4"><i class="fas fa-heart mr-2"></i> สร้างภาพไพ่ป๊อก</h4>
-                
-                <div class="form-group mb-4">
-                    <label class="text-white">เลือกรูปแบบการทำนาย:</label>
-                    <select id="drawType" class="form-control bg-dark text-white border-gold">
-                        <option value="1">ทำนาย 1 ใบ (ภาพรวม)</option>
-                        <option value="3">ทำนาย 3 ใบ (อดีต ปัจจุบัน อนาคต)</option>
-                    </select>
+                <!-- Branding Header -->
+                <div style="position: absolute; top: 40px; right: 50px; text-align: right; z-index: 10;">
+                    <h2 style="margin:0; font-size: 2.2rem; color:#d4af37; font-family:'Sarabun', sans-serif; font-weight:700; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">สยามโหรามงคล</h2>
+                    <p style="margin:0; font-size: 1.2rem; color:#fff; font-family:'Sarabun', sans-serif; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); opacity: 0.8;">ศาสตร์พยากรณ์ไพ่ป๊อก</p>
                 </div>
 
-                <button class="btn btn-danger btn-block py-3 mb-4" style="font-weight: bold; border-radius: 10px;" onclick="adminDrawCartomancyPage()">
-                    <i class="fas fa-random mr-2"></i> สุ่มไพ่ใหม่ (Draw)
-                </button>
-                
-                <div class="form-group mb-3">
-                    <label class="text-gold">ข้อความเสริม (หัวกระดาษ):</label>
-                    <input type="text" id="adminCartomancyCustomText" class="form-control bg-dark text-white border-secondary" placeholder="เช่น แด่คุณลูกค้า VIP">
+                <div style="position: absolute; top: 40px; left: 50px; z-index: 10;">
+                    <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(212, 175, 55, 0.4); padding: 10px 25px; border-radius: 30px; backdrop-filter: blur(8px);">
+                        <span id="canvasHeaderTag" style="font-size: 1.4rem; color: #fff; font-family: 'Sarabun', sans-serif; font-weight: bold;">♣️ ไพ่ป๊อกพยากรณ์ 3 ใบ</span>
+                    </div>
                 </div>
-                
-                <div class="form-group mb-3">
-                    <label class="text-gold">วันที่:</label>
-                    <input type="date" id="adminCartomancyDate" class="form-control bg-dark text-white border-secondary">
-                </div>
-                
-                <hr class="border-secondary my-4">
-                
-                <button class="btn btn-warning btn-block py-3" style="font-weight: bold; border-radius: 10px; background: linear-gradient(135deg, #f1c40f, #d4af37); color: #000; border: none;" onclick="downloadAdminCartomancyImagePage()">
-                    <i class="fas fa-download mr-2"></i> ดาวน์โหลดรูปภาพ
-                </button>
-                <button class="btn btn-primary btn-block py-3 mt-2" style="font-weight: bold; border-radius: 10px; background: linear-gradient(45deg, #1877F2, #3b5998); border: none;" onclick="postToFacebook()">
-                    <i class="fa-brands fa-facebook mr-2"></i> โพสต์ลงเพจ
-                </button>
-                <small class="text-muted mt-2 d-block text-center">ภาพจะถูกบันทึกเป็น PNG ความคมชัดสูง</small>
-            </div>
-            
-            <!-- Right: Preview Area -->
-            <div class="col-md-8 col-lg-9 preview-panel">
-                <div id="adminCartomancyPreviewContainer" style="width: 100%; display: flex; justify-content: center; align-items: flex-start; overflow-x: auto;">
-                    <canvas id="cartomancyCanvas" style="max-width: 100%; height: auto; border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.5);"></canvas>
+
+                <!-- Main Layout Container (Fills dynamically) -->
+                <div id="canvasContentLayout" style="margin-top: 130px; width: 92%; display: flex; flex-direction: column; align-items: center; z-index: 5;">
+                    <!-- 3 Cards Layout -->
+                    <div id="layout3Cards" style="display: flex; justify-content: center; gap: 40px; width: 100%; margin-bottom: 40px;">
+                        <!-- Card 1 -->
+                        <div class="card-col">
+                            <div class="card-position">อดีต (Past)</div>
+                            <div class="card-img-wrap">
+                                <div class="card-glow"></div>
+                                <div id="cardUI1" class="playing-card-ui">
+                                    <div class="card-corner top-left">A<br>♥</div>
+                                    <div class="card-center-symbol">♥</div>
+                                    <div class="card-corner bottom-right">A<br>♥</div>
+                                </div>
+                            </div>
+                            <div id="cardName1" class="card-name">A โพแดง</div>
+                            <div id="cardDesc1" class="card-desc">...</div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="card-col">
+                            <div class="card-position">ปัจจุบัน (Present)</div>
+                            <div class="card-img-wrap">
+                                <div class="card-glow"></div>
+                                <div id="cardUI2" class="playing-card-ui">
+                                    <div class="card-corner top-left">10<br>♦</div>
+                                    <div class="card-center-symbol">♦</div>
+                                    <div class="card-corner bottom-right">10<br>♦</div>
+                                </div>
+                            </div>
+                            <div id="cardName2" class="card-name">10 ข้าวหลามตัด</div>
+                            <div id="cardDesc2" class="card-desc">...</div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="card-col">
+                            <div class="card-position">อนาคต (Future)</div>
+                            <div class="card-img-wrap">
+                                <div class="card-glow"></div>
+                                <div id="cardUI3" class="playing-card-ui">
+                                    <div class="card-corner top-left">K<br>♣</div>
+                                    <div class="card-center-symbol">♣</div>
+                                    <div class="card-corner bottom-right">K<br>♣</div>
+                                </div>
+                            </div>
+                            <div id="cardName3" class="card-name">K ดอกจิก</div>
+                            <div id="cardDesc3" class="card-desc">...</div>
+                        </div>
+                    </div>
+
+                    <!-- 1 Card Layout (Hidden by default) -->
+                    <div id="layout1Card" style="display: none; align-items: center; justify-content: center; gap: 50px; width: 100%; margin-bottom: 40px; padding: 20px 50px;">
+                        <div class="card-img-wrap" style="margin-bottom: 0;">
+                            <div class="card-glow" style="width: 220px; height: 330px;"></div>
+                            <div id="cardUI1Single" class="playing-card-ui">
+                                <div class="card-corner top-left">7<br>♠</div>
+                                <div class="card-center-symbol">♠</div>
+                                <div class="card-corner bottom-right">7<br>♠</div>
+                            </div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <div id="cardName1Single" class="card-name" style="text-align: left; font-size: 2.5rem; color: #f1c40f;">7 โพดำ</div>
+                            <div id="cardDesc1Single" class="card-desc" style="font-size: 1.3rem;">...</div>
+                        </div>
+                    </div>
+
+                    <!-- Overall Summary Panel -->
+                    <div class="glass-panel text-left" style="width: 100%;">
+                        <h3 style="color: #d4af37; font-size: 1.5rem; font-weight: bold; margin-bottom: 12px;"><i class="fas fa-magic"></i> บทสรุปภาพรวมดวงชะตา</h3>
+                        <p id="summaryText" style="color: #f8f9fa; font-size: 1.25rem; line-height: 1.7; margin-bottom: 0; white-space: pre-wrap;">สุ่มไพ่เพื่อเริ่มการพยากรณ์ชะตาชีวิตของคุณ...</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     
+    <!-- App Scripts -->
+    <script src="firebase-config.js"></script>
     <script src="cartomancy-data.js"></script>
     <script src="adminCartomancy.js"></script>
-    
-    <script>
-        document.getElementById('adminCartomancyCustomText').addEventListener('input', function(e) {
-            // เราจะวาดใหม่เมื่อมีการเปลี่ยนข้อความ
-            if (window.lastDrawnCards) {
-                renderCanvas(document.getElementById('drawType').value, window.lastDrawnCards);
-            }
-        });
-        
-        document.getElementById('adminCartomancyDate').addEventListener('input', function(e) {
-            if (window.lastDrawnCards) {
-                renderCanvas(document.getElementById('drawType').value, window.lastDrawnCards);
-            }
-        });
-        
-        // Initial drawing (empty state)
-        window.onload = function() {
-            // Set default date to today
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            document.getElementById('adminCartomancyDate').value = `${yyyy}-${mm}-${dd}`;
-            
-            renderEmptyCanvas();
-        };
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

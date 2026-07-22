@@ -33,7 +33,7 @@ const DAILY_FORTUNE_DB = {
 };
 
 // ข้อมูล 12 ราศี
-const ZODIAC_LIST = [
+if (typeof ZODIAC_LIST === 'undefined') { var ZODIAC_LIST = [
     { name: "ราศีเมษ", icon: "♈", element: "ไฟ" },
     { name: "ราศีพฤษภ", icon: "♉", element: "ดิน" },
     { name: "ราศีเมถุน", icon: "♊", element: "ลม" },
@@ -46,7 +46,7 @@ const ZODIAC_LIST = [
     { name: "ราศีมังกร", icon: "♑", element: "ดิน" },
     { name: "ราศีกุมภ์", icon: "♒", element: "ลม" },
     { name: "ราศีมีน", icon: "♓", element: "น้ำ" }
-];
+]; }
 
 const DAYS_LIST = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
 const ADMIN_CONTENT_DAY_COLORS = ["🔴", "🟡", "🩷", "🟢", "🟠", "🔵", "🟣"];

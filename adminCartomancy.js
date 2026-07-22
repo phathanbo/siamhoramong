@@ -1,561 +1,274 @@
 /**
  * adminCartomancy.js
- * โลจิกสำหรับหน้า adminCartomancy.html 
- * ปรับปรุงให้ใช้ Canvas 2D API แบบ Native แทน html2canvas
+ * โลจิกควบคุมหน้าจอระบบทำนายไพ่ป๊อก 32 ใบ (ฝั่งแอดมิน)
+ * อิงการแสดงผลแบบ HTML/CSS และจับภาพหน้าจอด้วย html2canvas
  */
 
-function openAdminCartomancyModal() {
-    window.location.href = 'adminCartomancy.html';
-}
+"use strict";
 
-function adminDrawCartomancyPage() {
-    if (typeof drawSingleCartomancy !== 'function') {
-        Swal.fire('Error', 'ไม่พบข้อมูลไพ่ป๊อก', 'error');
-        return;
-    }
+let currentMode = 3; // 1 or 3
+let drawnCards = [];
+let autoSummary = "";
+
+document.addEventListener("DOMContentLoaded", () => {
+    // ป้องกันการทำงานบนหน้า admin.html (รันเฉพาะหน้าที่มีบอร์ดพรีวิวไพ่)
+    if (!document.getElementById("renderCanvas")) return;
+
+    const customSummary = document.getElementById("customSummaryInput");
+    if (customSummary) customSummary.value = "";
     
-    const drawType = document.getElementById('drawType').value;
+    // โหลดครั้งแรก
+    switchMode(3);
+});
+
+// 1. สลับโหมดการดูดวง (1 ใบ หรือ 3 ใบ)
+function switchMode(mode) {
+    currentMode = mode;
     
-    let cards = [];
-    if (drawType === '1') {
-        cards = [drawSingleCartomancy()];
+    const btnMode1 = document.getElementById("btnMode1");
+    const btnMode3 = document.getElementById("btnMode3");
+    const controlsMode1 = document.getElementById("controlsMode1");
+    const controlsMode3 = document.getElementById("controlsMode3");
+    const layout1Card = document.getElementById("layout1Card");
+    const layout3Cards = document.getElementById("layout3Cards");
+    const canvasHeaderTag = document.getElementById("canvasHeaderTag");
+    const renderCanvas = document.getElementById("renderCanvas");
+    
+    if (!renderCanvas || !btnMode1 || !btnMode3) return;
+    
+    if (mode === 1) {
+        btnMode1.classList.add("active");
+        btnMode3.classList.remove("active");
+        controlsMode1.style.display = "block";
+        controlsMode3.style.display = "none";
+        layout1Card.style.display = "flex";
+        layout3Cards.style.display = "none";
+        canvasHeaderTag.innerHTML = "♥️ ไพ่ป๊อกพยากรณ์ประจำวัน (1 ใบ)";
+        
+        // ปรับขนาดเฟรมรองรับ 1 ใบ (1080x1080)
+        renderCanvas.style.width = "1080px";
+        renderCanvas.style.minHeight = "1080px";
+        renderCanvas.style.height = "1080px";
+        
+        drawSingleCard();
     } else {
-        cards = drawThreeCartomancy();
+        btnMode3.classList.add("active");
+        btnMode1.classList.remove("active");
+        controlsMode3.style.display = "block";
+        controlsMode1.style.display = "none";
+        layout3Cards.style.display = "flex";
+        layout1Card.style.display = "none";
+        canvasHeaderTag.innerHTML = "♣️ ไพ่ป๊อกพยากรณ์ชะตาชีวิต (3 ใบ)";
+        
+        // ปรับขนาดเฟรมรองรับ 3 ใบ (1200x1200)
+        renderCanvas.style.width = "1200px";
+        renderCanvas.style.minHeight = "1200px";
+        renderCanvas.style.height = "1200px";
+        
+        drawThreeCards();
     }
     
-    // บันทึกไพ่ล่าสุดไว้สำหรับวาดใหม่เมื่อแก้ข้อความเสริม
-    window.lastDrawnCards = cards;
+    // ล้างช่องป้อนข้อความสรุปเอง
+    const input = document.getElementById("customSummaryInput");
+    if (input) input.value = "";
     
-    renderCanvas(drawType, cards);
+    adjustScale();
 }
 
-function renderEmptyCanvas() {
-    const canvas = document.getElementById('cartomancyCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+// 2. ปรับขนาดอัตราส่วนให้พอดีจอแสดงผล
+function adjustScale() {
+    const canvas = document.getElementById("renderCanvas");
+    const wrapper = document.getElementById("previewWrapper");
+    if (!canvas || !wrapper) return;
     
-    const canvasWidth = 900;
-    const canvasHeight = 600;
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
+    const wrapperWidth = wrapper.offsetWidth;
+    const canvasWidth = currentMode === 1 ? 1080 : 1200;
     
-    // Draw Background
-    drawBackground(ctx, canvasWidth, canvasHeight);
-    
-    // Draw Header
-    drawHeader(ctx, canvasWidth);
-    
-    // Draw Empty State Text
-    ctx.fillStyle = '#555555';
-    ctx.font = '30px "Sarabun", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('กรุณากดสุ่มไพ่', canvasWidth / 2, canvasHeight / 2 + 50);
-}
-
-function renderCanvas(drawType, cards) {
-    const canvas = document.getElementById('cartomancyCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    
-    // 1 card mode: 900x1200
-    // 3 cards mode: 1200x900
-    let canvasWidth = drawType === '1' ? 900 : 1200;
-    let canvasHeight = drawType === '1' ? 1200 : 900;
-    
-    // Adjust height for 3 cards based on content if needed, but 900-1000 is usually enough
-    if(drawType === '3') canvasHeight = 950;
-    
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    
-    // Enable antialiasing (usually on by default, but good to ensure high quality)
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    
-    // 1. Draw Background
-    drawBackground(ctx, canvasWidth, canvasHeight);
-    
-    // 2. Draw Header
-    drawHeader(ctx, canvasWidth);
-    
-    const cardWidth = 220;
-    const cardHeight = 310;
-    const cardY = 220;
-    
-    if (drawType === '1') {
-        // 1 Card Mode
-        const cardX = (canvasWidth - cardWidth) / 2;
-        drawCard(ctx, cards[0], cardX, cardY, cardWidth, cardHeight);
-        
-        // Draw Meaning Box below the card
-        const boxY = cardY + cardHeight + 40;
-        const boxWidth = 800;
-        const boxX = (canvasWidth - boxWidth) / 2;
-        const boxHeight = canvasHeight - boxY - 40;
-        drawMeaningBox1(ctx, cards[0], boxX, boxY, boxWidth, boxHeight);
-        
+    if (wrapperWidth < canvasWidth) {
+        const scale = wrapperWidth / canvasWidth;
+        canvas.style.transform = `scale(${scale})`;
+        canvas.style.transformOrigin = "top center";
+        // ปรับความสูง wrapper ให้พอดีกล่องหลังย่อสเกล
+        const canvasHeight = currentMode === 1 ? 1080 : 1200;
+        wrapper.style.height = (canvasHeight * scale) + "px";
     } else {
-        // 3 Cards Mode
-        const gap = 50;
-        const totalCardsWidth = (cardWidth * 3) + (gap * 2);
-        let startX = (canvasWidth - totalCardsWidth) / 2;
-        const positions = ['อดีต', 'ปัจจุบัน', 'อนาคต'];
-        
-        for (let i = 0; i < 3; i++) {
-            const cardX = startX + (i * (cardWidth + gap));
-            
-            // Draw Position Text
-            ctx.fillStyle = '#d4af37';
-            ctx.font = 'bold 24px "Sarabun", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(`ไพ่ใบที่ ${i + 1}`, cardX + (cardWidth/2), cardY - 40);
-            ctx.font = '18px "Sarabun", sans-serif';
-            ctx.fillText(`(${positions[i]})`, cardX + (cardWidth/2), cardY - 15);
-            
-            drawCard(ctx, cards[i], cardX, cardY, cardWidth, cardHeight);
-            
-            // Draw Meaning Box below each card
-            const boxY = cardY + cardHeight + 40;
-            const boxHeight = canvasHeight - boxY - 40;
-            drawMeaningBox3(ctx, cards[i], cardX, boxY, cardWidth, boxHeight);
-        }
+        canvas.style.transform = "none";
+        wrapper.style.height = "auto";
     }
 }
 
-function drawBackground(ctx, width, height) {
-    // Gradient Background
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, '#1a0831');
-    gradient.addColorStop(1, '#0d041a');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-    
-    // Golden Border
-    ctx.strokeStyle = '#e9b64c';
-    ctx.lineWidth = 8;
-    ctx.strokeRect(4, 4, width - 8, height - 8);
-    ctx.lineWidth = 4;
-    ctx.strokeRect(16, 16, width - 32, height - 32);
-}
+window.addEventListener("resize", adjustScale);
 
-function drawHeader(ctx, width) {
-    // Title
-    ctx.fillStyle = '#f9d976';
-    ctx.font = 'bold 45px "Sarabun", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.shadowColor = 'rgba(0,0,0,0.8)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetX = 3;
-    ctx.shadowOffsetY = 3;
-    ctx.fillText('สยามโหรามงคล', width / 2, 70);
-    
-    // Reset shadow
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    
-    // Subtitle 1
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '30px "Sarabun", sans-serif';
-    ctx.fillText('คำทำนายไพ่ป๊อกพยากรณ์', width / 2, 120);
-    
-    // Custom Subtitle
-    const customText = document.getElementById('adminCartomancyCustomText') ? document.getElementById('adminCartomancyCustomText').value : '';
-    let currentY = 160;
-    if (customText) {
-        ctx.fillStyle = '#d4af37';
-        ctx.font = '24px "Sarabun", sans-serif';
-        ctx.fillText(customText, width / 2, currentY);
-        currentY += 40;
-    }
-    
-    // Custom Date
-    const customDate = document.getElementById('adminCartomancyDate') ? document.getElementById('adminCartomancyDate').value : '';
-    if (customDate) {
-        const d = new Date(customDate);
-        if (!isNaN(d)) {
-            const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            const formattedDate = d.getDate() + ' ' + thaiMonths[d.getMonth()] + ' ' + (d.getFullYear() + 543);
-            ctx.fillStyle = '#f1c40f';
-            ctx.font = '20px "Sarabun", sans-serif';
-            ctx.fillText('ประจำวันที่ ' + formattedDate, width / 2, currentY);
-        }
-    }
-}
-
-function drawCard(ctx, card, x, y, width, height) {
-    const radius = 15;
-    
-    // Card Shadow
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-    ctx.shadowBlur = 20;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 10;
-    
-    // Card Base
-    ctx.fillStyle = '#111111';
-    
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
-    ctx.fill();
-    
-    // Card Gradient Overlay
-    const cardGradient = ctx.createLinearGradient(x, y, x + width, y + height);
-    cardGradient.addColorStop(0, '#111111');
-    cardGradient.addColorStop(1, '#222222');
-    ctx.fillStyle = cardGradient;
-    ctx.fill();
-    
-    // Reset shadow for content
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    
-    // Card Content Color
-    const textColor = card.color === 'red' ? '#ff3333' : '#e0e0e0';
-    ctx.fillStyle = textColor;
-    
-    const rank = card.name.split(' ')[0];
-    
-    // Top Left Corner
-    ctx.font = 'bold 24px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(rank, x + 25, y + 35);
-    ctx.font = '28px Arial';
-    ctx.fillText(card.symbol, x + 25, y + 65);
-    
-    // Bottom Right Corner (Upside down)
-    ctx.save();
-    ctx.translate(x + width - 25, y + height - 35);
-    ctx.rotate(Math.PI);
-    ctx.font = 'bold 24px Arial';
-    ctx.fillText(rank, 0, 0);
-    ctx.font = '28px Arial';
-    ctx.fillText(card.symbol, 0, 30);
-    ctx.restore();
-    
-    // Center Content
-    drawCenterPips(ctx, rank, card.symbol, textColor, x, y, width, height);
-}
-
-function drawCenterPips(ctx, rank, symbol, color, x, y, width, height) {
-    ctx.fillStyle = color;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    const cx = x + (width / 2);
-    const cy = y + (height / 2);
-    
-    if (['J', 'Q', 'K'].includes(rank)) {
-        const icon = rank === 'K' ? '♚' : (rank === 'Q' ? '♛' : '♞');
-        ctx.font = '50px Arial';
-        ctx.fillText(icon, cx, cy - 30);
-        ctx.font = 'bold 80px Arial';
-        ctx.fillText(rank, cx, cy + 30);
+// 3. จั่วไพ่ 1 ใบ
+function drawSingleCard() {
+    if (typeof drawSingleCartomancy !== "function") {
+        Swal.fire("ข้อผิดพลาด", "ไม่พบฟังก์ชันสุ่มไพ่", "error");
         return;
     }
     
-    if (rank === 'A') {
-        ctx.font = '90px Arial';
-        ctx.fillText(symbol, cx, cy);
+    const card = drawSingleCartomancy();
+    drawnCards = [card];
+    
+    // อัปเดตการ์ด HTML
+    renderCardUI("cardUI1Single", card);
+    document.getElementById("cardName1Single").innerHTML = `${card.name} (${card.symbol})`;
+    document.getElementById("cardDesc1Single").innerHTML = card.meaning;
+    
+    // ตั้งค่าบทสรุปอัตโนมัติ
+    autoSummary = `ไพ่ป๊อกพยากรณ์ประจำวันของคุณในวันนี้คือ "${card.name}"\nคำทำนายโดยรวม: ${card.meaning}\n• การงาน: ${card.work}\n• การเงิน: ${card.finance}\n• ความรัก: ${card.love}`;
+    
+    updateSummaryText("");
+}
+
+// 4. จั่วไพ่ 3 ใบ
+function drawThreeCards() {
+    if (typeof drawThreeCartomancy !== "function") {
+        Swal.fire("ข้อผิดพลาด", "ไม่พบฟังก์ชันสุ่มไพ่ 3 ใบ", "error");
         return;
     }
     
-    // Number cards
-    const num = parseInt(rank);
-    let pips = [];
+    const cards = drawThreeCartomancy();
+    drawnCards = cards;
     
-    if (num === 2) pips = ['C1', 'C5'];
-    if (num === 3) pips = ['C1', 'C3', 'C5'];
-    if (num === 4) pips = ['L1', 'R1', 'L5', 'R5'];
-    if (num === 5) pips = ['L1', 'R1', 'C3', 'L5', 'R5'];
-    if (num === 6) pips = ['L1', 'R1', 'L3', 'R3', 'L5', 'R5'];
-    if (num === 7) pips = ['L1', 'R1', 'C2', 'L3', 'R3', 'L5', 'R5'];
-    if (num === 8) pips = ['L1', 'R1', 'C2', 'L3', 'R3', 'C4', 'L5', 'R5'];
-    if (num === 9) pips = ['L1', 'R1', 'L2', 'R2', 'C3', 'L4', 'R4', 'L5', 'R5'];
-    if (num === 10) pips = ['L1', 'R1', 'C2', 'L2', 'R2', 'L4', 'R4', 'C4', 'L5', 'R5'];
+    // อัปเดต HTML การ์ดทั้ง 3 ใบ
+    renderCardUI("cardUI1", cards[0]);
+    document.getElementById("cardName1").innerHTML = `${cards[0].name} (${cards[0].symbol})`;
+    document.getElementById("cardDesc1").innerHTML = cards[0].meaning;
+    
+    renderCardUI("cardUI2", cards[1]);
+    document.getElementById("cardName2").innerHTML = `${cards[1].name} (${cards[1].symbol})`;
+    document.getElementById("cardDesc2").innerHTML = cards[1].meaning;
+    
+    renderCardUI("cardUI3", cards[2]);
+    document.getElementById("cardName3").innerHTML = `${cards[2].name} (${cards[2].symbol})`;
+    document.getElementById("cardDesc3").innerHTML = cards[2].meaning;
+    
+    // คำนวณสรุปดวง 3 ใบอดีต ปัจจุบัน อนาคต
+    autoSummary = `สรุปทิศทางดวงชะตา 3 ใบ (อดีต - ปัจจุบัน - อนาคต):\nอดีตที่ผ่านมาดวงของคุณเป็นไปตามพลังของไพ่ "${cards[0].name}" (${cards[0].meaning.substring(0, 80)}...)\nในขณะที่ปัจจุบัน ดวงของคุณขึ้นอยู่กับอิทธิพลของไพ่ "${cards[1].name}" ซึ่งเด่นเรื่อง: ${cards[1].work}\nและอนาคตอันใกล้มีแนวโน้มจะลงเอยตามข้อสรุปของไพ่ "${cards[2].name}" แนะนำว่า: ${cards[2].love}`;
+    
+    updateSummaryText("");
+}
 
-    // Pip positioning map
-    // Grid: L(eft), C(enter), R(ight) x 1(top) to 5(bottom)
-    const cw = width;
-    const ch = height;
+// 5. วาดลวดลายและข้อมลในตัวไพ่ป๊อก
+function renderCardUI(elementId, card) {
+    const cardEl = document.getElementById(elementId);
+    if (!cardEl) return;
     
-    const posX = { 'L': x + cw * 0.3, 'C': cx, 'R': x + cw * 0.7 };
-    const posY = { '1': y + ch * 0.2, '2': y + ch * 0.35, '3': cy, '4': y + ch * 0.65, '5': y + ch * 0.8 };
+    const isRed = card.color === "red";
+    const colorClass = isRed ? "suit-red" : "suit-black";
+    const rank = card.name.split(" ")[0];
     
-    ctx.font = '35px Arial';
-    
-    pips.forEach(p => {
-        const col = p.charAt(0);
-        const row = p.charAt(1);
-        const px = posX[col];
-        const py = posY[row];
+    cardEl.innerHTML = `
+        <div class="card-corner top-left ${colorClass}">${rank}<br>${card.symbol}</div>
+        <div class="card-center-symbol ${colorClass}">${card.symbol}</div>
+        <div class="card-corner bottom-right ${colorClass}">${rank}<br>${card.symbol}</div>
+    `;
+}
+
+// 6. อัปเดตสเตตัสข้อความสรุปด้านล่าง
+function updateSummaryText(customVal) {
+    const summaryText = document.getElementById("summaryText");
+    if (!summaryText) return;
+    summaryText.innerText = customVal.trim() || autoSummary;
+}
+
+// 7. ดาวน์โหลดรูปภาพ หรือ คืนค่ารูปภาพแบบ Base64 สำหรับแชร์
+function downloadImage(action = "download") {
+    return new Promise((resolve) => {
+        Swal.fire({
+            title: "กำลังเตรียมสร้างภาพความละเอียดสูง...",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
         
-        const invert = parseInt(row) > 3;
+        // คืนค่า Scale เพื่อความละเอียด 100% ตอนแคปเจอร์
+        const canvas = document.getElementById("renderCanvas");
+        const wrapper = document.getElementById("previewWrapper");
+        canvas.style.transform = "none";
+        if (wrapper) wrapper.style.height = "auto";
         
-        ctx.save();
-        ctx.translate(px, py);
-        if (invert) ctx.rotate(Math.PI);
-        ctx.fillText(symbol, 0, 0);
-        ctx.restore();
+        // เรียกใช้ html2canvas แบบ Dynamic
+        const script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+        script.onload = () => {
+            html2canvas(canvas, {
+                scale: 2, // เพิ่มความละเอียดระดับ Retina HD 2x
+                useCORS: true,
+                backgroundColor: "#1f0505"
+            }).then(c => {
+                const dataUrl = c.toDataURL("image/png");
+                
+                // คืนค่าการย่อสเกลสำหรับหน้าจอผู้ใช้
+                adjustScale();
+                Swal.close();
+                
+                if (action === "post") {
+                    resolve(dataUrl);
+                } else {
+                    const link = document.createElement("a");
+                    link.download = `cartomancy-${currentMode}-cards-${Date.now()}.png`;
+                    link.href = dataUrl;
+                    link.click();
+                    resolve();
+                }
+            }).catch(err => {
+                console.error("Capture failed:", err);
+                Swal.fire("ข้อผิดพลาด", "ไม่สามารถสร้างไฟล์ภาพได้", "error");
+                adjustScale();
+                resolve();
+            });
+        };
+        document.body.appendChild(script);
     });
 }
 
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-    const words = text.split(' '); // For Thai, word boundary is hard without a library, we might need character wrap or approximate it.
-    // Thai text wrapping on canvas without Intl.Segmenter can be tricky, we'll use a basic char-by-char approach if it's purely Thai, but space split is a start.
-    // Better yet, split by space, but for long Thai string, we might need a custom wrapper.
-    
-    // Simple custom wrapper that respects English spaces but also breaks Thai reasonably by length.
-    let line = '';
-    let currentY = y;
-    
-    for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        const testLine = line + char;
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
-        
-        if (testWidth > maxWidth && i > 0) {
-            ctx.fillText(line, x, currentY);
-            line = char;
-            currentY += lineHeight;
-        } else {
-            line = testLine;
-        }
-    }
-    ctx.fillText(line, x, currentY);
-    return currentY + lineHeight;
-}
-
-function drawMeaningBox1(ctx, card, x, y, width, height) {
-    // Box Background
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-    ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
-    ctx.lineWidth = 1;
-    
-    const radius = 15;
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-    
-    // Card Name Title
-    ctx.fillStyle = '#f9d976';
-    ctx.font = 'bold 32px "Sarabun", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    ctx.fillText(card.name, x + width / 2, y + 25);
-    
-    // Meanings
-    ctx.textAlign = 'left';
-    let textY = y + 80;
-    
-    ctx.font = 'bold 22px "Sarabun", sans-serif';
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText('🔮 ภาพรวม:', x + 30, textY);
-    ctx.font = '22px "Sarabun", sans-serif';
-    ctx.fillStyle = '#eeeeee';
-    textY = wrapText(ctx, card.meaning, x + 140, textY, width - 170, 30);
-    
-    textY += 15;
-    
-    // Sub-boxes
-    const drawSubBox = (icon, title, text, titleColor, bgColor, bdColor, sy) => {
-        // Draw small bg rect
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(x + 30, sy, width - 60, 60);
-        // Draw left border
-        ctx.fillStyle = bdColor;
-        ctx.fillRect(x + 30, sy, 5, 60);
-        
-        ctx.fillStyle = titleColor;
-        ctx.font = 'bold 20px "Sarabun", sans-serif';
-        // We'll skip emoji/fontawesome icons in canvas to avoid missing fonts, use text instead.
-        ctx.fillText(title, x + 50, sy + 18);
-        
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '20px "Sarabun", sans-serif';
-        wrapText(ctx, text, x + 150, sy + 18, width - 200, 26);
-        return sy + 75;
-    };
-    
-    textY = drawSubBox('', 'การงาน:', card.work, '#81c784', 'rgba(46, 125, 50, 0.1)', '#4caf50', textY);
-    textY = drawSubBox('', 'การเงิน:', card.finance, '#64b5f6', 'rgba(21, 101, 192, 0.1)', '#2196f3', textY);
-    textY = drawSubBox('', 'ความรัก:', card.love, '#e57373', 'rgba(198, 40, 40, 0.1)', '#f44336', textY);
-}
-
-function drawMeaningBox3(ctx, card, x, y, width, height) {
-    // Box Background
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-    ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
-    ctx.lineWidth = 1;
-    
-    const radius = 10;
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-    
-    // Card Name Title
-    ctx.fillStyle = '#f9d976';
-    ctx.font = 'bold 22px "Sarabun", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    ctx.fillText(card.name, x + width / 2, y + 15);
-    
-    // Line separator
-    ctx.beginPath();
-    ctx.setLineDash([5, 5]);
-    ctx.moveTo(x + 20, y + 45);
-    ctx.lineTo(x + width - 20, y + 45);
-    ctx.strokeStyle = '#555555';
-    ctx.stroke();
-    ctx.setLineDash([]);
-    
-    ctx.textAlign = 'left';
-    let textY = y + 60;
-    
-    ctx.font = 'bold 16px "Sarabun", sans-serif';
-    ctx.fillStyle = '#d4af37';
-    ctx.fillText('ความหมาย:', x + 15, textY);
-    ctx.font = '16px "Sarabun", sans-serif';
-    ctx.fillStyle = '#cccccc';
-    textY = wrapText(ctx, card.meaning, x + 15, textY + 22, width - 30, 22);
-    
-    textY += 10;
-    
-    const drawLineInfo = (title, text, color, sy) => {
-        ctx.fillStyle = color;
-        ctx.font = 'bold 16px "Sarabun", sans-serif';
-        ctx.fillText(title, x + 15, sy);
-        
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '16px "Sarabun", sans-serif';
-        return wrapText(ctx, text, x + 60, sy, width - 75, 22);
-    };
-    
-    textY = drawLineInfo('งาน:', card.work, '#81c784', textY);
-    textY = drawLineInfo('เงิน:', card.finance, '#64b5f6', textY + 5);
-    textY = drawLineInfo('รัก:', card.love, '#e57373', textY + 5);
-}
-
-function downloadAdminCartomancyImagePage(action = 'download') {
-    const canvas = document.getElementById('cartomancyCanvas');
-    if (!canvas) {
-        Swal.fire('ข้อผิดพลาด', 'ไม่พบ Canvas', 'error');
-        return;
-    }
-    
-    // ตรวจสอบว่ามีการสุ่มไพ่หรือยัง (ดูจาก window.lastDrawnCards)
-    if (!window.lastDrawnCards || window.lastDrawnCards.length === 0) {
-        Swal.fire('แจ้งเตือน', 'กรุณาสุ่มไพ่ก่อนทำการดาวน์โหลด', 'warning');
-        return;
-    }
-    
-    try {
-        const dataUrl = canvas.toDataURL('image/png');
-        
-        if (action === 'post') {
-            return dataUrl;
-        }
-
-        const filename = `cartomancy_premium_${new Date().getTime()}.png`;
-        
-        const link = document.createElement('a');
-        link.download = filename;
-        link.href = dataUrl;
-        link.click();
-        
-        Swal.fire({
-            icon: 'success',
-            title: 'บันทึกรูปภาพสำเร็จ!',
-            confirmButtonColor: '#d4af37'
-        });
-    } catch (err) {
-        console.error("Canvas export error:", err);
-        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถบันทึกรูปภาพได้', 'error');
-    }
-}
-
-// --- Facebook Posting Logic ---
+// 8. การโพสต์คำทำนายลง Facebook
 async function postToFacebook() {
     try {
-        const dataUrl = downloadAdminCartomancyImagePage('post');
+        const dataUrl = await downloadImage("post");
         if (!dataUrl) return;
         
-        const customText = document.getElementById('adminCartomancyCustomText').value;
-        const msg = customText ? `ดวงไพ่ป๊อก: ${customText}` : "ดูดวงไพ่ป๊อก 3 ใบ กับสยามโหรามงคล";
+        const summary = document.getElementById("summaryText").innerText;
         
-        // Preview Modal
         const confirmResult = await Swal.fire({
-            title: 'ยืนยันการโพสต์',
-                        html: `
+            title: "ยืนยันการแชร์โพสต์ลงเพจ",
+            html: `
                 <div style="background: #ffffff; color: #1c1e21; border-radius: 12px; width: 100%; text-align: left; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;">
                     <div style="display: flex; padding: 12px 16px; gap: 10px; align-items: center;">
                         <div style="width: 40px; height: 40px; border-radius: 50%; background: #ccc; overflow: hidden;">
-                            <img src="https://ui-avatars.com/api/?name=Siam&background=4F46E5&color=fff" style="width: 100%; height: 100%;">
+                            <img src="https://ui-avatars.com/api/?name=Siam&background=5a0909&color=fff" style="width: 100%; height: 100%;">
                         </div>
                         <div style="display: flex; flex-direction: column;">
                             <span style="font-weight: 600; font-size: 15px; color: #050505;">สยามโหรามงคล</span>
                             <span style="font-size: 13px; color: #65676b;">เพิ่งครู่ · 🌎</span>
                         </div>
                     </div>
-                    <div style="padding: 4px 16px 16px 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; color: #050505; max-height: 200px; overflow-y: auto;">${msg}</div>
+                    <div style="padding: 4px 16px 16px 16px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; color: #050505; max-height: 200px; overflow-y: auto;">${summary}</div>
                     <img src="${dataUrl}" style="width: 100%; display: block; border-top: 1px solid #eee;">
                 </div>
                 <div style="margin-top: 20px; text-align: left; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid #333;">
-                    <h4 style="margin: 0 0 10px 0; font-size: 15px; color: #d4af37;"><i class="fas fa-cog"></i> ตั้งค่าเพิ่มเติม (Optional)</h4>
-                    <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">ตั้งเวลาโพสต์ล่วงหน้า (ถ้ามี):</label>
+                    <h4 style="margin: 0 0 10px 0; font-size: 15px; color: #d4af37;"><i class="fas fa-cog"></i> ตั้งค่าเพิ่มเติม</h4>
+                    <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">ตั้งเวลาโพสต์ล่วงหน้า (Schedule):</label>
                     <input type="datetime-local" id="swalScheduleTime" style="width: 95%; padding: 10px; margin-bottom: 15px; border-radius: 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; font-family: inherit; font-size: 14px;">
-                    <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">เช็คอินสถานที่ (รหัส Place ID):</label>
-                    <input type="text" id="swalPlaceId" placeholder="เช่น 108398189188044 (Bangkok)" style="width: 95%; padding: 10px; border-radius: 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; font-family: inherit; font-size: 14px;">
+                    <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">รหัสสถานที่เช็คอิน (Place ID):</label>
+                    <input type="text" id="swalPlaceId" placeholder="เช่น 108398189188044" style="width: 95%; padding: 10px; border-radius: 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; font-family: inherit; font-size: 14px;">
                 </div>
             `,
             showCancelButton: true,
-            confirmButtonText: '<i class="fas fa-paper-plane"></i> ยืนยันโพสต์',
-            cancelButtonText: 'ยกเลิก',
-            background: '#1e1e1e',
-            color: '#fff',
-            width: '600px',
+            confirmButtonText: '<i class="fas fa-paper-plane"></i> ยืนยันโพสต์ลงเพจ',
+            cancelButtonText: "ยกเลิก",
+            background: "#1e1e1e",
+            color: "#fff",
+            width: "600px",
             preConfirm: () => {
                 return {
-                    scheduleTime: document.getElementById('swalScheduleTime') ? document.getElementById('swalScheduleTime').value : '',
-                    placeId: document.getElementById('swalPlaceId') ? document.getElementById('swalPlaceId').value.trim() : ''
+                    scheduleTime: document.getElementById("swalScheduleTime") ? document.getElementById("swalScheduleTime").value : "",
+                    placeId: document.getElementById("swalPlaceId") ? document.getElementById("swalPlaceId").value.trim() : ""
                 };
             }
         });
 
-        if (!confirmResult.isConfirmed) {
-            return;
-        }
+        if (!confirmResult.isConfirmed) return;
 
         let scheduledPublishTime = null;
         if (confirmResult.value && confirmResult.value.scheduleTime) {
@@ -564,25 +277,30 @@ async function postToFacebook() {
         let place = (confirmResult.value && confirmResult.value.placeId) ? confirmResult.value.placeId : null;
 
         Swal.fire({
-            title: 'กำลังโพสต์ลงเพจ...',
+            title: "กำลังโพสต์ไปยังเพจ Facebook...",
             allowOutsideClick: false,
             didOpen: () => Swal.showLoading()
         });
 
-        const res = await fetch('http://127.0.0.1:3000/api/facebook-post', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: msg, image: dataUrl , scheduledPublishTime: scheduledPublishTime, place: place })
+        const res = await fetch("http://127.0.0.1:3000/api/facebook-post", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: summary,
+                image: dataUrl,
+                scheduledPublishTime: scheduledPublishTime,
+                place: place
+            })
         });
-        
+
         const data = await res.json();
         if (data.success) {
-            Swal.fire('สำเร็จ!', 'โพสต์ลงเพจ Facebook เรียบร้อยแล้ว', 'success');
+            Swal.fire("สำเร็จ!", "โพสต์ข้อมูลและแชร์ไพ่ป๊อกสำเร็จเรียบร้อย!", "success");
         } else {
-            Swal.fire('ข้อผิดพลาด', data.error || 'ไม่สามารถโพสต์ได้', 'error');
+            Swal.fire("เกิดข้อผิดพลาด", data.error || "ไม่สามารถโพสต์ได้", "error");
         }
     } catch (err) {
         console.error(err);
-        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้: ' + err.message, 'error');
+        Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อกับบริการ API หลังบ้านได้: " + err.message, "error");
     }
 }
