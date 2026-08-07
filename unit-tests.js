@@ -6,7 +6,7 @@
 const fs = require('fs');
 
 // โหลดโค้ดจาก utils-helpers.js เพื่อทดสอบ
-const helpersCode = fs.readFileSync('./utils-helpers.js', 'utf8');
+const helpersCode = fs.readFileSync('./src/utils/utils-helpers.js', 'utf8');
 eval(helpersCode);
 
 let passed = 0;
@@ -66,7 +66,7 @@ console.log('');
 // Test Suite 4: Auspicious Days Utility Verification
 // -----------------------------------------------------------------------------
 console.log('🚩 [Suite 4] Auspicious Days Single Source of Truth');
-const ausCode = fs.readFileSync('./utils-auspicious.js', 'utf8');
+const ausCode = fs.readFileSync('./src/utils/utils-auspicious.js', 'utf8');
 assert(ausCode.includes('function getAuspiciousDays(month)'), "ไฟล์ utils-auspicious.js มีฟังก์ชัน getAuspiciousDays เป็น Single Source of Truth");
 console.log('');
 
@@ -75,7 +75,7 @@ console.log('');
 // -----------------------------------------------------------------------------
 console.log('🌙 [Suite 5] Dream Interpretation Module Verification');
 global.window = {};
-require('./dreamInterpretation.js');
+require('./src/ui/dream-interpretation.js');
 assert(typeof window.DREAM_MEANINGS !== 'undefined', "ดาวน์โหลดและส่งออกมหาคลังข้อมูล DREAM_MEANINGS สำเร็จ");
 let totalWords = 0;
 for (let cat in window.DREAM_MEANINGS) {
@@ -90,7 +90,7 @@ console.log('');
 // -----------------------------------------------------------------------------
 console.log('🎰 [Suite 6] Lucky Numbers Numerology & Planetary Alignment Verification');
 global.document = { addEventListener: () => {} };
-const lottoMod = require('./lotto.js');
+const lottoMod = require('./src/engine/lotto.js');
 assert(lottoMod.PLANET_NUMBERS['อังคาร'] === 3, "ดาวอังคารมีค่าเลข 3 ตรงตามตำราทักษาปกรณ์");
 assert(lottoMod.PLANET_NUMBERS['พุธ'] === 4, "ดาวพุธ (กลางวัน) มีค่าเลข 4 ตรงตามตำราทักษาปกรณ์");
 assert(lottoMod.PLANET_NUMBERS['พุธกลางคืน'] === 8 && lottoMod.PLANET_NUMBERS['ราหู'] === 8, "ดาวราหู / พุธกลางคืน มีค่าเลข 8 ตรงตามตำราทักษาปกรณ์");
@@ -102,7 +102,7 @@ console.log('');
 // Test Suite 7: Lucky Colors (Colors.js) Mahataksa & Five Elements Verification
 // -----------------------------------------------------------------------------
 console.log('🎨 [Suite 7] Lucky Colors Mahataksa & Five Elements Verification');
-const colorsMod = require('./colors.js');
+const colorsMod = require('./src/utils/colors.js');
 assert(colorsMod.PLANET_BY_DAY['อังคาร'] === 3, "วันอังคารตรงกับดาวอังคาร เลข 3 (ไม่ใช่เลข 9)");
 assert(colorsMod.PLANET_BY_DAY['พุธกลางคืน'] === 8, "รองรับวันพุธกลางคืน (พระราหู เลข 8)");
 assert(colorsMod.PLANET_BY_DAY['เสาร์'] === 7, "วันเสาร์ตรงกับดาวเสาร์ เลข 7");
@@ -116,7 +116,7 @@ console.log('');
 // Test Suite 8: Element Manual & Five Elements Astrological Relations Verification
 // -----------------------------------------------------------------------------
 console.log('📜 [Suite 8] Element Manual & Five Elements Astrological Relations Verification');
-const elementMod = require('./element.js');
+const elementMod = require('./src/engine/element.js');
 assert(elementMod.getBirthElement(8).name === "ธาตุลม" && elementMod.getBirthElement("ราหู").name === "ธาตุลม", "รองรับดาวราหู (พุธกลางคืน เลข 8) เป็นธาตุลมตามตำราทักษา");
 assert(elementMod.getElementRelation("ธาตุไฟ", "ธาตุทอง").includes("พิฆาต"), "ความสัมพันธ์ ไฟ vs ทอง คือพิฆาต (ไฟหลอมละลายทอง) ถูกต้องตามตำราเบญจธาตุ");
 assert(elementMod.getElementRelation("ธาตุดิน", "ธาตุไม้").includes("พิฆาต"), "ความสัมพันธ์ ดิน vs ไม้ คือพิฆาต (รากไม้ชอนไชดิน) ถูกต้องตามตำราเบญจธาตุ");
@@ -128,7 +128,7 @@ console.log('');
 // Test Suite 9: Patient Fate (ทักษาตัดอายุคนป่วย) Scripture Compliance Verification
 // -----------------------------------------------------------------------------
 console.log('⚕️ [Suite 9] Patient Fate (ทักษาตัดอายุคนป่วย) Scripture Compliance Verification');
-const patientFateCode = fs.readFileSync('PatientFate.js', 'utf8');
+const patientFateCode = fs.readFileSync('src/engine/patient-fate.js', 'utf8');
 const indexHtmlCode = fs.readFileSync('index.html', 'utf8');
 assert(!patientFateCode.includes('>เศษ 0') && !patientFateCode.includes('เศษ ๐ : ชะตาขาดสามเส้น ทายว่าตาย') && patientFateCode.includes('เศษ ๗ (๐) : ชะตาขาดสามเส้น'), "ไม่มีการใช้ 'เศษ 0' ในการแสดงผลพยากรณ์ตัดอายุ แปลงหารลงตัวเป็นเศษ ๕ หรือเศษ ๗ ถูกต้องตามตำรา");
 assert(patientFateCode.includes('remain1_raw === 0 ? 5 : remain1_raw') && patientFateCode.includes('remain2_raw === 0 ? 7 : remain2_raw'), "วิธีที่ ๑ และ ๒ แปลงค่า modulo 0 เป็นเศษ ๕ และเศษ ๗ ตามตำราโบราณ");
@@ -139,7 +139,7 @@ console.log('');
 // Test Suite 10: Life Extension (วิชามหามงคลต่อชะตาชีวิต) Scripture Compliance Verification
 // -----------------------------------------------------------------------------
 console.log('⏳ [Suite 10] Life Extension (วิชามหามงคลต่อชะตาชีวิต) Scripture Compliance Verification');
-const lifeExtCode = fs.readFileSync('lifeExtension.js', 'utf8');
+const lifeExtCode = fs.readFileSync('src/engine/life-extension.js', 'utf8');
 assert(lifeExtCode.includes('dayDict') && lifeExtCode.includes('power: 6') && lifeExtCode.includes('power: 15') && lifeExtCode.includes('power: 12'), "ครบถ้วนด้วยระบบกำลังวันเกิดทั้ง ๘ วัน (รวมพระราหู กำลัง ๑๒ และอาทิตย์ กำลัง ๖) ตามตำราทักษาปกรณ์");
 assert(lifeExtCode.includes('เดือนอ้าย') && lifeExtCode.includes('เดือนยี่') && lifeExtCode.includes('เดือนห้า'), "ใช้การนับเดือนเกิดตามจันทรคติไทย (เดือนอ้าย ถึง เดือนสิบสอง) ถูกต้องตามตำราพรหมชาติ");
 assert(lifeExtCode.includes('dayPrayer') && lifeExtCode.includes('candleText') && lifeExtCode.includes('guardian'), "มีระบบคำนวณเทียนมงคล พระคาถาประจำวัน และเทวดาคุ้มครองชะตาครบถ้วนสมบูรณ์");
@@ -149,8 +149,8 @@ console.log('');
 // Test Suite 11: Year Clash (ปีชง-ปีเสริม) Default Year & Auto-Render Verification
 // -----------------------------------------------------------------------------
 console.log('🐉 [Suite 11] Year Clash (ปีชง-ปีเสริม) Default Year & Auto-Render Verification');
-const yearClashCode = fs.readFileSync('yearClash.js', 'utf8');
-const scriptCode = fs.readFileSync('script.js', 'utf8');
+const yearClashCode = fs.readFileSync('src/engine/year-clash.js', 'utf8');
+const scriptCode = fs.readFileSync('src/ui/script.js', 'utf8');
 assert(yearClashCode.includes('function ycGetDefaultBirthYear()') && yearClashCode.includes('MemberManager.getSingleProfile') && yearClashCode.includes('localStorage.getItem("userBirthdate")'), "มีระบบค้นหาปีเกิดปัจจุบันของผู้ใช้จาก MemberManager, localStorage และช่อง input อย่างชาญฉลาด");
 assert(yearClashCode.includes('const defY = ycGetDefaultBirthYear();') && yearClashCode.includes('setTimeout(renderYearClash, 80);'), "ใช้ค่าเริ่มต้นของปีปัจจุบันหรือปีผู้ใช้ พร้อมสั่งวิเคราะห์และแสดงผลทันทีที่เปิดหน้า");
 assert(scriptCode.includes("pageId === 'yearClashPage'") && scriptCode.includes("showYearClashPage"), "มีการเชื่อมต่อ navigation hook ใน script.js เพื่อให้อัปเดตข้อมูลปีชงปีเสริมทุกครั้งที่สลับหน้า");

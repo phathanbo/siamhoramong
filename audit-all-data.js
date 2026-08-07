@@ -47,7 +47,7 @@ console.log('══════════════════════�
 // -----------------------------------------------------------------------------
 logSection('1. Chinese Zodiac & Elements Data (compatibility.js)');
 try {
-    let compatCode = fs.readFileSync('./compatibility.js', 'utf8');
+    let compatCode = fs.readFileSync('./src/engine/compatibility.js', 'utf8');
     compatCode = compatCode.replace(/const\s+ZODIAC_MASTER\s*=/g, 'global.ZODIAC_MASTER =').replace(/const\s+ELEMENT_RELATION\s*=/g, 'global.ELEMENT_RELATION =');
     eval(compatCode);
 
@@ -85,7 +85,7 @@ try {
 // -----------------------------------------------------------------------------
 logSection('2. Navagraha 9 Planets & Gun Milan Data (relation.js)');
 try {
-    let relCode = fs.readFileSync('./relation.js', 'utf8');
+    let relCode = fs.readFileSync('./src/engine/relation.js', 'utf8');
     relCode = relCode.replace(/const\s+PATNI_BY_PLANET\s*=/g, 'global.PATNI_BY_PLANET =');
     eval(relCode);
 
@@ -111,7 +111,7 @@ try {
 // -----------------------------------------------------------------------------
 logSection('3. Mahataksa 8 Directions & Dasha Cycles (mahataksa.js)');
 try {
-    let taksaCode = fs.readFileSync('./mahataksa.js', 'utf8');
+    let taksaCode = fs.readFileSync('./src/engine/mahataksa.js', 'utf8');
     // ลบ import ES module ออกเพื่อให้รันใน Node eval ได้
     taksaCode = taksaCode.replace(/import\s+.*from\s+['"].*['"];?/g, '');
     taksaCode = taksaCode.replace(/const\s+THAKSA_NAMES\s*=/g, 'global.THAKSA_NAMES =')
@@ -156,7 +156,7 @@ try {
 // -----------------------------------------------------------------------------
 logSection('4. Seven Digits (สัตตเลข 7 ตัว 9 ฐาน) Data Integrity');
 try {
-    const sdCode = fs.readFileSync('./sevenDigits.js', 'utf8');
+    const sdCode = fs.readFileSync('./src/engine/seven-digits.js', 'utf8');
     check(sdCode.includes('อาทิตย์') && sdCode.includes('จันทร์') && sdCode.includes('ราหู'),
         'ไฟล์สัตตเลข (sevenDigits.js) มีข้อมูลดาวและฐานคำนวณครบถ้วน ไม่พบความเสียหายของไฟล์');
     check(sdCode.length > 50000, `ขนาดไฟล์สัตตเลขสมบูรณ์ (${Math.round(sdCode.length / 1024)} KB) ไม่มียอดรหัสขาดหาย`);
@@ -169,8 +169,8 @@ try {
 // -----------------------------------------------------------------------------
 logSection('5. Thai Lunar Calendar & Kala Yok Formulas');
 try {
-    const tlCode = fs.readFileSync('./ThaiLunar.js', 'utf8');
-    const ausDaysCode = fs.readFileSync('./AuspiciousDays.js', 'utf8');
+    const tlCode = fs.readFileSync('./src/engine/thai-lunar.js', 'utf8');
+    const ausDaysCode = fs.readFileSync('./src/engine/auspicious-days.js', 'utf8');
     
     check(tlCode.includes('ข้างขึ้น') || tlCode.includes('ข้างแรม') || tlCode.includes('ดิถี'),
         'ระบบปฏิทินจันทรคติไทย (ดิถี/ข้างขึ้นข้างแรม) มีตารางและฟังก์ชันคำนวณครบถ้วน');
@@ -185,7 +185,7 @@ try {
 // -----------------------------------------------------------------------------
 logSection('6. Knowledge Database (knowledge-data.js)');
 try {
-    const kdCode = fs.readFileSync('./knowledge-data.js', 'utf8');
+    const kdCode = fs.readFileSync('./src/data/knowledge-data.js', 'utf8');
     eval(kdCode);
     
     const hasData = typeof KNOWLEDGE_DATABASE !== 'undefined' || typeof knowledgeData !== 'undefined' || kdCode.length > 100000;

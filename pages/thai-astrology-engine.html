@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 ระบบวิเคราะห์ดวงชะตาโหราศาสตร์ไทยสมบูรณ์แบบ - สยามโหรามงคล</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <!-- SweetAlert2 & Astronomy Engine -->
+    <script charset="UTF-8" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script charset="UTF-8" src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+    
+    <!-- Main Style Theme Reused -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/modern-theme.css">
+    
+    <style>
+        :root {
+            --card-bg: linear-gradient(135deg, rgba(18, 26, 46, 0.95) 0%, rgba(10, 15, 29, 0.95) 100%);
+            --gold-glow-strong: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #080b11;
+            background-image: radial-gradient(circle at 50% 0%, #151d30 0%, #080b11 70%);
+            color: var(--text, #F3F4F6);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .header-section {
+            padding: 40px 20px 20px 20px;
+            text-align: center;
+        }
+
+        .header-title {
+            font-family: 'Outfit', 'Sarabun', sans-serif;
+            font-weight: 800;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #fff 30%, #F9E596 70%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
+            margin-bottom: 5px;
+        }
+
+        .header-subtitle {
+            color: var(--muted, #94A3B8);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .premium-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .premium-card:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15), 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header-gold {
+            border-bottom: 1px dashed rgba(212, 175, 55, 0.25);
+            padding: 18px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header-gold h4 {
+            color: #F9E596;
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .text-gold {
+            color: #F9E596 !important;
+        }
+
+        .btn-gold-premium {
+            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+            color: #0b0e14 !important;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 12px 25px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gold-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+            filter: brightness(1.1);
+        }
+
+        .btn-outline-gold {
+            background: transparent;
+            border: 1px solid #d4af37;
+            color: #F9E596 !important;
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-gold:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #F9E596;
+            transform: translateY(-1px);
+        }
+
+        .form-control-premium {
+            background-color: rgba(10, 15, 28, 0.8) !important;
+            border: 1px solid rgba(212, 175, 55, 0.2) !important;
+            color: #F3F4F6 !important;
+            border-radius: 10px;
+            padding: 10px 15px;
+            height: auto;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-premium:focus {
+            border-color: #d4af37 !important;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3) !important;
+        }
+
+        /* SVG Zodiac Wheel styling */
+        .zodiac-wheel-container {
+            position: relative;
+            max-width: 420px;
+            margin: 0 auto 20px auto;
+        }
+
+        .zodiac-wheel-svg {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
+        }
+
+        /* Tabs styling */
+        .nav-tabs-premium {
+            border-bottom: 2px solid rgba(212, 175, 55, 0.15);
+            margin-bottom: 25px;
+            gap: 5px;
+        }
+
+        .nav-tabs-premium .nav-link {
+            border: none;
+            color: var(--muted, #94A3B8);
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 10px 10px 0 0;
+            background: transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-tabs-premium .nav-link:hover {
+            color: #F9E596;
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .nav-tabs-premium .nav-link.active {
+            color: #d4af37;
+            background: transparent;
+        }
+
+        .nav-tabs-premium .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #d4af37;
+            box-shadow: 0 0 8px #d4af37;
+        }
+
+        /* Custom badge */
+        .badge-standard {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .badge-standard.bg-kaset { background-color: rgba(59, 168, 122, 0.15); color: #3BA87A; border: 1px solid rgba(59, 168, 122, 0.3); }
+        .badge-standard.bg-uch { background-color: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); }
+        .badge-standard.bg-chak { background-color: rgba(142, 68, 173, 0.15); color: #ce93d8; border: 1px solid rgba(142, 68, 173, 0.3); }
+        .badge-standard.bg-chok { background-color: rgba(74, 144, 217, 0.15); color: #4A90D9; border: 1px solid rgba(74, 144, 217, 0.3); }
+        .badge-standard.bg-pra { background-color: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
+        .badge-standard.bg-nij { background-color: rgba(149, 165, 166, 0.15); color: #95a5a6; border: 1px solid rgba(149, 165, 166, 0.3); }
+        .badge-standard.bg-normal { background-color: rgba(255, 255, 255, 0.05); color: #F3F4F6; }
+
+        .thaksa-role {
+            font-weight: 600;
+        }
+        .role-sri { color: #3BA87A; }
+        .role-kali { color: #e74c3c; font-weight: bold; }
+        .role-dech { color: #f1c40f; }
+        .role-montri { color: #4A90D9; }
+
+        /* Report item decoration */
+        .report-section-title {
+            color: #F9E596;
+            border-left: 4px solid #d4af37;
+            padding-left: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .geek-item {
+            background: rgba(212, 175, 55, 0.05);
+            border-left: 4px solid #d4af37;
+            border-radius: 0 12px 12px 0;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        .geek-item-danger {
+            background: rgba(231, 76, 60, 0.05);
+            border-left-color: #E74C3C;
+        }
+
+        .prediction-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.25s ease;
+        }
+
+        .prediction-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(212, 175, 55, 0.2);
+        }
+
+        .prediction-category {
+            font-weight: 700;
+            color: #F9E596;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .zodiac-grid-input {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="py-2 px-3 d-flex justify-content-between align-items-center" style="background: rgba(15, 23, 42, 0.4) !important; border-bottom: 1px solid rgba(212, 175, 55, 0.15);">
+        <a href="../index.html#mainpage" class="btn btn-outline-gold btn-sm border-0 py-1 px-2" style="font-size: 0.85rem; width: auto !important; display: inline-flex !important; align-items: center; justify-content: center;">
+            <i class="fas fa-chevron-left mr-1"></i> กลับ
+        </a>
+        <span class="text-gold font-weight-bold" style="font-size: 0.9rem;"><i class="fas fa-place-of-worship mr-1"></i> สยามโหรามงคล</span>
+    </header>
+
+    <div class="container-fluid py-4 px-md-5">
+        
+        <!-- Header Info -->
+        <div class="header-section">
+            <h1 class="header-title">🔮 โหราศาสตร์ไทยระบบสมบูรณ์</h1>
+            <p class="header-subtitle">วิเคราะห์เชิงลึกอิงตามลัคนาราศี ตำแหน่งดาวเคราะห์สิบดวง มาตรฐานดาว เกณฑ์พิเศษ และหลักมหาทักษาปกรณ์</p>
+        </div>
+
+        <div class="row">
+            
+            <!-- Left: Configurations / Inputs -->
+            <div class="col-xl-4 col-lg-5 col-md-12">
+                <div class="premium-card">
+                    <div class="card-header-gold">
+                        <h4><i class="fas fa-sliders-h"></i> ข้อมูลดวงชะตา</h4>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-gold btn-sm" onclick="loadSampleData()">ดวงตัวอย่าง</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <!-- Member Database Pull Section -->
+                        <div class="form-group mb-4" style="background: rgba(212, 175, 55, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(212, 175, 55, 0.3);">
+                            <label class="text-gold font-weight-bold"><i class="fas fa-database mr-2"></i>ดึงข้อมูลจากฐานข้อมูลสมาชิก:</label>
+                            <select id="memberSelect" class="form-control form-control-premium" onchange="autoFillFromMember(this.value)">
+                                <option value="">-- เลือกสมาชิก --</option>
+                            </select>
+                            <small class="text-white-50 mt-1 d-block">ระบบจะคำนวณตำแหน่งดาวเคราะห์จริงตามเวลาเกิดให้อัตโนมัติ</small>
+                        </div>
+
+                        <form id="chartConfigForm" onsubmit="event.preventDefault(); return analyzeChart();">
+                            
+                            <!-- Birthday Section -->
+                            <div class="form-group mb-4">
+                                <label class="text-gold font-weight-bold">📅 วันเกิดเจ้าชะตา (ใช้คำนวณทักษา):</label>
+                                <select id="birthDay" class="form-control form-control-premium">
+                                    <option value="1">วันอาทิตย์ (๑)</option>
+                                    <option value="2">วันจันทร์ (๒)</option>
+                                    <option value="3">วันอังคาร (๓)</option>
+                                    <option value="4">วันพุธกลางวัน (๔)</option>
+                                    <option value="8">วันพุธกลางคืน / ราหู (๘)</option>
+                                    <option value="5">วันพฤหัสบดี (๕)</option>
+                                    <option value="6">วันศุกร์ (๖)</option>
+                                    <option value="7">วันเสาร์ (๗)</option>
+                                </select>
+                            </div>
+
+                            <!-- Lagna Section -->
+                            <div class="form-group mb-4">
+                                <label class="text-gold font-weight-bold">♈ ลัคนาสถิตราศี:</label>
+                                <select id="lagna" class="form-control form-control-premium" onchange="analyzeChart()">
+                                    <option value="0">ราศีเมษ (แกะ)</option>
+                                    <option value="1" selected>ราศีพฤษภ (โค)</option>
+                                    <option value="2">ราศีเมถุน (คนคู่)</option>
+                                    <option value="3">ราศีกรกฎ (ปู)</option>
+                                    <option value="4">ราศีสิงห์ (สิงโต)</option>
+                                    <option value="5">ราศีกันย์ (หญิงสาว)</option>
+                                    <option value="6">ราศีตุลย์ (ตราชั่ง)</option>
+                                    <option value="7">ราศีพิจิก (แมงป่อง)</option>
+                                    <option value="8">ราศีธนู (คนโก่งธนู)</option>
+                                    <option value="9">ราศีมังกร (ม้ามังกร)</option>
+                                    <option value="10">ราศีกุมภ์ (คนถือหม้อน้ำ)</option>
+                                    <option value="11">ราศีมีน (ปลาคู่)</option>
+                                </select>
+                            </div>
+
+                            <!-- Planets Placement Grid -->
+                            <h5 class="text-gold border-bottom border-secondary pb-2 mb-3 mt-4">🪐 ตำแหน่งดาวเคราะห์ประจำราศี</h5>
+                            <div class="zodiac-grid-input">
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50">อาทิตย์ (๑)</label>
+                                    <select id="p1" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50">จันทร์ (๒)</label>
+                                    <select id="p2" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50">อังคาร (๓)</label>
+                                    <select id="p3" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50">พุธ (๔)</label>
+                                    <select id="p4" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50">พฤหัสบดี (๕)</label>
+                                    <select id="p5" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50">ศุกร์ (๖)</label>
+                                    <select id="p6" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50">เสาร์ (๗)</label>
+                                    <select id="p7" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50">ราหู (๘)</label>
+                                    <select id="p8" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50">เกตุ (๙)</label>
+                                    <select id="p9" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50">มฤตยู (๐)</label>
+                                    <select id="p0" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-2">
+                                <button type="submit" class="btn btn-gold-premium btn-block">
+                                    <i class="fas fa-sync-alt mr-2"></i> ประมวลผลดวงชะตา
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Results Dashboard & Wheel -->
+            <div class="col-xl-8 col-lg-7 col-md-12">
+                <div class="row">
+                    
+                    <!-- SVG Zodiac Wheel View -->
+                    <div class="col-lg-6 col-md-12 mb-4 text-center">
+                        <div class="premium-card p-4 h-100 d-flex flex-column justify-content-center">
+                            <h5 class="text-gold mb-3"><i class="fas fa-compass mr-2"></i>วงล้อจักราศี (Zodiac Wheel)</h5>
+                            <div class="zodiac-wheel-container">
+                                <!-- Dynamic SVG will be rendered here -->
+                                <div id="wheelContainer"></div>
+                            </div>
+                            <small class="text-white-50">สัญลักษณ์ <b>ลั</b> แทนตำแหน่งลัคนาของท่าน</small>
+                        </div>
+                    </div>
+
+                    <!-- Quick Overview Summary -->
+                    <div class="col-lg-6 col-md-12 mb-4">
+                        <div class="premium-card p-4 h-100">
+                            <h5 class="text-gold mb-3"><i class="fas fa-info-circle mr-2"></i>ข้อมูลพื้นฐานชะตาชีวิต</h5>
+                            <div class="table-responsive">
+                                <table class="table table-borderless text-white mb-0" style="font-size: 0.95rem;">
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-white-50 py-1" style="width: 45%;">ลัคนาราศี:</td>
+                                            <td class="font-weight-bold py-1 text-gold" id="summaryLagna">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-white-50 py-1">ธาตุและทิศราศี:</td>
+                                            <td class="py-1" id="summaryElement">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-white-50 py-1">ดาวตนุเศษ (บุคลิกแฝง):</td>
+                                            <td class="py-1 text-gold font-weight-bold" id="summaryTanuset">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-white-50 py-1">วันทางทักษา:</td>
+                                            <td class="py-1 text-info font-weight-bold" id="summaryDay">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-white-50 py-1">ดาวกาลกิณี:</td>
+                                            <td class="py-1 text-danger font-weight-bold" id="summaryKali">-</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <hr class="border-secondary my-3">
+                            <h6 class="text-gold mb-2"><i class="fas fa-award mr-2"></i>เกณฑ์โยคและเกณฑ์พิเศษเด่น</h6>
+                            <div id="specialGeekQuickList" style="max-height: 120px; overflow-y: auto;">
+                                <div class="text-white-50 small">ไม่มีเกณฑ์พิเศษถูกกระตุ้น</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs navigation for deep information -->
+                <ul class="nav nav-tabs nav-tabs-premium" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="predictions-tab" data-toggle="tab" href="#predictions" role="tab"><i class="fas fa-book-open mr-2"></i>คำทำนายดวงชะตา</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="star-standards-tab" data-toggle="tab" href="#star-standards" role="tab"><i class="fas fa-table mr-2"></i>ตารางดาวพยากรณ์</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="special-yogas-tab" data-toggle="tab" href="#special-yogas" role="tab"><i class="fas fa-yin-yang mr-2"></i>เกณฑ์พิเศษและคู่สัมพันธ์</a>
+                    </li>
+                </ul>
+
+                <!-- Tabs Content -->
+                <div class="tab-content">
+                    
+                    <!-- Tab: Predictions -->
+                    <div class="tab-pane fade show active" id="predictions" role="tabpanel">
+                        <div class="premium-card p-4">
+                            <h5 class="report-section-title">คำทำนายแบบละเอียดตามคัมภีร์วิบูลแพทยาคม</h5>
+                            <div id="predictionList">
+                                <!-- Prediction cards will be injected here -->
+                                <div class="text-center py-4 text-white-50">กรุณากดคำนวณเพื่อแสดงผลลัพธ์</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Star Standards -->
+                    <div class="tab-pane fade" id="star-standards" role="tabpanel">
+                        <div class="premium-card p-4">
+                            <h5 class="report-section-title">ข้อมูลคุณลักษณะและระดับความแข็งแกร่งดาว</h5>
+                            <div class="table-responsive">
+                                <table class="table table-dark bg-transparent table-striped text-white mb-0" style="border: 1px solid rgba(212, 175, 55, 0.1);">
+                                    <thead>
+                                        <tr style="border-bottom: 2px solid rgba(212, 175, 55, 0.3);">
+                                            <th>ดาวเคราะห์</th>
+                                            <th>สัญลักษณ์</th>
+                                            <th>คุณสมบัติธาตุ</th>
+                                            <th>เพศ</th>
+                                            <th>มาตรฐานดาว</th>
+                                            <th>ภูมิพยากรณ์ (ทักษา)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="starStandardTableBody">
+                                        <!-- Injected via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Special Yogas -->
+                    <div class="tab-pane fade" id="special-yogas" role="tabpanel">
+                        <div class="premium-card p-4">
+                            <!-- Special Geeks -->
+                            <h5 class="report-section-title">เกณฑ์พิเศษ (องค์เกณฑ์ / ปทุมเกณฑ์ / พินทุบาทว์)</h5>
+                            <div id="specialGeekDetailList" class="mb-4">
+                                <!-- Injected via JavaScript -->
+                            </div>
+
+                            <!-- Conjunctions & Oppositions Relation -->
+                            <h5 class="report-section-title">คู่ปฏิกิริยาสัมพันธ์ดวงดาว (Conjunctions & Oppositions)</h5>
+                            <div id="planetRelationsList">
+                                <!-- Injected via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Script implementation -->
+    <script>
+        // ----------------------------------------------------
+        // 1. ASTROLOGY ENGINE DEFINITION
+        // ----------------------------------------------------
+        const ThaiAstrologyEngine = {
+            zodiacs: [
+                { id: 0, name: 'เมษ', type: 'ปัศวะ', element: 'ไฟ', mode: 'จร', sign: 'แพะ', organ: 'สมอง ประสาท ผม', shape: 'รูปร่างสูงเพรียว ผอมบาง มีกระดูกขึ้น คอยาว นัยน์ตาพองคม หน้าเสี้ยม ผิวคล้ำ/ดำแดง', dir: 'ทิศบูรพา (ตะวันออก)', phase: 'ภาคกลางคืน' },
+                { id: 1, name: 'พฤษภ', type: 'ปัศวะ', element: 'ดิน', mode: 'สถิร', sign: 'โค', organ: 'หน้าผาก จมูก ปาก', shape: 'รูปร่างอ้วนพี แข็งแรงล่ำสัน หน้าผากกว้าง ตาโต ฝ่ามือหยาบ ร่างใหญ่ ดำหรือขาว', dir: 'ทิศตะวันออกเฉียงเหนือ', phase: 'ภาคกลางคืน' },
+                { id: 2, name: 'เมถุน', type: 'นระ', element: 'ลม', mode: 'ทวิภาวะ', sign: 'คนคู่', organ: 'หัวไหล่ ท่อนแขน', shape: 'รูปงามเท่ากันสองคน สูงชะลูด ผิวเอิบเลือดฝาด หน้าอุ้ม มือเท้าอุ้ม ตาคม ผิวสองสี', dir: 'ทิศตะวันออกเฉียงเหนือ', phase: 'ภาคกลางคืน' },
+                { id: 3, name: 'กรกฎ', type: 'อำพุ', element: 'น้ำ', mode: 'จร', sign: 'ปู', organ: 'ทรวงอก', shape: 'รูปร่างลำตัวแบนใหญ่/ป้อม หน้าเสี้ยม ศีรษะหลิม มือเท้ายาว ตาเล็ก/แดง ผิวซีด', dir: 'ทิศอุดร (เหนือ)', phase: 'ภาคกลางคืน' },
+                { id: 4, name: 'สิงห์', type: 'ปัศวะ', element: 'ไฟ', mode: 'สถิร', sign: 'ราชสีห์', organ: 'หัวใจ', shape: 'รูปร่างใหญ่ สันทัด ไหล่กว้าง ใบหน้ากลม จมูกโด่ง ตาพอง ว่องไว ผิวเอิบเลือดฝาด', dir: 'ทิศตะวันตกเฉียงเหนือ', phase: 'ภาคกลางวัน' },
+                { id: 5, name: 'กันย์', type: 'นระ', element: 'ดิน', mode: 'ทวิภาวะ', sign: 'หญิงสาว', organ: 'ท้อง ลำไส้', shape: 'รูปร่างแบบบาง อ้อนแอ้น คอยาว อวบอัด ทรวดทรงดี สวยงาม', dir: 'ทิศตะวันตกเฉียงเหนือ', phase: 'ภาคกลางวัน' },
+                { id: 6, name: 'ตุลย์', type: 'นระ', element: 'ลม', mode: 'จร', sign: 'คนถือตราชั่ง', organ: 'ท้องน้อย กระเพาะปัสสาวะ ไต', shape: 'รูปร่างสมส่วน ท่อนบนท่อนล่างเท่ากัน ผิวค่อนข้างดำหรือสองสี', dir: 'ทิศปัจจิม (ตะวันตก)', phase: 'ภาคกลางวัน' },
+                { id: 7, name: 'พิจิก', type: 'กีฏะ', element: 'น้ำ', mode: 'สถิร', sign: 'แมลงป่อง', organ: 'อวัยวะเพศ มดลูก ประจำเดือน', shape: 'มีนัยน์ตาตื่น เดินส่าย เอวมักกอด สูงใหญ่ คอสั้น ลงพุง', dir: 'ทิศตะวันตกเฉียงใต้', phase: 'ภาคกลางวัน' },
+                { id: 8, name: 'ธนู', type: 'นระ', element: 'ไฟ', mode: 'ทวิภาวะ', sign: 'คนโก่งธนู', organ: 'สะโพก โคนขา', shape: 'รูปผอม ลำตัวยาวกว่าทุกส่วน เวลาตื่นนั่งหลังงอโค้ง สูงชะลูด ลำตัวกลม ผิวสองสี', dir: 'ทิศตะวันตกเฉียงใต้', phase: 'ภาคกลางวัน' },
+                { id: 9, name: 'มังกร', type: 'อำพุ', element: 'ดิน', mode: 'จร', sign: 'ม้ามังกร', organ: 'เข่า โคนขา', shape: 'สูงใหญ่ ใบหน้าเชิด เดินเท้าเพ้นกัน ผิวดำหรือดำแดง', dir: 'ทิศทักษิณ (ใต้)', phase: 'ภาคกลางวัน' },
+                { id: 10, name: 'กุมภ์', type: 'นระ', element: 'ลม', mode: 'สถิร', sign: 'คนถือหม้อน้ำ', organ: 'แข้ง ข้อเท้า', shape: 'ค่อนข้างอ้วน ศีรษะล้าน/โกร่ง หน้าผากกว้าง ใบหน้ายาว/สี่เหลี่ยม', dir: 'ทิศตะวันออกเฉียงใต้', phase: 'ภาคกลางคืน' },
+                { id: 11, name: 'มีน', type: 'อำพุ', element: 'น้ำ', mode: 'ทวิภาวะ', sign: 'ปลาตะเพียนคู่', organ: 'ตาตุ่มถึงปลายเท้า', shape: 'ลำตัวแบน เตี้ยสมทรง นัยน์ตาพอง', dir: 'ทิศตะวันออกเฉียงใต้', phase: 'ภาคกลางคืน' }
+            ],
+
+            houses: [
+                'ตนุ', 'กฎุมภะ', 'สหัชชะ', 'พันธุ', 'ปุตตะ', 'อริ',
+                'ปัตนิ', 'มรณะ', 'ศุภะ', 'กัมมะ', 'ลาภะ', 'วินาสน์'
+            ],
+
+            planets: {
+                1: { name: 'อาทิตย์', symbol: '๑', type: 'บาปเคราะห์', gender: 'ชาย', quote: 'ยศศักดิ์ทายอาทิตย์', astroElement: 'ไฟกรด' },
+                2: { name: 'จันทร์', symbol: '๒', type: 'ศุภเคราะห์', gender: 'หญิง', quote: 'รูปร่างจริตทายจันทร์', astroElement: 'น้ำดินชุย' },
+                3: { name: 'อังคาร', symbol: '๓', type: 'บาปเคราะห์', gender: 'กะเทย/ไม่ระบุ', quote: 'กล้าแข็งขยันทายอังคาร', astroElement: 'ลมกรด' },
+                4: { name: 'พุธ', symbol: '๔', type: 'ศุภเคราะห์', gender: 'กะเทย/ไม่ระบุ', quote: 'เจรจาอ่อนหวานทายพุธ', astroElement: 'น้ำมหาสมุทร' },
+                5: { name: 'พฤหัสบดี', symbol: '๕', type: 'ศุภเคราะห์', gender: 'ชาย', quote: 'ปัญญาบริสุทธิ์ทายพฤหัส', astroElement: 'ดินแข็ง' },
+                6: { name: 'ศุกร์', symbol: '๖', type: 'ศุภเคราะห์', gender: 'หญิง', quote: 'กิเลสสมบัติทายศุกร์', astroElement: 'น้ำฝน' },
+                7: { name: 'เสาร์', symbol: '๗', type: 'บาปเคราะห์', gender: 'หญิง', quote: 'โทษทุกข์ทายเสาร์', astroElement: 'ไฟสุมขอน' },
+                8: { name: 'ราหู', symbol: '๘', type: 'บาปเคราะห์', gender: 'กะเทย/ไม่ระบุ', quote: 'มัวเมาทายราหู', astroElement: 'ลมพายุ' },
+                9: { name: 'เกตุ', symbol: '๙', type: 'วิญญาณธาตุ', gender: 'กะเทย/ไม่ระบุ', quote: 'อายุยืนอยู่ทายเกตุ', astroElement: 'วิญญาณธาตุ' },
+                0: { name: 'มฤตยู', symbol: '๐', type: 'อากาศธาตุ', gender: ' - ', quote: 'ภัยอาเภททายมฤตยู', astroElement: 'อากาศธาตุ' }
+            },
+
+            kasetrMap: { 0: 3, 1: 6, 2: 4, 3: 2, 4: 1, 5: 4, 6: 6, 7: 3, 8: 5, 9: 7, 10: 7, 11: 5 },
+
+            standardsMap: {
+                uch: { 0: 1, 1: 2, 9: 3, 5: 4, 3: 5, 11: 6, 6: 7, 2: 8 },
+                ประ: { 6: 1, 10: 2, 7: 3, 8: 4, 9: 5, 2: 6, 0: 7, 1: 8 },
+                niz: { 6: 1, 7: 2, 3: 3, 11: 4, 9: 5, 5: 6, 0: 7, 8: 8 },
+                mahachak: { 1: 1, 4: 2, 7: 3, 2: 4, 8: 5, 10: 6, 9: 7, 11: 8 },
+                rajachok: { 2: 1, 10: 2, 1: 3, 3: 4, 11: 5, 7: 6, 8: 7, 9: 8 }
+            },
+
+            calculateThaksa(birthDay) {
+                const sequence = [1, 2, 3, 4, 7, 5, 8, 6];
+                const roles = ['บริวาร', 'อายุ', 'เดช', 'ศรี', 'มูละ', 'อุตสาหะ', 'มนตรี', 'กาลกิณี'];
+                
+                let startIndex = sequence.indexOf(birthDay);
+                if (startIndex === -1) startIndex = 0;
+
+                let thaksaResult = {};
+                for (let i = 0; i < 8; i++) {
+                    let planet = sequence[(startIndex + i) % 8];
+                    thaksaResult[planet] = roles[i];
+                }
+                return thaksaResult;
+            },
+
+            getDistance(fromZodiac, toZodiac) {
+                return (toZodiac - fromZodiac + 12) % 12 + 1;
+            },
+
+            // คำนวณตนุเศษตามสูตรตำราโบราณ
+            calculateTanuset(lagnaIndex, planetsPlacement) {
+                try {
+                    const tLagnaOwner = this.kasetrMap[lagnaIndex]; // เจ้าเรือนลัคนา
+                    const tLagnaOwnerSign = planetsPlacement[tLagnaOwner]; // ราศีที่เจ้าเรือนลัคนาอยู่
+                    if (tLagnaOwnerSign === undefined || tLagnaOwnerSign === null) return null;
+
+                    const dist1 = this.getDistance(lagnaIndex, tLagnaOwnerSign); // ระยะที่ 1
+
+                    const tSecondOwner = this.kasetrMap[tLagnaOwnerSign]; // ดาวเจ้าเรือนของราศีที่เจ้าเรือนลัคนาไปอาศัย
+                    const tSecondOwnerSign = planetsPlacement[tSecondOwner]; // ราศีที่ดาวดวงนี้อาศัยอยู่
+                    if (tSecondOwnerSign === undefined || tSecondOwnerSign === null) return null;
+
+                    const dist2 = this.getDistance(tLagnaOwnerSign, tSecondOwnerSign); // ระยะที่ 2
+
+                    const product = dist1 * dist2;
+                    let rem = product % 7;
+                    if (rem === 0) rem = 7; // เศษ 0 คือ เสาร์ (๗)
+
+                    return rem; // 1=อาทิตย์, 2=จันทร์, 3=อังคาร, 4=พุธ, 5=พฤหัส, 6=ศุกร์, 7=เสาร์
+                } catch(e) {
+                    console.error("Tanuset error:", e);
+                    return null;
+                }
+            },
+
+            analyzeChart(inputData) {
+                const { lagna, planetsPlacement, birthDay } = inputData;
+                const thaksa = this.calculateThaksa(birthDay);
+                
+                let analysis = {
+                    lagnaInfo: this.zodiacs[lagna],
+                    thaksaMap: thaksa,
+                    housePositions: {},
+                    planetPositions: {},
+                    specialGeeks: [],
+                    planetRelations: [],
+                    predictions: [],
+                    tanuset: this.calculateTanuset(lagna, planetsPlacement)
+                };
+
+                for (let h = 0; h < 12; h++) {
+                    let currentZodiac = (lagna + h) % 12;
+                    let houseName = this.houses[h];
+                    let kasetrPlanet = this.kasetrMap[currentZodiac];
+                    
+                    analysis.housePositions[houseName] = {
+                        zodiac: this.zodiacs[currentZodiac].name,
+                        kasetrPlanet: kasetrPlanet,
+                        planetsInHouse: []
+                    };
+                }
+
+                for (let p in planetsPlacement) {
+                    let pNum = parseInt(p);
+                    let pZodiac = planetsPlacement[p];
+                    if (pZodiac === null || isNaN(pZodiac)) continue;
+                    let houseIndex = (pZodiac - lagna + 12) % 12;
+                    let houseName = this.houses[houseIndex];
+
+                    let status = [];
+                    if (this.kasetrMap[pZodiac] === pNum) status.push('เกษตร');
+                    if (this.standardsMap.uch[pZodiac] === pNum) status.push('อุจจ์');
+                    if (this.standardsMap.ประ[pZodiac] === pNum) status.push('ประ');
+                    if (this.standardsMap.niz[pZodiac] === pNum) status.push('นิจ');
+                    if (this.standardsMap.mahachak[pZodiac] === pNum) status.push('มหาจักร');
+                    if (this.standardsMap.rajachok[pZodiac] === pNum) status.push('ราชาโชค');
+
+                    analysis.planetPositions[pNum] = {
+                        zodiac: this.zodiacs[pZodiac].name,
+                        zodiacIndex: pZodiac,
+                        house: houseName,
+                        houseIndex: houseIndex + 1,
+                        status: status.join(', ') || 'ปกติ',
+                        thaksaRole: thaksa[pNum] || ' - '
+                    };
+
+                    analysis.housePositions[houseName].planetsInHouse.push(pNum);
+                }
+
+                this.checkSpecialRules(lagna, planetsPlacement, thaksa, analysis);
+                this.checkPlanetRelations(planetsPlacement, analysis);
+                this.generatePredictions(analysis);
+
+                return analysis;
+            },
+
+            checkSpecialRules(lagna, planets, thaksa, analysis) {
+                const lagnaType = this.zodiacs[lagna].type;
+
+                // 1. องค์เกณฑ์ตามหลักสูตรขุนวิบูลแพทยาคม
+                for (let p in planets) {
+                    let pNum = parseInt(p);
+                    let pZod = planets[p];
+                    if (pZod === null || isNaN(pZod)) continue;
+                    let dist = this.getDistance(lagna, pZod);
+
+                    // ปัศวะ (เมษ 0, พฤษภ 1, สิงห์ 4) -> ดาว ๑, ๒, ๓, ๘ ได้องค์เกณฑ์ในภพที่ 10 (กัมมะ)
+                    if (lagnaType === 'ปัศวะ' && dist === 10 && [1, 2, 3, 8].includes(pNum)) {
+                        analysis.specialGeeks.push({
+                            type: 'benefit',
+                            title: `ดาว ${this.planets[pNum].name} (เลข ${pNum}) ได้ "องค์เกณฑ์" (ปัศวะเกณฑ์)`,
+                            detail: `ปัศวะทศต้ององค์เกณฑ์ ส่งผลเสริมดวงชะตามีอำนาจ บารมี มียศและหน้าที่การงานมั่นคงถาวรไม่เสื่อมถอย`
+                        });
+                    } 
+                    // นระ (เมถุน 2, กันย์ 5, ตุลย์ 6, ธนู 8, กุมภ์ 10) -> ดาว ๑, ๔, ๕, ๗ ได้องค์เกณฑ์ในภพที่ 1 (ตนุ)
+                    else if (lagnaType === 'นระ' && dist === 1 && [1, 4, 5, 7].includes(pNum)) {
+                        analysis.specialGeeks.push({
+                            type: 'benefit',
+                            title: `ดาว ${this.planets[pNum].name} (เลข ${pNum}) ได้ "องค์เกณฑ์" (นระเกณฑ์)`,
+                            detail: `นระกุมลัคน์เป็นองค์เกณฑ์ ยศเกียรติยศชื่อเสียงขจรไกล มีสติปัญญาเลอเลิศ มีความเจริญรุ่งเรืองอย่างยิ่ง`
+                        });
+                    } 
+                    // อำพุ (กรกฎ 3, มังกร 9, มีน 11) -> ดาว ๒, ๔, ๕, ๖ ได้องค์เกณฑ์ในภพที่ 4 (พันธุ)
+                    else if (lagnaType === 'อำพุ' && dist === 4 && [2, 4, 5, 6].includes(pNum)) {
+                        analysis.specialGeeks.push({
+                            type: 'benefit',
+                            title: `ดาว ${this.planets[pNum].name} (เลข ${pNum}) ได้ "องค์เกณฑ์" (อำพุเกณฑ์)`,
+                            detail: `อำพุสี่องค์เกณฑ์ ส่งผลให้มีอสังหาริมทรัพย์ ที่ดิน ยานพาหนะ และครอบครัวมั่นคงอุดมสมบูรณ์พูนสุข`
+                        });
+                    } 
+                    // กีฏะ (พิจิก 7) -> ดาว ๓, ๗, ๘ ได้องค์เกณฑ์ในภพที่ 7 (ปัตนิ)
+                    else if (lagnaType === 'กีฏะ' && dist === 7 && [3, 7, 8].includes(pNum)) {
+                        analysis.specialGeeks.push({
+                            type: 'benefit',
+                            title: `ดาว ${this.planets[pNum].name} (เลข ${pNum}) ได้ "องค์เกณฑ์" (กีฏะเกณฑ์)`,
+                            detail: `กีฏะเจ็ดองค์เกณฑ์ ส่งเสริมให้ชะตาชีวิตประสบความสำเร็จ ชนะคู่แข่งและมีอิทธิพลสูง`
+                        });
+                    }
+                }
+
+                // 2. ปทุมเกณฑ์
+                if (planets[2] !== undefined && planets[2] !== null && this.getDistance(lagna, planets[2]) === 11) {
+                    analysis.specialGeeks.push({
+                        type: 'benefit',
+                        title: 'ได้ "ปทุมเกณฑ์" จากดาวจันทร์ (๒)',
+                        detail: 'จันทร์สิบเอ็ดแท้แก่ลัคน์: มีเสน่ห์ เมตตามหานิยมสูง เป็นที่รักใคร่เอ็นดูและได้รับการอุปถัมภ์จากผู้ใหญ่เสมอ'
+                    });
+                }
+                if (planets[5] !== undefined && planets[5] !== null && this.getDistance(lagna, planets[5]) === 4) {
+                    analysis.specialGeeks.push({
+                        type: 'benefit',
+                        title: 'ได้ "ปทุมเกณฑ์" จากดาวพฤหัสบดี (๕)',
+                        detail: 'พฤหัสสี่ทรงศักดิ์แช่มช้อย: ดวงชะตาอุดมด้วยยศถาบรรดาศักดิ์ ศีลธรรมความรู้ และมีสติปัญญาพึ่งพาได้ตนเอง'
+                    });
+                }
+                if (planets[6] !== undefined && planets[6] !== null && this.getDistance(lagna, planets[6]) === 3) {
+                    analysis.specialGeeks.push({
+                        type: 'benefit',
+                        title: 'ได้ "ปทุมเกณฑ์" จากดาวศุกร์ (๖)',
+                        detail: 'ศุกร์สามได้คุณล้ำเลิศ: เจริญด้วยกิเลสสมบัติ โภคทรัพย์ เงินทองศิลปวิทยาการ และเสน่ห์ดึงดูดใจผู้พบเห็น'
+                    });
+                }
+
+                // 3. ดวงพินทุบาทว์ (ดวงแตก/ดวงช้ำ/จุดแปดเปื้อน)
+                // "เสาร์เพ่งเล็งอสุรา..." (เสาร์หรือราหูเป็น 7)
+                if (planets[7] !== undefined && planets[7] !== null && this.getDistance(lagna, planets[7]) === 7) {
+                    analysis.specialGeeks.push({
+                        type: 'harm',
+                        title: 'ดวงพินทุบาทว์ "เสาร์เพ่งเล็งลัคน์"',
+                        detail: 'เสาร์เป็น ๗ แก่ลัคนา: ชีวิตคู่มักจะมีแต่ปัญหา อึดอัดขัดแย้ง อาภัพคู่ หรือมีความเดือดเนื้อร้อนใจนิรันดร์'
+                    });
+                }
+                if (planets[8] !== undefined && planets[8] !== null && this.getDistance(lagna, planets[8]) === 7) {
+                    analysis.specialGeeks.push({
+                        type: 'harm',
+                        title: 'ดวงพินทุบาทว์ "ราหูเล็งลัคน์"',
+                        detail: 'ราหูเป็น ๗ แก่ลัคนา: ระวังถูกหลอกลวง มัวเมา หรือมักมีเรื่องเดือดร้อนกับหุ้นส่วนคู่สัญญา'
+                    });
+                }
+                // "ระวิภุมมะทั้งโสรา ปัญจะแก่ลัคนา" (๑, ๓, ๗ เป็น 5)
+                if (planets[1] !== undefined && planets[1] !== null && this.getDistance(lagna, planets[1]) === 5) {
+                    analysis.specialGeeks.push({
+                        type: 'harm',
+                        title: 'ดวงพินทุบาทว์ "อาทิตย์ปัญจะ"',
+                        detail: 'อาทิตย์สถิตภพที่ ๕ แก่ลัคนา: ชีวิตมักเจอความเสื่อมถอยในลาภยศ หรือเดือดร้อนเพราะบุตรบริวาร'
+                    });
+                }
+                if (planets[3] !== undefined && planets[3] !== null && this.getDistance(lagna, planets[3]) === 5) {
+                    analysis.specialGeeks.push({
+                        type: 'harm',
+                        title: 'ดวงพินทุบาทว์ "อังคารปัญจะ"',
+                        detail: 'อังคารสถิตภพที่ ๕ แก่ลัคนา: อารมณ์รุนแรง หุนหันพลันแล่น ขัดแย้งกับบุตรหลานได้ง่าย'
+                    });
+                }
+                if (planets[7] !== undefined && planets[7] !== null && this.getDistance(lagna, planets[7]) === 5) {
+                    analysis.specialGeeks.push({
+                        type: 'harm',
+                        title: 'ดวงพินทุบาทว์ "เสาร์ปัญจะ"',
+                        detail: 'เสาร์สถิตภพที่ ๕ แก่ลัคนา: วิตกกังวล ความทุกข์ระทมใจเพราะบุตรบริวารไม่เชื่อฟัง หรือคิดกังวลเกินไป'
+                    });
+                }
+                // "พุธเก้า" (๔ เป็น 9)
+                if (planets[4] !== undefined && planets[4] !== null && this.getDistance(lagna, planets[4]) === 9) {
+                    analysis.specialGeeks.push({
+                        type: 'harm',
+                        title: 'ดวงพินทุบาทว์ "พุธเก้า"',
+                        detail: 'พุธสถิตภพที่ ๙ แก่ลัคนา: คำเจรจาอาจนำความเดือดร้อน มีข้อบกพร่องเรื่องการสื่อสารและการทำเอกสารสัญญา'
+                    });
+                }
+                // "จันทร์กับชีวาเป็นแปด" (๒, ๕ เป็น 8)
+                if (planets[2] !== undefined && planets[2] !== null && this.getDistance(lagna, planets[2]) === 8) {
+                    analysis.specialGeeks.push({
+                        type: 'harm',
+                        title: 'ดวงพินทุบาทว์ "จันทร์แปด"',
+                        detail: 'จันทร์สถิตภพที่ ๘ (มรณะ): อารมณ์แปรปรวน อารมณ์อ่อนไหวง่าย มักช้ำใจเพราะเรื่องส่วนตัวหรือคนรอบข้าง'
+                    });
+                }
+                if (planets[5] !== undefined && planets[5] !== null && this.getDistance(lagna, planets[5]) === 8) {
+                    analysis.specialGeeks.push({
+                        type: 'harm',
+                        title: 'ดวงพินทุบาทว์ "พฤหัสบดีแปด"',
+                        detail: 'พฤหัสสถิตภพที่ ๘ (มรณะ): ขัดใจผู้ใหญ่ ทำคุณคนไม่ขึ้น วิชาความรู้มักถูกคนอื่นบิดเบือนหรือมองข้าม'
+                    });
+                }
+                // "ศุกร์เจ็ดอาจารย์เจ้าว่าร้อนนิรันดร์" (๖ เป็น 7)
+                if (planets[6] !== undefined && planets[6] !== null && this.getDistance(lagna, planets[6]) === 7) {
+                    analysis.specialGeeks.push({
+                        type: 'harm',
+                        title: 'ดวงพินทุบาทว์ "ศุกร์เจ็ดเล็งลัคน์"',
+                        detail: 'ศุกร์สถิตภพที่ ๗ แก่ลัคนา: ร้อนรุ่มในความรัก มักเดือดร้อน ผิดหวัง และไม่ลงรอยกับคู่ครองอยู่เนือง ๆ'
+                    });
+                }
+                // "อังคารแปด" (๓ เป็น 8)
+                if (planets[3] !== undefined && planets[3] !== null && this.getDistance(lagna, planets[3]) === 8) {
+                    analysis.specialGeeks.push({
+                        type: 'harm',
+                        title: 'ดวงพินทุบาทว์ "อังคารแปด"',
+                        detail: 'อังคารเป็น ๘ แก่ลัคนา: มักเจอกลโกง ถูกหักหลังทางธุรกิจ หรือประสบอุบัติเหตุจากการทำกิจกรรมต่าง ๆ'
+                    });
+                }
+            },
+
+            // ตรวจสอบปฏิสัมพันธ์คู่ดาวเคราะห์ (กุม/เล็ง)
+            checkPlanetRelations(planets, analysis) {
+                // คู่มิตร (๑-๕, ๒-๔, ๓-๖, ๗-๘)
+                // คู่ศัตรู (๑-๓, ๒-๕, ๔-๘, ๖-๗)
+                // คู่ธาตุ (๑-๗ = ไฟ, ๒-๔ = ดิน, ๓-๖ = ลม, ๕-๘ = น้ำ)
+                // คู่สมพล (๑-๖, ๒-๘, ๓-๕, ๔-๗)
+                const checkPair = (pA, pB, typeName, title, desc) => {
+                    const zA = planets[pA];
+                    const zB = planets[pB];
+                    if (zA === undefined || zA === null || zB === undefined || zB === null) return;
+                    
+                    const dist = this.getDistance(zA, zB);
+                    if (dist === 1) { // กุม
+                        analysis.planetRelations.push({
+                            type: typeName,
+                            mode: 'กุมกัน',
+                            planets: `${this.planets[pA].symbol}-${this.planets[pB].symbol}`,
+                            title: `ดาว ${this.planets[pA].name} กุม ${this.planets[pB].name} (${title})`,
+                            detail: `สถิตร่วมกันในราศี${this.zodiacs[zA].name}: ${desc}`
+                        });
+                    } else if (dist === 7) { // เล็ง
+                        analysis.planetRelations.push({
+                            type: typeName,
+                            mode: 'เล็งกัน',
+                            planets: `${this.planets[pA].symbol}-${this.planets[pB].symbol}`,
+                            title: `ดาว ${this.planets[pA].name} เล็ง ${this.planets[pB].name} (${title})`,
+                            detail: `สถิตตรงข้ามกันข้ามราศี: ${desc}`
+                        });
+                    }
+                };
+
+                // คู่มิตร
+                checkPair(1, 5, 'mitr', 'คู่มิตร', 'ดาวคู่มิตรผู้อุปถัมภ์ ให้คุณเด่นเรื่องการศึกษา ความเจริญก้าวหน้า ผู้ใหญ่ส่งเสริมและเกื้อกูล');
+                checkPair(2, 4, 'mitr', 'คู่มิตร', 'คู่มิตรเจรจา เสน่ห์เมตตา ได้รับการเกื้อหนุนจากคำพูด วงสังคมกว้างขวาง สมาคมดีเลิศ');
+                checkPair(3, 6, 'mitr', 'คู่มิตร', 'คู่มิตรสิเน่หา เสน่ห์ดึงดูดใจเพศตรงข้าม ความรักชุ่มชื่น มีโชคจากเสน่ห์ส่วนตัว');
+                checkPair(7, 8, 'mitr', 'คู่มิตร', 'คู่มิตรอิทธิพล/คู่มิตรใหญ่ ได้รับความเกื้อหนุนจากผู้มีอิทธิพล เอาตัวรอดได้ในยามขับคัน');
+
+                // คู่ศัตรู
+                checkPair(1, 3, 'enemy', 'คู่ศัตรู', 'คู่ขัดแย้ง/ใจร้อน อารมณ์ฉุนเฉียวได้ง่าย ทิฐิสูง ระวังขัดแย้งกับบุคคลรอบตัวหรือผู้ใหญ่');
+                checkPair(2, 5, 'enemy', 'คู่ศัตรู', 'ศัตรูทางความคิด ขัดแย้งระหว่างอารมณ์และเหตุผล ความคิดเห็นมักไม่ตรงรอยกับบุคคลอื่น');
+                checkPair(4, 8, 'enemy', 'คู่ศัตรู', 'คู่ปะทะคำพูด/คดีความ คำพูดมักเป็นพิษ ระวังเดือดร้อนใจหรือโดนคดโกงจากสัญญาเจรจา');
+                checkPair(6, 7, 'enemy', 'คู่ศัตรู', 'คู่ทุกข์โศก อาภัพความรัก ระวังร้อนใจเพราะเรื่องเงินทองหรือปัญหารักร้าวในครอบครัว');
+
+                // คู่ธาตุ
+                checkPair(1, 7, 'element', 'คู่ธาตุไฟ', 'มีพลังงานร้อนแรง มุ่งมั่นเด็ดเดี่ยว มีแรงผลักดันและแรงขับเคลื่อนในการทำงานสูงยิ่ง');
+                checkPair(2, 4, 'element', 'คู่ธาตุดิน', 'ส่งผลให้มีหลักฐานมั่นคง สะสมหลักทรัพย์ รอบคอบ ปลอดภัย และมีความอดทนสูง');
+                checkPair(3, 6, 'element', 'คู่ธาตุลม', 'ว่องไว ไหวพริบดี เปลี่ยนแปลงรวดเร็ว อารมณ์แปรผันผกผันได้ง่ายตามสิ่งเร้า');
+                checkPair(5, 8, 'element', 'คู่ธาตุน้ำ', 'มีความโอบอ้อมอารี แผ่เมตตา จิตใจกว้างขวาง ชะตาชีวิตลื่นไหลประสบความสำเร็จราบรื่น');
+
+                // คู่สมพล
+                checkPair(1, 6, 'sompol', 'คู่สมพล', 'ส่งเสริมพลังโภคทรัพย์ เสริมอำนาจชื่อเสียงทางการเงินและการค้าให้ก้าวหน้า');
+                checkPair(2, 8, 'sompol', 'คู่สมพล', 'เสริมเสน่ห์ดึงดูด ดึงดูดโชคลาภลาภลอยแบบฟลุ๊กๆ มีบารมีดึงดูดบริวาร');
+                checkPair(3, 5, 'sompol', 'คู่สมพล', 'ผสมผสานความกล้าและปัญญา นำพาโครงการใหญ่สู่ความสำเร็จลุล่วงด้วยดี');
+                checkPair(4, 7, 'sompol', 'คู่สมพล', 'ไหวพริบเฉียบคม มีการเจรจาต่อรองลุ่มลึก รู้ทันเล่ห์เหลี่ยมชั้นเชิงธุรกิจเป็นเลิศ');
+            },
+
+            generatePredictions(analysis) {
+                const { lagnaInfo, planetPositions, thaksaMap, tanuset } = analysis;
+
+                // 1. ลัคนาราศี
+                analysis.predictions.push({
+                    category: 'รูปร่างและอุปนิสัย (ตามลัคนาราศี)',
+                    detail: `ลัคนาของท่านสถิตใน ราศี${lagnaInfo.name} (${lagnaInfo.sign}) ธาตุ${lagnaInfo.element} (${lagnaInfo.mode}ราศี) ทิศ${lagnaInfo.dir} (${lagnaInfo.phase}) รูปร่างของท่านตามตำราป่าคือ: "${lagnaInfo.shape}" มีจุดพยากรณ์ควบคุมร่างกายที่บริเวณ "${lagnaInfo.organ}" มักพบว่าชีวิตผูกพันและมีสติปัญญาจริตกิริยาไปตามราศีเกิดนี้`
+                });
+
+                // 2. ดาวกุมลัคน์
+                let planetsInLagna = Object.keys(planetPositions).filter(p => planetPositions[p].house === 'ตนุ');
+                if (planetsInLagna.length > 0) {
+                    planetsInLagna.forEach(p => {
+                        let pInfo = this.planets[p];
+                        let desc = '';
+                        if (p == 1) desc = 'ทำให้มีเกียรติยศ รักศักดิ์ศรี รักความยุติธรรม ปรารถนาความเป็นเลิศ';
+                        else if (p == 2) desc = 'ทำให้เป็นคนอ่อนหวาน มีเมตตา อารมณ์ไหวหวั่นง่าย รักงานบริการและการอุปถัมภ์';
+                        else if (p == 3) desc = 'ทำให้เป็นคนกล้าหาญ เด็ดเดี่ยว ขยันขันแข็ง รักการแข่งขันและการต่อสู้';
+                        else if (p == 4) desc = 'ทำให้เป็นคนช่างพูดช่างเจรจา มีไหวพริบปฏิภาณ ฉลาดรอบรู้ในการสื่อสาร';
+                        else if (p == 5) desc = 'ทำให้เป็นคนรักความก้าวหน้า ใฝ่ความรู้ คุณธรรมสูง มีสติปัญญาไตร่ตรองรอบคอบ';
+                        else if (p == 6) desc = 'ทำให้รักสวยรักงาม มีรสนิยมสูง ชื่นชอบศิลปะ ดนตรี และความสำราญรื่นเริง';
+                        else if (p == 7) desc = 'ทำให้เป็นคนมีความรับผิดชอบสูง มัธยัสถ์ คิดมาก เก็บกดลึกซึ้ง แต่อดทนแกร่งกล้า';
+                        else if (p == 8) desc = 'ทำให้เป็นคนใจใหญ่ กล้าได้กล้าเสีย ไหวพริบพลิกแพลงเก่ง ชื่นชอบความตื่นเต้น';
+                        
+                        analysis.predictions.push({
+                            category: `อิทธิพลดาวกุมลัคน์ (${pInfo.name})`,
+                            detail: `ดาว ${pInfo.name} (${pInfo.symbol}) กุมลัคนาในภพตนุ: มีนิยามวิชาโหรว่า "${pInfo.quote}" ${desc} ส่งอิทธิพลต่อจิตใจและความประพฤติโดยตรงของชะตาชีวิต`
+                        });
+                    });
+                } else {
+                    analysis.predictions.push({
+                        category: 'อิทธิพลต่อจิตใจ (ดาวเจ้าเรือนตนุ)',
+                        detail: `ชะตานี้ไม่มีดาวเคราะห์ใดกุมลัคนาโดยตรง จิตใจและวิถีชีวิตจะขึ้นกับดาวเจ้าเรือนเกษตรตนุคือดาว ${this.planets[this.kasetrMap[lagnaInfo.id]].name} เป็นตัวนำทิศทางของชีวิตในสังคม`
+                    });
+                }
+
+                // 2.5 ดาวตนุเศษ ( Tanuset )
+                if (tanuset) {
+                    const pInfo = this.planets[tanuset];
+                    let desc = '';
+                    if (tanuset == 1) desc = 'มีจิตสำนึกรักเกียรติยศ ทะนงตน มีความรับผิดชอบและเจ้านายสูง';
+                    else if (tanuset == 2) desc = 'มีอารมณ์ละเอียดอ่อน อ่อนหวาน รังเกียจความหยาบคาย มีความเอื้อเฟื้อสูง';
+                    else if (tanuset == 3) desc = 'มีความกระตือรือร้น ขยัน ใจร้อน รักเสรีภาพและการลงมือทำรวดเร็ว';
+                    else if (tanuset == 4) desc = 'ชอบเรียนรู้ คิดวิเคราะห์ เจรจาเก่ง ช่างสังเกตและปรับตัวตามสถานการณ์เลิศ';
+                    else if (tanuset == 5) desc = 'มีหลักคุณธรรม อดทน ซื่อตรง มีวิสัยทัศน์กว้างไกล รักความสงบและสติปัญญา';
+                    else if (tanuset == 6) desc = 'รักในความสุนทรีย์ ศิลปะ การเงิน ความบันเทิงใจและมีความเมตตาอ่อนโยน';
+                    else if (tanuset == 7) desc = 'มีความระมัดระวัง รอบคอบ คิดการณ์ไกล อดทนเก็บกด มัธยัสถ์สูง';
+
+                    analysis.predictions.push({
+                        category: `ตัวตนชั้นลึก (ดาวตนุเศษ: ${pInfo.name})`,
+                        detail: `ดาวตนุเศษของท่านคือดาว ${pInfo.name} (หมายเลข ${tanuset}): แสดงถึงโครงสร้างบุคลิกภาพแฝงหรือวิญญาณชั้นลึกของเจ้าชะตา ซึ่งจะคอยเหนี่ยวนำให้ท่านตัดสินใจและประพฤติตนไปในแนวทาง: "${desc}"`
+                    });
+                }
+
+                // 3. คู่ครองและความรัก
+                let patniHouse = analysis.housePositions['ปัตนิ'];
+                analysis.predictions.push({
+                    category: 'คู่ครองและการคบหาสมาคม (ภพปัตนิ)',
+                    detail: `เรือนปัตนิของท่านสถิตในราศี ${patniHouse.zodiac} มีดาวเกษตรเจ้าเรือนคือ ดาว ${this.planets[patniHouse.kasetrPlanet].name} ชีวิตรักและการคบหาสมาคม หุ้นส่วนคู่คิด จะดำเนินไปตามจุดที่ดาวเจ้านี้สถิต ซึ่งจะแสดงถึงวัย อุปนิสัย และความเกื้อหนุนของคู่ครอง`
+                });
+
+                // 4. อุปสรรคและดาวกาลกิณี
+                let foundKali = false;
+                for (let p in thaksaMap) {
+                    if (thaksaMap[p] === 'กาลกิณี') {
+                        let kalakiniPlanet = this.planets[p];
+                        let pos = planetPositions[p];
+                        if (pos) {
+                            foundKali = true;
+                            analysis.predictions.push({
+                                category: 'ดาวกาลกิณีประจำชะตา (ข้อควรระวัง)',
+                                detail: `ดาว ${kalakiniPlanet.name} (เลข ${p}) เป็นกาลกิณีวันเกิด สถิตอยู่ในเรือนชะตา "${pos.house}" (ภพที่ ${pos.houseIndex}) ส่งผลให้ต้องระมัดระวังเป็นพิเศษต่อปัญหา ความล่าช้า หรือเหตุขัดแย้งที่เกี่ยวข้องกับเรื่องราวของเรือนชะตาดังกล่าว หลีกเลี่ยงการทำสัญญาสำคัญในวันที่ตรงกับกำลังของดาวนี้`
+                            });
+                        }
+                    }
+                }
+                if (!foundKali) {
+                    analysis.predictions.push({
+                        category: 'ดาวกาลกิณีประจำชะตา',
+                        detail: 'ไม่พบดาวกาลกิณีสถิตในระบบดาวเคราะห์หลักชะตาชีวิตที่กรอกข้อมูล ทำให้โครงสร้างดวงเด่นไม่มีจุดหักมุมรุนแรง'
+                    });
+                }
+            }
+        };
+
+        // ----------------------------------------------------
+        // 2. USER INTERACTION & CONFIGURATION LOGIC
+        // ----------------------------------------------------
+        
+        // Populate standard options for 0-11 Zodiacs
+        const zodiacNames = ['เมษ', 'พฤษภ', 'เมถุน', 'กรกฎ', 'สิงห์', 'กันย์', 'ตุลย์', 'พิจิก', 'ธนู', 'มังกร', 'กุมภ์', 'มีน'];
+        
+        function populateZodiacOptions() {
+            const selects = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p0'];
+            selects.forEach(selId => {
+                const el = document.getElementById(selId);
+                if (!el) return;
+                el.innerHTML = '';
+                zodiacNames.forEach((name, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.textContent = `${name}`;
+                    el.appendChild(opt);
+                });
+            });
+        }
+
+        // Auto-load values from sample
+        function loadSampleData() {
+            document.getElementById('birthDay').value = '3'; // วันอังคาร
+            document.getElementById('lagna').value = '1';    // ราศีพฤษภ
+            
+            // Set placements
+            document.getElementById('p1').value = '4';  // อาทิตย์ -> สิงห์
+            document.getElementById('p2').value = '11'; // จันทร์ -> มีน
+            document.getElementById('p3').value = '0';  // อังคาร -> เมษ
+            document.getElementById('p4').value = '5';  // พุธ -> กันย์
+            document.getElementById('p5').value = '4';  // พฤหัส -> สิงห์
+            document.getElementById('p6').value = '1';  // ศุกร์ -> พฤษภ
+            document.getElementById('p7').value = '9';  // เสาร์ -> มังกร
+            document.getElementById('p8').value = '2';  // ราหู -> เมถุน
+            document.getElementById('p9').value = '11'; // เกตุ -> มีน
+            document.getElementById('p0').value = '9';  // มฤตยู -> มังกร
+            
+            analyzeChart();
+            
+            Swal.fire({
+                title: 'สำเร็จ!',
+                text: 'โหลดดวงชะตาตัวอย่างเรียบร้อยแล้ว',
+                icon: 'success',
+                confirmButtonText: 'ตกลง',
+                timer: 1500
+            });
+        }
+
+        // ----------------------------------------------------
+        // 3. MEMBER DATABASE SYNC & CALCULATIONS
+        // ----------------------------------------------------
+        
+        // Lahiri Ayanamsa and Julian Day constants/functions
+        const LAHIRI_OFFSET_J2000 = 23.853056;
+        const PRECESSION_RATE = 50.290966 / 3600;
+
+        function toJD(y, m, d, h) {
+            const A = Math.floor((14 - m) / 12);
+            const Y = y + 4800 - A;
+            const M = m + 12 * A - 3;
+            let jdn = d + Math.floor((153*M + 2)/5) + 365*Y + Math.floor(Y/4) -
+                      Math.floor(Y/100) + Math.floor(Y/400) - 32045;
+            return jdn - 0.5 + h/24.0;
+        }
+
+        function norm(deg) {
+            let d = deg % 360;
+            return d < 0 ? d + 360 : d;
+        }
+
+        function degToSign(deg) {
+            return Math.floor(norm(deg) / 30);
+        }
+
+        // Astro-calculation to set Lagna & Planets from date/time
+        function calculateNatalPlacements(birthdateStr, birthtimeStr) {
+            try {
+                // Parse date
+                let dateVal = birthdateStr;
+                if (dateVal.includes("/")) {
+                    const parts = dateVal.split("/");
+                    if (parts.length === 3) {
+                        let year = parseInt(parts[2]);
+                        if (year > 2400) year -= 543; // convert to AD
+                        dateVal = `${year}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                    }
+                }
+                
+                const dObj = new Date(dateVal);
+                if (isNaN(dObj.getTime())) return null;
+
+                const year = dObj.getFullYear();
+                const month = dObj.getMonth() + 1;
+                const day = dObj.getDate();
+                
+                let hour = 12, min = 0;
+                if (birthtimeStr) {
+                    const cleanTime = birthtimeStr.replace(/\s*น\.?/, '').trim();
+                    const parts = cleanTime.split(':');
+                    if (parts.length >= 2) {
+                        hour = parseInt(parts[0]);
+                        min = parseInt(parts[1]);
+                    }
+                }
+
+                const jd = toJD(year, month, day, (hour + min/60) - 7); // Bangkok UTC+7
+                const time = Astronomy.MakeTime(dObj);
+
+                function getSiderealZodiacIndex(bodyName) {
+                    const vec = Astronomy.GeoVector(bodyName, time, true);
+                    const ecl = Astronomy.Ecliptic(vec);
+                    const siderealLon = norm(ecl.elon - LAHIRI_OFFSET_J2000);
+                    return degToSign(siderealLon);
+                }
+
+                // Node (Rahu)
+                const T = (jd - 2451545.0)/36525;
+                const rahuTropical = 125.04452 - 1934.136261 * T;
+                const ayan = LAHIRI_OFFSET_J2000 + (jd - 2451545.0)/365.25 * PRECESSION_RATE;
+                const rahuLon = norm(rahuTropical - ayan);
+                const rahuIdx = degToSign(rahuLon);
+                const ketuIdx = degToSign(norm(rahuLon + 180));
+
+                // Lagna Lon
+                const theta0 = norm(280.46061837 + 360.98564736629*(jd - 2451545.0) + 0.000387933*T*T);
+                const LST = norm(theta0 + 100.5); // Bangkok is ~100.5E
+                const eps = 23.439291 - 0.013004*T;
+                const e = eps * Math.PI/180;
+                const lrad = 13.75 * Math.PI/180; // Bangkok Latitude
+                const RARad = LST * Math.PI/180;
+                const tanAsc = Math.cos(RARad) / (-Math.sin(e)*Math.tan(lrad) + Math.cos(e)*Math.sin(RARad));
+                let asc = Math.atan(tanAsc) * 180/Math.PI;
+                const sinRa = Math.sin(RARad);
+                if (sinRa < 0) asc += 180;
+                else if (sinRa > 0 && Math.cos(RARad) < 0) asc += 360;
+                const lagnaLonVal = norm(asc - ayan);
+                const lagnaIdx = degToSign(lagnaLonVal);
+
+                // Weekday
+                const weekDay = ((Math.floor(jd + 1.5)) % 7 + 7) % 7; // 0=Sun, 1=Mon...
+                let birthDaySeq = weekDay === 0 ? 1 : weekDay + 1; // 1=Sun, 2=Mon...
+                
+                // Wednesday night checking (after 6 PM and before 6 AM next day)
+                if (weekDay === 3) { // Wednesday
+                    if (hour >= 18 || hour < 6) {
+                        birthDaySeq = 8; // Wed Night (Rahu)
+                    }
+                }
+
+                return {
+                    birthDay: birthDaySeq,
+                    lagna: lagnaIdx,
+                    placements: {
+                        1: getSiderealZodiacIndex('Sun'),
+                        2: getSiderealZodiacIndex('Moon'),
+                        3: getSiderealZodiacIndex('Mars'),
+                        4: getSiderealZodiacIndex('Mercury'),
+                        5: getSiderealZodiacIndex('Jupiter'),
+                        6: getSiderealZodiacIndex('Venus'),
+                        7: getSiderealZodiacIndex('Saturn'),
+                        8: rahuIdx,
+                        9: ketuIdx,
+                        0: getSiderealZodiacIndex('Uranus')
+                    }
+                };
+
+            } catch (err) {
+                console.error("Natal placement calculation error:", err);
+                return null;
+            }
+        }
+
+        // Initialize Member Selector
+        function initMemberSelect() {
+            const memberSelect = document.getElementById("memberSelect");
+            if (!memberSelect) return;
+
+            try {
+                const historyStr = localStorage.getItem("horo_history");
+                if (historyStr) {
+                    const history = JSON.parse(historyStr);
+                    if (history && Array.isArray(history)) {
+                        memberSelect.innerHTML = '<option value="">-- เลือกสมาชิก --</option>';
+                        history.forEach(member => {
+                            const opt = document.createElement("option");
+                            opt.value = JSON.stringify({
+                                name: member.name || "ไม่มีชื่อ",
+                                date: member.birthdate || member.birthDate || member.date,
+                                time: member.birthtime || member.birthTime || member.time || "12:00"
+                            });
+                            opt.textContent = `${member.memberId ? `${member.memberId} - ` : ''}${member.name} ${member.lastName || ''}`;
+                            memberSelect.appendChild(opt);
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading members into select:", e);
+            }
+        }
+
+        // Autofill when a member is selected
+        function autoFillFromMember(valueStr) {
+            if (!valueStr) return;
+            try {
+                const data = JSON.parse(valueStr);
+                
+                // Show loading modal while computing astronomy transits
+                Swal.fire({
+                    title: 'กำลังดึงข้อมูลสมาชิก...',
+                    text: 'กำลังคำนวณสถิติตำแหน่งจักรราศีทางดาราศาสตร์จริง...',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading() }
+                });
+
+                setTimeout(() => {
+                    const result = calculateNatalPlacements(data.date, data.time);
+                    
+                    if (result) {
+                        // Set basic fields
+                        document.getElementById('birthDay').value = result.birthDay.toString();
+                        document.getElementById('lagna').value = result.lagna.toString();
+
+                        // Set planets placement
+                        for (let p in result.placements) {
+                            const pSelect = document.getElementById(`p${p}`);
+                            if (pSelect) {
+                                pSelect.value = result.placements[p].toString();
+                            }
+                        }
+
+                        analyzeChart();
+
+                        Swal.fire({
+                            title: 'ดึงข้อมูลสำเร็จ!',
+                            text: `ประมวลผลตำแหน่งดวงชะตากำเนิดของ คุณ ${data.name} เรียบร้อยแล้ว`,
+                            icon: 'success',
+                            confirmButtonText: 'ตกลง',
+                            timer: 2000
+                        });
+                    } else {
+                        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถประมวลผลวันเดือนปีเกิดของสมาชิกได้', 'error');
+                    }
+                }, 300);
+
+            } catch (err) {
+                console.error("Error auto-filling from member select:", err);
+                Swal.fire('ข้อผิดพลาด', 'เกิดปัญหาในการดึงและคำนวณข้อมูลสมาชิก', 'error');
+            }
+        }
+
+        // Render dynamic SVG Zodiac Wheel
+        function drawZodiacWheel(lagnaIndex, planetsMap) {
+            const size = 360;
+            const center = size / 2;
+            const rOuter = 160;
+            const rInner1 = 120;
+            const rInner2 = 80;
+            const rCenter = 25;
+
+            let svg = `<svg viewBox="0 0 ${size} ${size}" class="zodiac-wheel-svg" xmlns="http://www.w3.org/2000/svg">`;
+            
+            // Background Shadow
+            svg += `<circle cx="${center}" cy="${center}" r="${rOuter}" fill="#0a0f1d" stroke="#d4af37" stroke-width="3" />`;
+            svg += `<circle cx="${center}" cy="${center}" r="${rInner1}" fill="none" stroke="rgba(212,175,55,0.3)" stroke-width="1.5" />`;
+            svg += `<circle cx="${center}" cy="${center}" r="${rInner2}" fill="#0e172a" stroke="rgba(212,175,55,0.4)" stroke-width="2" />`;
+            svg += `<circle cx="${center}" cy="${center}" r="${rCenter}" fill="#090d16" stroke="#d4af37" stroke-width="1" />`;
+
+            // Draw 12 Sectors
+            // In standard circular representation, Aries is top or left.
+            // Let's place Aries (0) at 12 o'clock position (270 degrees in SVG coordinates) and go counter-clockwise
+            for (let i = 0; i < 12; i++) {
+                const startAngle = 270 - (i * 30);
+                const endAngle = startAngle - 30;
+                
+                const x1 = center + rOuter * Math.cos(startAngle * Math.PI / 180);
+                const y1 = center + rOuter * Math.sin(startAngle * Math.PI / 180);
+                
+                const x2 = center + rInner2 * Math.cos(startAngle * Math.PI / 180);
+                const y2 = center + rInner2 * Math.sin(startAngle * Math.PI / 180);
+                
+                // Draw separator line
+                svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(212,175,55,0.3)" stroke-width="1" />`;
+                
+                // Label Zodiac Name (Middle of sector)
+                const textAngle = startAngle - 15;
+                const rText = rOuter - 20;
+                const tx = center + rText * Math.cos(textAngle * Math.PI / 180);
+                const ty = center + rText * Math.sin(textAngle * Math.PI / 180) + 4; // adjustment for font height
+                
+                svg += `<text x="${tx}" y="${ty}" fill="#f9e596" font-size="9" text-anchor="middle" font-weight="bold" opacity="0.85">${zodiacNames[i]}</text>`;
+            }
+
+            // Draw Planets & Lagna in Zodiac cells
+            // We group items by their zodiac sign
+            let zodiacGroups = Array.from({length: 12}, () => []);
+            
+            // Add Lagna
+            zodiacGroups[lagnaIndex].push({ label: 'ลั', type: 'lagna' });
+            
+            // Add Planets
+            for (let p in planetsMap) {
+                let zod = planetsMap[p];
+                if (zod !== null && !isNaN(zod)) {
+                    let symbol = ThaiAstrologyEngine.planets[p].symbol;
+                    zodiacGroups[zod].push({ label: symbol, type: 'planet', id: p });
+                }
+            }
+
+            // Draw the content inside each cell
+            for (let z = 0; z < 12; z++) {
+                const items = zodiacGroups[z];
+                if (items.length === 0) continue;
+                
+                const cellAngle = 270 - (z * 30) - 15; // center of cell
+                
+                // Space items vertically or horizontally within the cell
+                items.forEach((item, index) => {
+                    // Radius variation based on index to avoid overlaying
+                    const radiusOffset = index * 14;
+                    const cellRadius = rInner1 - 18 - (index > 1 ? 12 : 0);
+                    const angleOffset = (index % 2 === 0 ? 1 : -1) * (index > 0 ? 8 : 0);
+                    
+                    const rad = cellAngle + angleOffset;
+                    
+                    const px = center + cellRadius * Math.cos(rad * Math.PI / 180);
+                    const py = center + cellRadius * Math.sin(rad * Math.PI / 180) + 4;
+                    
+                    if (item.type === 'lagna') {
+                        svg += `<text x="${px}" y="${py}" fill="#e74c3c" font-size="13" font-weight="bold" text-anchor="middle">ลั</text>`;
+                        // Small circle indicator for Lagna
+                        svg += `<circle cx="${px}" cy="${py - 2}" r="11" fill="none" stroke="#e74c3c" stroke-width="1" stroke-dasharray="2,2"/>`;
+                    } else {
+                        const color = item.id == '0' || item.id == '8' ? '#e74c3c' : '#ffffff';
+                        const weight = item.id == '5' ? 'bold' : 'normal';
+                        svg += `<text x="${px}" y="${py}" fill="${color}" font-size="12" font-weight="${weight}" text-anchor="middle">${item.label}</text>`;
+                    }
+                });
+            }
+
+            // Draw center decoration
+            svg += `<text x="${center}" y="${center + 5}" fill="#d4af37" font-family="'Outfit', sans-serif" font-size="14" font-weight="800" text-anchor="middle">สยาม</text>`;
+
+            svg += `</svg>`;
+            document.getElementById('wheelContainer').innerHTML = svg;
+        }
+
+        // Main Calculation Controller
+        function analyzeChart() {
+            const lagna = parseInt(document.getElementById('lagna').value);
+            const birthDay = parseInt(document.getElementById('birthDay').value);
+            
+            const planetsPlacement = {
+                1: parseInt(document.getElementById('p1').value),
+                2: parseInt(document.getElementById('p2').value),
+                3: parseInt(document.getElementById('p3').value),
+                4: parseInt(document.getElementById('p4').value),
+                5: parseInt(document.getElementById('p5').value),
+                6: parseInt(document.getElementById('p6').value),
+                7: parseInt(document.getElementById('p7').value),
+                8: parseInt(document.getElementById('p8').value),
+                9: parseInt(document.getElementById('p9').value),
+                0: parseInt(document.getElementById('p0').value)
+            };
+
+            // Call Engine
+            const result = ThaiAstrologyEngine.analyzeChart({
+                lagna: lagna,
+                birthDay: birthDay,
+                planetsPlacement: planetsPlacement
+            });
+
+            // Update UI Summary Elements
+            document.getElementById('summaryLagna').innerText = `ราศี${result.lagnaInfo.name} (${result.lagnaInfo.sign})`;
+            document.getElementById('summaryElement').innerText = `${result.lagnaInfo.element} / ${result.lagnaInfo.dir}`;
+            
+            // Tanuset Info
+            if (result.tanuset) {
+                const tPlanet = ThaiAstrologyEngine.planets[result.tanuset];
+                document.getElementById('summaryTanuset').innerText = `${tPlanet.name} (เลข ${result.tanuset})`;
+            } else {
+                document.getElementById('summaryTanuset').innerText = 'ไม่ระบุ';
+            }
+            
+            const dayNames = { 1:'วันอาทิตย์', 2:'วันจันทร์', 3:'วันอังคาร', 4:'วันพุธกลางวัน', 5:'วันพฤหัสบดี', 6:'วันศุกร์', 7:'วันเสาร์', 8:'วันพุธกลางคืน' };
+            document.getElementById('summaryDay').innerText = dayNames[birthDay];
+            
+            let kaliPlanet = '';
+            for (let p in result.thaksaMap) {
+                if (result.thaksaMap[p] === 'กาลกิณี') {
+                    kaliPlanet = `${ThaiAstrologyEngine.planets[p].name} (เลข ${p})`;
+                    break;
+                }
+            }
+            document.getElementById('summaryKali').innerText = kaliPlanet || 'ไม่มี';
+
+            // Draw Zodiac Wheel
+            drawZodiacWheel(lagna, planetsPlacement);
+
+            // Display Predictions
+            const predictionList = document.getElementById('predictionList');
+            predictionList.innerHTML = '';
+            result.predictions.forEach(p => {
+                let iconClass = 'fa-star';
+                if (p.category.includes('ลัคนา')) iconClass = 'fa-user-circle';
+                else if (p.category.includes('คู่ครอง')) iconClass = 'fa-heart';
+                else if (p.category.includes('กาลกิณี')) iconClass = 'fa-exclamation-triangle';
+                else if (p.category.includes('ตนุเศษ')) iconClass = 'fa-id-badge';
+                
+                predictionList.innerHTML += `
+                    <div class="prediction-card">
+                        <div class="prediction-category">
+                            <i class="fas ${iconClass}"></i> ${p.category}
+                        </div>
+                        <p class="mb-0 text-white-50" style="line-height: 1.7; font-size: 0.95rem;">${p.detail}</p>
+                    </div>
+                `;
+            });
+
+            // Display Standards Table
+            const tableBody = document.getElementById('starStandardTableBody');
+            tableBody.innerHTML = '';
+            
+            for (let pNum = 0; pNum <= 9; pNum++) {
+                const actualNum = pNum === 9 ? 9 : (pNum === 0 ? 0 : pNum); // Order 1-9 then 0
+                if (actualNum === 9 && !planetsPlacement[9]) continue;
+                
+                const pInfo = ThaiAstrologyEngine.planets[actualNum];
+                const pPos = result.planetPositions[actualNum];
+                if (!pPos) continue;
+
+                // Set Standard badge style
+                let badgeClass = 'bg-normal';
+                if (pPos.status.includes('เกษตร')) badgeClass = 'bg-kaset';
+                else if (pPos.status.includes('อุจจ์')) badgeClass = 'bg-uch';
+                else if (pPos.status.includes('มหาจักร')) badgeClass = 'bg-chak';
+                else if (pPos.status.includes('ราชาโชค')) badgeClass = 'bg-chok';
+                else if (pPos.status.includes('ประ')) badgeClass = 'bg-pra';
+                else if (pPos.status.includes('นิจ')) badgeClass = 'bg-nij';
+
+                // Set Thaksa role style
+                let roleClass = '';
+                if (pPos.thaksaRole === 'ศรี') roleClass = 'role-sri';
+                else if (pPos.thaksaRole === 'กาลกิณี') roleClass = 'role-kali';
+                else if (pPos.thaksaRole === 'เดช') roleClass = 'role-dech';
+                else if (pPos.thaksaRole === 'มนตรี') roleClass = 'role-montri';
+
+                tableBody.innerHTML += `
+                    <tr>
+                        <td><b>${pInfo.name}</b></td>
+                        <td class="text-gold font-weight-bold text-center" style="font-size: 1.15rem;">${pInfo.symbol}</td>
+                        <td>ราศีธาตุ${pInfo.astroElement}</td>
+                        <td>${pInfo.gender}</td>
+                        <td><span class="badge badge-standard ${badgeClass}">${pPos.status}</span></td>
+                        <td><span class="thaksa-role ${roleClass}">${pPos.thaksaRole}</span></td>
+                    </tr>
+                `;
+            }
+
+            // Display Special Geeks Quick list and Detail list
+            const geekQuickList = document.getElementById('specialGeekQuickList');
+            const geekDetailList = document.getElementById('specialGeekDetailList');
+            
+            geekQuickList.innerHTML = '';
+            geekDetailList.innerHTML = '';
+
+            if (result.specialGeeks.length > 0) {
+                result.specialGeeks.forEach(g => {
+                    const iconColor = g.type === 'benefit' ? 'text-success' : 'text-danger';
+                    const icon = g.type === 'benefit' ? 'fa-check-circle' : 'fa-times-circle';
+                    const itemClass = g.type === 'benefit' ? '' : 'geek-item-danger';
+
+                    // Quick list
+                    geekQuickList.innerHTML += `
+                        <div class="small mb-1"><i class="fas ${icon} ${iconColor} mr-2"></i><b>${g.title}</b></div>
+                    `;
+
+                    // Detailed list
+                    geekDetailList.innerHTML += `
+                        <div class="geek-item ${itemClass}">
+                            <h6 class="font-weight-bold mb-1"><i class="fas ${icon} ${iconColor} mr-2"></i>${g.title}</h6>
+                            <p class="mb-0 text-white-50 small">${g.detail}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                geekQuickList.innerHTML = `<div class="text-white-50 small">ไม่มีเกณฑ์พิเศษถูกกระตุ้นในโครงสร้างนี้</div>`;
+                geekDetailList.innerHTML = `<div class="text-center py-4 text-white-50">ไม่มีเกณฑ์โยคหรือเกณฑ์พิเศษที่ถูกกระตุ้นตามตำรา</div>`;
+            }
+
+            // Display Planet Conjunctions/Oppositions Relation list
+            const relationsList = document.getElementById('planetRelationsList');
+            relationsList.innerHTML = '';
+            if (result.planetRelations.length > 0) {
+                result.planetRelations.forEach(rel => {
+                    let badgeColor = 'rgba(59, 168, 122, 0.15); color: #3BA87A; border: 1px solid rgba(59, 168, 122, 0.3);'; // mitr
+                    if (rel.type === 'enemy') {
+                        badgeColor = 'rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3);';
+                    } else if (rel.type === 'element') {
+                        badgeColor = 'rgba(74, 144, 217, 0.15); color: #4A90D9; border: 1px solid rgba(74, 144, 217, 0.3);';
+                    } else if (rel.type === 'sompol') {
+                        badgeColor = 'rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3);';
+                    }
+
+                    relationsList.innerHTML += `
+                        <div class="prediction-card p-3 d-flex flex-column gap-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge font-weight-bold" style="${badgeColor}">${rel.mode} [${rel.planets}]</span>
+                                <strong class="text-gold" style="font-size: 0.95rem;">${rel.title.split(' (')[1].replace(')', '')}</strong>
+                            </div>
+                            <h6 class="font-weight-bold mb-1 text-white">${rel.title.split(' (')[0]}</h6>
+                            <p class="mb-0 text-white-50 small" style="line-height: 1.6;">${rel.detail}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                relationsList.innerHTML = `<div class="text-center py-4 text-white-50">ไม่พบดาวเคราะห์คู่มิตร/คู่ศัตรู/คู่ธาตุ/คู่สมพล ที่โคจรกุมกันหรือเล็งกันในดวงชะตานี้</div>`;
+            }
+
+            return false;
+        }
+
+        // On Load initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            populateZodiacOptions();
+            initMemberSelect();
+            
+            // Set Default placeholder placement values
+            document.getElementById('p1').value = '0';
+            document.getElementById('p2').value = '1';
+            document.getElementById('p3').value = '2';
+            document.getElementById('p4').value = '3';
+            document.getElementById('p5').value = '4';
+            document.getElementById('p6').value = '5';
+            document.getElementById('p7').value = '6';
+            document.getElementById('p8').value = '7';
+            document.getElementById('p9').value = '8';
+            document.getElementById('p0').value = '9';
+            
+            // Run default
+            analyzeChart();
+
+            // Vanilla JS Tab Switcher
+            document.querySelectorAll('.nav-tabs-premium .nav-link').forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.nav-tabs-premium .nav-link').forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all tab panes
+                    document.querySelectorAll('.tab-content .tab-pane').forEach(pane => {
+                        pane.classList.remove('show', 'active');
+                    });
+                    
+                    // Show target tab pane
+                    const targetId = this.getAttribute('href');
+                    const targetPane = document.querySelector(targetId);
+                    if (targetPane) {
+                        targetPane.classList.add('show', 'active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสร้างอินโฟกราฟิกคำทำนายรายวัน - สยามโหรามงคล</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script charset="UTF-8" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- html2canvas -->
+    <script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            padding: 0;
+            background: linear-gradient(135deg, #0f0c29, #1e1b4b, #0f172a); 
+            color: #fff; 
+            font-family: 'Sarabun', sans-serif; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header Navigation */
+        .admin-nav {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 18px 35px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .admin-nav h1 {
+            margin: 0;
+            color: #ffdf73;
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffdf73;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            padding: 8px 22px;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            font-weight: 500;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .back-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        /* Main Workspace Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 25px;
+            gap: 25px;
+            max-width: 1920px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Left Control Sidebar */
+        .sidebar {
+            width: 350px;
+            flex-shrink: 0;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 18px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffdf73;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .form-control, select, input[type="date"], textarea {
+            background: rgba(2, 6, 23, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: 'Sarabun', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus, select:focus, input[type="date"]:focus, textarea:focus {
+            border-color: #f59e0b;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            color: #0f172a;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
+        }
+        .btn-action:hover {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s ease;
+        }
+        .btn-success:hover {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            transform: translateY(-2px);
+        }
+
+        /* Right Canvas Workspace */
+        .preview-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 20px;
+            overflow: auto;
+            padding: 10px;
+            min-width: 0;
+        }
+
+        /* Infographic Canvas Scaler Container */
+        .canvas-scaler {
+            position: relative;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            flex-shrink: 0;
+            background: #fdfbf7;
+        }
+
+        #infographicCanvas {
+            width: 1920px;
+            height: 1080px;
+            background: #fdfbf7;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(251, 191, 36, 0.08), transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(225, 29, 72, 0.06), transparent 40%);
+            color: #1e293b;
+            padding: 30px 55px 25px 55px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            transform-origin: top left;
+            overflow: hidden;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        /* Infographic Decor Accents */
+        .bg-decor-top-right {
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(217, 119, 6, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .bg-decor-bottom-left {
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(190, 24, 93, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Infographic Header */
+        .info-header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            z-index: 2;
+        }
+        .info-header-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+        }
+        .info-crystal-ball {
+            font-size: 48px;
+            filter: drop-shadow(0 4px 10px rgba(126, 34, 206, 0.3));
+        }
+        .info-main-title {
+            font-size: 38px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .info-subhead-1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #334155;
+            margin: 0;
+        }
+        .info-subhead-2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #64748b;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sparkle-icon {
+            color: #f59e0b;
+            font-size: 15px;
+        }
+
+        /* Infographic Content Grid (2 Columns) */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Left Card (Work & Finance) */
+        .card-left {
+            background: #ffffff;
+            border: 3px solid #d97706;
+            border-radius: 28px;
+            padding: 40px 30px 25px 30px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            box-shadow: 0 12px 30px rgba(217, 119, 6, 0.1);
+        }
+        .pill-badge-orange {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #d97706, #f59e0b);
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 800;
+            padding: 8px 36px;
+            border-radius: 50px;
+            box-shadow: 0 6px 16px rgba(217, 119, 6, 0.35);
+            white-space: nowrap;
+        }
+
+        .left-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 8px 0;
+        }
+        .left-item-icon {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+        }
+        .left-item-content {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .left-item-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+        }
+        .left-item-text {
+            font-size: 18.5px;
+            font-weight: 500;
+            color: #334155;
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        /* Right Side Column */
+        .col-right {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: flex-start;
+        }
+
+        /* Right Top Card (Love & Lucky Tips) */
+        .card-right-top {
+            background: #ffffff;
+            border: 3px solid #be185d;
+            border-radius: 26px;
+            padding: 42px 28px 24px 28px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(190, 24, 93, 0.1);
+        }
+        .pill-badge-pink {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #be185d, #e11d48);
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 800;
+            padding: 8px 36px;
+            border-radius: 50px;
+            box-shadow: 0 6px 16px rgba(190, 24, 93, 0.35);
+            white-space: nowrap;
+        }
+        .right-top-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .right-top-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+            padding: 0 4px;
+        }
+        .right-top-icon {
+            font-size: 62px;
+            height: 66px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .right-top-title {
+            font-size: 21px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+        }
+        .right-top-text {
+            font-size: 17.5px;
+            font-weight: 500;
+            color: #334155;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Right Bottom Table Box */
+        .card-right-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+        .table-section-title {
+            text-align: center;
+            font-size: 21px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .lucky-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 2px solid #cbd5e1;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+        .lucky-table th {
+            background: #e2e8f0;
+            color: #0f172a;
+            font-size: 17px;
+            font-weight: 800;
+            padding: 10px 10px;
+            text-align: center;
+            border-bottom: 2px solid #cbd5e1;
+            border-right: 1.5px solid #cbd5e1;
+        }
+        .lucky-table th:last-child {
+            border-right: none;
+        }
+        .lucky-table td {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            padding: 8.5px 10px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+        .lucky-table td:last-child {
+            border-right: none;
+        }
+        .lucky-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Color Pill Badges */
+        .color-pill {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 14px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            margin: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+        }
+        .color-pill.green { background-color: #16a34a; }
+        .color-pill.red { background-color: #dc2626; }
+        .color-pill.yellow { background-color: #eab308; color: #1e293b; }
+        .color-pill.orange { background-color: #ea580c; }
+        .color-pill.pink { background-color: #ec4899; }
+        .color-pill.blue { background-color: #0284c7; }
+        .color-pill.purple { background-color: #9333ea; }
+        .color-pill.black { background-color: #1e293b; }
+        .color-pill.white { background-color: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; }
+
+        /* Infographic Footer */
+        .info-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            padding-top: 5px;
+        }
+        .watermark-brand {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+
+        /* Editable inline highlight outline */
+        [contenteditable="true"]:hover {
+            outline: 2px dashed #f59e0b;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        [contenteditable="true"]:focus {
+            outline: 2px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <div class="admin-nav">
+        <h1><i class="fas fa-magic"></i> ระบบสร้างอินโฟกราฟิกคำทำนายรายวัน</h1>
+        <a href="../admin.html" class="back-btn"><i class="fas fa-arrow-left"></i> กลับไประบบหลังบ้าน</a>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="main-container">
+        
+        <!-- Left Sidebar Controls -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-sliders-h"></i> ตั้งค่าระบบคำทำนาย
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> วันที่ทำนาย:</label>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-secondary" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <input type="date" id="predictDate" style="flex: 1;">
+                    <button type="button" class="btn-secondary" onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-comment-dots"></i> โทนคำทำนาย:</label>
+                <select id="predictTone">
+                    <option value="mystic">ฟันธงดวงรายวัน (ขลัง/แม่นยำ/ดุดัน)</option>
+                    <option value="casual">เป็นกันเอง (น่ารัก/เข้าใจง่าย)</option>
+                    <option value="formal">สุภาพ เป็นทางการ</option>
+                </select>
+            </div>
+
+            <button class="btn-action" onclick="generateDailyInfographic()"><i class="fas fa-wand-magic-sparkles"></i> สร้างคำทำนายอัตโนมัติ</button>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 5px 0;">
+
+            <div class="sidebar-header" style="font-size: 16px; border: none; padding: 0;">
+                <i class="fas fa-download"></i> ส่งออกและส่งต่อ
+            </div>
+
+            <button class="btn-success" onclick="downloadInfographicPNG()"><i class="fas fa-file-image"></i> ดาวน์โหลดรูปภาพ PNG (1920x1080)</button>
+            <button class="btn-secondary" onclick="copyCaptionText()"><i class="fas fa-copy"></i> คัดลอกแคปชันสำหรับโพสต์ FB</button>
+
+            <div class="form-group" style="margin-top: 10px;">
+                <label><i class="fas fa-align-left"></i> แคปชันพร้อมโพสต์ (Preview):</label>
+                <textarea id="captionTextArea" rows="6" readonly style="font-size: 13px; line-height: 1.4; resize: vertical;"></textarea>
+            </div>
+        </div>
+
+        <!-- Right Preview Canvas Area -->
+        <div class="preview-area">
+            <div class="canvas-scaler" id="canvasScaler">
+                
+                <!-- Infographic Canvas Output (1920x1080) -->
+                <div id="infographicCanvas">
+                    <div class="bg-decor-top-right"></div>
+                    <div class="bg-decor-bottom-left"></div>
+
+                    <!-- Top Header Section -->
+                    <div class="info-header">
+                        <div class="info-header-title-row">
+                            <span class="info-crystal-ball">🔮</span>
+                            <h1 class="info-main-title" id="canvasMainTitle" contenteditable="true">เปิดชะตาฟ้าลิขิต: ฟันธงดวงรายวันประจำวันเสาร์ที่ 25 ก.ค. 2569</h1>
+                        </div>
+                        <p class="info-subhead-1" id="canvasSubhead1" contenteditable="true">สรุปคำทำนายดวงชะตาตามวันเกิดทั้ง 7 วัน ประจำวันเสาร์ที่ 25 กรกฎาคม พ.ศ. 2569</p>
+                        <p class="info-subhead-2">
+                            <i class="fas fa-star sparkle-icon"></i>
+                            <span id="canvasSubhead2" contenteditable="true">ครอบคลุมทั้งด้านความสำเร็จในการทำงาน โชคลาภทางการเงิน และสถานะความรัก พร้อมเลขและสีมงคลเสริมดวง</span>
+                            <i class="fas fa-star sparkle-icon"></i>
+                        </p>
+                    </div>
+
+                    <!-- Main Grid (2 Columns) -->
+                    <div class="info-grid">
+                        
+                        <!-- Left Column Card -->
+                        <div class="card-left">
+                            <div class="pill-badge-orange" id="badgeLeftTitle" contenteditable="true">ภาพรวมดวงชะตาด้านการงานและการเงิน</div>
+
+                            <!-- Row 1 -->
+                            <div class="left-item">
+                                <div class="left-item-icon">📈</div>
+                                <div class="left-item-content">
+                                    <h3 class="left-item-title" id="workTitle" contenteditable="true">เกณฑ์ความสำเร็จและข่าวดีเรื่องงาน</h3>
+                                    <p class="left-item-text" id="workDesc" contenteditable="true">วันจันทร์ พุธ และเสาร์ มีเกณฑ์โปรเจกต์สำเร็จเกินคาด ส่วนวันอาทิตย์เด่นเรื่องการเจรจา</p>
+                                </div>
+                            </div>
+
+                            <!-- Row 2 -->
+                            <div class="left-item">
+                                <div class="left-item-icon">💰</div>
+                                <div class="left-item-content">
+                                    <h3 class="left-item-title" id="wealthTitle" contenteditable="true">โชคลาภและการเงินที่โดดเด่น</h3>
+                                    <p class="left-item-text" id="wealthDesc" contenteditable="true">วันอาทิตย์ อังคาร ศุกร์ และเสาร์ มีเกณฑ์ได้ลาภลอยหรือได้เงินคืนจากลูกหนี้</p>
+                                </div>
+                            </div>
+
+                            <!-- Row 3 -->
+                            <div class="left-item">
+                                <div class="left-item-icon">⚡</div>
+                                <div class="left-item-content">
+                                    <h3 class="left-item-title" id="cautionTitle" contenteditable="true">ข้อควรระวังทางการเงินและงาน</h3>
+                                    <p class="left-item-text" id="cautionDesc" contenteditable="true">วันพุธระวังของหาย วันพฤหัสบดีระวังการสื่อสารผิดพลาด และวันจันทร์ระวังการใช้จ่ายตามอารมณ์</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column (Top Card + Table Card) -->
+                        <div class="col-right">
+                            
+                            <!-- Top Right Card -->
+                            <div class="card-right-top">
+                                <div class="pill-badge-pink" id="badgeRightTitle" contenteditable="true">ความรักและเคล็ดลับเสริมดวง</div>
+
+                                <div class="right-top-grid">
+                                    <div class="right-top-item">
+                                        <div class="right-top-icon">💕</div>
+                                        <h3 class="right-top-title" id="loveTitle" contenteditable="true">สถานะหัวใจ: คนโสดและคนมีคู่</h3>
+                                        <p class="right-top-text" id="loveDesc" contenteditable="true">คนโสดวันจันทร์ พฤหัสบดี และศุกร์ มีลุ้นพบรักจากงาน ส่วนคนมีคู่ควรระวังคำพูดในวันอาทิตย์และเสาร์</p>
+                                    </div>
+                                    <div class="right-top-item">
+                                        <div class="right-top-icon">📿</div>
+                                        <h3 class="right-top-title" id="trickTitle" contenteditable="true">ทริคเสริมดวงด้วยสีและเลขมงคล</h3>
+                                        <p class="right-top-text" id="trickDesc" contenteditable="true">ใช้สีและเลขมงคลตามวันเกิดเพื่อปรับพลังงานบวกให้ชีวิตตลอดทั้งวัน</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Right Table -->
+                            <div class="card-right-bottom">
+                                <h3 class="table-section-title" id="tableTitle" contenteditable="true">ตารางสรุปข้อมูลมงคลประจำวัน</h3>
+                                <table class="lucky-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 28%;">วันเกิด</th>
+                                            <th style="width: 25%;">สีมงคล</th>
+                                            <th style="width: 18%;">เลขมงคล</th>
+                                            <th style="width: 29%;">จุดเด่นที่ต้องโฟกัส</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="luckyTableBody">
+                                        <tr>
+                                            <td>อาทิตย์ / จันทร์ / อังคาร</td>
+                                            <td>
+                                                <span class="color-pill green">เขียว</span>
+                                                <span class="color-pill red">แดง</span>
+                                                <span class="color-pill red">แดง</span>
+                                            </td>
+                                            <td>05 / 54 / 40</td>
+                                            <td>การเจรจา / ข่าวดีเรื่องงาน / ความอดทน</td>
+                                        </tr>
+                                        <tr>
+                                            <td>พุธ / พฤหัสบดี / ศุกร์</td>
+                                            <td>
+                                                <span class="color-pill yellow">เหลือง</span>
+                                                <span class="color-pill red">แดง</span>
+                                                <span class="color-pill red">แดง</span>
+                                            </td>
+                                            <td>01 / 12 / 20</td>
+                                            <td>ระวังของหาย / จัดสรรเวลา / ผู้ใหญ่หนุน</td>
+                                        </tr>
+                                        <tr>
+                                            <td>เสาร์</td>
+                                            <td>
+                                                <span class="color-pill orange">ส้ม</span>
+                                            </td>
+                                            <td>00</td>
+                                            <td>งานสำเร็จ / ลาภลอย</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Footer Watermark -->
+                    <div class="info-footer">
+                        <div class="watermark-brand" id="brandWatermark" contenteditable="true">
+                            <i class="fas fa-moon"></i> สยามโหรามงคล
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script Implementation -->
+    <script charset="UTF-8" src="../admin/js/admin-daily-infographic.js"></script>
+</body>
+</html>
