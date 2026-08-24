@@ -23,7 +23,7 @@ function getSeededRandom(seed) {
     return x - Math.floor(x);
 }
 
-function generateLuckyNumbers(baseNumbers) {
+function generateDailyLuckyNumbers(baseNumbers) {
     const todaySeed = new Date().setHours(0, 0, 0, 0); // ใช้ timestamp วันนี้เป็น seed
     const nums = new Set();
     let attempts = 0;
@@ -76,7 +76,7 @@ function showLuckyPage() {
 
     // จัดเตรียมเลขนำโชค
     const baseNums = data.numbers.split(",").map(n => n.trim());
-    const luckyNums = generateLuckyNumbers(baseNums);
+    const luckyNums = generateDailyLuckyNumbers(baseNums);
 
     container.innerHTML = `
         <div class="text-center mb-4">

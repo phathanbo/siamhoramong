@@ -1348,6 +1348,7 @@ function analyzeBhavaCombinations(lagnaIdx, pl) {
 
 function showthaihora() {
     const container = document.getElementById('thaiHoraContainer');
+    if (!container) return;
    
     const html = `
     
@@ -1558,9 +1559,14 @@ window.addEventListener('DOMContentLoaded', () => {
     showthaihora();
     populateThaiHoraMemberSelect();
   const now = new Date();
-  document.getElementById('inYear').value  = now.getFullYear() + 543 - 30;
-  document.getElementById('inMonth').value = now.getMonth() + 1;
-  document.getElementById('inDay').value   = now.getDate();
-  document.getElementById('inHour').value  = 8;
-  document.getElementById('inMin').value   = 0;
+  const inYear = document.getElementById('inYear');
+  if (inYear) inYear.value = now.getFullYear() + 543 - 30;
+  const inMonth = document.getElementById('inMonth');
+  if (inMonth) inMonth.value = now.getMonth() + 1;
+  const inDay = document.getElementById('inDay');
+  if (inDay) inDay.value = now.getDate();
+  const inHour = document.getElementById('inHour');
+  if (inHour) inHour.value = 8;
+  const inMin = document.getElementById('inMin');
+  if (inMin) inMin.value = 0;
 });

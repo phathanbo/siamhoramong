@@ -535,6 +535,10 @@ function navigateTo(pageId, addHistory = true) {
         initTodayDashboard();
     }
 
+    if (pageId === 'historySection' && typeof loadHistory === 'function') {
+        loadHistory();
+    }
+
     if (pageId === 'adminDashboard' && typeof renderAdminDashboard === 'function') {
         renderAdminDashboard();
     }
@@ -561,6 +565,15 @@ function navigateTo(pageId, addHistory = true) {
 
     if (pageId === 'personalizedAuspiciousPage' && typeof initPersonalizedAuspicious === 'function') {
         initPersonalizedAuspicious();
+    }
+
+    if (pageId === 'zodiacdetailsection') {
+        if (typeof populateZodiacMemberDropdown === 'function') {
+            populateZodiacMemberDropdown();
+        }
+        if (typeof initZodiacTabs === 'function') {
+            initZodiacTabs();
+        }
     }
 
     if (pageId === 'auspiciousPage') {
@@ -659,6 +672,14 @@ function navigateTo(pageId, addHistory = true) {
         setTimeout(() => {
             if (typeof renderTablerelation === 'function') {
                 renderTablerelation();
+            }
+        }, 50);
+    }
+
+    if (pageId === 'elementManualPage') {
+        setTimeout(() => {
+            if (typeof renderElemHistory === 'function') {
+                renderElemHistory();
             }
         }, 50);
     }

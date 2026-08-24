@@ -247,10 +247,9 @@ const TaksaMeanings = {
 
 
 function showname() {
-    const container = document.getElementById('shownamepage')
-    if (container) {
-        container.style.display = 'block';
-    }
+    const container = document.getElementById('shownamepage');
+    if (!container) return;
+    container.style.display = 'block';
 
     const html = `
         <div class="container py-4">

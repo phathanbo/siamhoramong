@@ -53,13 +53,13 @@ function fixFile(filepath) {
 
     if (content.includes(old_html)) {
         content = content.replace(old_html, new_html);
-        console.log(\`Fixed \${filepath} pattern.\`);
+        console.log(`Fixed ${filepath} pattern.`);
     } else if (content.includes(old_html_carousel)) {
         content = content.replace(old_html_carousel, new_html_carousel);
-        console.log(\`Fixed \${filepath} carousel pattern.\`);
+        console.log(`Fixed ${filepath} carousel pattern.`);
     } else {
         content = content.replace(/<div class="tarot-content-wrapper" style="padding: \$\{gap\}px 0;">[\s\S]*?<\/div>\s*<\/div>/, new_html);
-        console.log(\`Used regex fallback for \${filepath}.\`);
+        console.log(`Used regex fallback for ${filepath}.`);
     }
 
     fs.writeFileSync(filepath, content, 'utf8');

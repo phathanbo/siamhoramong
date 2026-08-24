@@ -465,43 +465,414 @@ function generateYearSummary(taksa, age, gender) {
 }
 
 // -------------------------------------------------------------------
+//  Tab switcher สำหรับผลทักษา
+// -------------------------------------------------------------------
+function switchTaksaTab(tabName) {
+    document.querySelectorAll('.taksa-tab-content').forEach(el => {
+        el.style.display = 'none';
+    });
+    document.querySelectorAll('.taksa-tab-btn').forEach(el => {
+        el.style.background    = 'rgba(255,255,255,.05)';
+        el.style.color         = 'rgba(255,255,255,.55)';
+        el.style.borderBottom  = '2px solid transparent';
+    });
+    const content = document.getElementById(`taksaTab_${tabName}`);
+    if (content) content.style.display = 'block';
+    const btn = document.getElementById(`taksaTabBtn_${tabName}`);
+    if (btn) {
+        btn.style.background   = 'rgba(212,175,55,.18)';
+        btn.style.color        = '#d4af37';
+        btn.style.borderBottom = '2px solid #d4af37';
+    }
+}
+
+// -------------------------------------------------------------------
+//  Tab 2: ดวงประจำวัน
+// -------------------------------------------------------------------
+function renderDailyTab(taksa, age, gender) {
+    const now         = new Date();
+    const dayOfWeek   = now.getDay();           // 0=Sun … 6=Sat → ตรงกับ TAKSA_MASTER id
+    const todayStarId = dayOfWeek;              // Sun=0(อาทิตย์) … Sat=6(เสาร์)
+    const dayNames    = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+    const dayName     = dayNames[dayOfWeek];
+    const todayStar   = TAKSA_MASTER[todayStarId] || { name:'ไม่ทราบ', color:'#d4af37', icon:'fa-star' };
+    const pred        = STAR_PREDICTIONS[todayStarId] || {};
+
+    // หาว่าดาววันนี้ตกภูมิไหนในดวงของผู้ใช้
+    let todayGeo = null;
+    for (const [geo, val] of Object.entries(taksa)) {
+        if (val.id === todayStarId) { todayGeo = geo; break; }
+    }
+    const geoMeaning = todayGeo ? (TAKSA_DETAILED_MEANINGS[todayGeo] || {}) : {};
+
+    const influenceMap = {
+        'บริวาร':  { level:'🟢 ดี',       text:'ดาววันนี้ตกภูมิบริวาร — คนรอบข้างให้พลังงานบวก เหมาะทำงานเป็นทีมหรือขอความช่วยเหลือ' },
+        'อายุ':    { level:'🟢 ดี',       text:'ดาววันนี้เสริมภูมิอายุ — สุขภาพแข็งแรง มีพลังงานดีตลอดวัน เหมาะออกกำลังกาย' },
+        'เดช':     { level:'🌟 เด่นมาก',  text:'ดาววันนี้อยู่ภูมิเดช — บารมีสูงสุด วันนี้เหมาะนำเสนอผลงาน เจรจา ขอความก้าวหน้า' },
+        'ศรี':     { level:'🌟 โชคเด่น',  text:'ดาววันนี้ตกภูมิศรี — โชคลาภและสิริมงคลสูงสุด เหมาะทำธุรกรรม ลงทุน ค้าขาย' },
+        'มูละ':    { level:'🟡 ปานกลาง', text:'ดาววันนี้ตกภูมิมูละ — มั่นคงสม่ำเสมอ เหมาะดูแลทรัพย์สิน ซ่อมแซมบ้าน วางแผนระยะยาว' },
+        'อุตสาหะ': { level:'🟢 ดี',       text:'ดาววันนี้เสริมภูมิอุตสาหะ — ยิ่งลุยยิ่งได้ผล วันที่เหมาะทำงานหนัก ความพยายามคือกุญแจ' },
+        'มนตรี':   { level:'🟢 ดี',       text:'ดาววันนี้ตกภูมิมนตรี — ผู้ใหญ่เกื้อกูล เหมาะขอคำปรึกษา ติดต่อราชการ หรือพบเจ้านาย' },
+        'กาลกิณี': { level:'🔴 ระวัง',    text:'ดาววันนี้ตกภูมิกาลกิณี — ควรระมัดระวังตัว งดตัดสินใจใหญ่ เสริมบุญกุศลไว้ก่อน' }
+    };
+    const influence = todayGeo ? (influenceMap[todayGeo] || {}) : {};
+
+    const thaiDate = now.toLocaleDateString('th-TH', {
+        weekday:'long', year:'numeric', month:'long', day:'numeric', timeZone:'Asia/Bangkok'
+    });
+
+    return `
+        <div class="p-3">
+            <div class="text-center mb-4 p-4 rounded" style="background:linear-gradient(135deg,${todayStar.color}22,rgba(15,12,26,.9));border:2px solid ${todayStar.color}66;">
+                <i class="fas ${todayStar.icon} fa-3x mb-2" style="color:${todayStar.color};filter:drop-shadow(0 0 12px ${todayStar.color});"></i>
+                <div class="h5 fw-bold text-white mb-2">📅 ${thaiDate}</div>
+                <span class="badge px-3 py-2" style="background:${todayStar.color};color:#000;font-size:.9rem;">ดาว${dayName} (${todayStar.name}) ครองวัน</span>
+                ${todayGeo ? `<div class="mt-2 p-2 rounded" style="background:rgba(255,255,255,.08);">
+                    <span class="small text-white-50">ตกภูมิ</span>
+                    <strong class="ms-2" style="color:#d4af37;">${todayGeo}</strong>
+                    <span class="ms-2 badge" style="background:rgba(255,255,255,.12);font-size:.75rem;">${influence.level || ''}</span>
+                </div>` : ''}
+            </div>
+            ${influence.text ? `<div class="alert mb-4 p-3" style="background:rgba(212,175,55,.1);border-left:3px solid #d4af37;border:1px solid rgba(212,175,55,.3);border-radius:8px;">
+                <i class="fas fa-star-of-david me-2" style="color:#d4af37;"></i><span class="text-white small">${influence.text}</span>
+            </div>` : ''}
+            <div class="row g-3 mb-4">
+                <div class="col-6"><div class="p-3 h-100 rounded text-center" style="background:rgba(40,167,69,.15);border:1px solid rgba(40,167,69,.4);">
+                    <i class="fas fa-briefcase fa-lg text-success mb-2 d-block"></i>
+                    <div class="small text-success fw-bold mb-1">การงาน</div>
+                    <div class="small text-white">${pred.work || 'ดำเนินไปตามปกติ'}</div>
+                </div></div>
+                <div class="col-6"><div class="p-3 h-100 rounded text-center" style="background:rgba(255,193,7,.15);border:1px solid rgba(255,193,7,.4);">
+                    <i class="fas fa-coins fa-lg text-warning mb-2 d-block"></i>
+                    <div class="small text-warning fw-bold mb-1">การเงิน</div>
+                    <div class="small text-white">${pred.wealth || 'รายรับรายจ่ายสมดุล'}</div>
+                </div></div>
+                <div class="col-6"><div class="p-3 h-100 rounded text-center" style="background:rgba(220,53,69,.15);border:1px solid rgba(220,53,69,.4);">
+                    <i class="fas fa-heart fa-lg text-danger mb-2 d-block"></i>
+                    <div class="small text-danger fw-bold mb-1">ความรัก</div>
+                    <div class="small text-white">${pred.love || 'สัมพันธ์ราบรื่น'}</div>
+                </div></div>
+                <div class="col-6"><div class="p-3 h-100 rounded text-center" style="background:rgba(13,202,240,.15);border:1px solid rgba(13,202,240,.4);">
+                    <i class="fas fa-heartbeat fa-lg text-info mb-2 d-block"></i>
+                    <div class="small text-info fw-bold mb-1">สุขภาพ</div>
+                    <div class="small text-white">${geoMeaning.positive ? geoMeaning.positive.substring(0,55)+'...' : 'แข็งแรงพอสมควร'}</div>
+                </div></div>
+            </div>
+            <div class="p-3 rounded" style="background:rgba(13,202,240,.08);border:1px solid rgba(13,202,240,.25);">
+                <h6 class="fw-bold mb-3" style="color:#0dcaf0;"><i class="fas fa-pray me-2"></i>เคล็ดเสริมดวงวันนี้</h6>
+                <div class="row g-2 text-center">
+                    <div class="col-4"><div class="small text-white-50">🎨 สีมงคล</div><div class="small fw-bold text-white">${geoMeaning.lucky?.color || '-'}</div></div>
+                    <div class="col-4"><div class="small text-white-50">🔢 เลขนำโชค</div><div class="small fw-bold text-white">${geoMeaning.lucky?.number || (todayStarId+1)}</div></div>
+                    <div class="col-4"><div class="small text-white-50">🧭 ทิศมงคล</div><div class="small fw-bold text-white">${geoMeaning.lucky?.direction || DIRECTION_MASTER[todayStarId] || '-'}</div></div>
+                </div>
+                ${pred.remedy ? `<div class="mt-3 small text-warning"><i class="fas fa-magic me-1"></i>${pred.remedy}</div>` : ''}
+            </div>
+        </div>`;
+}
+
+// -------------------------------------------------------------------
+//  Tab 3: ดวงประจำเดือน
+// -------------------------------------------------------------------
+function renderMonthlyTab(taksa, age, gender) {
+    const now        = new Date();
+    const monthIdx   = now.getMonth();                                          // 0–11
+    const thaiYear   = now.getFullYear() + 543;
+    const monthNames = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                        'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+    // แต่ละเดือนเน้นภูมิต่างกัน (วนรอบ 8 ภูมิ)
+    const monthToGeo = ['บริวาร','อายุ','เดช','ศรี','มูละ','อุตสาหะ','มนตรี','กาลกิณี','บริวาร','อายุ','เดช','ศรี'];
+    const focusGeo   = monthToGeo[monthIdx];
+    const focusStar  = TAKSA_MASTER[taksa[focusGeo]?.id] || {};
+    const focusMean  = TAKSA_DETAILED_MEANINGS[focusGeo] || {};
+    const focusPred  = STAR_PREDICTIONS[taksa[focusGeo]?.id] || {};
+
+    // ภูมิรอง (ถัดไป 1 ตำแหน่ง)
+    const secGeo     = GEO_ORDER[(GEO_ORDER.indexOf(focusGeo) + 1) % 8];
+    const secStar    = TAKSA_MASTER[taksa[secGeo]?.id] || {};
+
+    const moonPhase  = monthIdx < 6
+        ? 'ช่วงต้นเดือน (ข้างขึ้น) เหมาะเริ่มต้นสิ่งใหม่ · ช่วงปลายเดือน (ข้างแรม) เหมาะสรุปและปิดงาน'
+        : 'ช่วงต้นเดือน (ข้างขึ้น) มีแรงหนุนโชค · ช่วงปลายเดือน (ข้างแรม) เหมาะทบทวนวางแผน';
+
+    return `
+        <div class="p-3">
+            <div class="text-center mb-4 p-4 rounded" style="background:linear-gradient(135deg,rgba(90,50,180,.3),rgba(15,12,26,.9));border:2px solid rgba(212,175,55,.4);">
+                <i class="fas fa-moon fa-3x mb-2" style="color:#d4af37;filter:drop-shadow(0 0 12px #d4af37);"></i>
+                <div class="h5 fw-bold text-white mb-2">🗓️ ${monthNames[monthIdx]} ${thaiYear}</div>
+                <span class="badge px-3 py-2" style="background:rgba(212,175,55,.3);color:#d4af37;border:1px solid #d4af37;font-size:.9rem;">ภพเด่นเดือนนี้: <strong>${focusGeo}</strong></span>
+                ${focusStar.name ? `<div class="small text-white-50 mt-2">ดาวครอง: <span style="color:${focusStar.color};">${focusStar.name}</span></div>` : ''}
+            </div>
+            <div class="card border-0 mb-3" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12) !important;">
+                <div class="card-body p-3">
+                    <h6 class="fw-bold mb-2" style="color:${focusStar.color||'#d4af37'};"><i class="fas fa-scroll me-2"></i>ภาพรวมเดือนนี้ — ${focusGeo}</h6>
+                    <p class="small text-white mb-3">${focusMean.summary || 'เดือนนี้เน้นเรื่อง '+focusGeo}</p>
+                    <div class="row g-2">
+                        <div class="col-6"><div class="p-2 rounded" style="background:rgba(40,167,69,.15);border:1px solid rgba(40,167,69,.3);">
+                            <div class="small text-success fw-bold">✅ โอกาสเดือนนี้</div>
+                            <div class="small text-white mt-1">${focusMean.positive || 'มีโอกาสดี'}</div>
+                        </div></div>
+                        <div class="col-6"><div class="p-2 rounded" style="background:rgba(220,53,69,.15);border:1px solid rgba(220,53,69,.3);">
+                            <div class="small text-danger fw-bold">⚠️ ควรระวัง</div>
+                            <div class="small text-white mt-1">${focusMean.negative?.substring(0,65)||'ระมัดระวังตามสมควร'}...</div>
+                        </div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card border-0 mb-3" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12) !important;">
+                <div class="card-body p-3">
+                    <h6 class="fw-bold mb-3" style="color:#d4af37;"><i class="fas fa-layer-group me-2"></i>พยากรณ์รายด้านประจำเดือน</h6>
+                    <div class="mb-2 pb-2" style="border-bottom:1px solid rgba(255,255,255,.1);">
+                        <span class="small text-white-50"><i class="fas fa-briefcase me-1"></i>การงาน: </span>
+                        <span class="small text-white">${focusPred.work||'ดำเนินการตามปกติ'}</span>
+                    </div>
+                    <div class="mb-2 pb-2" style="border-bottom:1px solid rgba(255,255,255,.1);">
+                        <span class="small text-white-50"><i class="fas fa-coins me-1"></i>การเงิน: </span>
+                        <span class="small text-white">${focusPred.wealth||'รายรับรายจ่ายสมดุล'}</span>
+                    </div>
+                    <div class="mb-2 pb-2" style="border-bottom:1px solid rgba(255,255,255,.1);">
+                        <span class="small text-white-50"><i class="fas fa-heart me-1"></i>ความรัก: </span>
+                        <span class="small text-white">${focusPred.love||'ดูแลความสัมพันธ์ให้ดี'}</span>
+                    </div>
+                    ${secStar.name ? `<div class="mt-1 pt-1" style="border-top:1px solid rgba(255,255,255,.1);">
+                        <span class="small text-white-50">ดาวรองเดือน (${secGeo}): </span>
+                        <span class="small" style="color:${secStar.color};">${secStar.name} — เสริมด้าน${secGeo}ให้เด่นขึ้น</span>
+                    </div>` : ''}
+                </div>
+            </div>
+            <div class="p-3 rounded mb-3" style="background:rgba(90,50,180,.15);border:1px solid rgba(90,50,180,.4);">
+                <h6 class="fw-bold mb-2" style="color:#a78bfa;"><i class="fas fa-calendar-day me-2"></i>ฤกษ์ข้างขึ้น–ข้างแรม</h6>
+                <p class="small text-white mb-0">${moonPhase}</p>
+            </div>
+            <div class="p-3 rounded" style="background:rgba(13,202,240,.08);border:1px solid rgba(13,202,240,.25);">
+                <h6 class="fw-bold mb-2" style="color:#0dcaf0;"><i class="fas fa-list-check me-2"></i>แนะนำประจำเดือนนี้</h6>
+                <div class="mb-2"><span class="text-success small fw-bold">✅ ควรทำ: </span><span class="small text-white">${focusMean.advice||'ทำบุญตามกำลัง รักษาสุขภาพ'}</span></div>
+                <div><span class="text-danger small fw-bold">❌ สิ่งที่ควรระวัง: </span><span class="small text-white">${focusMean.negative?.substring(0,70)||'การตัดสินใจใหญ่โดยไม่รอบคอบ'}...</span></div>
+            </div>
+        </div>`;
+}
+
+// -------------------------------------------------------------------
+//  Tab 4: ดวงประจำปี (ขยายจาก generateYearSummary)
+// -------------------------------------------------------------------
+function renderYearlyTab(taksa, age, gender) {
+    const thaiYear = new Date().getFullYear() + 543;
+    const ageNum   = parseInt(age) || 0;
+
+    const getStarName  = geo => TAKSA_MASTER[taksa[geo]?.id]?.name  || '?';
+    const getStarColor = geo => TAKSA_MASTER[taksa[geo]?.id]?.color || '#d4af37';
+    const getStarId    = geo => taksa[geo]?.id ?? -1;
+
+    const isFem    = gender === 'female';
+    const agePhase = ageNum >= 51 ? 'เก็บเกี่ยวผลบุญที่สั่งสมมา'
+                   : ageNum >= 26 ? 'สร้างฐานะและบารมีให้แข็งแกร่ง'
+                   : 'วางรากฐานชีวิตที่ดีที่สุด';
+
+    const quarters = [
+        { label:'Q1 ม.ค.–มี.ค.', geo:'บริวาร', icon:'fa-seedling', color:'#2ecc71' },
+        { label:'Q2 เม.ย.–มิ.ย.', geo:'เดช',    icon:'fa-bolt',     color:'#f39c12' },
+        { label:'Q3 ก.ค.–ก.ย.', geo:'ศรี',     icon:'fa-star',     color:'#3498db' },
+        { label:'Q4 ต.ค.–ธ.ค.', geo:'มูละ',    icon:'fa-home',     color:'#9b59b6' }
+    ];
+
+    return `
+        <div class="p-3">
+            ${generateYearSummary(taksa, age, gender)}
+            <div class="row g-3 mb-3">
+                <div class="col-6"><div class="p-3 rounded text-center h-100" style="background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.4);">
+                    <i class="fas fa-gem fa-2x text-success mb-2 d-block"></i>
+                    <div class="small text-success fw-bold">🌟 ดาวศรีประจำปี</div>
+                    <div class="h4 fw-bold text-white my-1">ดาว${getStarName('ศรี')}</div>
+                    <div class="small text-white-50">ส่งเสริมโชคลาภ สิริมงคล</div>
+                </div></div>
+                <div class="col-6"><div class="p-3 rounded text-center h-100" style="background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);">
+                    <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2 d-block"></i>
+                    <div class="small text-danger fw-bold">🚫 ดาวกาลกิณี</div>
+                    <div class="h4 fw-bold text-white my-1">ดาว${getStarName('กาลกิณี')}</div>
+                    <div class="small text-white-50">ระวัง อุปสรรค ความเสี่ยง</div>
+                </div></div>
+            </div>
+            <div class="card border-0 mb-3" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12) !important;">
+                <div class="card-body p-3">
+                    <h6 class="fw-bold mb-3" style="color:#d4af37;"><i class="fas fa-chart-line me-2"></i>ภาพรวมรายไตรมาส ปี ${thaiYear}</h6>
+                    <div class="row g-2">
+                        ${quarters.map(q => {
+                            const qStar = TAKSA_MASTER[getStarId(q.geo)] || {};
+                            const qPred = STAR_PREDICTIONS[getStarId(q.geo)] || {};
+                            return `<div class="col-6"><div class="p-2 rounded h-100" style="background:${q.color}22;border:1px solid ${q.color}55;">
+                                <div class="small fw-bold mb-1" style="color:${q.color};"><i class="fas ${q.icon} me-1"></i>${q.label}</div>
+                                <div class="small text-white-50">เน้น: ${q.geo}</div>
+                                ${qStar.name ? `<div class="small" style="color:${qStar.color};">ดาว${qStar.name}ครอง</div>` : ''}
+                                <div class="small text-white mt-1">${qPred.work?.substring(0,48)||'ดำเนินตามปกติ'}...</div>
+                            </div></div>`;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 rounded" style="background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);">
+                <h6 class="fw-bold mb-2" style="color:#d4af37;"><i class="fas fa-hourglass-half me-2"></i>ช่วงชีวิตปัจจุบัน (อายุย่าง ${ageNum} ปี)</h6>
+                <p class="small text-white mb-3">วัยนี้คือช่วง<strong class="text-warning"> ${agePhase}</strong> — ${isFem ? 'ดั่งสตรีบารมีสูง อ่อนโยนแต่เฉียบคม' : 'ดั่งบุรุษมีบารมี มั่นคงเด็ดขาด'}</p>
+                <div class="row g-2 text-center">
+                    ${['มนตรี','อุตสาหะ','อายุ','มูละ'].map(geo => `
+                    <div class="col-3">
+                        <div class="small text-white-50">${geo}</div>
+                        <div class="small fw-bold" style="color:${getStarColor(geo)};">ดาว${getStarName(geo)}</div>
+                    </div>`).join('')}
+                </div>
+            </div>
+        </div>`;
+}
+
+// -------------------------------------------------------------------
+//  Tab 5: ดวงตลอดชีวิต
+// -------------------------------------------------------------------
+function renderLifetimeTab(taksa, age, gender) {
+    const ageNum   = parseInt(age) || 0;
+    const isFem    = gender === 'female';
+
+    const getStarName  = geo => TAKSA_MASTER[taksa[geo]?.id]?.name  || '?';
+    const getStarColor = geo => TAKSA_MASTER[taksa[geo]?.id]?.color || '#d4af37';
+    const getStarIcon  = geo => TAKSA_MASTER[taksa[geo]?.id]?.icon  || 'fa-star';
+    const getMean      = geo => TAKSA_DETAILED_MEANINGS[geo] || {};
+    const getPred      = geo => STAR_PREDICTIONS[taksa[geo]?.id] || {};
+
+    const coreGeo     = 'บริวาร';
+    const coreStar    = TAKSA_MASTER[taksa[coreGeo]?.id] || { name:'?', color:'#d4af37', icon:'fa-star' };
+    const coreMean    = getMean(coreGeo);
+
+    const curStage    = ageNum < 26 ? 'early' : ageNum < 51 ? 'mid' : 'late';
+    const stageHL     = s => s === curStage ? 'border:2px solid #d4af37 !important;box-shadow:0 0 15px rgba(212,175,55,.3);' : '';
+
+    const stages = [
+        {
+            key:'early', icon:'👶', label:'ปฐมวัย', range:'แรกเกิด – 25 ปี', color:'#3498db',
+            geo1:'บริวาร', geo2:'อายุ',
+            title:'การวางรากฐาน · การเรียนรู้ · ครอบครัว',
+            desc:`ช่วงนี้ดาว<b>${getStarName('บริวาร')}</b>ครองภูมิบริวาร สะท้อนสิ่งแวดล้อมครอบครัวและความสัมพันธ์แรกเริ่ม ประกอบกับดาว<b>${getStarName('อายุ')}</b>ครองภูมิอายุ บ่งบอกพลังชีวิตและสุขภาพในวัยเด็ก`
+        },
+        {
+            key:'mid', icon:'🏃', label:'วัยสร้างตัว', range:'26 – 50 ปี', color:'#e67e22',
+            geo1:'เดช', geo2:'อุตสาหะ',
+            title:'บารมี · การงาน · ฐานะ · ความรัก',
+            desc:`ช่วงพลังบุกเบิก ดาว<b>${getStarName('เดช')}</b>ครองเดชบารมี ขับเคลื่อนชื่อเสียงและอำนาจ ดาว<b>${getStarName('อุตสาหะ')}</b>ครองการงาน บ่งบอกว่ายิ่งทุ่มเทยิ่งสำเร็จ`
+        },
+        {
+            key:'late', icon:'🏡', label:'วัยบั้นปลาย', range:'51 ปีขึ้นไป', color:'#2ecc71',
+            geo1:'ศรี', geo2:'มนตรี',
+            title:'ความสำเร็จ · ความสงบ · มรดก · ผู้ดูแล',
+            desc:`ช่วงเก็บเกี่ยวผลบุญ ดาว<b>${getStarName('ศรี')}</b>ครองโชคลาภสิริมงคล ดาว<b>${getStarName('มนตรี')}</b>ครองผู้ใหญ่ บ่งบอกว่าจะมีคนรุ่นหลังเคารพนับถือและเกื้อกูล`
+        }
+    ];
+
+    return `
+        <div class="p-3">
+            <div class="text-center mb-4 p-4 rounded" style="background:linear-gradient(135deg,${coreStar.color}22,rgba(15,12,26,.95));border:2px solid ${coreStar.color}66;">
+                <i class="fas ${coreStar.icon} fa-3x mb-2" style="color:${coreStar.color};filter:drop-shadow(0 0 15px ${coreStar.color});"></i>
+                <div class="h5 fw-bold text-white mb-1">🌟 วาสนาพื้นดวงชะตา</div>
+                <div class="small text-white-50 mb-2">ดาวหลักที่กำหนดเส้นทางชีวิต</div>
+                <span class="badge px-3 py-2" style="background:${coreStar.color};color:#000;font-size:.9rem;">ดาว${coreStar.name} — ${coreMean.subtitle||''}</span>
+                <p class="small text-white mt-3 mb-0" style="line-height:1.7;">${coreMean.summary||''}</p>
+            </div>
+            <div class="row g-2 mb-4">
+                <div class="col-6"><div class="p-3 rounded text-center h-100" style="background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.3);">
+                    <div class="small text-warning fw-bold mb-1">💪 พลังตลอดชีวิต</div>
+                    <div class="small text-white">${coreMean.positive||'ดีตามดวงชะตา'}</div>
+                </div></div>
+                <div class="col-6"><div class="p-3 rounded text-center h-100" style="background:rgba(13,202,240,.1);border:1px solid rgba(13,202,240,.3);">
+                    <div class="small text-info fw-bold mb-1">🎯 แนวทางชีวิต</div>
+                    <div class="small text-white">${coreMean.advice||'ทำบุญสม่ำเสมอ'}</div>
+                </div></div>
+            </div>
+            <h6 class="fw-bold mb-3" style="color:#d4af37;"><i class="fas fa-route me-2"></i>เส้นทางชีวิต 3 ช่วง</h6>
+            <div class="d-flex flex-column gap-3 mb-4">
+                ${stages.map(s => `
+                <div class="p-3 rounded" style="background:rgba(15,12,26,.8);border-left:4px solid ${s.color};border:1px solid ${s.color}44;${stageHL(s.key)}">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span style="font-size:1.3rem;">${s.icon}</span>
+                        <div>
+                            <div class="fw-bold text-white">${s.label}
+                                ${s.key===curStage ? '<span class="badge ms-2" style="background:#d4af37;color:#000;font-size:.68rem;">◀ ปัจจุบัน</span>' : ''}
+                            </div>
+                            <div class="small" style="color:${s.color};">${s.range}</div>
+                        </div>
+                    </div>
+                    <div class="small text-white-50 fst-italic mb-2">${s.title}</div>
+                    <p class="small text-white mb-2" style="line-height:1.6;">${s.desc}</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <span class="badge" style="background:${getStarColor(s.geo1)}33;color:${getStarColor(s.geo1)};border:1px solid ${getStarColor(s.geo1)}55;">
+                            <i class="fas ${getStarIcon(s.geo1)} me-1"></i>ดาว${getStarName(s.geo1)} (${s.geo1})
+                        </span>
+                        <span class="badge" style="background:${getStarColor(s.geo2)}33;color:${getStarColor(s.geo2)};border:1px solid ${getStarColor(s.geo2)}55;">
+                            <i class="fas ${getStarIcon(s.geo2)} me-1"></i>ดาว${getStarName(s.geo2)} (${s.geo2})
+                        </span>
+                    </div>
+                </div>`).join('')}
+            </div>
+            <div class="card border-0 mb-3" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12) !important;">
+                <div class="card-body p-3">
+                    <h6 class="fw-bold mb-3" style="color:#d4af37;"><i class="fas fa-balance-scale me-2"></i>ดุลยภาพชีวิต</h6>
+                    <div class="row g-2">
+                        <div class="col-6"><div class="p-2 rounded text-center" style="background:${getStarColor('มูละ')}22;border:1px solid ${getStarColor('มูละ')}55;">
+                            <i class="fas fa-home" style="color:${getStarColor('มูละ')};"></i>
+                            <div class="small text-white-50 mt-1">รากฐาน-มรดก (มูละ)</div>
+                            <div class="small fw-bold" style="color:${getStarColor('มูละ')};">ดาว${getStarName('มูละ')}</div>
+                            <div class="small text-white mt-1">${getMean('มูละ').positive?.substring(0,55)||''}...</div>
+                        </div></div>
+                        <div class="col-6"><div class="p-2 rounded text-center" style="background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);">
+                            <i class="fas fa-yin-yang" style="color:#ff6b6b;"></i>
+                            <div class="small text-white-50 mt-1">บทเรียนชีวิต (กาลกิณี)</div>
+                            <div class="small fw-bold text-danger">ดาว${getStarName('กาลกิณี')}</div>
+                            <div class="small text-white mt-1">${getMean('กาลกิณี').positive?.substring(0,55)||''}...</div>
+                        </div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 rounded" style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.3);">
+                <h6 class="fw-bold mb-2" style="color:#d4af37;"><i class="fas fa-scroll me-2"></i>วาระสรุปดวงชะตา</h6>
+                <p class="small text-white mb-1" style="line-height:1.7;">
+                    ดวงชะตาของ${isFem ? 'ท่านสตรี' : 'ท่าน'}กำหนดให้เส้นทางชีวิตเดินผ่านพลัง<b style="color:${coreStar.color};">ดาว${coreStar.name}</b>
+                    ซึ่งนำพาความ<b>${coreMean.subtitle?.split('·')[0]?.trim()||'สมบูรณ์'}</b> เป็นแก่นกลางชีวิต
+                    หากดูแลจุดแข็งนี้อย่างต่อเนื่อง ชีวิตจะรุ่งเรืองและมีความสุขในทุกช่วงวัย
+                </p>
+                <div class="small text-white-50 fst-italic">✨ ${coreMean.advice||'ทำบุญตามกำลัง เสริมสร้างปัญญา รักษาความสัมพันธ์ที่ดี'}</div>
+            </div>
+        </div>`;
+}
+
+// -------------------------------------------------------------------
 //  Render ผลลัพธ์ทั้งหมด
 // -------------------------------------------------------------------
 function renderTaksaResult(taksa, age, gender) {
-    let html = `
-        <div class="text-center mb-4">
-            <h3 style="color:#d4af37;" class="fw-bold mb-1">ผลผูกดวงทักษา 8 ภูมิ</h3>
-            <p class="text-white-50 small">สยามโหรามงคล</p>
-        </div>
-    `;
 
-    // --- Part 1: บริวาร – ศรี ---
-    html += `<div id="taksaPart1" class="p-3 mb-4 rounded shadow-sm" style="background:#0f0c1a; border:1px solid #d4af37;">`;
-    html += `<h5 class="text-center mb-3 small" style="color:#d4af37;"><i class="fas fa-star me-2"></i>ทักษาชุดที่ 1 — บริวาร · อายุ · เดช · ศรี</h5>`;
-    html += `<div class="row g-0">`;
+    // --- สร้าง HTML ของ Tab 1 (8 ภูมิ เดิม) ---
+    let tab1Html = '';
+
+    // Part 1: บริวาร – ศรี
+    tab1Html += `<div id="taksaPart1" class="p-3 mb-4 rounded shadow-sm" style="background:#0f0c1a;border:1px solid #d4af37;">`;
+    tab1Html += `<h5 class="text-center mb-3 small" style="color:#d4af37;"><i class="fas fa-star me-2"></i>ทักษาชุดที่ 1 — บริวาร · อายุ · เดช · ศรี</h5>`;
+    tab1Html += `<div class="row g-0">`;
     GEO_ORDER.slice(0, 4).forEach(key => {
-        if (taksa[key]) html += `<div class="col-12 col-md-6 p-1">${createTaksaCard(key, taksa[key])}</div>`;
+        if (taksa[key]) tab1Html += `<div class="col-12 col-md-6 p-1">${createTaksaCard(key, taksa[key])}</div>`;
     });
-    html += `</div></div>`;
+    tab1Html += `</div></div>`;
 
-    // --- Part 2: มูละ – กาลกิณี ---
-    html += `<div id="taksaPart2" class="p-3 mb-4 rounded shadow-sm" style="background:#0f0c1a; border:1px solid #d4af37;">`;
-    html += `<h5 class="text-center mb-3 small" style="color:#d4af37;"><i class="fas fa-shield-alt me-2"></i>ทักษาชุดที่ 2 — มูละ · อุตสาหะ · มนตรี · กาลกิณี</h5>`;
-    html += `<div class="row g-0">`;
+    // Part 2: มูละ – กาลกิณี
+    tab1Html += `<div id="taksaPart2" class="p-3 mb-4 rounded shadow-sm" style="background:#0f0c1a;border:1px solid #d4af37;">`;
+    tab1Html += `<h5 class="text-center mb-3 small" style="color:#d4af37;"><i class="fas fa-shield-alt me-2"></i>ทักษาชุดที่ 2 — มูละ · อุตสาหะ · มนตรี · กาลกิณี</h5>`;
+    tab1Html += `<div class="row g-0">`;
     GEO_ORDER.slice(4, 8).forEach(key => {
-        if (taksa[key]) html += `<div class="col-12 col-md-6 p-1">${createTaksaCard(key, taksa[key])}</div>`;
+        if (taksa[key]) tab1Html += `<div class="col-12 col-md-6 p-1">${createTaksaCard(key, taksa[key])}</div>`;
     });
-    html += `</div></div>`;
+    tab1Html += `</div></div>`;
 
-    // --- ทิศมงคล ---
-    const sriStar   = taksa['ศรี'];
-    const kalaStar  = taksa['กาลกิณี'];
-    html += `<div id="taksaDetails" class="p-3 rounded" style="background:rgba(26,26,46,.8);">`;
-
+    // ทิศมงคล + สรุปปี
+    const sriStar  = taksa['ศรี'];
+    const kalaStar = taksa['กาลกิณี'];
+    tab1Html += `<div id="taksaDetails" class="p-3 rounded" style="background:rgba(26,26,46,.8);">`;
     if (sriStar && kalaStar) {
-        const luckyDir  = DIRECTION_MASTER[sriStar.id]  || '—';
-        const avoidDir  = DIRECTION_MASTER[kalaStar.id] || '—';
-        html += `
+        const luckyDir = DIRECTION_MASTER[sriStar.id]  || '—';
+        const avoidDir = DIRECTION_MASTER[kalaStar.id] || '—';
+        tab1Html += `
             <div class="card border-0 mb-4 shadow" style="background:linear-gradient(135deg,#1a1a2e,#2d1b47);">
                 <div class="card-body text-center p-4">
                     <div class="row align-items-center">
@@ -517,32 +888,79 @@ function renderTaksaResult(taksa, age, gender) {
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
+            </div>`;
     }
+    tab1Html += generateYearSummary(taksa, age, gender);
+    tab1Html += `</div>`; // ปิด taksaDetails
 
-    html += generateYearSummary(taksa, age, gender);
-    html += `</div>`; // ปิด taksaDetails
+    // --- Tab styles ---
+    const tabBtnBase = `style="flex:1;min-width:80px;padding:10px 6px;font-size:.78rem;font-weight:600;border:none;cursor:pointer;border-bottom:2px solid transparent;background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);transition:all .25s;white-space:nowrap;"`;
+    const tabBtnActive = `style="flex:1;min-width:80px;padding:10px 6px;font-size:.78rem;font-weight:600;border:none;cursor:pointer;border-bottom:2px solid #d4af37;background:rgba(212,175,55,.18);color:#d4af37;transition:all .25s;white-space:nowrap;"`;
 
-    // --- ปุ่มกด (อยู่นอก taksaDetails ไม่ติดไปในภาพ) ---
-    html += `
+    const tabs = [
+        { key:'8geo',     icon:'fa-th',         label:'8 ภูมิทักษา' },
+        { key:'daily',    icon:'fa-sun',         label:'ดวงวันนี้'    },
+        { key:'monthly',  icon:'fa-moon',        label:'ดวงเดือนนี้'  },
+        { key:'yearly',   icon:'fa-calendar-alt',label:'ดวงปีนี้'     },
+        { key:'lifetime', icon:'fa-infinity',    label:'ดวงตลอดชีวิต' }
+    ];
+
+    // --- สร้าง HTML รวม ---
+    let html = `
+        <div class="text-center mb-3">
+            <h3 style="color:#d4af37;" class="fw-bold mb-1">ผลผูกดวงทักษาพยากรณ์</h3>
+            <p class="text-white-50 small">สยามโหรามงคล</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div style="display:flex;overflow-x:auto;background:rgba(0,0,0,.35);border-radius:12px 12px 0 0;border:1px solid rgba(212,175,55,.25);border-bottom:none;margin-bottom:0;-webkit-overflow-scrolling:touch;" class="mb-0">
+            ${tabs.map((t,i) => `
+            <button id="taksaTabBtn_${t.key}"
+                class="taksa-tab-btn"
+                onclick="switchTaksaTab('${t.key}')"
+                ${i===0 ? tabBtnActive : tabBtnBase}>
+                <i class="fas ${t.icon} d-block mb-1" style="font-size:1.1rem;"></i>
+                ${t.label}
+            </button>`).join('')}
+        </div>
+
+        <!-- Tab Contents -->
+        <div style="background:rgba(15,12,26,.95);border:1px solid rgba(212,175,55,.25);border-radius:0 0 12px 12px;min-height:300px;">
+
+            <div id="taksaTab_8geo" class="taksa-tab-content" style="display:block;">
+                ${tab1Html}
+            </div>
+
+            <div id="taksaTab_daily" class="taksa-tab-content" style="display:none;">
+                ${renderDailyTab(taksa, age, gender)}
+            </div>
+
+            <div id="taksaTab_monthly" class="taksa-tab-content" style="display:none;">
+                ${renderMonthlyTab(taksa, age, gender)}
+            </div>
+
+            <div id="taksaTab_yearly" class="taksa-tab-content" style="display:none;">
+                ${renderYearlyTab(taksa, age, gender)}
+            </div>
+
+            <div id="taksaTab_lifetime" class="taksa-tab-content" style="display:none;">
+                ${renderLifetimeTab(taksa, age, gender)}
+            </div>
+
+        </div>
+
+        <!-- ปุ่มกด (อยู่นอก tabs ไม่ติดภาพ) -->
         <div class="share-buttons-container mt-4 p-3 rounded" style="background:rgba(255,255,255,.08);">
             <p class="text-center small mb-3" style="color:#d4af37;">📸 บันทึกภาพคำทำนาย</p>
             <div class="row g-2 mb-2">
                 <div class="col-4">
-                    <button class="btn btn-sm btn-outline-warning w-100 py-2" onclick="downloadSpecificPart('taksaPart1','ผังทักษา_1')">
-                        ส่วนที่ 1
-                    </button>
+                    <button class="btn btn-sm btn-outline-warning w-100 py-2" onclick="downloadSpecificPart('taksaPart1','ผังทักษา_1')">ส่วนที่ 1</button>
                 </div>
                 <div class="col-4">
-                    <button class="btn btn-sm btn-outline-warning w-100 py-2" onclick="downloadSpecificPart('taksaPart2','ผังทักษา_2')">
-                        ส่วนที่ 2
-                    </button>
+                    <button class="btn btn-sm btn-outline-warning w-100 py-2" onclick="downloadSpecificPart('taksaPart2','ผังทักษา_2')">ส่วนที่ 2</button>
                 </div>
                 <div class="col-4">
-                    <button class="btn btn-sm btn-outline-warning w-100 py-2" onclick="downloadSpecificPart('taksaDetails','สรุปดวงปี')">
-                        สรุปดวง
-                    </button>
+                    <button class="btn btn-sm btn-outline-warning w-100 py-2" onclick="downloadSpecificPart('taksaDetails','สรุปดวงปี')">สรุปดวง</button>
                 </div>
             </div>
             <button class="btn btn-warning w-100 py-3 fw-bold" onclick="resetTaksa()">
@@ -563,20 +981,20 @@ function renderTaksaResult(taksa, age, gender) {
             });
         }
 
-        // animate cards
+        // Animate cards (เฉพาะ tab 1)
         setTimeout(() => {
             resultEl.querySelectorAll('.taksa-card').forEach((el, i) => {
-                el.style.opacity        = '0';
-                el.style.transform      = 'translateY(24px)';
-                el.style.transition     = `opacity .4s ease ${i * 0.12}s, transform .4s ease ${i * 0.12}s`;
-                // force reflow
+                el.style.opacity   = '0';
+                el.style.transform = 'translateY(24px)';
+                el.style.transition = `opacity .4s ease ${i * 0.12}s, transform .4s ease ${i * 0.12}s`;
                 void el.offsetHeight;
-                el.style.opacity        = '1';
-                el.style.transform      = 'translateY(0)';
+                el.style.opacity   = '1';
+                el.style.transform = 'translateY(0)';
             });
         }, 50);
     }
 }
+
 
 // -------------------------------------------------------------------
 //  ฟังก์ชันหลัก: ผูกดวงทักษา
@@ -653,18 +1071,17 @@ function showtaksatable(){
                 <div class="form-group mb-3">
                     <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
                     <select class="form-control bg-black text-black border-gold member-selector-shared"
-                        onchange="autoFillMemberData(this.value);calculateAndShowTaksa()"> >
+                        onchange="autoFillMemberData(this.value)">
                         <option value="">-- เลือกสมาชิก --</option>
                     </select>
                 </div>
 
                     <div class="form-group mt-2 mx-auto" style="max-width: 300px;">
                         <label class="text-gold">เพศ (ทิศเวียนทักษา)</label>
-                            <select id="taksagender" class="form-control bg-dark text-white border-gold" style="height: 55px;"> 
-                                <option value="male"> ชาย (เวียนขวา)</option>
-                                <option value="female"> หญิง (เวียนซ้าย)</option>
-                            </select>
-                        </label>
+                        <select id="taksagender" class="form-control bg-dark text-white border-gold" style="height: 55px;"> 
+                            <option value="male"> ชาย (เวียนขวา)</option>
+                            <option value="female"> หญิง (เวียนซ้าย)</option>
+                        </select>
                     </div>
                     <div class="form-group mt-2 mx-auto" style="max-width: 300px;">
                         <label class="text-white-50">วันเกิด</label>
@@ -686,7 +1103,7 @@ function showtaksatable(){
                         <input type="number" id="userAge" class="form-control bg-dark text-white border-gold"
                             placeholder="เช่น 25" min="1" max="120" required style="height: 55px;">
                     </div>
-                    <button class="btn btn-gold btn-lg px-5 mt-4 shadow-lg" onclick="calculateAndShowTaksa()"id="taksaBtn">
+                    <button class="btn btn-gold btn-lg px-5 mt-4 shadow-lg" onclick="calculateAndShowTaksa()" id="taksaBtn">
                         ✨ ผูกดวงทักษา
                     </button>
                 </div>
@@ -713,19 +1130,12 @@ function showtaksatable(){
 
 document.addEventListener("DOMContentLoaded", () => {
     showtaksatable();
-});
-
-document.addEventListener('DOMContentLoaded', () => {
     const inputEl = document.getElementById('taksaTablepage');
-
-    if (!inputEl) return;
-
-    showtaksatable();
-
-    inputEl.addEventListener('input', debouncedDisplay);
-    inputEl.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') calculateAndShowTaksa();
-    });
+    if (inputEl) {
+        inputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') calculateAndShowTaksa();
+        });
+    }
 });
 
 // -------------------------------------------------------------------

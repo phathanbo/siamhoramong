@@ -45,20 +45,33 @@ const RASSI_THAI = {
 };
 
 /**
- * 🔍 รับเดือนจากปฏิเวณ
+ * 🔍 คำนวณราศีตามหลักโหราศาสตร์ไทย (นิรายนะ / สุริยยาตร์)
+ * อ้างอิง: คัมภีร์สุริยยาตร์และปฏิทินโหราศาสตร์ไทย (ตัดราศีวันที่ 13-16 ของแต่ละเดือน)
  */
 function getRassiIndex(month, day) {
-    if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return 0;
-    if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return 1;
-    if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return 2;
-    if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return 3;
-    if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return 4;
-    if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return 5;
-    if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return 6;
-    if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return 7;
-    if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return 8;
-    if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) return 9;
-    if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return 10;
+    // ราศีเมษ: 13-14 เม.ย. - 13-14 พ.ค.
+    if ((month == 4 && day >= 13) || (month == 5 && day <= 13)) return 0;
+    // ราศีพฤษภ: 14 พ.ค. - 13-14 มิ.ย.
+    if ((month == 5 && day >= 14) || (month == 6 && day <= 14)) return 1;
+    // ราศีมิถุน: 15 มิ.ย. - 14-15 ก.ค.
+    if ((month == 6 && day >= 15) || (month == 7 && day <= 15)) return 2;
+    // ราศีกรกฎ: 16 ก.ค. - 16 ส.ค.
+    if ((month == 7 && day >= 16) || (month == 8 && day <= 16)) return 3;
+    // ราศีสิงห์: 17 ส.ค. - 16 ก.ย.
+    if ((month == 8 && day >= 17) || (month == 9 && day <= 16)) return 4;
+    // ราศีกันย์: 17 ก.ย. - 16 ต.ค.
+    if ((month == 9 && day >= 17) || (month == 10 && day <= 16)) return 5;
+    // ราศีตุลย์: 17 ต.ค. - 15 พ.ย.
+    if ((month == 10 && day >= 17) || (month == 11 && day <= 15)) return 6;
+    // ราศีพิจิก: 16 พ.ย. - 15 ธ.ค.
+    if ((month == 11 && day >= 16) || (month == 12 && day <= 15)) return 7;
+    // ราศีธนู: 16 ธ.ค. - 13-14 ม.ค.
+    if ((month == 12 && day >= 16) || (month == 1 && day <= 14)) return 8;
+    // ราศีมังกร: 15 ม.ค. - 12-13 ก.พ.
+    if ((month == 1 && day >= 15) || (month == 2 && day <= 12)) return 9;
+    // ราศีกุมภ์: 13 ก.พ. - 13-14 มี.ค.
+    if ((month == 2 && day >= 13) || (month == 3 && day <= 13)) return 10;
+    // ราศีมีน: 14 มี.ค. - 12-13 เม.ย.
     return 11;
 }
 

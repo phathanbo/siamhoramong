@@ -9,111 +9,246 @@ function initAdminQuickTools() {
     const p = window.location.pathname.includes('/admin/') ? '' : 'admin/';
 
     container.innerHTML = `
-        <div class="admin-panel shadow" style="background: #111; padding: 30px; border-radius: 15px; border: 1px solid #d4af37; color: white;">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 style="color: #d4af37; margin: 0;"><i class="fas fa-tools mr-2"></i> ศูนย์รวมเครื่องมือแอดมิน (Quick Tools)</h2>
+        <div class="admin-glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0 font-weight-bold" style="color: #FFF0A8;">
+                    <i class="fas fa-tools mr-2 text-warning"></i> ศูนย์รวมเครื่องมือสร้างสื่อ & คอนเทนต์ (Quick Tools)
+                </h4>
+                <span class="badge px-3 py-2" style="background: rgba(241,208,110,0.2); color: #FFF0A8; border: 1px solid rgba(241,208,110,0.4); border-radius: 20px;">
+                    เครื่องมือด่วน
+                </span>
             </div>
             
-            <p style="color: #aaa; margin-bottom: 30px; font-size: 1.1rem;">เลือกเครื่องมือที่ต้องการใช้งานเพื่อสร้างคอนเทนต์หรือรายงานได้อย่างรวดเร็ว</p>
+            <p style="color: #CBD5E1; margin-bottom: 25px; font-size: 0.95rem;">เลือกเครื่องมือสร้างภาพกราฟิก ใบดวงชะตา รายงาน PDF และโพสต์โซเชียลมีเดียอัตโนมัติ</p>
 
-            <div class="dashboard-tools" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                <!-- แผ่นดวงชะตา / ดวงส่วนบุคคล -->
-                <button class="btn shadow" onclick="window.location.href='${p}../pages/profile.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #d4af37, #aa7c11); color: #121212; border: none; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-id-card" style="font-size: 3.5rem; color: #121212;"></i> 
-                    <span style="font-weight: bold; line-height: 1.3;">แผ่นดวงชะตา<br><small style="font-weight: normal; font-size: 0.95rem; color: #222;">(ดวงชะตาส่วนบุคคล)</small></span>
-                </button>
+            <div class="row g-3">
+                
+                <!-- 1. แผ่นดวงชะตา / ดวงส่วนบุคคล -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}../pages/profile.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(241,208,110,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#FFF0A8'; this.style.boxShadow='0 12px 25px rgba(241,208,110,0.2)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(241,208,110,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #F1D06E;"><i class="fas fa-id-card"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">แผ่นดวงชะตา</div>
+                            <small class="text-white-50">ดวงชะตาส่วนบุคคล</small>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- สร้างคำทำนายรายวัน (ข้อความ + ภาพสรุป) -->
-                <button class="btn btn-gold shadow" onclick="window.location.href='${p}daily-content.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #f1c40f, #d4af37); color: #111; border: none; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-star-and-crescent" style="font-size: 3.5rem; color: #111;"></i> 
-                    <span style="font-weight: bold; line-height: 1.3;">สร้างคำทำนายรายวัน<br><small style="font-weight: normal; font-size: 0.95rem; color: #333;">(โพสต์ + ภาพสรุป 1080px)</small></span>
-                </button>
-                
-                <!-- อินโฟกราฟิก ฟันธงดวงรายวัน -->
-                <button class="btn shadow" onclick="window.location.href='${p}daily-infographic.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #d97706, #f59e0b); color: #0f172a; border: none; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-magic" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold; line-height: 1.3;">อินโฟกราฟิก ฟันธงดวงรายวัน<br><small style="font-weight: normal; font-size: 0.95rem; color: #0f172a;">(แบบเปิดชะตาฟ้าลิขิต 1920px)</small></span>
-                </button>
-                
-                <!-- สร้างรายงาน PDF -->
-                <button class="btn btn-primary shadow" onclick="window.location.href='${p}vip-report.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #007bff, #0056b3); color: white; border: none; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-file-pdf" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">สร้างรายงาน<br>PDF (VIP)</span>
-                </button>
-                
-                <!-- ดวงรายวัน (แผ่นเดียว) -->
-                <button class="btn btn-warning shadow" onclick="window.location.href='${p}daily-single-image.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-image" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">ภาพดวงรายวัน<br>(แผ่นเดียว)</span>
-                </button>
-                
-                <!-- ไพ่ยิปซี -->
-                <button class="btn btn-dark shadow" onclick="window.location.href='${p}tarot-reading.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #141e30, #243b55); color: #fff; border: 1px solid #243b55; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-layer-group" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">ทำนายไพ่ยิปซี<br></span>
-                </button>
-                
-                <!-- วอลเปเปอร์สายมู -->
-                <button class="btn btn-dark shadow" onclick="window.location.href='${p}wallpaper-gen.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #11998e, #38ef7d); color: #fff; border: 1px solid #38ef7d; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-mobile-alt" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">วอลเปเปอร์สายมู<br>(เครื่องราง)</span>
-                </button>
-                
-                <!-- ดวง 12 ราศี (ภาพรวม) -->
-                <button class="btn shadow" onclick="window.open('${p}zodiac-daily.html', '_blank')" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #4b1a75, #1a0831); color: #f9d976; border: 1px solid #e9b64c; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-th-large" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">ภาพดวง 12 ราศี<br>(แผ่นรวม)</span>
-                </button>
-                
-                <!-- ดวง 12 ราศี (แยกแผ่น) -->
-                <button class="btn shadow" onclick="window.open('${p}zodiac-single.html', '_blank')" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #6a1b9a, #38006b); color: #f9d976; border: 1px solid #f9d976; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-th-list" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">ภาพดวง 12 ราศี<br>(แยกแผ่น)</span>
-                </button>
-                
-                <!-- ไพ่ป๊อกทำนายดวง -->
-                <button class="btn shadow" onclick="window.location.href='${p}cartomancy.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #a61b1b, #590909); color: #fff; border: 1px solid #ff4d4d; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-heart" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">ภาพไพ่ป๊อก<br>(1 ใบ / 3 ใบ)</span>
-                </button>
-                
-                <!-- ฐานข้อมูลไพ่ป๊อก 32 ใบ -->
-                <button class="btn shadow" onclick="window.location.href='${p}cartomancy-db.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #2c3e50, #1a252f); color: #fff; border: 1px solid #d4af37; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-database" style="font-size: 3.5rem; color: #d4af37;"></i> 
-                    <span style="font-weight: bold;">ฐานข้อมูลไพ่ป๊อก<br><small style="font-weight: normal; font-size: 0.95rem; color: #d4af37;">(ตำรา 32 ใบ)</small></span>
-                </button>
-                
-                <!-- สร้างโพสต์ Facebook -->
-                <button class="btn shadow" onclick="window.location.href='${p}facebook-post.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #1877f2, #0c438c); color: #fff; border: 1px solid #1877f2; height: 100%; transition: transform 0.2s;">
-                    <i class="fa-brands fa-facebook" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">สร้างโพสต์ Facebook<br><small style="font-weight: normal; font-size: 0.95rem; color: #ddd;">(พิมพ์ข้อความเอง)</small></span>
-                </button>
-                
-                <!-- สร้างโพสต์เลขเด็ด (ทักษาพยากรณ์) -->
-                <button class="btn shadow" onclick="window.location.href='${p}lotto-post.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; border: 1px solid #8E2DE2; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-dice" style="font-size: 3.5rem; color: #f1c40f;"></i> 
-                    <span style="font-weight: bold; color: #f1c40f;">สร้างโพสต์เลขเด็ด<br><small style="font-weight: normal; font-size: 0.95rem; color: #fff;">(คำนวณตามหลักทักษา)</small></span>
-                </button>
-                
-                <!-- สร้างภาพดวงรายวัน (NEW COMBINED) -->
-                <button class="btn shadow" onclick="window.location.href='${p}zodiac-auto-carousel.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #ff9a9e, #fecfef); color: #111; border: 1px solid #ff9a9e; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-magic" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">สร้างภาพดวงรายวัน<br><small style="font-weight: normal; font-size: 0.95rem; color: #555;">(แผ่นเดียว / อัลบั้ม 9 ภาพ)</small></span>
-                </button>
-                
-                <!-- สร้างภาพดวงอัตโนมัติ (NEW) -->
-                <button class="btn shadow" onclick="window.location.href='${p}chart-image-gen.html'" style="font-size: 1.2rem; padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: linear-gradient(135deg, #111, #333); color: #FFDF73; border: 1px solid #D4AF37; height: 100%; transition: transform 0.2s;">
-                    <i class="fas fa-camera-retro" style="font-size: 3.5rem;"></i> 
-                    <span style="font-weight: bold;">สร้างภาพพื้นดวง<br><small style="font-weight: normal; font-size: 0.95rem; color: #AAA;">(วิเคราะห์กราฟ & ทักษา)</small></span>
-                </button>
+                <!-- 2. สร้างคำทำนายรายวัน -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}daily-content.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(241,208,110,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#FFF0A8'; this.style.boxShadow='0 12px 25px rgba(241,208,110,0.2)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(241,208,110,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #F1D06E;"><i class="fas fa-star-and-crescent"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">คำทำนายรายวัน</div>
+                            <small class="text-white-50">โพสต์ + ภาพสรุป 1080px</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. อินโฟกราฟิก ฟันธงดวงรายวัน -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}daily-infographic.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(245,158,11,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#FCD34D'; this.style.boxShadow='0 12px 25px rgba(245,158,11,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(245,158,11,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #F59E0B;"><i class="fas fa-magic"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">ฟันธงดวงรายวัน</div>
+                            <small class="text-white-50">อินโฟกราฟิก 1920px</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. สร้างรายงาน PDF (VIP) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}vip-report.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(59,130,246,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#93C5FD'; this.style.boxShadow='0 12px 25px rgba(59,130,246,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(59,130,246,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #60A5FA;"><i class="fas fa-file-pdf"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">รายงาน PDF (VIP)</div>
+                            <small class="text-white-50">วิเคราะห์ดวงฉบับเต็ม</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. รายงานดวงตลอดชีพ (PDF) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}lifetime-report.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(168,85,247,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#D8B4FE'; this.style.boxShadow='0 12px 25px rgba(168,85,247,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(168,85,247,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #A855F7;"><i class="fas fa-history"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">ดวงตลอดชีพ (PDF)</div>
+                            <small class="text-white-50">คำนวณกราฟชีวิตตลอดอายุ</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. ภาพดวงรายวัน (แผ่นเดียว) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}daily-single-image.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(234,88,12,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#FDBA74'; this.style.boxShadow='0 12px 25px rgba(234,88,12,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(234,88,12,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #FB923C;"><i class="fas fa-image"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">ภาพดวงรายวัน</div>
+                            <small class="text-white-50">แผ่นเดียวกราฟิกสวย</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. ทำนายไพ่ยิปซี -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}tarot-reading.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(139,92,246,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#C4B5FD'; this.style.boxShadow='0 12px 25px rgba(139,92,246,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(139,92,246,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #A78BFA;"><i class="fas fa-layer-group"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">ทำนายไพ่ยิปซี</div>
+                            <small class="text-white-50">ระบบวิเคราะห์ไพ่ทาโรต์</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. วอลเปเปอร์สายมู -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}wallpaper-gen.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(16,185,129,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#6EE7B7'; this.style.boxShadow='0 12px 25px rgba(16,185,129,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(16,185,129,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #34D399;"><i class="fas fa-mobile-alt"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">วอลเปเปอร์สายมู</div>
+                            <small class="text-white-50">เครื่องรางมงคลมือถือ</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. ภาพดวง 12 ราศี (แผ่นรวม) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.open('${p}zodiac-daily.html', '_blank')"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(217,70,239,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#F0ABFC'; this.style.boxShadow='0 12px 25px rgba(217,70,239,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(217,70,239,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #E879F9;"><i class="fas fa-th-large"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">ดวง 12 ราศี</div>
+                            <small class="text-white-50">ภาพรวม 12 ราศี</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. ภาพดวง 12 ราศี (แยกแผ่น) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.open('${p}zodiac-single.html', '_blank')"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(192,132,252,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#E9D5FF'; this.style.boxShadow='0 12px 25px rgba(192,132,252,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(192,132,252,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #C084FC;"><i class="fas fa-th-list"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">ดวงรายราศี</div>
+                            <small class="text-white-50">แยก 12 ภาพรายคน</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 11. ภาพไพ่ป๊อกทำนายดวง -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}cartomancy.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(239,68,68,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#FCA5A5'; this.style.boxShadow='0 12px 25px rgba(239,68,68,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(239,68,68,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #F87171;"><i class="fas fa-heart"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">ภาพไพ่ป๊อก</div>
+                            <small class="text-white-50">ทำนายดวง 1 ใบ / 3 ใบ</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12. สร้างโพสต์ Facebook -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}facebook-post.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(37,99,235,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#93C5FD'; this.style.boxShadow='0 12px 25px rgba(37,99,235,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(37,99,235,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #3B82F6;"><i class="fab fa-facebook"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">โพสต์ Facebook</div>
+                            <small class="text-white-50">เขียนข้อความและแคปชั่น</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 13. โพสต์เลขเด็ด (ทักษา) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}lotto-post.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(245,158,11,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#FDE68A'; this.style.boxShadow='0 12px 25px rgba(245,158,11,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(245,158,11,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #FBBF24;"><i class="fas fa-dice"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">โพสต์เลขเด็ด</div>
+                            <small class="text-white-50">คำนวณตามหลักทักษา</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 14. ภาพดวงอัลบั้ม Carousel -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}zodiac-auto-carousel.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(244,114,182,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#FBCFE8'; this.style.boxShadow='0 12px 25px rgba(244,114,182,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(244,114,182,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #F472B6;"><i class="fas fa-images"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">อัลบั้มภาพดวง</div>
+                            <small class="text-white-50">Carousel 9 ภาพโซเชียล</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 15. สร้างภาพพื้นดวง -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}chart-image-gen.html'"
+                         style="background: rgba(20,32,58,0.6); border: 1px solid rgba(241,208,110,0.3); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#FFF0A8'; this.style.boxShadow='0 12px 25px rgba(241,208,110,0.2)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(241,208,110,0.3)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #F1D06E;"><i class="fas fa-camera-retro"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FFFFFF; font-size: 1rem;">ภาพพื้นดวงชะตา</div>
+                            <small class="text-white-50">วิเคราะห์กราฟ & ทักษา</small>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            
-            <style>
-                #adminQuickToolsContainer button:hover {
-                    transform: translateY(-5px);
-                    box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important;
-                }
-            </style>
         </div>
     `;
 }

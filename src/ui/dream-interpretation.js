@@ -743,18 +743,49 @@ function interpretDream() {
     let foundKeywords = [];
     let allLuckyNumbers = new Set();
 
+    // พจนานุกรมคำพ้องความหมาย / คำสืบค้นยอดนิยม (Synonym & Root Mapping)
+    const SYNONYM_MAP = {
+        "งูเห่า": "งู", "งูจงอาง": "งู", "งูเขียว": "งู", "งูเหลือม": "งู", "งูหลาม": "งู", "งูรัด": "งูรัด", "งูกัด": "งูกัด",
+        "พญานาคราช": "พญานาค", "องค์พญานาค": "พญานาค", "นาคราช": "พญานาค",
+        "พระพุทธรูป": "พระพุทธรูป", "พระเครื่อง": "พระพุทธรูป", "พระสงฆ์": "พระสงฆ์", "พระบวชใหม่": "พระสงฆ์", "สามเณร": "พระสงฆ์",
+        "ฟันหลุด": "ฟันหัก", "ฟันร่วง": "ฟันหัก", "ฟันโยก": "ฟันหัก", "ฟันหน้าหัก": "ฟันหัก",
+        "สร้อยทอง": "ทองคำ", "แหวนทอง": "แหวน", "ทองแท่ง": "ทองคำ", "ทองรูปพรรณ": "ทองคำ",
+        "เงินสด": "เงิน", "เหรียญเงิน": "เงิน", "แบงก์": "เงิน", "ธนบัตร": "เงิน",
+        "คนตาย": "คนตาย", "ศพคน": "ศพ", "ซากศพ": "ศพ", "งานศพ": "งานศพ", "เมรุ": "เมรุ",
+        "อุ้มเด็ก": "เด็กทารก", "คลอดลูก": "คลอดลูก", "เด็กน้อย": "เด็กทารก", "ทารก": "เด็กทารก",
+        "น้ำท่วมบ้าน": "น้ำท่วม", "จมน้ำ": "ตกน้ำ", "ตกน้ำ": "ตกน้ำ", "ว่ายน้ำ": "ว่ายน้ำ",
+        "ไฟไหม้บ้าน": "ไฟไหม้", "เพลิงไหม้": "ไฟไหม้",
+        "ขับรถ": "รถยนต์", "รถชน": "รถยนต์", "รถคว่ำ": "รถยนต์",
+        "ช้างเผือก": "ช้าง", "ลูกช้าง": "ช้าง", "เสือโคร่ง": "เสือ", "เสือดำ": "เสือ",
+        "ปลาไหล": "ปลา", "ปลาดุก": "ปลา", "ปลาช่อน": "ปลา", "ตกปลา": "จับปลา", "ทอดแห": "จับปลา",
+        "นกพิราบ": "นก", "นกยูง": "นก", "ไก่ชน": "ไก่", "ม้าขาว": "ม้า", "วัวกระทิง": "วัว",
+        "จระเข้ใหญ่": "จระเข้", "เต่าทะเล": "เต่า", "พญาครุฑ": "พญาครุฑ", "ท้าวเวสสุวรรณ": "ท้าวเวสสุวรรณ"
+    };
+
+    // ตรวจสอบคำพ้องก่อนเพื่อนำเข้าคีย์เวิร์ดหลัก
+    for (let syn in SYNONYM_MAP) {
+        if (dreamText.includes(syn)) {
+            const rootWord = SYNONYM_MAP[syn];
+            if (!dreamText.includes(rootWord)) {
+                dreamText += " " + rootWord;
+            }
+        }
+    }
+
     // ค้นหาในทุกหมวดหมู่ของ DREAM_MEANINGS
     for (let category in DREAM_MEANINGS) {
         for (let [keyword, data] of Object.entries(DREAM_MEANINGS[category])) {
             if (dreamText.includes(keyword)) {
-                foundMeanings.push({
-                    keyword: keyword,
-                    meaning: data.meaning,
-                    lucky: data.lucky
-                });
-                foundKeywords.push(keyword);
-                if (data.lucky && Array.isArray(data.lucky)) {
-                    data.lucky.forEach(num => allLuckyNumbers.add(num));
+                if (!foundKeywords.includes(keyword)) {
+                    foundMeanings.push({
+                        keyword: keyword,
+                        meaning: data.meaning,
+                        lucky: data.lucky
+                    });
+                    foundKeywords.push(keyword);
+                    if (data.lucky && Array.isArray(data.lucky)) {
+                        data.lucky.forEach(num => allLuckyNumbers.add(num));
+                    }
                 }
             }
         }

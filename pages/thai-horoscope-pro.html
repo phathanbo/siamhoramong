@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ผูกดวงโหราศาสตร์ไทยฉบับสมบูรณ์ (ราศีจักร • นวางค์ • ตรียางค์ • ทักษา • ตรีวัย) - สยามโหรามงคล</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #1e293b;
+            --accent-gold: #d97706;
+            --accent-blue: #2563eb;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-bottom: 60px;
+        }
+
+        .top-navbar {
+            background: linear-gradient(135deg, #1e1b4b, #0f172a);
+            color: #ffffff;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .top-navbar h1 {
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .top-navbar a {
+            color: #f1f5f9;
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .top-navbar a:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 16px;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .form-control {
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .btn-calc {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: white;
+            padding: 11px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-calc:hover {
+            opacity: 0.95;
+        }
+        .btn-member-picker {
+            background: #475569;
+            color: white;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Charts Layout */
+        .chart-main-wrapper {
+            background: #ffffff;
+            padding: 30px 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .chart-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-grow: 1;
+        }
+        .chart-actions {
+            display: flex;
+            gap: 12px;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .chart-actions i:hover {
+            color: var(--accent-blue);
+        }
+
+        .chart-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: absolute;
+            top: 40px;
+            left: 30px;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .rasi-canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0 30px 0;
+        }
+
+        /* Navamsha & Drekkana Section (ภาพที่ 2) */
+        .harmonic-wheels-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 20px 0;
+            padding-top: 20px;
+            border-top: 1px dashed #cbd5e1;
+        }
+        @media (max-width: 860px) {
+            .harmonic-wheels-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .harmonic-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: center;
+        }
+        .harmonic-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Bottom Section: Thaksa & Trivai */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 30px;
+        }
+        @media (max-width: 860px) {
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-options {
+                position: static;
+                margin-bottom: 16px;
+            }
+        }
+
+        .section-sub-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .section-sub-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Thaksa Grid 3x3 */
+        .thaksa-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border: 1px solid #64748b;
+            background: #ffffff;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+        .thaksa-cell {
+            border: 1px solid #cbd5e1;
+            padding: 8px 4px;
+            text-align: center;
+            min-height: 84px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .thaksa-top-label {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        .thaksa-num {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .thaksa-bot-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+        .thaksa-highlight-circle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            border: 2px solid #ea580c;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .center-cell {
+            background-color: #fafafa;
+        }
+
+        /* Trivai Grid 3x4 */
+        .trivai-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: 1px solid #64748b;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .trivai-cell {
+            border: 1px solid #cbd5e1;
+            padding: 6px 2px;
+            text-align: center;
+            min-height: 72px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .trivai-house {
+            font-size: 0.8rem;
+            color: #475569;
+        }
+        .trivai-num {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .trivai-age {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .trivai-active-circle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ea580c;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .trivai-footer-labels {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            max-width: 420px;
+            margin: 8px auto 0 auto;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #475569;
+        }
+
+        /* Reading styles */
+        .reading-container {
+            margin-top: 30px;
+        }
+        .reading-section {
+            background: #ffffff;
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        .reading-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e1b4b;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .house-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        .house-table th, .house-table td {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        .house-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .period-card {
+            border-left: 4px solid #2563eb;
+            background: #f8fafc;
+            padding: 14px 18px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+        .period-card.current {
+            border-left-color: #d97706;
+            background: #fffbeb;
+        }
+
+        .btn-export-full {
+            background: #0f172a;
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-navbar">
+        <h1><i class="fas fa-dharmachakra"></i> โหราศาสตร์ไทยฉบับสมบูรณ์ (ราศีจักร • นวางค์ • ตรียางค์ • ทักษา • ตรีวัย)</h1>
+        <div>
+            <a href="../index.html"><i class="fas fa-home"></i> กลับหน้าหลัก</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Main Mode Tabs -->
+        <div style="display:flex; justify-content:center; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
+            <button id="tabBtnPersonal" class="btn" style="background:#2563eb; color:white; padding:12px 24px; border-radius:30px; font-weight:700; font-size:1rem; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,0.25); display:inline-flex; align-items:center; gap:8px;" onclick="switchMainTab('personal')">
+                <i class="fas fa-user-circle"></i> ผูกดวงชะตาเฉพาะบุคคล & สมาชิก
+            </button>
+            <button id="tabBtnPublicDaily" class="btn" style="background:#f1f5f9; color:#475569; padding:12px 24px; border-radius:30px; font-weight:700; font-size:1rem; border:1px solid #cbd5e1; cursor:pointer; display:inline-flex; align-items:center; gap:8px;" onclick="switchMainTab('publicDaily')">
+                <i class="fas fa-globe-asia text-warning"></i> ดูดวงประจำวันทั่วไป (12 ราศี • 7 วันเกิด • 12 นักษัตร)
+            </button>
+        </div>
+
+        <!-- Section 1: Personal Horoscope Mode Container -->
+        <div id="personalModeContainer">
+            <!-- Form Section -->
+            <div class="glass-card">
+            <h2 style="font-size: 1.2rem; margin-bottom: 16px; color: #1e293b;">
+                <i class="fas fa-user-edit text-gold"></i> ข้อมูลเจ้าชะตา & ผูกดวง
+            </h2>
+            <div class="form-grid">
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label style="color:#d97706;"><i class="fas fa-users"></i> ดึงข้อมูลจากประวัติสมาชิก / ผู้ใช้:</label>
+                    <select id="mainMemberSelector" class="form-control" style="border: 2px solid #f59e0b; background:#fffbeb; font-weight:600;" onchange="onSelectMemberDropdown(this.value)">
+                        <option value="">-- เลือกสมาชิกเพื่อโหลดข้อมูลอัตโนมัติ --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ชื่อ-นามสกุล / เจ้าชะตา</label>
+                    <input type="text" id="targetName" class="form-control" placeholder="ระบุชื่อเจ้าชะตา" value="เจ้าชะตา" onchange="processHoroscopeCalculation()">
+                </div>
+                <div class="form-group">
+                    <label>วันเกิด (ค.ศ. / พ.ศ.)</label>
+                    <input type="date" id="targetBirthDate" class="form-control" value="1995-05-15" onchange="processHoroscopeCalculation()">
+                </div>
+                <div class="form-group">
+                    <label>เวลาเกิด (น.)</label>
+                    <input type="time" id="targetBirthTime" class="form-control" value="20:05" onchange="processHoroscopeCalculation()">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn-calc" style="width: 100%;" onclick="processHoroscopeCalculation()">
+                        <i class="fas fa-star-and-crescent"></i> คำนวณและผูกดวง
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Charts Container -->
+        <div id="chartCaptureArea" class="chart-main-wrapper">
+            <!-- Main Wheel: Rasi -->
+            <div class="chart-header">
+                <div class="chart-options">
+                    <label class="option-item">
+                        <input type="checkbox" id="chkKaset" checked onchange="refreshVisuals()"> เกษตร (๘) 🌟
+                    </label>
+                    <label class="option-item">
+                        <input type="checkbox" id="chkHouse" checked onchange="refreshVisuals()"> เรือนลัคนา 🌟
+                    </label>
+                    <label class="option-item">
+                        <input type="checkbox" id="chkTransit" checked onchange="refreshVisuals()"> ดวงจร
+                    </label>
+                </div>
+                <div class="chart-title">ราศีจักร</div>
+                <div class="chart-actions">
+                    <i class="fas fa-external-link-alt" title="แชร์ดวง" onclick="copyChartLink()"></i>
+                    <i class="fas fa-camera" title="บันทึกภาพดวงชะตา" onclick="exportChartImage()"></i>
+                </div>
+            </div>
+
+            <div class="rasi-canvas-container">
+                <canvas id="rasiCanvas" width="460" height="460"></canvas>
+            </div>
+
+            <!-- Harmonic Wheels: Navamsha & Drekkana -->
+            <div class="harmonic-wheels-grid">
+                <div class="harmonic-card">
+                    <div class="harmonic-title">
+                        <span>นวางค์จักร (นว.)</span>
+                        <i class="fas fa-camera" style="cursor:pointer; color:#64748b; font-size:1rem;" onclick="exportSingleWheel('navCanvas', 'navamsha_chart.png')"></i>
+                    </div>
+                    <canvas id="navCanvas" width="380" height="380"></canvas>
+                </div>
+                <div class="harmonic-card">
+                    <div class="harmonic-title">
+                        <span>ตรียางค์จักร (ตย.)</span>
+                        <i class="fas fa-camera" style="cursor:pointer; color:#64748b; font-size:1rem;" onclick="exportSingleWheel('drekCanvas', 'drekkana_chart.png')"></i>
+                    </div>
+                    <canvas id="drekCanvas" width="380" height="380"></canvas>
+                </div>
+            </div>
+
+            <!-- Bottom Sub Tables: Thaksa & Trivai -->
+            <div class="bottom-grid">
+                <div>
+                    <div class="section-sub-header">
+                        <h3>ทักษา</h3>
+                        <div class="chart-actions" style="font-size: 1rem;">
+                            <i class="fas fa-camera" onclick="exportThaksaImage()"></i>
+                        </div>
+                    </div>
+                    <div id="thaksaContainer"></div>
+                    <div style="text-align: center; margin-top: 14px;">
+                        <label class="option-item" style="justify-content: center;">
+                            <input type="checkbox" id="chkCenterAge" checked> นับอายุจรตากลาง
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="section-sub-header">
+                        <h3>ตรีวัย</h3>
+                        <div class="chart-actions" style="font-size: 1rem;">
+                            <i class="fas fa-camera" onclick="exportTrivaiImage()"></i>
+                        </div>
+                    </div>
+                    <div id="trivaiContainer"></div>
+                    <div style="text-align: center; margin-top: 14px; font-size: 0.85rem; color: #475569;">
+                        นับตรีวัยจาก <select id="selTrivaiSource" class="form-control" style="display:inline-block; width:auto; padding:4px 8px;" onchange="refreshVisuals()">
+                            <option value="tanu">ตนุเศษ</option>
+                            <option value="asc">ลัคนา</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Save Button -->
+        <div style="text-align: center;">
+            <button class="btn-export-full" onclick="exportChartImage()">
+                <i class="fas fa-download"></i> บันทึกภาพชาร์ตดวงชะตาทั้งหมด (HD PNG)
+            </button>
+        </div>
+
+        <!-- Professional Predictions Section (100% Deterministic & Rule-based) -->
+        <div id="predictionResultsArea" class="reading-container">
+            <!-- 1. ภาพรวมพื้นดวงชะตา -->
+            <div class="reading-section">
+                <div class="reading-title"><i class="fas fa-crown text-warning"></i> คำทำนายภาพรวม & พื้นดวงกำเนิด (Natal Analysis)</div>
+                <div id="readBasic"></div>
+            </div>
+
+            <!-- 2. เจาะลึก 12 ภพ -->
+            <div class="reading-section">
+                <div class="reading-title"><i class="fas fa-th-list"></i> วิเคราะห์ความหมาย 12 ภพตามตำแหน่งดาวสถิต (12 Houses)</div>
+                <div style="overflow-x: auto;">
+                    <table class="house-table">
+                        <thead>
+                            <tr>
+                                <th>ภพ</th>
+                                <th>ราศี</th>
+                                <th>ดาวเจ้าเรือน</th>
+                                <th>ดาวที่สถิตในภพ</th>
+                                <th>ความหมายและการทำนายตามหลักโหร</th>
+                            </tr>
+                        </thead>
+                        <tbody id="housesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 2.1 เจาะลึก 5 มิติชะตาชีวิตตามตำราโหรโบราณ (อาชีพ, พี่น้อง, พ่อแม่, คู่ครอง, สุขภาพ) -->
+            <div class="reading-section">
+                <div class="reading-title"><i class="fas fa-user-astronaut text-primary"></i> เจาะลึก 5 มิติชะตาชีวิตเฉพาะบุคคล (Personal Destiny Core)</div>
+                <div id="readLifeAspectsArea" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:14px; margin-top:12px;"></div>
+            </div>
+
+            <!-- 2.2 คลังพยากรณ์ชั้นครู (ฤกษ์กำเนิด 27 นักษัตร, มาตรฐานดาว, ฆาตชะตา, เลขศาสตร์ และรหัสวาสนา) -->
+            <div class="reading-section">
+                <div class="reading-title"><i class="fas fa-star-and-crescent text-warning"></i> คลังพยากรณ์ชั้นครู & ศาสตร์มหาทักษาชั้นสูง (Supreme Astrology Analysis)</div>
+                <div id="readAdvancedDoctrinesArea" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:14px; margin-top:12px;"></div>
+            </div>
+
+            <!-- 3. คำทำนายในอายุแต่ละปี (1-100 ปี) -->
+            <div class="reading-section">
+                <div class="reading-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div><i class="fas fa-calendar-check text-primary"></i> เจาะลึกคำทำนายรายปี (อายุ 1 - 100 ปี)</div>
+                    <div style="font-size:0.95rem; font-weight:normal;">
+                        <button class="btn btn-sm" style="background:#e2e8f0; border:none; padding:4px 10px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="changeSelectedAge(-1)">
+                            <i class="fas fa-chevron-left"></i> ปีก่อนหน้า
+                        </button>
+                        <select id="selTargetAge" class="form-control" style="display:inline-block; width:auto; font-weight:bold; color:#1e1b4b; margin:0 4px; border:2px solid #3b82f6;" onchange="onSelectAgeChange(this.value)">
+                            <!-- เติมตัวเลือกอายุ 1-100 ปี -->
+                        </select>
+                        <button class="btn btn-sm" style="background:#e2e8f0; border:none; padding:4px 10px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="changeSelectedAge(1)">
+                            ปีถัดไป <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button class="btn btn-sm" style="background:#d97706; color:white; border:none; padding:4px 10px; border-radius:6px; font-weight:bold; margin-left:4px; cursor:pointer;" onclick="resetToCurrentAge()">
+                            ปีปัจจุบัน
+                        </button>
+                    </div>
+                </div>
+                <div id="readYearlyArea" style="margin-top: 14px;"></div>
+            </div>
+
+            <!-- 4. คำทำนาย 12 เดือนประจำปีที่เลือก -->
+            <div class="reading-section">
+                <div class="reading-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                    <div><i class="fas fa-calendar-alt text-success"></i> จังหวะชีวิต 12 เดือน (แปรผันตามอายุย่าง <span id="displaySelectedAgeHeader" style="color:#2563eb;">-</span> ปี)</div>
+                </div>
+                <p style="color:#64748b; font-size:0.9rem; margin-bottom:14px;">คำนวณตามการยกย้ายราศีของพระอาทิตย์สัมพันธ์กับทักษาจร (ศรีจร/กาลกิณีจร) ประจำปีนี้อย่างแม่นยำ 100%:</p>
+                <div id="readMonthlyArea" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;"></div>
+            </div>
+
+            <!-- 4.1 พยากรณ์ดวงวันจร (Daily Horoscope & Transit) -->
+            <div class="reading-section" style="border: 2px solid #3b82f6; background: #ffffff;">
+                <div class="reading-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div><i class="fas fa-sun text-warning"></i> พยากรณ์ดวงวันจร & จังหวะชีวิตรายวัน (Daily Transit Horoscope)</div>
+                    <div style="font-size:0.95rem; font-weight:normal;">
+                        <button class="btn btn-sm" style="background:#e2e8f0; border:none; padding:4px 10px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="changeDailyDate(-1)">
+                            <i class="fas fa-chevron-left"></i> วันก่อนหน้า
+                        </button>
+                        <input type="date" id="dailyDatePicker" class="form-control" style="display:inline-block; width:auto; font-weight:bold; color:#1e1b4b; margin:0 4px; border:2px solid #3b82f6; padding:3px 8px;" onchange="onDailyDateChange(this.value)">
+                        <button class="btn btn-sm" style="background:#e2e8f0; border:none; padding:4px 10px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="changeDailyDate(1)">
+                            วันถัดไป <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button class="btn btn-sm" style="background:#2563eb; color:white; border:none; padding:4px 10px; border-radius:6px; font-weight:bold; margin-left:4px; cursor:pointer;" onclick="resetToTodayDate()">
+                            วันนี้
+                        </button>
+                    </div>
+                </div>
+                <div id="readDailyArea" style="margin-top: 14px;"></div>
+            </div>
+
+            <!-- 5. ดวงจร & เคล็ดลับเสริมดวง -->
+            <div class="reading-section">
+                <div class="reading-title"><i class="fas fa-compass"></i> เคล็ดลับการเสริมดวง & ดาวกระทบชะตาปัจจุบัน</div>
+                <div id="readTransits" style="line-height: 1.8; margin-bottom: 14px;"></div>
+                <div id="readThaksaGuide" style="line-height: 1.8;"></div>
+            </div>
+        </div>
+        </div> <!-- End of personalModeContainer -->
+
+        <!-- Section 2: Public Daily Horoscope Container -->
+        <div id="publicDailyModeContainer" style="display:none;">
+            <!-- Header Controls for Public Daily -->
+            <div class="glass-card" style="margin-bottom: 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div>
+                        <h2 style="font-size:1.3rem; color:#1e1b4b; margin-bottom:4px;">
+                            <i class="fas fa-bullhorn text-warning"></i> ดูดวงประจำวันทั่วไป (Daily Horoscope & Global Transit)
+                        </h2>
+                        <div id="publicDateTitle" style="color:#64748b; font-size:0.95rem; font-weight:600;">-</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                        <button class="btn btn-sm" style="background:#e2e8f0; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="changePublicDate(-1)">
+                            <i class="fas fa-chevron-left"></i> วันก่อนหน้า
+                        </button>
+                        <input type="date" id="publicDatePicker" class="form-control" style="width:auto; font-weight:bold; color:#1e1b4b; border:2px solid #f59e0b; padding:4px 8px;" onchange="onPublicDateChange(this.value)">
+                        <button class="btn btn-sm" style="background:#e2e8f0; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="changePublicDate(1)">
+                            วันถัดไป <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button class="btn btn-sm" style="background:#d97706; color:white; border:none; padding:6px 14px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="resetPublicDateToday()">
+                            วันนี้
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 3 Lucky Zodiac Signs of the Day -->
+            <div class="reading-section" style="background:#fffbeb; border:2px solid #f59e0b; margin-bottom:20px;">
+                <div class="reading-title" style="color:#b45309; margin-bottom:10px;">
+                    <i class="fas fa-trophy text-warning"></i> 3 อันดับราศีที่ดวงดีและเฮงที่สุดประจำวัน (Top Lucky Zodiacs)
+                </div>
+                <div id="publicTopRasisArea" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px;"></div>
+            </div>
+
+            <!-- 1. ดวง 12 ราศีประจำวัน -->
+            <div class="reading-section" style="margin-bottom:20px;">
+                <div class="reading-title"><i class="fas fa-star-half-alt text-primary"></i> 1. เจาะลึกดวง 12 ราศีประจำวัน (Zodiac Signs)</div>
+                <div id="publicZodiacGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin-top:12px;"></div>
+            </div>
+
+            <!-- 2. ดวงคนเกิดทั้ง 7 วัน -->
+            <div class="reading-section" style="margin-bottom:20px;">
+                <div class="reading-title"><i class="fas fa-calendar-day text-success"></i> 2. ดวงคนเกิดทั้ง 7 วัน & สีมงคลเปิดทรัพย์ (Days of Birth & Thaksa)</div>
+                <div id="publicDaysGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin-top:12px;"></div>
+            </div>
+
+            <!-- 3. ดวง 12 นักษัตร (สมพงษ์ & ชงประจำวัน) -->
+            <div class="reading-section" style="margin-bottom:20px;">
+                <div class="reading-title"><i class="fas fa-paw text-danger"></i> 3. ดวง 12 นักษัตรประจำวัน & เกณฑ์ชง-สมพงษ์ (Chinese Zodiac Harmony)</div>
+                <div id="publicAnimalGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px; margin-top:12px;"></div>
+            </div>
+        </div> <!-- End of publicDailyModeContainer -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="../src/engine/thai-horoscope-engine.js"></script>
+    <script src="../src/ui/thai-horoscope-chart-canvas.js"></script>
+
+    <script>
+        let currentHoroData = null;
+        let globalMembersList = [];
+        let selectedAgeYang = 30; // ค่าเริ่มต้น
+
+        // ฟังก์ชันแปลงวันที่ให้เป็น YYYY-MM-DD
+        function formatToDateInputValue(dateStr) {
+            if (!dateStr) return "1995-05-15";
+            dateStr = String(dateStr).trim();
+
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+
+            if (dateStr.includes('/') || dateStr.includes('-')) {
+                const parts = dateStr.split(/[\/\-]/);
+                if (parts.length === 3) {
+                    let d = parts[0].padStart(2, '0');
+                    let m = parts[1].padStart(2, '0');
+                    let y = parseInt(parts[2], 10);
+                    if (y > 2400) y -= 543;
+                    return `${y}-${m}-${d}`;
+                }
+            }
+
+            const dt = new Date(dateStr);
+            if (!isNaN(dt.getTime())) {
+                const y = dt.getFullYear();
+                const m = String(dt.getMonth() + 1).padStart(2, '0');
+                const d = String(dt.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+
+            return "1995-05-15";
+        }
+
+        // โหลดข้อมูลสมาชิก
+        function loadAllAvailableMembers() {
+            const list = [];
+            const seen = new Set();
+
+            function addMember(m) {
+                if (!m) return;
+                const id = m.memberId || m.name || Math.random().toString();
+                if (seen.has(id)) return;
+                seen.add(id);
+                list.push(m);
+            }
+
+            try {
+                const history = JSON.parse(localStorage.getItem('horo_history')) || [];
+                history.forEach(addMember);
+            } catch(e) {}
+
+            try {
+                const sm = JSON.parse(localStorage.getItem('siamhora_members')) || [];
+                sm.forEach(addMember);
+            } catch(e) {}
+
+            try {
+                const p = JSON.parse(localStorage.getItem('thaiHoroProfile'));
+                addMember(p);
+            } catch(e) {}
+
+            const demo = [
+                { memberId: "MEM-001", name: "พิกุรห์", lastName: "บุญเพ็ชร์", birthdate: "1995-03-02", birthtime: "14:26" },
+                { memberId: "MEM-002", name: "สมชาย", lastName: "มั่นคง", birthdate: "1988-08-15", birthtime: "08:30" },
+                { memberId: "MEM-003", name: "ศิริพร", lastName: "เจริญสุข", birthdate: "2000-12-24", birthtime: "19:15" },
+                { memberId: "MEM-004", name: "กฤษณะ", lastName: "มหาลาภ", birthdate: "1983-05-20", birthtime: "20:05" }
+            ];
+            demo.forEach(addMember);
+
+            return list;
+        }
+
+        function initMemberDropdown() {
+            globalMembersList = loadAllAvailableMembers();
+            const sel = document.getElementById('mainMemberSelector');
+            if (!sel) return;
+
+            sel.innerHTML = '<option value="">-- เลือกสมาชิกเพื่อโหลดข้อมูลอัตโนมัติ --</option>';
+            globalMembersList.forEach((m, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                const nameDisplay = `${m.name || 'ไม่ระบุชื่อ'} ${m.lastName || ''}`.trim();
+                const bdateDisplay = m.birthdate || 'ไม่ระบุวันเกิด';
+                const btimeDisplay = m.birthtime || '12:00';
+                opt.textContent = `👤 ${m.memberId ? `[${m.memberId}] ` : ''}${nameDisplay} (เกิด: ${bdateDisplay} เวลา ${btimeDisplay} น.)`;
+                sel.appendChild(opt);
+            });
+        }
+
+        function onSelectMemberDropdown(idx) {
+            if (idx === "" || idx === undefined) return;
+            const member = globalMembersList[idx];
+            if (!member) return;
+
+            const fullName = `${member.name || ''} ${member.lastName || ''}`.trim() || "เจ้าชะตา";
+            document.getElementById('targetName').value = fullName;
+
+            const formattedDate = formatToDateInputValue(member.birthdate);
+            document.getElementById('targetBirthDate').value = formattedDate;
+
+            let bTime = member.birthtime || "06:00";
+            if (bTime.includes('T')) bTime = bTime.split('T')[1];
+            bTime = bTime.substring(0, 5);
+            document.getElementById('targetBirthTime').value = bTime;
+
+            processHoroscopeCalculation();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'เปลี่ยนข้อมูลสมาชิกสำเร็จ',
+                text: `โหลดข้อมูลของคุณ ${fullName} (วันเกิด: ${formattedDate} เวลา ${bTime} น.) และคำนวณดวงชะตาใหม่เรียบร้อยแล้ว`,
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // เติมตัวเลือกอายุ 1-100 ปี
+        function populateAgeDropdown(birthYear, currentAgeYang) {
+            const sel = document.getElementById('selTargetAge');
+            if (!sel) return;
+
+            sel.innerHTML = '';
+            for (let a = 1; a <= 100; a++) {
+                const opt = document.createElement('option');
+                opt.value = a;
+                const yBE = birthYear ? (birthYear + a - 1 + 543) : '';
+                const isCur = (a === currentAgeYang) ? ' (ปีปัจจุบัน)' : '';
+                opt.textContent = `อายุย่าง ${a} ปี ${yBE ? `(พ.ศ. ${yBE})` : ''}${isCur}`;
+                sel.appendChild(opt);
+            }
+            sel.value = selectedAgeYang;
+        }
+
+        function changeSelectedAge(delta) {
+            let newAge = selectedAgeYang + delta;
+            if (newAge < 1) newAge = 1;
+            if (newAge > 100) newAge = 100;
+            selectedAgeYang = newAge;
+            document.getElementById('selTargetAge').value = selectedAgeYang;
+            renderDynamicYearAndMonths();
+        }
+
+        function onSelectAgeChange(val) {
+            selectedAgeYang = parseInt(val, 10) || 1;
+            renderDynamicYearAndMonths();
+        }
+
+        function resetToCurrentAge() {
+            if (currentHoroData) {
+                selectedAgeYang = currentHoroData.ageYang;
+                document.getElementById('selTargetAge').value = selectedAgeYang;
+                renderDynamicYearAndMonths();
+            }
+        }
+
+        function processHoroscopeCalculation() {
+            const birthDateStr = document.getElementById('targetBirthDate').value;
+            const birthTimeStr = document.getElementById('targetBirthTime').value || "20:05";
+
+            if (!birthDateStr) {
+                Swal.fire('แจ้งเตือน', 'กรุณาระบุวันเกิด', 'warning');
+                return;
+            }
+
+            currentHoroData = ThaiHoroProEngine.calculateFullHoroscope(birthDateStr, birthTimeStr);
+            selectedAgeYang = currentHoroData.ageYang;
+
+            const bYear = new Date(birthDateStr).getFullYear();
+            populateAgeDropdown(bYear, currentHoroData.ageYang);
+
+            refreshVisuals();
+            renderPredictions();
+        }
+
+        function refreshVisuals() {
+            if (!currentHoroData) return;
+
+            const showKaset = document.getElementById('chkKaset').checked;
+            const showHouse = document.getElementById('chkHouse').checked;
+            const showTransit = document.getElementById('chkTransit').checked;
+
+            ThaiHoroProUI.renderRasiChart('rasiCanvas', currentHoroData, { showKaset, showHouse, showTransit });
+            ThaiHoroProUI.renderNavamshaChart('navCanvas', currentHoroData, { showTransit });
+            ThaiHoroProUI.renderDrekkanaChart('drekCanvas', currentHoroData, { showTransit });
+            ThaiHoroProUI.renderThaksaTable('thaksaContainer', currentHoroData.thaksa);
+            ThaiHoroProUI.renderTrivaiTable('trivaiContainer', currentHoroData.trivai);
+        }
+
+        function renderPredictions() {
+            if (!currentHoroData || !currentHoroData.reading) return;
+            const reading = currentHoroData.reading;
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+
+            // ภาพรวม
+            document.getElementById('readBasic').innerHTML = `
+                <div style="font-size:1.1rem; font-weight:700; color:#1e293b; margin-bottom:8px;">
+                    ดวงชะตาของคุณ: <span style="color:#d97706;">${targetName}</span> (เกิด ${document.getElementById('targetBirthDate').value} เวลา ${document.getElementById('targetBirthTime').value} น. / อายุย่าง ${currentHoroData.ageYang} ปี)
+                </div>
+                <p style="font-size: 1.05rem; line-height: 1.8;">${reading.basicSummary.character}</p>
+                <div style="margin-top: 12px; color: #475569; font-size: 0.95rem; line-height: 1.7; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <strong>ลัคนาสถิต:</strong> ราศี${reading.basicSummary.ascName} (${currentHoroData.asc.deg}° ${currentHoroData.asc.min}') | 
+                    <strong>นวางค์ลัคนา:</strong> ราศี${reading.basicSummary.navamshaAsc} | 
+                    <strong>ตรียางค์ลัคนา:</strong> ราศี${reading.basicSummary.drekkanaAsc} | 
+                    <strong>ดาวตนุลัคน์:</strong> ${reading.basicSummary.lordName} กุมภพ${reading.basicSummary.lordInHouse}
+                </div>
+            `;
+
+            // 12 ภพ
+            const tbody = document.getElementById('housesTableBody');
+            tbody.innerHTML = reading.housesAnalysis.map(h => `
+                <tr style="vertical-align: top;">
+                    <td style="font-weight:700; color:#1e1b4b; white-space:nowrap; background:#f8fafc;">
+                        <span style="font-size:1.05rem;">${h.name}</span>
+                        <div style="font-size:0.8rem; color:#64748b; font-weight:normal;">(${h.meaning.split(' ')[0]})</div>
+                    </td>
+                    <td style="white-space:nowrap; text-align:center;">
+                        <strong>ราศี${h.rasi}</strong>
+                        <div style="font-size:0.8rem; color:#64748b;">(ธาตุ${h.element})</div>
+                    </td>
+                    <td style="white-space:nowrap; text-align:center;">
+                        <strong style="color:#4f46e5;">ดาว${h.lord}</strong>
+                        <div style="font-size:0.8rem; color:#059669; font-weight:600;">(สถิตภพ ${h.lordInHouse})</div>
+                    </td>
+                    <td style="white-space:nowrap; text-align:center;">
+                        <span style="display:inline-block; padding:3px 8px; border-radius:6px; background:${h.occupants === 'ไม่มีดาวสถิต' ? '#f1f5f9' : '#e0e7ff'}; color:${h.occupants === 'ไม่มีดาวสถิต' ? '#94a3b8' : '#3730a3'}; font-weight:600; font-size:0.9rem;">
+                            ${h.occupants}
+                        </span>
+                    </td>
+                    <td style="font-size:0.95rem; line-height:1.7;">
+                        ${h.detailsHTML || h.meaning}
+                    </td>
+                </tr>
+            `).join('');
+
+            // เจาะลึก 5 มิติชีวิตเฉพาะบุคคล
+            if (reading.lifeAspects) {
+                const la = reading.lifeAspects;
+                const aspectsDiv = document.getElementById('readLifeAspectsArea');
+                aspectsDiv.innerHTML = `
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid #3b82f6;">
+                        <div style="font-weight:700; color:#1e3a8a; font-size:1.05rem; margin-bottom:8px;">
+                            <i class="fas fa-briefcase"></i> 1. อาชีพ & ธุรกิจที่ถูกโฉลกสร้างความร่ำรวย
+                        </div>
+                        <div style="font-size:0.95rem; line-height:1.7; color:#1e293b; margin-bottom:6px;">
+                            <strong>สายงานที่ส่งเสริมดวง:</strong> ${la.career.title}
+                        </div>
+                        <div style="font-size:0.9rem; color:#475569; line-height:1.6; background:#eff6ff; padding:8px 10px; border-radius:6px;">
+                            💡 ${la.career.advice} (ดาวกัมมะ: ${la.career.lord} สถิตภพ ${la.career.houseLordIn})
+                        </div>
+                    </div>
+
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid #10b981;">
+                        <div style="font-weight:700; color:#065f46; font-size:1.05rem; margin-bottom:8px;">
+                            <i class="fas fa-users"></i> 2. พี่น้อง & ญาติมิตร (Siblings & Bond)
+                        </div>
+                        <div style="font-size:0.95rem; line-height:1.7; color:#1e293b; margin-bottom:6px;">
+                            <strong>เกณฑ์จำนวนพี่น้อง:</strong> ${la.siblings.estimate}
+                        </div>
+                        <div style="font-size:0.9rem; color:#475569; line-height:1.6; background:#f0fdf4; padding:8px 10px; border-radius:6px;">
+                            🤝 ${la.siblings.bond}
+                        </div>
+                    </div>
+
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid #f59e0b;">
+                        <div style="font-weight:700; color:#92400e; font-size:1.05rem; margin-bottom:8px;">
+                            <i class="fas fa-home"></i> 3. บิดามารดา & วงศ์ตระกูล (Parents & Lineage)
+                        </div>
+                        <div style="font-size:0.92rem; line-height:1.7; color:#1e293b; margin-bottom:6px;">
+                            👨 <strong>บิดา (พ่อ):</strong> ${la.parents.father}
+                        </div>
+                        <div style="font-size:0.92rem; line-height:1.7; color:#1e293b;">
+                            👩 <strong>มารดา (แม่):</strong> ${la.parents.mother}
+                        </div>
+                    </div>
+
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid #ec4899;">
+                        <div style="font-weight:700; color:#9d174d; font-size:1.05rem; margin-bottom:8px;">
+                            <i class="fas fa-heart"></i> 4. คู่ครอง & ชีวิตสมรส (Spouse & Partnership)
+                        </div>
+                        <div style="font-size:0.95rem; line-height:1.7; color:#1e293b;">
+                            ${la.spouse.desc}
+                        </div>
+                    </div>
+
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid #ef4444;">
+                        <div style="font-weight:700; color:#991b1b; font-size:1.05rem; margin-bottom:8px;">
+                            <i class="fas fa-heartbeat"></i> 5. สุขภาพ & โรคภัยที่ต้องระวัง (Health Caution)
+                        </div>
+                        <div style="font-size:0.95rem; line-height:1.7; color:#1e293b;">
+                            ${la.health.advice}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 2.2 คลังพยากรณ์ชั้นครู & ศาสตร์มหาทักษาชั้นสูง
+            const advDiv = document.getElementById('readAdvancedDoctrinesArea');
+            if (advDiv) {
+                const nak = reading.birthNakshatra;
+                const dignities = reading.dignities || [];
+                const khaata = reading.khaata || [];
+                const aura = reading.aura;
+                const tier = reading.destinyTier;
+
+                let dignitiesHTML = dignities.length > 0 ? dignities.map(d => `
+                    <div style="margin-bottom:6px; font-size:0.9rem; line-height:1.6;">
+                        <strong>ดาว${d.planet} (${d.num}):</strong> สถิตราศี${d.rasi} ได้ตำแหน่ง 
+                        ${d.dignities.map(dig => `<span style="${dig.style}; padding:1px 6px; border-radius:4px; font-size:0.75rem; font-weight:bold; margin:0 2px;">${dig.badge}</span>`).join(' ')}
+                        <div style="color:#475569; font-size:0.85rem; margin-top:2px;">${d.dignities.map(dig => dig.desc).join(' | ')}</div>
+                    </div>
+                `).join('') : '<div style="color:#64748b; font-size:0.9rem;">ดาวส่วนใหญ่ได้เกณฑ์มาตรฐานปกติ ไม่มีดาวบาป/ศุภเคราะห์ครองตำแหน่งสุดขั้ว</div>';
+
+                let khaataHTML = khaata.map(k => `
+                    <div style="margin-bottom:6px; font-size:0.9rem; line-height:1.6; background:${k.type === 'success' ? '#f0fdf4' : '#fff1f2'}; padding:6px 10px; border-radius:6px; border-left:3px solid ${k.type === 'success' ? '#16a34a' : '#e11d48'};">
+                        <strong style="color:${k.type === 'success' ? '#15803d' : '#be123c'};">${k.title}:</strong>
+                        <div style="color:#334155; font-size:0.85rem; margin-top:2px;">${k.desc}</div>
+                    </div>
+                `).join('');
+
+                advDiv.innerHTML = `
+                    <!-- 1. ฤกษ์กำเนิด -->
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid #f59e0b;">
+                        <div style="font-weight:700; color:#b45309; font-size:1.05rem; margin-bottom:8px;">
+                            <i class="fas fa-moon"></i> 1. ฤกษ์กำเนิด & นักษัตรประจำตัว (Nakshatra)
+                        </div>
+                        <div style="font-size:0.95rem; line-height:1.7; color:#1e293b; margin-bottom:6px;">
+                            <strong>นักษัตรที่ ${nak.index}:</strong> ${nak.name}นักษัตร (เสวย <strong>${nak.type}</strong>)
+                        </div>
+                        <div style="font-size:0.88rem; color:#475569; line-height:1.6; background:#fffbeb; padding:8px 10px; border-radius:6px;">
+                            🌟 ${nak.desc}
+                        </div>
+                    </div>
+
+                    <!-- 2. ตำแหน่งมาตรฐานดาว -->
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid #8b5cf6;">
+                        <div style="font-weight:700; color:#6d28d9; font-size:1.05rem; margin-bottom:8px;">
+                            <i class="fas fa-crown"></i> 2. มาตรฐานดาวเด่น (Dignities & Yoga)
+                        </div>
+                        ${dignitiesHTML}
+                    </div>
+
+                    <!-- 3. จุดคุ้มกัน & ฆาตชะตา -->
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid #ec4899;">
+                        <div style="font-weight:700; color:#be185d; font-size:1.05rem; margin-bottom:8px;">
+                            <i class="fas fa-shield-virus"></i> 3. ฆาตชะตา & จุดเปราะบาง (Khaata & Dosha)
+                        </div>
+                        ${khaataHTML}
+                    </div>
+
+                    <!-- 4. เลขศาสตร์ & ทิศมงคล -->
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid #10b981;">
+                        <div style="font-weight:700; color:#047857; font-size:1.05rem; margin-bottom:8px;">
+                            <i class="fas fa-compass"></i> 4. เลขศาสตร์มงคล & ทิศนำโชค (Auspicious Aura)
+                        </div>
+                        <div style="font-size:0.9rem; line-height:1.7; color:#1e293b;">
+                            <div>🔢 <strong>เลขนำโชคประจำตัว:</strong> <span style="font-weight:bold; color:#059669;">${aura.luckyNumbers}</span></div>
+                            <div>🤝 <strong>คู่เลขมงคลเจรจาค้าขาย:</strong> <span style="font-weight:bold; color:#2563eb;">${aura.luckyPairs}</span></div>
+                            <div>⛔ <strong>เลขอุปสรรคที่ควรเลี่ยง:</strong> <span style="font-weight:bold; color:#dc2626;">${aura.badNumber}</span></div>
+                            <div>🧭 <strong>ทิศมงคลเปิดทรัพย์:</strong> <span style="font-weight:bold; color:#d97706;">${aura.luckyDirection}</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 5. รหัสวาสนาชะตาชีวิต 10 ขั้น -->
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid #3b82f6;">
+                        <div style="font-weight:700; color:#1d4ed8; font-size:1.05rem; margin-bottom:8px;">
+                            <i class="fas fa-layer-group"></i> 5. รหัสวาสนาชะตาชีวิต (Destiny Blueprint)
+                        </div>
+                        <div style="font-size:0.95rem; line-height:1.7; color:#1e293b; margin-bottom:4px;">
+                            <strong>โครงสร้างวาสนา:</strong> <span style="color:#d97706; font-weight:bold;">${tier.tierName}</span>
+                        </div>
+                        <div style="font-size:0.88rem; color:#475569; line-height:1.6; background:#eff6ff; padding:8px 10px; border-radius:6px;">
+                            📜 ${tier.desc}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // แสดงคำทำนายรายปีและรายเดือนแบบ Dynamic
+            renderDynamicYearAndMonths();
+
+            // แสดงคำทำนายดวงวันจร
+            renderDailyPrediction();
+
+            // ดวงจร
+            document.getElementById('readTransits').innerHTML = `
+                <div style="margin-bottom: 10px;">${reading.transitPrediction.jove}</div>
+                <div style="margin-bottom: 10px;">${reading.transitPrediction.saturn}</div>
+                <div>${reading.transitPrediction.rahu}</div>
+            `;
+
+            // ทักษา
+            document.getElementById('readThaksaGuide').innerHTML = `
+                <div style="margin-bottom: 8px;">${reading.thaksaLifeGuide.sriNote}</div>
+                <div style="margin-bottom: 8px;">${reading.thaksaLifeGuide.dechaNote}</div>
+                <div>${reading.thaksaLifeGuide.kalaNote}</div>
+            `;
+        }
+
+        // คำนวณและแสดงผลคำทำนายรายปี (1-100) และ 12 เดือนที่แปรผันตามอายุย่างที่เลือก
+        function renderDynamicYearAndMonths() {
+            if (!currentHoroData) return;
+
+            const bYear = currentHoroData.birthDate.getFullYear();
+            const yearData = ThaiHoroProEngine.calculateSingleYearPrediction(currentHoroData.birthPlanetNum, selectedAgeYang, bYear);
+            const monthlyData = ThaiHoroProEngine.calculateMonthlyPredictionsForYear(currentHoroData.asc.rasiIndex, currentHoroData.birthPlanetNum, selectedAgeYang);
+
+            const isCurrent = (selectedAgeYang === currentHoroData.ageYang);
+
+            // แสดงหัวข้อ
+            document.getElementById('displaySelectedAgeHeader').textContent = `${selectedAgeYang} (พ.ศ. ${yearData.yearBE})`;
+
+            // รายละเอียดปีที่เลือก
+            const yearlyDiv = document.getElementById('readYearlyArea');
+            yearlyDiv.innerHTML = `
+                <div class="period-card ${isCurrent ? 'current' : ''}" style="box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #cbd5e1;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:6px;">
+                        <span style="font-size:1.15rem; font-weight:bold; color:#1e1b4b;">
+                            📅 ดวงชะตาในวัยอายุย่าง ${yearData.ageYang} ปี (ตรงกับปี พ.ศ. ${yearData.yearBE})
+                        </span>
+                        ${isCurrent ? '<span style="background:#d97706; color:white; font-size:0.8rem; padding:3px 10px; border-radius:12px; font-weight:bold;">📍 ปีปัจจุบันของคุณ</span>' : '<span style="color:#64748b; font-size:0.85rem;">พยากรณ์ล่วงหน้า/ย้อนหลัง</span>'}
+                    </div>
+                    <div style="font-size:1rem; line-height:1.8; color:#1f2937;">
+                        ${yearData.text}
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:8px; margin-top:12px; background:#ffffff; padding:10px; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.85rem;">
+                        <div>👑 <strong>บริวารจร:</strong> ${yearData.thaksaPositions.boriwan}</div>
+                        <div>💪 <strong>เดชจร:</strong> <span style="color:#b45309; font-weight:bold;">${yearData.thaksaPositions.decha}</span></div>
+                        <div>✨ <strong>ศรีจร:</strong> <span style="color:#15803d; font-weight:bold;">${yearData.thaksaPositions.sri}</span></div>
+                        <div>💼 <strong>มนตรีจร:</strong> ${yearData.thaksaPositions.montri}</div>
+                        <div>⚠️ <strong>กาลกิณีจร:</strong> <span style="color:#b91c1c; font-weight:bold;">${yearData.thaksaPositions.kalakini}</span></div>
+                    </div>
+                </div>
+            `;
+
+            // รายละเอียด 12 เดือนของปีที่เลือก
+            const monthlyDiv = document.getElementById('readMonthlyArea');
+            monthlyDiv.innerHTML = monthlyData.map(m => `
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px; box-shadow:0 2px 6px rgba(0,0,0,0.02);">
+                    <div style="font-weight:700; color:#1e293b; font-size:1.05rem; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                        <span><i class="fas fa-calendar-day text-gold"></i> เดือน${m.monthName} <span style="font-size:0.85rem; color:#64748b; font-weight:normal;">(ภพ${m.houseName} ราศี${m.rasiName})</span></span>
+                        ${m.specialBadge || ''}
+                    </div>
+                    <div style="font-size:0.92rem; line-height:1.7; color:#334155;">
+                        ${m.text}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // จัดการวันที่สำหรับดวงวันจร
+        let selectedDailyDate = new Date();
+
+        function renderDailyPrediction() {
+            if (!currentHoroData) return;
+
+            const datePicker = document.getElementById('dailyDatePicker');
+            if (datePicker && !datePicker.value) {
+                datePicker.value = selectedDailyDate.toISOString().split('T')[0];
+            }
+
+            const dailyData = ThaiHoroProEngine.calculateDailyPrediction(currentHoroData.asc.rasiIndex, currentHoroData.birthPlanetNum, selectedDailyDate);
+            const dailyArea = document.getElementById('readDailyArea');
+            if (!dailyArea) return;
+
+            const isToday = (selectedDailyDate.toDateString() === new Date().toDateString());
+
+            dailyArea.innerHTML = `
+                <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:18px; box-shadow:0 4px 12px rgba(0,0,0,0.03); border-left:5px solid #2563eb;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px; flex-wrap:wrap; gap:6px;">
+                        <div>
+                            <span style="font-size:1.15rem; font-weight:bold; color:#1e1b4b;">
+                                📅 ดวงวันจร: ${dailyData.dateDisplay}
+                            </span>
+                            <span style="font-size:0.9rem; color:#475569; margin-left:6px;">(${dailyData.dailyHighlight})</span>
+                        </div>
+                        ${isToday ? '<span style="background:#16a34a; color:white; font-size:0.8rem; padding:3px 10px; border-radius:12px; font-weight:bold;">📍 วันนี้ (Today)</span>' : '<span style="color:#64748b; font-size:0.85rem;">ดูดวงรายวันล่วงหน้า/ย้อนหลัง</span>'}
+                    </div>
+
+                    <!-- 1. พระจันทร์เสวยภพประจำวัน -->
+                    <div style="background:#eff6ff; padding:12px 14px; border-radius:8px; margin-bottom:12px; border:1px solid #bfdbfe;">
+                        <div style="font-weight:bold; color:#1d4ed8; font-size:0.98rem; margin-bottom:4px;">
+                            🌙 ตำแหน่งพระจันทร์จรประจำวัน (Moon Transit):
+                        </div>
+                        <div style="font-size:0.93rem; color:#1e293b; line-height:1.7;">
+                            ${dailyData.moonInfluenceText}
+                        </div>
+                    </div>
+
+                    <!-- 2. ทักษาจรประจำวัน & สีมงคลวันนี้ -->
+                    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px; margin-bottom:12px;">
+                        <div style="font-weight:bold; color:#1e293b; font-size:0.98rem; margin-bottom:6px;">
+                            🧭 ทักษาจรประจำวัน (Daily Energy):
+                        </div>
+                        <div style="font-size:0.92rem; color:#334155; line-height:1.7; margin-bottom:8px;">
+                            ${dailyData.dailyThaksaDesc}
+                        </div>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; font-size:0.9rem; margin-top:8px;">
+                            <div style="background:#f0fdf4; padding:8px 12px; border-radius:6px; border:1px solid #bbf7d0;">
+                                ✨ <strong>สีมงคลเสริมโชคลาภวันนี้:</strong><br>
+                                <span style="display:inline-flex; align-items:center; gap:5px; margin-top:3px; font-weight:600; color:#15803d;">
+                                    <span style="display:inline-block; width:12px; height:12px; background-color:${dailyData.sri.color}; border-radius:3px; border:1px solid rgba(0,0,0,0.15);"></span>
+                                    ${dailyData.sri.colorName} (ดาว${dailyData.sri.name})
+                                </span>
+                            </div>
+                            <div style="background:#fef2f2; padding:8px 12px; border-radius:6px; border:1px solid #fecaca;">
+                                ⚠️ <strong>สีกาลกิณีควรเลี่ยงวันนี้:</strong><br>
+                                <span style="display:inline-flex; align-items:center; gap:5px; margin-top:3px; font-weight:600; color:#b91c1c;">
+                                    <span style="display:inline-block; width:12px; height:12px; background-color:${dailyData.kala.color}; border-radius:3px; border:1px solid rgba(0,0,0,0.15);"></span>
+                                    ${dailyData.kala.colorName} (ดาว${dailyData.kala.name})
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function onDailyDateChange(dateVal) {
+            if (!dateVal) return;
+            selectedDailyDate = new Date(dateVal);
+            renderDailyPrediction();
+        }
+
+        function changeDailyDate(offsetDays) {
+            selectedDailyDate.setDate(selectedDailyDate.getDate() + offsetDays);
+            const datePicker = document.getElementById('dailyDatePicker');
+            if (datePicker) {
+                datePicker.value = selectedDailyDate.toISOString().split('T')[0];
+            }
+            renderDailyPrediction();
+        }
+
+        function resetToTodayDate() {
+            selectedDailyDate = new Date();
+            const datePicker = document.getElementById('dailyDatePicker');
+            if (datePicker) {
+                datePicker.value = selectedDailyDate.toISOString().split('T')[0];
+            }
+            renderDailyPrediction();
+        }
+
+        // จัดการสลับแท็บโหมดหลัก
+        let currentMainTab = 'personal'; // 'personal' | 'publicDaily'
+        let selectedPublicDate = new Date();
+
+        function switchMainTab(mode) {
+            currentMainTab = mode;
+            const btnPersonal = document.getElementById('tabBtnPersonal');
+            const btnPublic = document.getElementById('tabBtnPublicDaily');
+            const personalContainer = document.getElementById('personalModeContainer');
+            const publicContainer = document.getElementById('publicDailyModeContainer');
+
+            if (mode === 'personal') {
+                btnPersonal.style.background = '#2563eb';
+                btnPersonal.style.color = '#ffffff';
+                btnPersonal.style.border = 'none';
+                btnPersonal.style.boxShadow = '0 4px 12px rgba(37,99,235,0.25)';
+
+                btnPublic.style.background = '#f1f5f9';
+                btnPublic.style.color = '#475569';
+                btnPublic.style.border = '1px solid #cbd5e1';
+                btnPublic.style.boxShadow = 'none';
+
+                personalContainer.style.display = 'block';
+                publicContainer.style.display = 'none';
+            } else {
+                btnPublic.style.background = '#d97706';
+                btnPublic.style.color = '#ffffff';
+                btnPublic.style.border = 'none';
+                btnPublic.style.boxShadow = '0 4px 12px rgba(217,119,6,0.25)';
+
+                btnPersonal.style.background = '#f1f5f9';
+                btnPersonal.style.color = '#475569';
+                btnPersonal.style.border = '1px solid #cbd5e1';
+                btnPersonal.style.boxShadow = 'none';
+
+                personalContainer.style.display = 'none';
+                publicContainer.style.display = 'block';
+
+                renderPublicDailyOverview();
+            }
+        }
+
+        // จัดการและแสดงผลโหมดดวงรายวันสาธารณะ (12 ราศี, 7 วันเกิด, 12 นักษัตร)
+        function renderPublicDailyOverview() {
+            const datePicker = document.getElementById('publicDatePicker');
+            if (datePicker && !datePicker.value) {
+                datePicker.value = selectedPublicDate.toISOString().split('T')[0];
+            }
+
+            const data = ThaiHoroProEngine.calculatePublicDailyOverview(selectedPublicDate);
+            document.getElementById('publicDateTitle').innerHTML = `📅 ${data.dateDisplay} (พระอาทิตย์สถิตราศี${data.sunRasiName} • พระจันทร์สถิตราศี${data.moonRasiName})`;
+
+            // 1. Top 3 Lucky Zodiacs
+            const topDiv = document.getElementById('publicTopRasisArea');
+            topDiv.innerHTML = data.topRasis.map((r, i) => `
+                <div style="background:#ffffff; border-radius:8px; padding:12px 14px; border:1px solid #fde68a; display:flex; align-items:center; gap:12px;">
+                    <div style="font-size:1.8rem; font-weight:bold; color:${i === 0 ? '#d97706' : i === 1 ? '#475569' : '#b45309'};">
+                        #${i + 1}
+                    </div>
+                    <div>
+                        <div style="font-weight:bold; font-size:1.05rem; color:#1e1b4b;">ราศี${r.name} (${r.symbol})</div>
+                        <div style="font-size:0.85rem; color:#059669; font-weight:600;">${r.tag}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // 2. 12 ราศี (แสดงผลแบบ 4 มิติ: งาน เงิน รัก สุขภาพ)
+            const zodiacDiv = document.getElementById('publicZodiacGrid');
+            zodiacDiv.innerHTML = data.zodiacReadings.map(r => `
+                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-top:4px solid ${r.score >= 4 ? '#10b981' : r.score <= 2 ? '#ef4444' : '#3b82f6'};">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #f1f5f9; padding-bottom:8px; flex-wrap:wrap; gap:4px;">
+                        <span style="font-weight:700; font-size:1.1rem; color:#1e293b;">
+                            ${r.symbol} ราศี${r.name} <span style="font-size:0.85rem; color:#64748b; font-weight:normal;">(ธาตุ${r.element} • ภพ${r.moonHouse})</span>
+                        </span>
+                        <span style="font-size:0.8rem; font-weight:bold; padding:3px 10px; border-radius:12px; background:${r.score >= 4 ? '#dcfce7' : r.score <= 2 ? '#fee2e2' : '#e0e7ff'}; color:${r.score >= 4 ? '#15803d' : r.score <= 2 ? '#b91c1c' : '#3730a3'};">
+                            ${r.tag}
+                        </span>
+                    </div>
+
+                    <div style="font-size:0.9rem; line-height:1.6; color:#334155; display:grid; gap:8px;">
+                        <div style="background:#f8fafc; padding:8px 10px; border-radius:6px; border-left:3px solid #3b82f6;">
+                            💼 <strong>การงาน & ธุรกิจ:</strong> ${r.work}
+                        </div>
+                        <div style="background:#f8fafc; padding:8px 10px; border-radius:6px; border-left:3px solid #10b981;">
+                            💰 <strong>การเงิน & โชคลาภ:</strong> ${r.money}
+                        </div>
+                        <div style="background:#f8fafc; padding:8px 10px; border-radius:6px; border-left:3px solid #ec4899;">
+                            💖 <strong>ความรัก & ครอบครัว:</strong> ${r.love}
+                        </div>
+                        <div style="background:#f8fafc; padding:8px 10px; border-radius:6px; border-left:3px solid #f59e0b;">
+                            🩺 <strong>สุขภาพ & เสริมดวง:</strong> ${r.health}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // 3. 7 วันเกิด (แสดงผลแบบ 4 มิติ: ภาพรวม งาน เงิน ข้อควรระวัง + สีมงคล)
+            const daysDiv = document.getElementById('publicDaysGrid');
+            daysDiv.innerHTML = data.dayBornReadings.map(d => `
+                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); border-left:5px solid ${d.color};">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid #f1f5f9; padding-bottom:6px;">
+                        <strong style="font-size:1.1rem; color:#1e293b;">${d.name}</strong>
+                        <span style="font-size:0.8rem; font-weight:bold; padding:3px 10px; border-radius:12px; background:#eff6ff; color:#1d4ed8;">${d.badge}</span>
+                    </div>
+                    <div style="font-size:0.92rem; line-height:1.7; color:#334155; margin-bottom:10px;">
+                        ${d.overallDesc}
+                    </div>
+
+                    <div style="font-size:0.88rem; line-height:1.6; display:grid; gap:6px; margin-bottom:10px;">
+                        <div style="color:#1e3a8a;">💼 <strong>กลยุทธ์การงาน:</strong> ${d.careerTip}</div>
+                        <div style="color:#065f46;">💰 <strong>โอกาสการเงิน:</strong> ${d.moneyTip}</div>
+                        <div style="color:#991b1b;">⚠️ <strong>ข้อควรระวัง:</strong> ${d.cautionTip}</div>
+                    </div>
+
+                    <div style="font-size:0.85rem; background:#f8fafc; padding:8px 12px; border-radius:6px; border:1px dashed #cbd5e1; display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between;">
+                        <div>
+                            <span style="color:#15803d; font-weight:600;">✨ สีมงคลโชคลาภ:</span> ${d.sriColor} <span style="display:inline-block; width:10px; height:10px; background-color:${d.sriHex}; border-radius:2px; vertical-align:middle;"></span>
+                        </div>
+                        <div>
+                            <span style="color:#b45309; font-weight:600;">💪 สีเดชอำนาจ:</span> ${d.dechaColor} <span style="display:inline-block; width:10px; height:10px; background-color:${d.dechaHex}; border-radius:2px; vertical-align:middle;"></span>
+                        </div>
+                        <div>
+                            <span style="color:#b91c1c; font-weight:600;">⚠️ เลี่ยง:</span> ${d.kalaColor} <span style="display:inline-block; width:10px; height:10px; background-color:${d.kalaHex}; border-radius:2px; vertical-align:middle;"></span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // 4. 12 นักษัตร (แสดงผลสถานะ ชง/ฮะ/ซาฮะ + คำทำนายเฉพาะปี + เคล็ดลับเสริมดวง)
+            const animalDiv = document.getElementById('publicAnimalGrid');
+            animalDiv.innerHTML = data.animalReadings.map(a => `
+                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:14px; box-shadow:0 2px 6px rgba(0,0,0,0.02);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid #f1f5f9; padding-bottom:6px;">
+                        <strong style="font-size:1.05rem; color:#1e293b;">${a.name} <span style="font-size:0.8rem; color:#64748b; font-weight:normal;">(ธาตุ${a.element})</span></strong>
+                        <span style="font-size:0.75rem; padding:2px 8px; border-radius:6px; ${a.statusStyle}">${a.status}</span>
+                    </div>
+                    <div style="font-size:0.9rem; line-height:1.6; color:#334155; margin-bottom:8px;">
+                        ${a.desc}
+                    </div>
+                    <div style="font-size:0.82rem; color:#059669; background:#f0fdf4; padding:6px 10px; border-radius:6px; border:1px solid #bbf7d0;">
+                        💡 <strong>เคล็ดลับเปิดโชค:</strong> ${a.luckTip}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function onPublicDateChange(dateVal) {
+            if (!dateVal) return;
+            selectedPublicDate = new Date(dateVal);
+            renderPublicDailyOverview();
+        }
+
+        function changePublicDate(offsetDays) {
+            selectedPublicDate.setDate(selectedPublicDate.getDate() + offsetDays);
+            const datePicker = document.getElementById('publicDatePicker');
+            if (datePicker) {
+                datePicker.value = selectedPublicDate.toISOString().split('T')[0];
+            }
+            renderPublicDailyOverview();
+        }
+
+        function resetPublicDateToday() {
+            selectedPublicDate = new Date();
+            const datePicker = document.getElementById('publicDatePicker');
+            if (datePicker) {
+                datePicker.value = selectedPublicDate.toISOString().split('T')[0];
+            }
+            renderPublicDailyOverview();
+        }
+
+        function exportChartImage() {
+            const name = document.getElementById('targetName').value || 'horoscope';
+            ThaiHoroProUI.saveChartImage('chartCaptureArea', `${name}_horoscope_pro_full.png`);
+        }
+        function exportSingleWheel(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const link = document.createElement("a");
+            link.download = filename;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        }
+        function exportThaksaImage() {
+            ThaiHoroProUI.saveChartImage('thaksaContainer', `thaksa_chart.png`);
+        }
+        function exportTrivaiImage() {
+            ThaiHoroProUI.saveChartImage('trivaiContainer', `trivai_chart.png`);
+        }
+
+        function copyChartLink() {
+            navigator.clipboard.writeText(window.location.href);
+            Swal.fire('คัดลอกสำเร็จ', 'คัดลอกลิงก์หน้าผูกดวงแล้ว', 'success');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initMemberDropdown();
+            processHoroscopeCalculation();
+        });
+    </script>
+</body>
+</html>

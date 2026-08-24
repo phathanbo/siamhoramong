@@ -274,13 +274,13 @@ async function postCarouselToFacebook() {
         
         let imagesHtml = '';
         images.forEach((img) => {
-            imagesHtml += `<img src="${img}" style="width: 48%; margin: 1%; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.3); display: inline-block;">`;
+            imagesHtml += '<img src="' + img + '" style="width: 48%; margin: 1%; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.3); display: inline-block;">';
         });
         
         // Preview Modal
         const confirmResult = await Swal.fire({
             title: 'ยืนยันการโพสต์อัลบั้ม',
-                        html: `
+            html: \`
                 <div style="background: #ffffff; color: #1c1e21; border-radius: 12px; width: 100%; text-align: left; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;">
                     <div style="display: flex; padding: 12px 16px; gap: 10px; align-items: center;">
                         <div style="width: 40px; height: 40px; border-radius: 50%; background: #ccc; overflow: hidden;">
@@ -291,9 +291,9 @@ async function postCarouselToFacebook() {
                             <span style="font-size: 13px; color: #65676b;">เพิ่งครู่ · 🌎</span>
                         </div>
                     </div>
-                    <div style="padding: 4px 16px 16px 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; color: #050505; max-height: 200px; overflow-y: auto;">${msg}</div>
+                    <div style="padding: 4px 16px 16px 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; color: #050505; max-height: 200px; overflow-y: auto;">\${msg}</div>
                     <div style="max-height: 300px; overflow-y: auto; text-align: center; border-top: 1px solid #eee; background: #f0f2f5; padding: 5px;">
-                        ${imagesHtml}
+                        \${imagesHtml}
                     </div>
                 </div>
                 <div style="margin-top: 20px; text-align: left; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid #333;">
@@ -303,7 +303,7 @@ async function postCarouselToFacebook() {
                     <label style="color: #bbb; font-size: 13px; display: block; margin-bottom: 5px;">เช็คอินสถานที่ (รหัส Place ID):</label>
                     <input type="text" id="swalPlaceId" placeholder="เช่น 108398189188044 (Bangkok)" style="width: 95%; padding: 10px; border-radius: 6px; background: #1a1a1a; color: #fff; border: 1px solid #444; font-family: inherit; font-size: 14px;">
                 </div>
-            `,
+            \`,
             showCancelButton: true,
             confirmButtonText: '<i class="fas fa-paper-plane"></i> ยืนยันโพสต์อัลบั้ม',
             cancelButtonText: 'ยกเลิก',

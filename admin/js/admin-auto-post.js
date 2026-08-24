@@ -264,7 +264,7 @@ function generateTarotTemplate(dateObj, dateThai, container) {
 
 function generateZodiacAllTemplate(dateObj, dateThai, container) {
     container.className = 'canvas-container template-combined-all';
-    container.style.backgroundImage = "url('assets/zodiac_bg.png')";
+    container.style.backgroundImage = "url('../assets/zodiac_bg.png')";
 
     const predictions = (typeof generateDailyZodiacFortunes === 'function') ? generateDailyZodiacFortunes(dateObj) : [];
 
@@ -300,7 +300,7 @@ function generateZodiacAllTemplate(dateObj, dateThai, container) {
 
 function generateSevendaysAllTemplate(dateObj, dateThai, container) {
     container.className = 'canvas-container template-combined-all';
-    container.style.backgroundImage = "url('assets/sevendays_bg.png')";
+    container.style.backgroundImage = "url('../assets/sevendays_bg.png')";
 
     const baseMeanings = [
         "งานราบรื่น เงินดี รักสดใส",
@@ -338,7 +338,7 @@ function generateSevendaysAllTemplate(dateObj, dateThai, container) {
 
 function generateThaiAscendantAllTemplate(dateObj, dateThai, container) {
     container.className = 'canvas-container template-combined-all';
-    container.style.backgroundImage = "url('assets/zodiac_bg.png')"; // Reusing starry background for Astro
+    container.style.backgroundImage = "url('../assets/zodiac_bg.png')"; // Reusing starry background for Astro
 
     const ascendants = ["เมษ", "พฤษภ", "เมถุน", "กรกฎ", "สิงห์", "กันย์", "ตุลย์", "พิจิก", "ธนู", "มังกร", "กุมภ์", "มีน"];
     
@@ -376,7 +376,7 @@ function generateThaiAscendantAllTemplate(dateObj, dateThai, container) {
 
 function generateThaiAnimalAllTemplate(dateObj, dateThai, container) {
     container.className = 'canvas-container template-combined-all';
-    container.style.backgroundImage = "url('assets/sevendays_bg.png')";
+    container.style.backgroundImage = "url('../assets/sevendays_bg.png')";
 
     const animals = ["ชวด 🐀", "ฉลู 🐂", "ขาล 🐅", "เถาะ 🐇", "มะโรง 🐉", "มะเส็ง 🐍", "มะเมีย 🐎", "มะแม 🐐", "วอก 🐒", "ระกา 🐓", "จอ 🐕", "กุน 🐖"];
     const baseMeanings = [
@@ -413,7 +413,7 @@ async function drawZodiacCanvas(ctx, dateObj, dateThai) {
     const pred = predictions.find(p => p.id == targetId);
     if (!pred) throw new Error("ไม่พบข้อมูลราศี");
 
-    const bgImg = new Image(); bgImg.src = 'assets/zodiac_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/zodiac_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -474,7 +474,7 @@ async function drawSevendaysCanvas(ctx, dateObj, dateThai) {
     const workDesc = baseMeanings[(seed + 1) % baseMeanings.length];
     const finDesc = baseMeanings[(seed + 2) % baseMeanings.length];
 
-    const bgImg = new Image(); bgImg.src = 'assets/sevendays_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/sevendays_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -505,7 +505,7 @@ async function drawSevendaysCanvas(ctx, dateObj, dateThai) {
 
 async function drawTarotCanvas(ctx, dateObj, dateThai) {
     const card = tarotCards[Math.floor(Math.random() * tarotCards.length)];
-    const bgImg = new Image(); bgImg.src = 'assets/tarot_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/tarot_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -562,7 +562,7 @@ async function drawTarotCanvas(ctx, dateObj, dateThai) {
 }
 
 async function drawZodiacAllCanvas(ctx, dateObj, dateThai) {
-    const bgImg = new Image(); bgImg.src = 'assets/zodiac_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/zodiac_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -603,7 +603,7 @@ async function drawZodiacAllCanvas(ctx, dateObj, dateThai) {
 }
 
 async function drawSevendaysAllCanvas(ctx, dateObj, dateThai) {
-    const bgImg = new Image(); bgImg.src = 'assets/sevendays_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/sevendays_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -678,7 +678,7 @@ async function drawSevendaysAllCanvas(ctx, dateObj, dateThai) {
 }
 
 async function drawThaiAscendantAllCanvas(ctx, dateObj, dateThai) {
-    const bgImg = new Image(); bgImg.src = 'assets/zodiac_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/zodiac_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -708,7 +708,7 @@ async function drawThaiAscendantAllCanvas(ctx, dateObj, dateThai) {
 }
 
 async function drawThaiAnimalAllCanvas(ctx, dateObj, dateThai) {
-    const bgImg = new Image(); bgImg.src = 'assets/sevendays_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/sevendays_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     

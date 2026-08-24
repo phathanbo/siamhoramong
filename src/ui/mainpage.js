@@ -33,6 +33,7 @@ const APP_MENU = [
     { id: 'sevenDigitsPage', title: 'เลข 7 ตัว ฐาน 4', icon: 'fa-layer-group', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
     { id: 'horoscopeseven', title: 'เลข 7 ตัว ฐาน 4<br>(ตำราโบราณ)', icon: 'fa-layer-group', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
     { id: 'thaiAstrology', title: '🔮 โหราศาสตร์ไทย<br>(ดาวเกิด)', icon: 'fa-stars', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },   
+    { id: 'thaiHoroscopeProPage', title: '☸️ ราศีจักร-ทักษา-ตรีวัย<br>(ผูกดวงมืออาชีพ)', icon: 'fa-dharmachakra', color: '#ffb703', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/thai-horoscope-pro.html' },
     { id: 'thaiAstrologyEngine', title: '🔮 วิเคราะห์ดวงชะตา<br>(ระบบสมบูรณ์)', icon: 'fa-sun', color: '#F9E596', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/thai-astrology-engine.html' },
     { id: 'thaiHoraBookPage', title: '📘 ตำราโหราศาสตร์<br>(สิงห์โต สุริยาอารักษ์)', icon: 'fa-book', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/horasat.html' },
     { id: 'thaiHoraPage', title: 'โหราศาสตร์ไทย', icon: 'fa-star-and-crescent', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
@@ -180,21 +181,23 @@ function buildDashboard() {
         const style = document.createElement('style');
         style.id = 'dashboardStyles';
         style.textContent = '.dashboard-card {' +
-            'background: linear-gradient(135deg, rgba(18, 26, 46, 0.95) 0%, rgba(10, 15, 29, 0.95) 100%) !important;' +
-            'border: 1px solid rgba(212, 175, 55, 0.4) !important;' +
-            'border-radius: 18px;' +
-            'padding: 20px 15px;' +
+            'background: linear-gradient(135deg, rgba(35, 52, 88, 0.75) 0%, rgba(20, 32, 58, 0.85) 100%) !important;' +
+            'border: 1px solid rgba(241, 208, 110, 0.35) !important;' +
+            'border-radius: 20px;' +
+            'padding: 22px 18px;' +
             'height: 100%;' +
             'position: relative;' +
             'overflow: hidden;' +
-            'box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;' +
-            'backdrop-filter: blur(16px);' +
+            'box-shadow: 0 14px 35px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;' +
+            'backdrop-filter: blur(20px);' +
+            '-webkit-backdrop-filter: blur(20px);' +
             'transition: all 0.35s cubic-bezier(0.23, 1, 0.320, 1);' +
             '}' +
             '.dashboard-card:hover {' +
             'transform: translateY(-8px) scale(1.03);' +
-            'border-color: #D4AF37 !important;' +
-            'box-shadow: 0 20px 45px rgba(212, 175, 55, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;' +
+            'border-color: rgba(255, 243, 176, 0.8) !important;' +
+            'box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45), 0 0 25px rgba(241, 208, 110, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;' +
+            'background: linear-gradient(135deg, rgba(45, 66, 110, 0.85) 0%, rgba(25, 40, 72, 0.9) 100%) !important;' +
             '}' +
             '.dashboard-card::before {' +
             'content: "";' +
@@ -203,8 +206,8 @@ function buildDashboard() {
             'left: -100%;' +
             'width: 100%;' +
             'height: 100%;' +
-            'background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);' +
-            'transition: left 0.5s;' +
+            'background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);' +
+            'transition: left 0.6s;' +
             '}' +
             '.dashboard-card:hover::before { left: 100%; }' +
             '.card-icon-wrapper {' +
@@ -214,27 +217,28 @@ function buildDashboard() {
             'justify-content: center;' +
             'align-items: center;' +
             'height: 70px;' +
-            'background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(10, 15, 29, 0.4) 100%);' +
-            'border: 1px solid rgba(212, 175, 55, 0.25);' +
-            'border-radius: 16px;' +
+            'background: radial-gradient(circle, rgba(241, 208, 110, 0.25) 0%, rgba(20, 32, 58, 0.5) 100%);' +
+            'border: 1px solid rgba(241, 208, 110, 0.35);' +
+            'border-radius: 18px;' +
+            'box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);' +
             'transition: all 0.3s ease;' +
             '}' +
-            '.dashboard-card:hover .card-icon-wrapper { transform: scale(1.15) rotate(5deg); border-color: rgba(212, 175, 55, 0.6); box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }' +
+            '.dashboard-card:hover .card-icon-wrapper { transform: scale(1.15) rotate(4deg); border-color: #FFF0A8; box-shadow: 0 0 20px rgba(241, 208, 110, 0.5); }' +
             '.dashboard-card .card-title {' +
-            'color: #F9E596 !important;' +
+            'color: #FFFFFF !important;' +
             'background: none !important;' +
-            '-webkit-text-fill-color: #F3F4F6 !important;' +
+            '-webkit-text-fill-color: #FFFFFF !important;' +
             'font-size: 1.05rem !important;' +
             'font-weight: 600 !important;' +
             'letter-spacing: 0.3px;' +
-            'text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8) !important;' +
+            'text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;' +
             'line-height: 1.4 !important;' +
             'margin: 0;' +
             '}' +
             '.dashboard-card:hover .card-title {' +
-            'color: #D4AF37 !important;' +
-            '-webkit-text-fill-color: #F9E596 !important;' +
-            'text-shadow: 0 0 12px rgba(212, 175, 55, 0.6) !important;' +
+            'color: #FFF0A8 !important;' +
+            '-webkit-text-fill-color: #FFF0A8 !important;' +
+            'text-shadow: 0 0 15px rgba(241, 208, 110, 0.8) !important;' +
             '}' +
             '.card-shine {' +
             'position: absolute;' +
@@ -242,7 +246,7 @@ function buildDashboard() {
             'left: 0;' +
             'width: 100%;' +
             'height: 100%;' +
-            'background: radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 50%);' +
+            'background: radial-gradient(circle at 20% 50%, rgba(241, 208, 110, 0.2) 0%, transparent 60%);' +
             'pointer-events: none;' +
             'opacity: 0;' +
             'transition: opacity 0.3s;' +

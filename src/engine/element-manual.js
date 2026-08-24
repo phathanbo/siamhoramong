@@ -1,5 +1,17 @@
 "use strict";
 
+/**
+ * แปลงปี พ.ศ. เป็น ค.ศ. แบบปลอดภัย
+ */
+function toCE(year) {
+    if (!year || isNaN(year)) return new Date().getFullYear();
+    year = parseInt(year, 10);
+    return year > 2400 ? year - 543 : year;
+}
+if (typeof window !== 'undefined' && !window.toCE) {
+    window.toCE = toCE;
+}
+
 // ===== ข้อมูลพยากรณ์รายธาตุ (อิงหลักเบญจธาตุ ไทย–จีน) =====
 const ELEM_FORTUNE = {
     "ธาตุไฟ": {
@@ -102,16 +114,21 @@ const ELEM_FORTUNE = {
 
 const ELEM_THAI_DAYS = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
 const ELEM_EMOJI = { "ธาตุไฟ":"🔥","ธาตุดิน":"⛰️","ธาตุน้ำ":"💧","ธาตุลม":"🌬️","ธาตุไม้":"🌳","ธาตุทอง":"🪙" };
+
 function selectElemMember(birthdate, name) {
-    // แปลง dd/mm/yyyy (พ.ศ. หรือ ค.ศ.) → yyyy-mm-dd (ค.ศ.)
     let dateISO = '';
     if (birthdate && birthdate.includes('/')) {
         const parts = birthdate.split('/');
-        let year = parseInt(parts[2]);
+        let day = (parts[0] || '1').padStart(2, '0');
+        let month = (parts[1] || '1').padStart(2, '0');
+        let year = parseInt(parts[2] || '2000', 10);
         year = toCE(year);
-        dateISO = `${year}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+        dateISO = `${year}-${month}-${day}`;
     } else if (birthdate && birthdate.includes('-')) {
-        dateISO = birthdate.split('T')[0];
+        const parts = birthdate.split('T')[0].split('-');
+        let year = parseInt(parts[0], 10);
+        year = toCE(year);
+        dateISO = `${year}-${(parts[1] || '01').padStart(2, '0')}-${(parts[2] || '01').padStart(2, '0')}`;
     }
     const d = document.getElementById('elemPersonalDate');
     const n = document.getElementById('elemPersonalName');
@@ -124,21 +141,25 @@ function renderElemHistory() {
     const container = document.getElementById('elemHistoryList');
     if (!container) return;
 
-    const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
-    const history = typeof filterHistoryByCurrentUser === 'function'
-        ? filterHistoryByCurrentUser(allHistory)
-        : allHistory;
+    let history = [];
+    try {
+        const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
+        history = typeof filterHistoryByCurrentUser === 'function'
+            ? filterHistoryByCurrentUser(allHistory)
+            : allHistory;
+    } catch (e) {
+        console.warn("Error loading history for element manual", e);
+    }
 
-    if (!history.length) {
-        container.innerHTML = '<small class="text-muted">ยังไม่มีสมาชิก — เพิ่มสมาชิกในระบบก่อน</small>';
+    if (!history || !history.length) {
+        container.innerHTML = '<small class="text-muted">ยังไม่มีสมาชิกในระบบ — กรอกวันเกิดด้านล่างได้เลยครับ</small>';
         return;
     }
 
-    const options = history.map(m => {
-        const fullName = [m.name, m.lastName].filter(Boolean).join(' ') || 'ไม่มีชื่อ';
+    const options = history.map((m, idx) => {
+        const fullName = [m.name, m.lastName].filter(Boolean).join(' ') || m.name || 'ไม่มีชื่อ';
         const birthdate = m.birthdate || '';
-        const value = JSON.stringify({ birthdate, name: fullName });
-        return `<option value='${value.replace(/'/g,"&apos;")}'>${fullName} — ${birthdate}</option>`;
+        return `<option value="${idx}">${fullName} ${birthdate ? `(${birthdate})` : ''}</option>`;
     }).join('');
 
     container.innerHTML = `
@@ -150,7 +171,7 @@ function renderElemHistory() {
             </select>
           </div>
           <div class="col-md-4">
-            <button class="btn btn-gold btn-block" onclick="onElemMemberSelect()">
+            <button class="btn btn-gold btn-block font-weight-bold" onclick="onElemMemberSelect()" style="background-color:#d4af37; color:#000;">
               🔮 วิเคราะห์ธาตุ
             </button>
           </div>
@@ -159,19 +180,88 @@ function renderElemHistory() {
 
 function onElemMemberSelect() {
     const sel = document.getElementById('elemMemberSelect');
-    if (!sel || !sel.value) { Swal.fire('แจ้งเตือน', 'กรุณาเลือกสมาชิก', 'warning'); return; }
+    if (!sel || sel.value === "") { 
+        if (typeof Swal !== 'undefined') Swal.fire('แจ้งเตือน', 'กรุณาเลือกสมาชิก', 'warning'); 
+        return; 
+    }
     try {
-        const m = JSON.parse(sel.value);
-        selectElemMember(m.birthdate, m.name);
-    } catch { Swal.fire('เกิดข้อผิดพลาด', 'ข้อมูลไม่ถูกต้อง', 'error'); }
+        const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
+        const history = typeof filterHistoryByCurrentUser === 'function'
+            ? filterHistoryByCurrentUser(allHistory)
+            : allHistory;
+        const idx = parseInt(sel.value, 10);
+        const m = history[idx];
+        if (m) {
+            const fullName = [m.name, m.lastName].filter(Boolean).join(' ') || m.name || '';
+            selectElemMember(m.birthdate, fullName);
+        }
+    } catch (err) { 
+        console.error("onElemMemberSelect error", err);
+        if (typeof Swal !== 'undefined') Swal.fire('เกิดข้อผิดพลาด', 'ข้อมูลสมาชิกไม่ถูกต้อง', 'error'); 
+    }
+}
+
+function resolveElementRelation(baseElem, targetElem) {
+    const b = (typeof baseElem === 'string' ? baseElem : (baseElem && baseElem.name ? baseElem.name : '')).replace('ธาตุ', '').split(' ')[0].trim();
+    const t = (typeof targetElem === 'string' ? targetElem : (targetElem && (targetElem.element || targetElem.name) ? (targetElem.element || targetElem.name) : '')).replace('ธาตุ', '').split(' ')[0].trim();
+    
+    if (!b || !t) return "เป็นกลาง (อยู่ร่วมกันได้)";
+    if (b === t) return "ธาตุเดียวกัน (ส่งเสริมความมั่นคง)";
+    
+    const relations = {
+        "ไฟ": {
+            "ลม": "หนุนส่ง (ลมช่วยให้ไฟโชติช่วง)",
+            "ไม้": "เกื้อกูล (ไม้เป็นเชื้อเพลิงหล่อเลี้ยงไฟ)",
+            "ดิน": "ถ่ายเท (ไฟเผาผลาญกลายเป็นขี้เถ้าดิน)",
+            "ทอง": "พิฆาต (ไฟหลอมละลายทองและโลหะ)",
+            "น้ำ": "พิฆาต (น้ำข่มดับไฟ)"
+        },
+        "ดิน": {
+            "ไฟ": "หนุนส่ง (ไฟเผาผลาญกลายเป็นดิน)",
+            "ทอง": "ถ่ายเท (ดินบ่มเพาะแร่ธาตุและทอง)",
+            "น้ำ": "พิฆาต (ดินกั้นและถมน้ำ)",
+            "ไม้": "พิฆาต (รากไม้ชอนไชทำลายดิน)",
+            "ลม": "ขัดเกลา (ลมพัดพาหน้าดินให้แห้ง)"
+        },
+        "ลม": {
+            "ไฟ": "หนุนส่ง (ลมช่วยพัดให้ไฟแรงและโชติช่วง)",
+            "น้ำ": "หนุนส่ง (ลมพากระแสฝนและเมฆหมอก)",
+            "ไม้": "เกื้อกูล (ลมช่วยกระจายเกสรไม้ให้เติบโต)",
+            "ดิน": "ถ่ายเท (ลมพัดพาหน้าดินและฝุ่นละออง)",
+            "ทอง": "พิฆาต (โลหะ/กำแพงต้านกระแสลม)"
+        },
+        "น้ำ": {
+            "ทอง": "หนุนส่ง (โลหะหลอมเหลวเป็นน้ำ/เรียกฝน)",
+            "ไม้": "ถ่ายเท (น้ำหล่อเลี้ยงต้นไม้ให้เติบโต)",
+            "ลม": "เกื้อกูล (ลมพาความชื้นและเมฆฝน)",
+            "ไฟ": "พิฆาต (น้ำดับไฟ)",
+            "ดิน": "พิฆาต (ดินกั้นและถมน้ำ)"
+        },
+        "ไม้": {
+            "น้ำ": "หนุนส่ง (น้ำหล่อเลี้ยงต้นไม้และรากแก้ว)",
+            "ดิน": "เกื้อกูล (ไม้หยั่งรากยึดเกาะในดิน)",
+            "ลม": "เกื้อกูล (ลมช่วยกระจายเมล็ดพันธุ์และเกสร)",
+            "ไฟ": "ถ่ายเท (ไม้เผาไหม้กลายเป็นเชื้อเพลิงให้ไฟ)",
+            "ทอง": "พิฆาต (ขวานและโลหะตัดกิ่งไม้)"
+        },
+        "ทอง": {
+            "ดิน": "หนุนส่ง (ดินสร้างและบ่มเพาะแร่ธาตุ)",
+            "น้ำ": "ถ่ายเท (ทองละลายเป็นน้ำและสร้างความเย็น)",
+            "ไฟ": "พิฆาต (ไฟหลอมละลายทองและโลหะ)",
+            "ไม้": "พิฆาต (ขวาน/โลหะตัดต้นไม้)",
+            "ลม": "ขัดเกลา (โลหะต้านแรงกระแทกของลม)"
+        }
+    };
+    
+    return relations[b]?.[t] || "เป็นกลาง (อยู่ร่วมกันได้)";
 }
 
 function getRelBadge(relStr) {
-    const s = typeof relStr === 'string' ? relStr : '';
+    const s = typeof relStr === 'string' ? relStr : (relStr && relStr.text ? relStr.text : '');
     if (!s) return { icon:'〰️', cls:'warning', label:'เป็นกลาง' };
-    if (s.includes('หนุนส่ง') || s.includes('เกื้อกูล') || s.includes('ธาตุเดียวกัน'))
+    if (s.includes('หนุนส่ง') || s.includes('เกื้อกูล') || s.includes('ธาตุเดียวกัน') || s.includes('ส่งเสริม'))
         return { icon:'✅', cls:'success', label:'ส่งเสริม' };
-    if (s.includes('พิฆาต'))
+    if (s.includes('พิฆาต') || s.includes('หักล้าง') || s.includes('ขัดแย้ง'))
         return { icon:'⚠️', cls:'danger', label:'ขัดแย้ง' };
     return { icon:'〰️', cls:'warning', label:'เป็นกลาง' };
 }
@@ -179,30 +269,41 @@ function getRelBadge(relStr) {
 function calculatePersonalElement() {
     const inp = document.getElementById('elemPersonalDate');
     if (!inp || !inp.value) {
-        Swal.fire('แจ้งเตือน', 'กรุณากรอกวันเกิด', 'warning');
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('แจ้งเตือน', 'กรุณากรอกวันเกิด', 'warning');
+        } else {
+            alert('กรุณากรอกวันเกิด');
+        }
         return;
     }
     const nameInp = document.getElementById('elemPersonalName');
     const memberName = nameInp ? nameInp.value.trim() : '';
 
     const parts = inp.value.split('-');
-    const yr = parseInt(parts[0]), mo = parseInt(parts[1]) - 1, dy = parseInt(parts[2]);
+    if (parts.length < 3) {
+        if (typeof Swal !== 'undefined') Swal.fire('เกิดข้อผิดพลาด', 'รูปแบบวันเกิดไม่ถูกต้อง', 'error');
+        return;
+    }
+    const yr = toCE(parseInt(parts[0], 10)), mo = parseInt(parts[1], 10) - 1, dy = parseInt(parts[2], 10);
     const dateObj = new Date(yr, mo, dy);
-    if (isNaN(dateObj.getTime())) { Swal.fire('เกิดข้อผิดพลาด', 'วันเกิดไม่ถูกต้อง', 'error'); return; }
+    if (isNaN(dateObj.getTime())) { 
+        if (typeof Swal !== 'undefined') Swal.fire('เกิดข้อผิดพลาด', 'วันเกิดไม่ถูกต้อง', 'error'); 
+        return; 
+    }
 
     const dow = dateObj.getDay();
-    const dayElem   = getBirthElement(dow);   // { name:"ธาตุไฟ", level:"(ไฟแรง)", ... }
-    const monthElem = getMonthElement(mo);    // { name:"ธาตุน้ำ", level:"(ต้นธาตุ)", ... }
-    const zodElem   = getZodiacElement(dateObj); // { name:"ชวด", element:"ธาตุน้ำ", ... }
+    const dayElem   = (typeof getBirthElement === 'function') ? getBirthElement(dow) : { name: "ธาตุไฟ", level: "(ไฟแรง)" };
+    const monthElem = (typeof getMonthElement === 'function') ? getMonthElement(mo) : { name: "ธาตุน้ำ", level: "(ต้นธาตุ)" };
+    const zodElem   = (typeof getZodiacElement === 'function') ? getZodiacElement(dateObj) : { name: "ชวด", element: "ธาตุน้ำ" };
 
-    const dayKey  = dayElem.name;             // "ธาตุไฟ"
-    const moKey   = monthElem.name;           // "ธาตุน้ำ"
-    const zodKey  = zodElem.element || zodElem.name; // "ธาตุน้ำ" or "ธาตุไม้"
+    const dayKey  = (dayElem && dayElem.name) ? dayElem.name : "ธาตุไฟ";
+    const moKey   = (monthElem && monthElem.name) ? monthElem.name : "ธาตุน้ำ";
+    const zodKey  = (zodElem && (zodElem.element || zodElem.name)) ? (zodElem.element || zodElem.name) : "ธาตุน้ำ";
 
-    // Relationships (force string — getElementRelation may return undefined for unknown pairs)
-    const relDayMo  = String(getElementRelation(dayKey, moKey)  || 'เป็นกลาง');
-    const relDayZod = String(getElementRelation(dayKey, zodKey) || 'เป็นกลาง');
-    const relMoZod  = String(getElementRelation(moKey, zodKey)  || 'เป็นกลาง');
+    // Relationships
+    const relDayMo  = resolveElementRelation(dayKey, moKey);
+    const relDayZod = resolveElementRelation(dayKey, zodKey);
+    const relMoZod  = resolveElementRelation(moKey, zodKey);
 
     const bdDay  = getRelBadge(relDayMo);
     const bdZod  = getRelBadge(relDayZod);
@@ -221,6 +322,33 @@ function calculatePersonalElement() {
     const zodEmoji  = ELEM_EMOJI[zodKey]  || '✨';
 
     const thaiDate = `${dy} ${['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'][mo]} ${yr + 543}`;
+
+    // Highlight elements in Creative Cycle
+    const cleanE = (n) => n ? n.replace("ธาตุ", "").split(" ")[0].trim() : "";
+    document.querySelectorAll('.user-label').forEach(el => el.innerText = '');
+    document.querySelectorAll('[id^="manual-"]').forEach(box => {
+        box.style.backgroundColor = 'white';
+        box.style.border = '1px solid #dee2e6';
+    });
+
+    const myElements = [
+        { name: cleanE(dayKey), label: 'ธาตุวัน' },
+        { name: cleanE(moKey), label: 'ธาตุเดือน' },
+        { name: cleanE(zodKey), label: 'ธาตุปี' }
+    ];
+
+    myElements.forEach(item => {
+        const box = document.getElementById(`manual-${item.name}`);
+        if (box) {
+            box.style.backgroundColor = '#fff9e6';
+            box.style.border = '2px solid #d4af37';
+            const label = box.querySelector('.user-label');
+            if (label) {
+                label.innerHTML += (label.innerHTML ? ' ' : '') +
+                    `<span class="badge badge-warning text-dark px-2 py-1 mx-1" style="font-size:11px; font-weight:bold; border-radius:10px;">${item.label}</span>`;
+            }
+        }
+    });
 
     const html = `
     <div class="card shadow-sm border-gold mb-4 animate__animated animate__fadeIn">
@@ -502,6 +630,15 @@ function renderElementManual() {
     container.innerHTML = html;
     renderElemHistory();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Expose to window
+if (typeof window !== 'undefined') {
+    window.renderElementManual = renderElementManual;
+    window.renderElemHistory = renderElemHistory;
+    window.calculatePersonalElement = calculatePersonalElement;
+    window.selectElemMember = selectElemMember;
+    window.onElemMemberSelect = onElemMemberSelect;
 }
 
 document.addEventListener('DOMContentLoaded', () => {

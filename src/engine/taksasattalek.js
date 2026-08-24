@@ -610,7 +610,7 @@
             try {
                 const s = JSON.parse(localStorage.getItem('siamhora_auth_session') || '{}');
                 if (s.role === 'admin') return all;
-            const u = getCurrentUsername();
+            const u = typeof getCurrentUsername === 'function' ? getCurrentUsername() : (window.getCurrentUsername ? window.getCurrentUsername() : null);
                 if (!u) return all;
                 return all.filter(m => !m.username || m.username === u);
             } catch { return all; }
@@ -678,11 +678,41 @@
                     }
                 }
 
-                processDestiny();
+                if (typeof calculateAllHoroModules === 'function') {
+                    calculateAllHoroModules();
+                } else {
+                    processDestiny();
+                }
             } catch(e) { console.error('autoFillSattalek:', e); }
         }
 
-        document.addEventListener('DOMContentLoaded', populateSattalekSelect);
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSattalekSelect();
+            
+            // Hook into the global updateAllMemberSelectors to refresh our dropdown when Firestore sync completes
+            const hookSelector = () => {
+                if (typeof window.updateAllMemberSelectors === 'function' && !window.updateAllMemberSelectors._sattalekHooked) {
+                    const orig = window.updateAllMemberSelectors;
+                    window.updateAllMemberSelectors = function(allHistory) {
+                        orig(allHistory);
+                        populateSattalekSelect();
+                    };
+                    window.updateAllMemberSelectors._sattalekHooked = true;
+                    return true;
+                }
+                return false;
+            };
+
+            if (!hookSelector()) {
+                let checkCount = 0;
+                const interval = setInterval(() => {
+                    checkCount++;
+                    if (hookSelector() || checkCount > 50) {
+                        clearInterval(interval);
+                    }
+                }, 100);
+            }
+        });
 
         /* =========================================================
            21 ภูมิ
@@ -2178,14 +2208,14 @@ ${houses[r][c].name}
                 const zIndex = (zodiacIndex + i) % 12;
                 const z = zodiacs[zIndex];
                 houses12HTML += `
-                <div style="background:rgba(241, 241, 241, 1); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border); padding-bottom: 5px; margin-bottom: 8px;">
-                        <span style="font-size:14px; font-weight:bold; color:var(--text);">${houseNames12[i]}</span>
+                <div style="background:rgba(15, 23, 42, 0.6); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 8px; margin-bottom: 10px;">
+                        <span style="font-size:14.5px; font-weight:bold; color:var(--gold-lt);">${houseNames12[i]}</span>
                         <span style="font-size:18px;">${z.icon}</span>
                     </div>
                     <div>
-                        <div style="font-size:15px; font-weight:bold; color:var(--gold-lt); margin-bottom:3px;">ราศี${z.name} <span style="font-size:12px; color:var(--muted); font-weight:normal;">(${z.element})</span></div>
-                        <div style="font-size:13px; color:var(--text); line-height:1.4;">${z.desc}</div>
+                        <div style="font-size:15px; font-weight:bold; color:#fff; margin-bottom:5px;">ราศี${z.name} <span style="font-size:12px; color:var(--muted); font-weight:normal;">(${z.element})</span></div>
+                        <div style="font-size:13.5px; color:rgba(255, 255, 255, 0.85); line-height:1.45;">${z.desc}</div>
                     </div>
                 </div>
                 `;

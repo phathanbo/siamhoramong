@@ -421,6 +421,14 @@ function showdaybirth(){
     <div class="container" style="max-width: 900px; margin: 0 auto; padding: 20px 10px;">
             <h2 class="text-center text-gold mb-4 font-weight-bold" style="text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);">✨ คำพยากรณ์ลักษณะนิสัยและพื้นดวงตามวันเกิด ✨</h2>
     
+            <div class="form-group mb-4 mx-auto" style="max-width: 350px;">
+                <label class="text-gold"><i class="fas fa-users mr-1"></i> เลือกสมาชิกจากประวัติ:</label>
+                <select class="form-control bg-black text-black border-gold member-selector-shared"
+                    onchange="autoFillMemberData(this.value)" style="border-radius: 8px;">
+                    <option value="">-- เลือกสมาชิก --</option>
+                </select>
+            </div>
+
             <div class="day-selector d-flex justify-content-center flex-wrap gap-2 mb-4" style="gap: 12px;">
                 <button class="btn-day" id="btn-day-1"
                     onclick="showDayInfo(1, event); showPlanet(1); showPlanetaryData(1); showBuddha(1); showDetailDay(1); showThaksaDay(1);"

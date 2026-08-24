@@ -109,7 +109,7 @@ async function generateZodiacCanvas(p, dateStr) {
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     const bgImg = new Image();
-    bgImg.src = 'assets/thai_astrology_bg.png';
+    bgImg.src = '../assets/thai_astrology_bg.png';
     await new Promise((resolve) => {
         bgImg.onload = () => {
             ctx.drawImage(bgImg, 0, 0, canvasWidth, canvasHeight);

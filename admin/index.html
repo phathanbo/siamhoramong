@@ -5,110 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - สยามโหรามงคล</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../assets/css/modern-theme.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        body { background-color: #121212; color: #f8f9fa; font-family: 'Sarabun', sans-serif; }
-        .admin-card { background: #1e1e1e; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-        .text-gold { color: #d4af37 !important; }
-        .btn-gold { background-color: #d4af37; color: #121212; font-weight: bold; }
-        .btn-gold:hover { background-color: #f1c40f; color: #121212; }
+        body { 
+            font-family: 'Prompt', sans-serif !important; 
+            background-color: var(--modern-bg-base, #0c1424);
+            color: #FFFFFF; 
+            min-height: 100vh;
+        }
+        .admin-glass-card { 
+            background: linear-gradient(135deg, rgba(30, 46, 78, 0.75) 0%, rgba(18, 28, 50, 0.85) 100%);
+            border: 1px solid rgba(241, 208, 110, 0.35); 
+            border-radius: 24px; 
+            padding: 28px; 
+            margin-bottom: 28px; 
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .table-dark-glass {
+            background: rgba(13, 21, 39, 0.6) !important;
+            color: #FFFFFF !important;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .table-dark-glass th {
+            background: rgba(241, 208, 110, 0.15) !important;
+            color: #FFF0A8 !important;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(241, 208, 110, 0.3) !important;
+            padding: 14px !important;
+        }
+        .table-dark-glass td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+            padding: 14px !important;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-dark bg-dark border-bottom border-warning d-flex justify-content-between align-items-center">
-        <a class="navbar-brand text-gold" href="index.html">
-            <i class="fas fa-crown"></i> สยามโหรามงคล Admin
-        </a>
-        <a class="btn btn-outline-warning btn-sm" href="../index.html#adminDashboard">
-            <i class="fas fa-arrow-left"></i> กลับหน้าหลัก (Main Site)
-        </a>
-    </nav>
+    <header class="py-3 sticky-top">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div onclick="window.location.href='index.html'" style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.8rem; filter: drop-shadow(0 0 12px rgba(241,208,110,0.8));">👑</span>
+                <span style="background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.5px;">
+                    สยามโหรามงคล Admin Console
+                </span>
+            </div>
+            <a class="btn btn-outline-gold px-4 py-2" href="../index.html" style="border-radius: 50px; font-weight: 600;">
+                <i class="fas fa-arrow-left mr-1"></i> กลับหน้าหลัก (Main Site)
+            </a>
+        </div>
+    </header>
 
-    <div class="container mt-4">
-        <h2 class="text-gold mb-4"><i class="fas fa-cogs"></i> ระบบหลังบ้าน (Admin Dashboard)</h2>
+    <div class="container py-4" style="max-width: 1200px;">
+        
+        <!-- Header Banner -->
+        <div class="text-center mb-5 p-4 rounded" style="background: linear-gradient(135deg, rgba(241,208,110,0.12) 0%, rgba(20,32,58,0.75) 100%); border: 1px solid rgba(241,208,110,0.35); border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.35); backdrop-filter: blur(20px);">
+            <div style="font-size: 3rem; margin-bottom: 8px; filter: drop-shadow(0 0 15px rgba(241,208,110,0.6));">⚙️</div>
+            <h1 style="font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px rgba(241,208,110,0.3); margin-bottom: 8px;">
+                ระบบจัดการหลังบ้าน (Admin Command Center)
+            </h1>
+            <p style="color: #CBD5E1; font-size: 1rem; max-width: 650px; margin: 0 auto;">
+                ศูนย์รวมเครื่องมือสร้างคอนเทนต์ กราฟิกโซเชียล ตรวจสอบการชำระเงิน และจัดการฐานข้อมูลคำทำนาย
+            </p>
+        </div>
 
         <!-- Quick Tools Container -->
         <div id="adminQuickToolsContainer"></div>
 
-        <!-- จัดการฐานข้อมูลไพ่ป๊อก 32 ใบ -->
-        <div class="admin-card">
-            <h4 class="text-gold"><i class="fas fa-database"></i> จัดการฐานข้อมูลไพ่ป๊อก (ตำรามาตรฐาน 32 ใบ)</h4>
-            <p class="text-white-50">จัดการแก้ไขคำทำนาย, การงาน, การเงิน, และความรักของไพ่ป๊อกแต่ละใบ</p>
-            <button class="btn btn-gold" onclick="window.location.href='cartomancy-db.html'">
-                <i class="fas fa-edit"></i> เปิดแผงควบคุมจัดการฐานข้อมูลไพ่ป๊อก
-            </button>
-        </div>
-
-        <!-- จัดการฐานข้อมูลพจนานุกรม -->
-        <div class="admin-card">
-            <h4 class="text-gold"><i class="fas fa-book"></i> จัดการพจนานุกรมตั้งชื่อมงคล</h4>
-            <p class="text-white-50">เพิ่มคำศัพท์ใหม่สำหรับระบบ Name Generator</p>
-            
-            <form id="addVocabForm" class="row">
-                <div class="col-md-3 mb-3">
-                    <label for="vocabType">ประเภทคำ (Type)</label>
-                    <select id="vocabType" class="form-control bg-dark text-white border-secondary" required>
-                        <option value="prefixes">คำขึ้นต้น (Prefix)</option>
-                        <option value="middles">คำกลาง (Middle)</option>
-                        <option value="suffixes">คำลงท้าย (Suffix)</option>
-                    </select>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="vocabWord">คำศัพท์ (Word)</label>
-                    <input type="text" id="vocabWord" class="form-control bg-dark text-white border-secondary" required placeholder="เช่น ธน">
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="vocabMeaning">ความหมาย (Meaning)</label>
-                    <input type="text" id="vocabMeaning" class="form-control bg-dark text-white border-secondary" required placeholder="เช่น ทรัพย์สมบัติ">
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label>หมวดหมู่ (Tag)</label>
-                </div>
-                <div class="col-md-12">
-                    <button type="submit" class="btn btn-gold"><i class="fas fa-plus"></i> เพิ่มคำศัพท์ลงฐานข้อมูล</button>
-                    <span id="vocabStatus" class="ml-3 text-success"></span>
-                </div>
-            </form>
-        </div>
-            </form>
-        </div>
-
-        <!-- รายการคำศัพท์ปัจจุบัน -->
-        <div class="admin-card">
-            <h5 class="text-gold"><i class="fas fa-list"></i> คำศัพท์ในฐานข้อมูล</h5>
-            <div class="table-responsive mt-3">
-                <table class="table table-dark table-hover border-secondary">
-                    <thead>
-                        <tr>
-                            <th>ประเภท</th>
-                            <th>คำศัพท์</th>
-                            <th>ความหมาย</th>
-                            <th>หมวดหมู่</th>
-                            <th>จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vocabTableBody">
-                        <tr><td colspan="5" class="text-center text-white-50">กำลังโหลด...</td></tr>
-                    </tbody>
-                </table>
+        <!-- ตรวจสอบการชำระเงิน (Payments) -->
+        <div class="admin-glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0 font-weight-bold" style="color: #FFF0A8;">
+                    <i class="fas fa-money-check-alt mr-2 text-warning"></i> ตรวจสอบการชำระเงิน (Pending Payments)
+                </h4>
+                <span class="badge px-3 py-2" style="background: rgba(241,208,110,0.2); color: #FFF0A8; border: 1px solid rgba(241,208,110,0.4); border-radius: 20px;">
+                    รายการรอตรวจสอบ
+                </span>
             </div>
-        </div>
-
-        <!-- ตรวจสอบการชำระเงิน -->
-        <div class="admin-card">
-            <h4 class="text-gold"><i class="fas fa-money-check-alt"></i> ตรวจสอบการชำระเงิน (Pending Payments)</h4>
-            <p class="text-white-50">รายการแจ้งโอนเงินที่รอการตรวจสอบจากผู้ดูแลระบบ</p>
+            <p style="color: #CBD5E1; font-size: 0.95rem;">รายการแจ้งโอนเงินที่รอการอนุมัติเพื่ออัปเกรดสถานะสมาชิก</p>
             
-            <div class="table-responsive mt-3">
-                <table class="table table-dark table-hover border-secondary">
+            <div class="table-responsive mt-3" style="border-radius: 16px; border: 1px solid rgba(241,208,110,0.25);">
+                <table class="table table-dark-glass table-hover m-0">
                     <thead>
                         <tr>
                             <th>เวลาที่แจ้ง</th>
@@ -120,7 +107,65 @@
                         </tr>
                     </thead>
                     <tbody id="paymentsTableBody">
-                        <tr><td colspan="6" class="text-center text-white-50">กำลังโหลดข้อมูล...</td></tr>
+                        <tr><td colspan="6" class="text-center py-4" style="color: #CBD5E1;">กำลังโหลดข้อมูล...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- จัดการฐานข้อมูลพจนานุกรมตั้งชื่อมงคล -->
+        <div class="admin-glass-card">
+            <h4 class="font-weight-bold mb-2" style="color: #FFF0A8;">
+                <i class="fas fa-book mr-2 text-warning"></i> จัดการพจนานุกรมตั้งชื่อมงคล
+            </h4>
+            <p style="color: #CBD5E1; font-size: 0.95rem;">เพิ่มคำศัพท์ใหม่สำหรับระบบคำนวณและสร้างชื่อมงคล (Name Generator)</p>
+            
+            <form id="addVocabForm" class="row mt-4">
+                <div class="col-md-3 mb-3">
+                    <label for="vocabType" class="text-white-50 small font-weight-bold">ประเภทคำ (Type)</label>
+                    <select id="vocabType" class="form-control" style="border-radius: 12px;" required>
+                        <option value="prefixes">คำขึ้นต้น (Prefix)</option>
+                        <option value="middles">คำกลาง (Middle)</option>
+                        <option value="suffixes">คำลงท้าย (Suffix)</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="vocabWord" class="text-white-50 small font-weight-bold">คำศัพท์ (Word)</label>
+                    <input type="text" id="vocabWord" class="form-control" style="border-radius: 12px;" required placeholder="เช่น ธน">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="vocabMeaning" class="text-white-50 small font-weight-bold">ความหมาย (Meaning)</label>
+                    <input type="text" id="vocabMeaning" class="form-control" style="border-radius: 12px;" required placeholder="เช่น ทรัพย์สมบัติ">
+                </div>
+                <div class="col-md-2 mb-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-gold btn-block" style="border-radius: 12px; height: 48px; font-weight: 600;">
+                        <i class="fas fa-plus mr-1"></i> เพิ่มคำศัพท์
+                    </button>
+                </div>
+                <div class="col-12">
+                    <span id="vocabStatus" class="text-success font-weight-bold"></span>
+                </div>
+            </form>
+
+            <hr style="border-color: rgba(241,208,110,0.2); margin: 25px 0;">
+
+            <!-- รายการคำศัพท์ปัจจุบัน -->
+            <h5 class="font-weight-bold mb-3" style="color: #FFF0A8;">
+                <i class="fas fa-list mr-2 text-warning"></i> รายการคำศัพท์ในฐานข้อมูล
+            </h5>
+            <div class="table-responsive" style="border-radius: 16px; border: 1px solid rgba(241,208,110,0.25);">
+                <table class="table table-dark-glass table-hover m-0">
+                    <thead>
+                        <tr>
+                            <th>ประเภท</th>
+                            <th>คำศัพท์</th>
+                            <th>ความหมาย</th>
+                            <th>หมวดหมู่</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vocabTableBody">
+                        <tr><td colspan="5" class="text-center py-4" style="color: #CBD5E1;">กำลังโหลด...</td></tr>
                     </tbody>
                 </table>
             </div>

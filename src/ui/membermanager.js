@@ -157,6 +157,7 @@ function updateAllMemberSelectors(allHistory) {
             option.value = member.memberId || member.birthdate || "";
             option.textContent = `${member.memberId ? `${member.memberId} - ` : ''}${member.name}${member.lastName ? ` ${member.lastName}` : ''}`;
             option.setAttribute('data-name', member.name);
+            option.setAttribute('data-member', JSON.stringify(member));
             select.appendChild(option);
         });
 
@@ -744,26 +745,64 @@ function renderTable(dataArray) {
 
     historyBody.innerHTML = '';
     if (!dataArray || dataArray.length === 0) {
-        historyBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">ไม่พบข้อมูล</td></tr>';
+        historyBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-5" style="background: rgba(13,21,39,0.5);">
+                    <i class="fas fa-user-slash fa-3x text-muted mb-3 d-block"></i>
+                    <span style="color: #CBD5E1; font-size: 1rem;">ยังไม่พบประวัติสมาชิกที่ลงทะเบียน</span>
+                </td>
+            </tr>`;
         return;
     }
 
     const esc = (v) => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
-    dataArray.forEach((item) => {
+    dataArray.forEach((item, index) => {
         const safeId = esc(item.id);
+        const memberIdText = esc(item.memberId) || 'N/A';
+        const fullName = `${esc(item.name)} ${esc(item.lastName) || ''}`.trim();
+        const birthdateText = esc(item.birthdate) || '-';
+        const zodiacText = esc(item.zodiac) || '-';
+        const yamText = esc(item.yam) || '-';
+
         const row = `
-            <tr>
-                <td>${esc(item.memberId) || 'N/A'}</td>
-                <td>${esc(item.name)}</td>
-                <td>${esc(item.lastName) || '-'}</td>
-                <td>${esc(item.birthdate)}</td>
-                <td>${esc(item.zodiac) || '-'}</td>
-                <td>${esc(item.yam) || '-'}</td>
-                <td>
-                    <div class="btn-group">
-                        <button class="btn btn-outline-primary btn-sm" onclick="viewHistory('${safeId}')">🔍 ดู</button>
-                        <button class="btn btn-outline-danger btn-sm" onclick="deleteItem('${safeId}')">🗑️ ลบ</button>
+            <tr style="
+                border-bottom: 1px solid rgba(255,255,255,0.06);
+                transition: background 0.25s ease;
+                background: ${index % 2 === 0 ? 'rgba(20,32,58,0.3)' : 'rgba(13,21,39,0.3)'};
+            "
+            onmouseover="this.style.background='rgba(241,208,110,0.1)';"
+            onmouseout="this.style.background='${index % 2 === 0 ? 'rgba(20,32,58,0.3)' : 'rgba(13,21,39,0.3)'}';"
+            >
+                <td style="padding: 16px 12px; vertical-align: middle;">
+                    <span class="badge" style="background: rgba(241,208,110,0.18); color: #FFF0A8; border: 1px solid rgba(241,208,110,0.4); padding: 5px 12px; border-radius: 15px; font-weight: 600; font-size: 0.85rem;">
+                        ${memberIdText}
+                    </span>
+                </td>
+                <td style="padding: 16px 12px; vertical-align: middle; text-align: left;">
+                    <div style="font-weight: 600; color: #FFFFFF; font-size: 1rem;">
+                        ${fullName}
+                    </div>
+                </td>
+                <td style="padding: 16px 12px; vertical-align: middle; color: #E2E8F0; font-size: 0.95rem;">
+                    <i class="far fa-calendar-alt text-warning mr-1"></i> ${birthdateText}
+                </td>
+                <td style="padding: 16px 12px; vertical-align: middle;">
+                    <span style="display: inline-block; padding: 4px 10px; background: rgba(56,178,172,0.15); border: 1px solid rgba(56,178,172,0.3); border-radius: 8px; color: #81E6D9; font-size: 0.85rem;">
+                        ${zodiacText}
+                    </span>
+                </td>
+                <td style="padding: 16px 12px; vertical-align: middle; color: #CBD5E1; font-size: 0.95rem;">
+                    ${yamText}
+                </td>
+                <td style="padding: 16px 12px; vertical-align: middle;">
+                    <div class="d-inline-flex gap-2" style="gap: 6px;">
+                        <button class="btn btn-sm btn-gold px-3 py-1" onclick="viewHistory('${safeId}')" style="border-radius: 20px; font-weight: 600; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                            <i class="fas fa-chart-pie mr-1"></i> พยากรณ์
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger px-2 py-1" onclick="deleteItem('${safeId}')" style="border-radius: 20px; font-size: 0.85rem;" title="ลบข้อมูล">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                     </div>
                 </td>
             </tr>`;
@@ -792,8 +831,26 @@ function loadHistory() {
     const allHistory = JSON.parse(localStorage.getItem('horo_history')) || [];
     const history = filterHistoryByCurrentUser(allHistory);
     renderTable(history);
+    
+    // อัปเดตตัวนับและวิดเจ็ตสถิติ
     const countEl = document.getElementById('historyCount');
     if (countEl) countEl.innerText = `ทั้งหมด ${history.length} รายการ`;
+
+    const totalEl = document.getElementById('statTotalMembers');
+    if (totalEl) totalEl.innerText = history.length;
+
+    let maleCount = 0;
+    let femaleCount = 0;
+    history.forEach(m => {
+        if (m.gender === 'male' || m.gender === 'm' || m.gender === 'ชาย') maleCount++;
+        else if (m.gender === 'female' || m.gender === 'f' || m.gender === 'หญิง') femaleCount++;
+    });
+
+    const maleEl = document.getElementById('statMaleMembers');
+    if (maleEl) maleEl.innerText = maleCount;
+
+    const femaleEl = document.getElementById('statFemaleMembers');
+    if (femaleEl) femaleEl.innerText = femaleCount;
 }
 
 function viewHistory(docId) {
@@ -877,16 +934,25 @@ function selectMemberToView(name, birthdate) {
 }
 
 function showElementManual() {
-    // 1. จัดการการสลับหน้า (อิงตามระบบ main-section ของคุณ)
-    document.querySelectorAll('.main-section').forEach(section => {
-        section.classList.add('hidden');
-    });
-
-    const manualPage = document.getElementById('elementManualPage');
-    if (manualPage) {
-        manualPage.classList.remove('hidden');
+    if (typeof navigateTo === 'function') {
+        navigateTo('elementManualPage');
     } else {
-        return; // ป้องกัน Error ถ้าหาหน้าไม่เจอ
+        document.querySelectorAll('.main-section').forEach(section => {
+            section.classList.add('hidden');
+            section.style.display = 'none';
+        });
+
+        const manualPage = document.getElementById('elementManualPage');
+        if (manualPage) {
+            manualPage.classList.remove('hidden');
+            manualPage.style.display = 'block';
+        } else {
+            return;
+        }
+    }
+
+    if (typeof renderElemHistory === 'function') {
+        renderElemHistory();
     }
 
     // 2. ล้างข้อมูลเก่าในหน้าคู่มือ
@@ -896,39 +962,37 @@ function showElementManual() {
         box.style.border = '1px solid #dee2e6';
     });
 
-    // 3. ส่วนสำคัญ: ตรวจสอบว่ามีการคำนวณดวงไว้หรือยัง (กัน Error)
-    // เช็คว่าตัวแปรที่ใช้ใน element.js มีค่าไหม
-    if (typeof elementData !== 'undefined' && elementData.name) {
-
-        // ฟังก์ชันช่วยดึงชื่อธาตุสั้นๆ เช่น "ธาตุไฟ (ไฟแรง)" -> "ไฟ"
+    // 3. ตรวจสอบว่ามีการคำนวณดวงไว้หรือยัง
+    if (typeof elementData !== 'undefined' && elementData && elementData.name) {
         const cleanE = (name) => name ? name.replace("ธาตุ", "").split(" ")[0].split("(")[0].trim() : "";
 
         try {
             const myElements = [
                 { name: cleanE(elementData.name), label: 'วันเกิด' },
-                { name: cleanE(mElement.name), label: 'เดือนเกิด' },
-                { name: cleanE(zElement.element), label: 'ปีเกิด' }
+                { name: cleanE(typeof mElement !== 'undefined' && mElement ? mElement.name : ''), label: 'เดือนเกิด' },
+                { name: cleanE(typeof zElement !== 'undefined' && zElement ? (zElement.element || zElement.name) : ''), label: 'ปีเกิด' }
             ];
 
             // 4. สั่งไฮไลต์
             myElements.forEach(item => {
+                if (!item.name) return;
                 const box = document.getElementById(`manual-${item.name}`);
                 if (box) {
-                    box.style.backgroundColor = '#fff9e6'; // สีเหลืองทองอ่อนๆ
+                    box.style.backgroundColor = '#fff9e6';
                     box.style.border = '2px solid #d4af37';
                     const label = box.querySelector('.user-label');
                     if (label) {
-                        label.innerHTML += (label.innerHTML ? ' / ' : '') +
-                            `<span class="badge badge-primary" style="font-size:10px">${item.label}</span>`;
+                        label.innerHTML += (label.innerHTML ? ' ' : '') +
+                            `<span class="badge badge-warning text-dark px-2 py-1 mx-1" style="font-size:11px; font-weight:bold; border-radius:10px;">${item.label}</span>`;
                     }
                 }
             });
         } catch (err) {
-            console.log("รอการคำนวณดวงชะตาเพื่อแสดงธาตุประจำตัว");
+            console.log("รอการคำนวณดวงชะตาเพื่อแสดงธาตุประจำตัว", err);
         }
     }
 
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 async function deleteItem(docId) {
@@ -1873,33 +1937,33 @@ window.autoFillMemberData = function (memberKey) {
 
 const istaksapage = isPageVisible('taksaTablepage');
 
-if (istaksapage) {
-    // ใช้ ID ที่มีอยู่จริงใน HTML
+if (istaksapage && finalMember) {
     const genderSelect = document.getElementById('taksagender');
     const ageInput = document.getElementById('userAge');
     const birthdateSelect = document.getElementById('birthDaySelect');
 
-    // สมมติว่า 'member' คือ object ข้อมูลสมาชิกที่ดึงมาได้
-    if (member) {
-        // 1. จัดการเพศ (ใช้ .value สำหรับ <select>)
-        if (genderSelect) {
-            genderSelect.value = member.gender; // ค่าต้องตรงกับ 'male' หรือ 'female'
-        }
-
-        // 2. คำนวณอายุย่าง (จาก member.birthdate)
-        if (ageInput && member.birthdate) {
-            const birthYear = new Date(member.birthdate).getFullYear();
-            const currentYear = new Date().getFullYear();
-            // คำนวณอายุย่าง: (ปีปัจจุบัน - ปีเกิด) + 1
-            ageInput.value = (currentYear - birthYear) + 1;
-        }
-
-        // 3. จัดการเรื่องวันเกิด
-        if (birthdateSelect && member.birthdate) {
-            const birthDay = new Date(formattedDate).getDay();
-            birthdateSelect.value = birthDay + 1;        
-        }
+    // 1. จัดการเพศ ('male' หรือ 'female')
+    if (genderSelect && finalMember.gender) {
+        genderSelect.value = (finalMember.gender === 'female' || finalMember.gender === 'หญิง') ? 'female' : 'male';
     }
+
+    // 2. คำนวณอายุย่าง (จาก birthDate)
+    if (ageInput && formattedDate) {
+        ageInput.value = window.calculateRunningAge(formattedDate);
+    }
+
+    // 3. จัดการเรื่องวันเกิด (0=อาทิตย์, 1=จันทร์, ..., 6=เสาร์, 7=พุธกลางคืน)
+    if (birthdateSelect && formattedDate) {
+        const birthDay = window.getAstrologicalDayOfWeek(formattedDate, finalMember.birthtime || null);
+        birthdateSelect.value = birthDay;        
+    }
+
+    // 4. สั่งคำนวณอัตโนมัติ
+    setTimeout(() => {
+        if (typeof calculateAndShowTaksa === 'function') {
+            calculateAndShowTaksa();
+        }
+    }, 150);
 }
 
 
@@ -2083,6 +2147,22 @@ if (isChantPage && formattedDate) {
     setTimeout(() => {
         if (typeof calculateChants === 'function') calculateChants();
     }, 150);
+}
+
+// ---- ส่วนของหน้าลักษณะนิสัยและพื้นดวงตามวันเกิด (daily-horoscope) ----
+const isDailyHoroscopePage = isPageVisible('daily-horoscope') || isPageVisible('showdaybirthpage');
+if (isDailyHoroscopePage && formattedDate) {
+    // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat, 7=Wed Night
+    let dayNum = window.getAstrologicalDayOfWeek(formattedDate, finalMember ? finalMember.birthtime : null);
+    // Map to button index: 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri, 7=Sat (ถ้าพุธกลางคืน map เป็น 4=พุธ)
+    let btnDayId = (dayNum === 0) ? 1 : (dayNum === 7 ? 4 : dayNum + 1);
+
+    setTimeout(() => {
+        const btn = document.getElementById(`btn-day-${btnDayId}`);
+        if (btn) {
+            btn.click();
+        }
+    }, 100);
 }
 
 const isLifeExtensionPage = isPageVisible('lifeExtensionPage') || isPageVisible('showlifeextensionpage');

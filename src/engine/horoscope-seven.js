@@ -730,7 +730,7 @@ function renderTable(day, month, zodiac, age, birthTimeStr = '12:00') {
     if (isGoodStar(jaiNum)) goodScore++;
     if (isGoodStar(teenungNum)) goodScore++;
 
-    let finalVerdict = goodScore >= 2 ? "ดี" : "ต้องระวังนิสัยบางประการ";
+    let finalVerdict = goodScore >= 2 ? "ดีและเป็นมงคล" : "มีเกณฑ์ต้องระวังนิสัยและอุปสรรคบางประการ";
 
     // ส่วนที่ 2: บทวิเคราะห์ตำแหน่งเด่น (ดึงจากฐานที่ 1 เป็นหลัก)
     const base1Data = tableData[0].data;
@@ -744,327 +744,468 @@ function renderTable(day, month, zodiac, age, birthTimeStr = '12:00') {
     const jaidayname = numberToday[jaiNum] || "วันไม่ถูกต้อง";
     const teenungdayname = numberToday[teenungNum] || "วันไม่ถูกต้อง";
 
-    // 3. เริ่มสร้าง HTML ตาราง
+    // ฝัง CSS สไตล์พรีเมียมเฉพาะตัว
     let html = `
-    <div class="table-responsive">
-        <table class="table table-sm table-bordered border-primary text-center bg-white shadow-sm mb-4">
-            <thead class="table-dark">
-                <tr>
-                    <th class="py-3" style="width: 20%;">ฐาน / ตำแหน่ง</th>
-                    ${[1,2,3,4,5,6,7].map(n => `
-                        <th class="${n-1 === targetIndex ? 'bg-danger text-white' : ''}">
-                            ${n} ${n-1 === targetIndex ? '<br><small>(อายุตก)</small>' : ''}
-                        </th>`).join('')}
-                </tr>
-            </thead>
-            <tbody>`;
+    <style>
+        .custom-modern-tabs {
+            border-bottom: 2px solid rgba(212,175,55,0.2) !important;
+        }
+        .custom-modern-tabs .nav-link {
+            background: transparent !important;
+            border: none !important;
+            color: rgba(255,255,255,0.6) !important;
+            border-bottom: 3px solid transparent !important;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 10px 15px;
+        }
+        .custom-modern-tabs .nav-link:hover {
+            color: #d4af37 !important;
+        }
+        .custom-modern-tabs .nav-link.active {
+            color: #d4af37 !important;
+            border-bottom-color: #d4af37 !important;
+        }
+        .horo-table-wrapper {
+            background: rgba(30, 30, 30, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .horo-table {
+            border-collapse: separate;
+            border-spacing: 4px;
+            width: 100%;
+        }
+        .horo-table th {
+            background: #1a1a1a !important;
+            color: #d4af37 !important;
+            border: 1px solid rgba(212,175,55,0.2) !important;
+            font-size: 0.9rem;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        .horo-table td {
+            background-color: rgba(40, 40, 40, 0.7) !important;
+            color: #fff !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            transition: all 0.3s;
+            padding: 8px;
+            border-radius: 6px;
+            vertical-align: middle;
+        }
+        .horo-table td:hover {
+            background-color: rgba(60, 60, 60, 0.9) !important;
+        }
+        .horo-table .col-highlight {
+            background-color: rgba(212, 175, 55, 0.18) !important;
+            border: 2px solid #d4af37 !important;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        .horo-table th.col-highlight-header {
+            background-color: #d4af37 !important;
+            color: #000 !important;
+            border: 2px solid #d4af37 !important;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        .trio-card {
+            background: rgba(30, 30, 30, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .trio-card:hover {
+            transform: translateY(-4px);
+            border-color: #d4af37;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4) !important;
+        }
+        .badge-cell {
+            font-size: 0.6rem !important;
+            padding: 2px 4px !important;
+            border-radius: 4px;
+        }
+    </style>
+
+    <div class="horo-table-wrapper mb-4">
+        <h5 class="text-gold fw-bold mb-3"><i class="bi bi-grid-3x3 me-2"></i>ตารางเลข ๗ ตัว ฐาน ๔</h5>
+        <div class="table-responsive">
+            <table class="horo-table text-center">
+                <thead>
+                    <tr>
+                        <th style="width: 22%; text-align: left; padding-left: 12px;">ฐาน / ตำแหน่ง</th>
+                        ${[1, 2, 3, 4, 5, 6, 7].map(n => {
+                            const isH = (n - 1 === targetIndex);
+                            return `<th class="${isH ? 'col-highlight-header' : ''}">
+                                ${n} ${isH ? '<br><small style="font-size: 0.65rem">(อายุตกจร)</small>' : ''}
+                            </th>`;
+                        }).join('')}
+                    </tr>
+                </thead>
+                <tbody>`;
 
     tableData.forEach((row, rowIndex) => {
         const isBase4 = rowIndex === 3; 
         html += `<tr>
-            <td class="fw-bold bg-light text-start ps-3 small">${row.name} ${isBase4 ? '<i class="bi bi-star-fill text-danger"></i>' : ''}</td>`;
+            <td class="fw-bold text-start ps-3" style="font-size: 0.85rem; color: ${isBase4 ? '#d4af37' : '#cfcfcf'}; background-color: rgba(20,20,20,0.8) !important;">
+                ${row.name} ${isBase4 ? '<i class="bi bi-star-fill text-warning ms-1" style="font-size: 0.75rem;"></i>' : ''}
+            </td>`;
         
         row.data.forEach((num, index) => {
             const label = row.labels[index];
             const meaning = BASE_DEFINITIONS.meanings[label] || '';
             const isTargetColumn = (index === targetIndex);
             
-            // กำหนด Class สำหรับ Cell (ไฮไลท์แถว 4 และจุดที่อายุตก)
             let cellClass = "";
-            if (isTargetColumn) cellClass = "table-danger border-danger border-2";
-            else if (isBase4) cellClass = "table-warning";
+            if (isTargetColumn) {
+                cellClass = "col-highlight";
+            } else if (isBase4) {
+                cellClass = "table-warning-custom";
+            }
 
             html += `<td class="${cellClass}" ${label ? `title="${label}: ${meaning}"` : ''}>
-                ${label ? `<div class="small text-muted" style="font-size:0.65rem">${label}</div>` : ''}
-                <div class="fw-bold fs-5">${num}</div>
-                ${isTargetColumn && isBase4 ? `<span class="badge bg-danger" style="font-size:0.6rem">จร</span>` : ''}
+                ${label ? `<div class="text-muted" style="font-size: 0.65rem; opacity: 0.8;">${label}</div>` : ''}
+                <div class="fw-bold fs-5 my-1" style="color: ${isTargetColumn ? '#ffd700' : '#ffffff'}">${num}</div>
+                ${isTargetColumn && isBase4 ? `<span class="badge bg-danger badge-cell">จร</span>` : ''}
             </td>`;
         });
         html += `</tr>`;
     });
     
-    html += `</tbody></table></div>`;
+    html += `</tbody></table></div></div>`;
 
-    // 4. ส่วนคำทำนายดวงจร (ปีปัจจุบัน)
+    // สร้างระบบ Tab Menu
     html += `
-    <div class="alert alert-warning border-0 shadow-sm p-4 mb-4" style="border-left: 8px solid #dc3545 !important;">
-        <h5 class="fw-bold text-danger"><i class="bi bi-calendar-event-fill me-2"></i>พระประจำชะตาจร (อายุ ${currentAge} ปี)</h5>
-        <div class="row">
-            <div class="col-md-2 text-center border-end">
-                <div class="display-5 fw-bold text-dark">${currentPlanetNum}</div>
-                <div class="badge bg-danger">${planetNameCurrent}</div>
-            </div>
-            <div class="col-md-10 ps-4">
-                <p class="fs-5 mb-0"><strong>ปีนี้ท่านว่า...</strong> ${predictionCurrent}</p>
-            </div>
-        </div>
-    </div>`;
+    <ul class="nav nav-tabs custom-modern-tabs mb-4" id="sevenHoroTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-transit-btn" onclick="switchSevenTab('transit')" type="button">
+                <i class="bi bi-calendar-event me-1"></i> ดวงจรปีนี้ & ภาพรวม
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-relations-btn" onclick="switchSevenTab('relations')" type="button">
+                <i class="bi bi-diagram-3 me-1"></i> เกณฑ์สัมพันธ์ & ยาม
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-natal-btn" onclick="switchSevenTab('natal')" type="button">
+                <i class="bi bi-book-half me-1"></i> พื้นดวงเจาะลึก 3 ฐาน
+            </button>
+        </li>
+    </ul>
 
-    // 5. ส่วนวิเคราะห์พื้นดวงเดิม (Overall)
-    html += `
-    <div class="row g-3">
-        <div class="col-md-6">
-            <div class="card h-100 border-0 bg-white shadow-sm border-start border-4 border-primary">
-                <div class="card-body">
-                    <h6 class="fw-bold text-primary text-uppercase small">พื้นดวงชะตา (อัตตะ)</h6>
-                    <p class="mb-0"><strong>กำลัง ${planetNameMain} (${mainPredictNum}):</strong> ${predictionMain}</p>
+    <div class="tab-content text-white">
+        <!-- ==================== TAB 1 ==================== -->
+        <div class="tab-pane show active" id="tab-transit" role="tabpanel">
+            <div class="alert alert-warning border-0 p-4 mb-4" style="background: rgba(212, 175, 55, 0.1); border-left: 5px solid #d4af37 !important; border-radius: 12px;">
+                <h5 class="fw-bold text-warning mb-3"><i class="bi bi-calendar2-check-fill me-2"></i>พระประจำชะตาจร (อายุจร ${currentAge} ปี)</h5>
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center border-md-end border-secondary mb-3 mb-md-0">
+                        <div class="display-3 fw-bold text-white mb-1">${currentPlanetNum}</div>
+                        <span class="badge bg-warning text-dark fw-bold px-3 py-1 fs-6">${planetNameCurrent}</span>
+                    </div>
+                    <div class="col-md-10 ps-md-4">
+                        <p class="fs-5 mb-0" style="line-height: 1.6;"><strong>ทำนายดวงจรปีนี้:</strong> ${predictionCurrent}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm" style="background: rgba(30, 30, 30, 0.6); border: 1px solid rgba(255,255,255,0.08) !important; border-radius: 12px;">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-gold text-uppercase small mb-2"><i class="bi bi-shield-shaded me-1"></i>พื้นดวงชะตากำเนิด (อัตตะ)</h6>
+                            <p class="mb-0 text-light" style="font-size: 0.95rem;"><strong>กำลัง ${planetNameMain} (${mainPredictNum}):</strong> ${predictionMain}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm" style="background: rgba(30, 30, 30, 0.6); border: 1px solid rgba(255,255,255,0.08) !important; border-radius: 12px;">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-gold text-uppercase small mb-2"><i class="bi bi-activity me-1"></i>เกณฑ์พลังดาวโดยรวม</h6>
+                            <p class="mb-0 text-light" style="font-size: 0.95rem;">${fortune.summary}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="trio-card p-4 text-center">
+                        <small class="d-block text-gold opacity-75 fw-bold mb-1"><i class="bi bi-chat-left-quote me-1"></i> ปาก (การเจรจา)</small>
+                        <div class="display-6 fw-bold text-white mb-2">${spec.pakNum} <span style="font-size: 1.1rem; font-weight: normal;">(${pakdayname})</span></div>
+                        <p class="small text-muted mb-0">${TRIO_PREDICTIONS["ปาก"][pakNum]}</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="trio-card p-4 text-center">
+                        <small class="d-block text-gold opacity-75 fw-bold mb-1"><i class="bi bi-heart-pulse me-1"></i> ใจ (ความคิดอ่าน)</small>
+                        <div class="display-6 fw-bold text-white mb-2">${spec.jaiNum} <span style="font-size: 1.1rem; font-weight: normal;">(${jaidayname})</span></div>
+                        <p class="small text-muted mb-0">${TRIO_PREDICTIONS["ใจ"][jaiNum]}</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="trio-card p-4 text-center">
+                        <small class="d-block text-gold opacity-75 fw-bold mb-1"><i class="bi bi-award me-1"></i> ที่นั่ง (บารมี/วาสนา)</small>
+                        <div class="display-6 fw-bold text-white mb-2">${spec.teenungNum} <span style="font-size: 1.1rem; font-weight: normal;">(${teenungdayname})</span></div>
+                        <p class="small text-muted mb-0">${TRIO_PREDICTIONS["ที่นั่ง"][teenungNum]}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 mb-4" style="background: rgba(25, 25, 25, 0.7); border: 1px solid rgba(212, 175, 55, 0.15) !important; border-radius: 12px;">
+                <div class="card-body text-center py-3">
+                    <span class="text-gold fw-bold"><i class="bi bi-check2-circle me-1 text-warning"></i> บทสรุปวาสนา ปาก ใจ ที่นั่ง:</span>
+                    <span class="ms-2 text-white">${finalVerdict}</span>
+                    <div class="small text-muted mt-2">
+                        * ปากตกเลข ${pakNum} ถือว่าเป็น ${isGoodStar(pakNum) ? '<span class="text-success">สมปเคราะห์ (ดาวให้คุณเป็นส่วนใหญ่)</span>' : '<span class="text-danger">บาปเคราะห์ (ควรมีสติระมัดระวังคำพูดเจรจา)</span>'}
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card h-100 border-0 bg-white shadow-sm border-start border-4 ${fortune.goodCount >= 4 ? 'border-success' : 'border-warning'}">
-                <div class="card-body">
-                    <h6 class="fw-bold ${fortune.statusClass} text-uppercase small">เกณฑ์ดวงโดยรวม</h6>
-                    <p class="mb-0 small">${fortune.summary}</p>
+
+        <!-- ==================== TAB 2 ==================== -->
+        <div class="tab-pane" id="tab-relations" role="tabpanel" style="display: none;">
+            <div id="relations-tab-content"></div>
+            <div id="yam-tab-content"></div>
+        </div>
+
+        <!-- ==================== TAB 3 ==================== -->
+        <div class="tab-pane" id="tab-natal" role="tabpanel" style="display: none;">
+            <!-- ฐานวัน -->
+            <div class="card border-0 mb-3" style="background: rgba(30, 30, 30, 0.6); border: 1px solid rgba(255,255,255,0.06) !important; border-radius: 12px;">
+                <div class="card-header bg-transparent border-bottom border-secondary text-gold fw-bold">
+                    <i class="bi bi-journal-text me-2"></i>วิเคราะห์พื้นชะตาตามตำแหน่งฐานวัน
                 </div>
-            </div>
-        </div>
-    </div>`;
-
-
-    // ส่วนแสดง ปาก ใจ ที่นั่ง
-    html += `
-    <div class="row g-2 mb-4">
-        <div class="col-4">
-            <div class="p-3 bg-dark text-white rounded-3 text-center shadow-sm">
-                <small class="d-block opacity-75">ปาก (เจรจา)</small>
-                <div class="display-6 fw-bold text-warning">${spec.pakNum} (${pakdayname})</div>
-                ${TRIO_PREDICTIONS["ปาก"][pakNum]}
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="p-3 bg-primary text-white rounded-3 text-center shadow-sm">
-                <small class="d-block opacity-75">ใจ (ความคิด)</small>
-                <div class="display-6 fw-bold">${spec.jaiNum} (${jaidayname})</div>
-                ${TRIO_PREDICTIONS["ใจ"][jaiNum]}
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="p-3 bg-success text-white rounded-3 text-center shadow-sm">
-                <small class="d-block opacity-75">ที่นั่ง (บารมี)</small>
-                <div class="display-6 fw-bold text-light">${spec.teenungNum} (${teenungdayname})</div>
-                ${TRIO_PREDICTIONS["ที่นั่ง"][teenungNum]}
-            </div>
-        </div>
-               
-        <div class="col-12" style="color: #007bff; text-align: center;">
-            <br><i class="bi bi-person-bounding-box me-2" ></i>สรุปนิสัยใจคอ (ปาก ใจ ที่นั่ง) - ผลสรุป: ${finalVerdict}
-            <br>
-            <strong>หมายเหตุตำรา:</strong> ปากตกเลข ${pakNum} ถือว่าเป็น ${isGoodStar(pakNum) ? 'สมปเคราะห์ (ดีก่อน)' : 'บาปเคราะห์ (ระวังก่อน)'}
-        </div>
-    </div>`;
-
-    
-    html += `
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white fw-bold border-bottom"><i class="bi bi-journal-text me-2"></i>วิเคราะห์พื้นชะตาตามตำแหน่งฐานวัน</div>
-        <div class="card-body p-0">
-            <ul class="list-group list-group-flush">`;
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush bg-transparent">`;
     
     base1Labels.forEach((label, idx) => {
         const num = base1Data[idx];      
         const text = POSITION_PREDICTIONS[label] ? POSITION_PREDICTIONS[label][num] : "คำทำนายรออัปเดต";       
-
         html += `
-            <li class="list-group-item p-3">
-                <span class="badge bg-secondary me-2">${label} (${num})</span>
-                <span class="text-dark">${text}</span>
+            <li class="list-group-item bg-transparent text-white border-bottom border-secondary p-3">
+                <span class="badge bg-warning text-dark me-2 fw-bold px-2 py-1">${label} (${num})</span>
+                <span style="font-size: 0.95rem; line-height: 1.5;">${text}</span>
             </li>`;
-       
-            
     });
 
-    html += `</ul></div></div>`;
+    html += `       </ul>
+                </div>
+            </div>
 
-    html += `
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white fw-bold border-bottom"><i class="bi bi-journal-text me-2"></i>วิเคราะห์พื้นชะตาตามตำแหน่งฐานเดือน</div>
-        <div class="card-body p-0">
-            <ul class="list-group list-group-flush">`;
+            <!-- ฐานเดือน -->
+            <div class="card border-0 mb-3" style="background: rgba(30, 30, 30, 0.6); border: 1px solid rgba(255,255,255,0.06) !important; border-radius: 12px;">
+                <div class="card-header bg-transparent border-bottom border-secondary text-gold fw-bold">
+                    <i class="bi bi-journal-text me-2"></i>วิเคราะห์พื้นชะตาตามตำแหน่งฐานเดือน
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush bg-transparent">`;
     
     base1Labels.forEach((label, idx) => {
         const num2 = base2Data[idx];
         const label2 = base2Labels[idx];     
         const text2 = POSITION_PREDICTIONS[label2] ? POSITION_PREDICTIONS[label2][num2] : "คำทำนายรออัปเดต";
-     
         html += `    
-            <li class="list-group-item p-3">
-                <span class="badge bg-secondary me-2">${label2} (${num2})</span>
-                <span class="text-dark">${text2}</span>
+            <li class="list-group-item bg-transparent text-white border-bottom border-secondary p-3">
+                <span class="badge bg-info text-dark me-2 fw-bold px-2 py-1">${label2} (${num2})</span>
+                <span style="font-size: 0.95rem; line-height: 1.5;">${text2}</span>
             </li> `;
-        
     });
 
-    html += `</ul></div></div>`;
+    html += `       </ul>
+                </div>
+            </div>
 
-    html += `
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white fw-bold border-bottom"><i class="bi bi-journal-text me-2"></i>วิเคราะห์พื้นชะตาตามตำแหน่งฐานปี</div>
-        <div class="card-body p-0">
-            <ul class="list-group list-group-flush">`;
+            <!-- ฐานปี -->
+            <div class="card border-0 mb-3" style="background: rgba(30, 30, 30, 0.6); border: 1px solid rgba(255,255,255,0.06) !important; border-radius: 12px;">
+                <div class="card-header bg-transparent border-bottom border-secondary text-gold fw-bold">
+                    <i class="bi bi-journal-text me-2"></i>วิเคราะห์พื้นชะตาตามตำแหน่งฐานปี
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush bg-transparent">`;
     
     base1Labels.forEach((label, idx) => {       
         const num3 = base3Data[idx];
         const label3 = base3Labels[idx];
         const text3 = POSITION_PREDICTIONS[label3] ? POSITION_PREDICTIONS[label3][num3] : "คำทำนายรออัปเดต";
-     
         html += `
-            <li class="list-group-item p-3">
-                <span class="badge bg-secondary me-2">${label3} (${num3})</span>
-                <span class="text-dark">${text3}</span>
+            <li class="list-group-item bg-transparent text-white border-bottom border-secondary p-3">
+                <span class="badge bg-secondary text-light me-2 fw-bold px-2 py-1">${label3} (${num3})</span>
+                <span style="font-size: 0.95rem; line-height: 1.5;">${text3}</span>
             </li>`;            
     });
 
-    html += `</ul></div></div>`;
+    html += `       </ul>
+                </div>
+            </div>
+        </div>
+    </div>`;
 
-const relations = analyzeRelations(tableData);
+    // ----------------------------------------------------
+    // สร้างส่วนเกณฑ์สัมพันธ์ (HTML ที่เปิด/ปิด Tags ถูกต้องสมบูรณ์)
+    // ----------------------------------------------------
+    let relationsHtml = '';
+    const relations = analyzeRelations(tableData);
 
-// 2. กรองแยกกลุ่มเพื่อเตรียมแสดงผล
-const attaRelations = relations.filter(r => r.type === 'อัตตะ');
-const hinaRelations = relations.filter(r => r.type === 'หินะ');
-const thanangList = relations.filter(r => r.type === "ธะนัง");
-const pitaList = relations.filter(r => r.type === "ปิตา");
-const mataList = relations.filter(r => r.type === "มาตา");
-const phokaList = relations.filter(r => r.type === "โภคา");
-const matchimaList = relations.filter(r => r.type === "มัชฌิมา");
+    const attaRelations = relations.filter(r => r.type === 'อัตตะ');
+    const hinaRelations = relations.filter(r => r.type === 'หินะ');
+    const thanangList = relations.filter(r => r.type === "ธะนัง");
+    const pitaList = relations.filter(r => r.type === "ปิตา");
+    const mataList = relations.filter(r => r.type === "มาตา");
+    const phokaList = relations.filter(r => r.type === "โภคา");
+    const matchimaList = relations.filter(r => r.type === "มัชฌิมา");
 
-if (attaRelations.length > 0) {
-    html += `    
-        <div class="card-header bg-warning text-dark fw-bold">
-            <i class="bi bi-person-check-fill me-2"></i>เกณฑ์สัมพันธ์</div>
-        <div class="card-body">
-            <p class="text">* วิเคราะห์จากเลข <strong>${tableData[0].data[0]}</strong> ในตำแหน่ง <strong>อัตตะ</strong> ที่ไปสัมพันธ์กับส่วนอื่นๆ</p>
-            <ul class="list-group list-group-flush bg-transparent">`;
-            
-    attaRelations.forEach(item => {
-        html += `
-            <li class="list-group-item bg-transparent border-0 ps-0 py-2">
-                <i class="bi bi-plus-circle-fill text-primary me-2"></i>
-                <strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
-            </li>`;
-    });
+    if (relations.length > 0) {
+        relationsHtml += `<div class="card border-0 mb-4" style="background: rgba(30, 30, 30, 0.6); border: 1px solid rgba(255,255,255,0.06) !important; border-radius: 12px;">
+            <div class="card-header bg-transparent border-bottom border-secondary text-gold fw-bold">
+                <i class="bi bi-diagram-3-fill me-2"></i>วิเคราะห์เกณฑ์สัมพันธ์โยงใยชะตา
+            </div>
+            <div class="card-body">`;
 
-    html += `</ul></div></div>`;
-}
+        if (attaRelations.length > 0) {
+            relationsHtml += `<div class="mb-4">
+                <p class="text-warning fw-bold mb-2"><i class="bi bi-arrow-right-circle me-2"></i>วิเคราะห์จากอัตตะ (ตัวตน) ตกเลข ${tableData[0].data[0]}:</p>
+                <ul class="list-group list-group-flush bg-transparent">`;
+            attaRelations.forEach(item => {
+                relationsHtml += `<li class="list-group-item bg-transparent text-light border-0 ps-3 py-1">
+                    <i class="bi bi-dot text-gold me-1"></i><strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
+                </li>`;
+            });
+            relationsHtml += `</ul></div>`;
+        }
 
-if (hinaRelations.length > 0) {
-    html += `
-        <div class="card-body">
-            <p class="text">* วิเคราะห์จากเลข <strong>${tableData[0].data[1]}</strong> ในตำแหน่ง <strong>หินะ</strong> ที่ไปสัมพันธ์กับส่วนอื่นๆ</p>
-            <ul class="list-group list-group-flush bg-transparent">`;            
-    hinaRelations.forEach(item => {
-        html += `
-            <li class="list-group-item bg-transparent border-0 ps-0 py-2">
-                <i class="bi bi-dash-circle-fill text-danger me-2"></i>
-                <strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
-            </li>`;
-    });
+        if (hinaRelations.length > 0) {
+            relationsHtml += `<div class="mb-4">
+                <p class="text-danger fw-bold mb-2"><i class="bi bi-arrow-right-circle me-2"></i>วิเคราะห์จากหินะ (จุดเสีย/ความเสื่อม) ตกเลข ${tableData[0].data[1]}:</p>
+                <ul class="list-group list-group-flush bg-transparent">`;
+            hinaRelations.forEach(item => {
+                relationsHtml += `<li class="list-group-item bg-transparent text-light border-0 ps-3 py-1">
+                    <i class="bi bi-dot text-gold me-1"></i><strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
+                </li>`;
+            });
+            relationsHtml += `</ul></div>`;
+        }
 
-    html += `</ul></div></div>`;
-}
+        if (thanangList.length > 0) {
+            relationsHtml += `<div class="mb-4">
+                <p class="text-info fw-bold mb-2"><i class="bi bi-arrow-right-circle me-2"></i>วิเคราะห์จากธะนัง (ทรัพย์สิน/การเงิน) ตกเลข ${tableData[0].data[2]}:</p>
+                <ul class="list-group list-group-flush bg-transparent">`;
+            thanangList.forEach(item => {
+                relationsHtml += `<li class="list-group-item bg-transparent text-light border-0 ps-3 py-1">
+                    <i class="bi bi-dot text-gold me-1"></i><strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
+                </li>`;
+            });
+            relationsHtml += `</ul></div>`;
+        }
 
-if (thanangList.length > 0) {
-    html += `    
-        <div class="card-body">
-            <p class="text">* วิเคราะห์จากเลข <strong>${tableData[0].data[2]}</strong> ในตำแหน่ง <strong>ธะนัง</strong> ที่สัมพันธ์กับจุดอื่นๆ</p>
-            <ul class="list-group list-group-flush bg-transparent">`;            
-    thanangList.forEach(item => {
-        html += `
-            <li class="list-group-item bg-transparent border-0 ps-0 py-2">
-                <i class="bi bi-gem text-success me-2"></i>
-                <strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
-            </li>`;
-    });
+        if (pitaList.length > 0) {
+            relationsHtml += `<div class="mb-4">
+                <p class="text-gold fw-bold mb-2"><i class="bi bi-arrow-right-circle me-2"></i>วิเคราะห์จากปิตา (บิดา/ผู้ใหญ่ฝ่ายชาย) ตกเลข ${tableData[0].data[3]}:</p>
+                <ul class="list-group list-group-flush bg-transparent">`;
+            pitaList.forEach(item => {
+                relationsHtml += `<li class="list-group-item bg-transparent text-light border-0 ps-3 py-1">
+                    <i class="bi bi-dot text-gold me-1"></i><strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
+                </li>`;
+            });
+            relationsHtml += `</ul></div>`;
+        }
 
-    html += `</ul></div></div>`;
-}
+        if (mataList.length > 0) {
+            relationsHtml += `<div class="mb-4">
+                <p class="fw-bold mb-2" style="color: #ff6b8b;"><i class="bi bi-arrow-right-circle me-2"></i>วิเคราะห์จากมาตา (มารดา/ผู้ใหญ่ฝ่ายหญิง) ตกเลข ${tableData[0].data[4]}:</p>
+                <ul class="list-group list-group-flush bg-transparent">`;
+            mataList.forEach(item => {
+                relationsHtml += `<li class="list-group-item bg-transparent text-light border-0 ps-3 py-1">
+                    <i class="bi bi-dot text-gold me-1"></i><strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
+                </li>`;
+            });
+            relationsHtml += `</ul></div>`;
+        }
 
-if (pitaList.length > 0) {
-    html += `    
-        <div class="card-body">
-            <p class="text">* วิเคราะห์จากเลข <strong>${tableData[0].data[3]}</strong> ในตำแหน่ง <strong>ปิตา</strong> ที่สัมพันธ์กับจุดอื่นๆ</p>
-            <ul class="list-group list-group-flush bg-transparent">`;
-    pitaList.forEach(item => {
-        html += `<li class="list-group-item bg-transparent border-0 ps-0 py-2">
-            <i class="bi bi-shield-check text-primary me-2"></i><strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
-        </li>`;
-    });
-    html += `</ul></div></div>`;
-}
+        if (phokaList.length > 0) {
+            relationsHtml += `<div class="mb-4">
+                <p class="text-warning fw-bold mb-2"><i class="bi bi-arrow-right-circle me-2"></i>วิเคราะห์จากโภคา (อสังหาริมทรัพย์/ความมั่งคั่ง) ตกเลข ${tableData[0].data[5]}:</p>
+                <ul class="list-group list-group-flush bg-transparent">`;
+            phokaList.forEach(item => {
+                relationsHtml += `<li class="list-group-item bg-transparent text-light border-0 ps-3 py-1">
+                    <i class="bi bi-dot text-gold me-1"></i><strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
+                </li>`;
+            });
+            relationsHtml += `</ul></div>`;
+        }
 
-if (mataList.length > 0) {
-    html += `   
-        <div class="card-body">
-            <p class="text">* วิเคราะห์จากเลข <strong>${tableData[0].data[4]}</strong> ในตำแหน่ง <strong>มาตา</strong> ที่สัมพันธ์กับจุดอื่นๆ</p>
-            <ul class="list-group list-group-flush bg-transparent">`;
-    mataList.forEach(item => {
-        html += `<li class="list-group-item bg-transparent border-0 ps-0 py-2">
-            <i class="bi bi-heart-fill text-danger me-2"></i><strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
-        </li>`;
-    });
-    html += `</ul></div></div>`;
-}
+        if (matchimaList.length > 0) {
+            relationsHtml += `<div class="mb-4">
+                <p class="text-light fw-bold mb-2"><i class="bi bi-arrow-right-circle me-2"></i>วิเคราะห์จากมัชฌิมา (ปานกลาง/คนทั่วไป) ตกเลข ${tableData[0].data[6]}:</p>
+                <ul class="list-group list-group-flush bg-transparent">`;
+            matchimaList.forEach(item => {
+                relationsHtml += `<li class="list-group-item bg-transparent text-light border-0 ps-3 py-1">
+                    <i class="bi bi-dot text-gold me-1"></i><strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
+                </li>`;
+            });
+            relationsHtml += `</ul></div>`;
+        }
 
-if (phokaList.length > 0) {
-    html += `    
-        <div class="card-body">
-            <p class="text">* วิเคราะห์จากเลข <strong>${tableData[0].data[5]}</strong> ในตำแหน่ง <strong>โภคา</strong> ที่สัมพันธ์กับส่วนอื่นๆ</p>
-            <ul class="list-group list-group-flush bg-transparent">`;
-            
-    phokaList.forEach(item => {
-        html += `
-            <li class="list-group-item bg-transparent border-0 ps-0 py-2">
-                <i class="bi bi-trophy-fill text-warning me-2"></i>
-                <strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
-            </li>`;
-    });
-
-    html += `</ul></div></div>`;
-}
-
-if (matchimaList.length > 0) {
-    html += `    
-        <div class="card-body">
-            <p class="text">* วิเคราะห์จากเลข <strong>${tableData[0].data[6]}</strong> ในตำแหน่ง <strong>มัชฌิมา</strong> ที่สัมพันธ์กับส่วนอื่นๆ</p>
-            <ul class="list-group list-group-flush bg-transparent">`;            
-    matchimaList.forEach(item => {
-        html += `
-            <li class="list-group-item bg-transparent border-0 ps-0 py-2">
-                <i class="bi bi-dot text-secondary me-2"></i>
-                <strong>สัมพันธ์กับ ${item.label}:</strong> ${item.text}
-            </li>`;
-    });
-
-    html += `</ul></div></div>`;
-}
-
+        relationsHtml += `</div></div>`;
+    }
 
     document.getElementById('result-area').innerHTML = html;
 
-    // ---- Section ยามอัฏฐกาล (แสดงท้ายสุดแยกต่างหาก) ----
+    // แทรกเกณฑ์สัมพันธ์เข้าไปในตำแหน่งที่ถูกต้องใน Tab 2
+    const relationsContainer = document.getElementById('relations-tab-content');
+    if (relationsContainer) {
+        relationsContainer.innerHTML = relationsHtml;
+    }
+
+    // ---- Section ยามอัฏฐกาล ----
     const yamInfo = getCurrentYamInfo(day, birthTimeStr);
     const yamPeriod = yamInfo.isNight ? 'กลางคืน 🌙' : 'กลางวัน ☀️';
-    const yamBadgeClass = yamInfo.isMatch ? 'bg-success' : 'bg-secondary';
+    const yamBadgeClass = yamInfo.isMatch ? 'bg-success text-white' : 'bg-secondary text-light';
     const yamMatchText = yamInfo.isMatch
         ? '✨ ยามเกิดตรงกับดาวเกิดของท่าน — เป็นมงคลยิ่ง'
-        : 'ยามเกิดไม่ตรงกับดาวเกิด';
+        : 'ยามเกิดไม่ตรงกับดาวเกิดตามกำลังวัน';
 
-    const yamSection = document.createElement('div');
-    yamSection.className = 'card border-0 shadow-sm mt-4';
-    yamSection.innerHTML = `
-        <div class="card-header bg-dark text-white fw-bold">
-            <i class="bi bi-clock-history me-2"></i>ยามอัฏฐกาล ณ เวลาเกิด (${yamPeriod})
-        </div>
-        <div class="card-body d-flex align-items-center gap-4 flex-wrap">
-            <div class="text-center">
-                <div class="display-4 fw-bold text-warning">${yamInfo.yamNumber}</div>
-                <div class="small text-muted">เลขยาม</div>
+    const yamSectionHtml = `
+        <div class="card border-0 shadow-sm" style="background: rgba(30, 30, 30, 0.6); border: 1px solid rgba(255,255,255,0.06) !important; border-radius: 12px;">
+            <div class="card-header bg-transparent border-bottom border-secondary text-gold fw-bold">
+                <i class="bi bi-clock-history me-2"></i>ยามอัฏฐกาล ณ เวลาเกิด (${yamPeriod})
             </div>
-            <div>
-                <div class="fs-5 fw-bold">${yamInfo.yamName}</div>
-                <div class="small text-muted">ยามที่ ${yamInfo.yamOrder} • เวลาเกิด ${yamInfo.birthTimeStr} น.</div>
-                <span class="badge ${yamBadgeClass} mt-2">${yamMatchText}</span>
+            <div class="card-body d-flex align-items-center gap-4 flex-wrap">
+                <div class="text-center px-3 py-2 bg-dark rounded" style="min-width: 90px; border: 1px solid rgba(212,175,55,0.2);">
+                    <div class="display-4 fw-bold text-warning">${yamInfo.yamNumber}</div>
+                    <div class="small text-muted" style="font-size:0.75rem;">เลขยาม</div>
+                </div>
+                <div>
+                    <div class="fs-5 fw-bold text-white mb-1">${yamInfo.yamName}</div>
+                    <div class="small text-muted">ยามที่ ${yamInfo.yamOrder} • เวลาเกิด ${yamInfo.birthTimeStr} น.</div>
+                    <span class="badge ${yamBadgeClass} mt-2 px-3 py-1 fw-bold">${yamMatchText}</span>
+                </div>
             </div>
         </div>`;
-    document.getElementById('result-area').appendChild(yamSection);
+        
+    const yamContainer = document.getElementById('yam-tab-content');
+    if (yamContainer) {
+        yamContainer.innerHTML = yamSectionHtml;
+    }
 }
+
+// ฟังก์ชันสลับ Tab แบบ Vanilla JS
+window.switchSevenTab = function(tabId) {
+    // ซ่อนทุกแท็บ
+    document.getElementById('tab-transit').style.display = 'none';
+    document.getElementById('tab-relations').style.display = 'none';
+    document.getElementById('tab-natal').style.display = 'none';
+
+    // แสดงแท็บที่เลือก
+    document.getElementById('tab-' + tabId).style.display = 'block';
+
+    // ลบสถานะ Active ออกจากปุ่มกดทั้งหมด
+    document.getElementById('tab-transit-btn').classList.remove('active');
+    document.getElementById('tab-relations-btn').classList.remove('active');
+    document.getElementById('tab-natal-btn').classList.remove('active');
+
+    // เติมสถานะ Active ให้ปุ่มที่คลิก
+    document.getElementById('tab-' + tabId + '-btn').classList.add('active');
+};

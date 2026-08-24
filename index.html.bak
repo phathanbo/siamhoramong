@@ -45,7 +45,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
     <!-- ===== PRELOAD (โหลดทรัพยากรที่สำคัญก่อน) ===== -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" as="style">
     <link rel="preload" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" as="style">
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" as="style">
     <link rel="preload" href="assets/css/style.css" as="style">
@@ -59,7 +59,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/cartomancy.css">
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/modern-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- ===== GOOGLE ANALYTICS ===== -->
     <script charset="UTF-8" async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -81,7 +82,7 @@
         top: 0; left: 0;
         width: 100%; height: 100%;
         z-index: 99999;
-        background: radial-gradient(circle at 50% 30%, rgba(159, 122, 234, 0.22) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(241, 208, 110, 0.25) 0%, transparent 50%), linear-gradient(135deg, #0e172a 0%, #15223e 50%, #0d1527 100%);
+        background: linear-gradient(135deg, #0d0d0d 0%, #1a0f00 40%, #0d1a0f 100%);
         align-items: center;
         justify-content: center;
         transition: opacity 0.4s ease;
@@ -107,28 +108,26 @@
                     font-size: 72px;
                     line-height: 1;
                     margin-bottom: 12px;
-                    filter: drop-shadow(0 0 25px rgba(241,208,110,0.8));
+                    filter: drop-shadow(0 0 20px rgba(212,175,55,0.6));
                 ">🔮</div>
                 <h1 style="
-                    background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    font-size: 2rem;
+                    color: #d4af37;
+                    font-size: 1.8rem;
                     font-weight: 700;
                     margin: 0 0 4px 0;
-                    text-shadow: 0 4px 20px rgba(241,208,110,0.3);
+                    text-shadow: 0 0 20px rgba(212,175,55,0.5);
                 ">สยามโหรามงคล</h1>
-                <p style="color: #cbd5e1; font-size: 0.95rem; margin: 0; font-weight: 400;">ระบบพยากรณ์โหราศาสตร์ไทย</p>
+                <p style="color: #888; font-size: 0.9rem; margin: 0;">ระบบพยากรณ์โหราศาสตร์ไทย</p>
             </div>
 
             <!-- Form Card -->
             <div style="
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
-                border: 1px solid rgba(241,208,110,0.4);
-                border-radius: 24px;
+                background: rgba(20,15,5,0.9);
+                border: 1px solid rgba(212,175,55,0.35);
+                border-radius: 20px;
                 padding: 36px 32px;
-                backdrop-filter: blur(28px) saturate(190%);
-                box-shadow: 0 25px 65px rgba(0,0,0,0.5), 0 0 35px rgba(241,208,110,0.15), inset 0 1px 0 rgba(255,255,255,0.25);
+                backdrop-filter: blur(20px);
+                box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08);
             " id="authFormBox">
 
                 <!-- ✨ Tab Navigation (Login/Register) ✨ -->
@@ -568,20 +567,17 @@
     </div>
 
  
-    <header class="py-3 sticky-top">
+    <header class="bg-dark text-white py-3">
         <div class="container d-flex justify-content-between align-items-center">
-            <div onclick="navigateTo('mainContent')" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 1.8rem; filter: drop-shadow(0 0 10px rgba(241,208,110,0.6));">🔮</span>
-                <span style="background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px;">สยามโหรามงคล</span>
-            </div>
+            <p onclick="navigateTo('mainContent')" style="cursor: pointer; color: #FFFFFF; font-size: 2rem;">🔮 สยามโหรามงคล</p>
             <nav>
                 <ul class="nav">
                     <li class="nav-item d-flex align-items-center ml-3">
-                        <div id="navYarmBadge" class="badge badge-gold px-3 py-2"
-                            style="border: 1px solid rgba(241,208,110,0.5); background: rgba(241,208,110,0.15); color: #FFF0A8; border-radius: 30px; cursor: pointer; backdrop-filter: blur(10px);"
+                        <div id="navYarmBadge" class="badge badge-gold p-2"
+                            style="border: 1px solid #d4af37; background: rgb(255, 255, 255); cursor: pointer;"
                             onclick="quickPredictYarm()">
-                            <i class="fas fa-clock mr-1" style="color: #F1D06E;"></i>
-                            <span id="navYarmName" style="color: #FFF; font-weight: 500;">กำลังคำนวณยาม...</span>
+                            <i class="fas fa-clock mr-1"></i>
+                            <span id="navYarmName">กำลังคำนวณยาม...</span>
                         </div>
                     </li>
                     <li class="nav-item">
@@ -666,107 +662,29 @@
     </section>
 
 
-    <!-- 2.หน้าประวัติและทะเบียนสมาชิก (Grand Royal Member Directory Edition) -->
+    <!-- 2.หน้าประวัติ ไฟล์ membermanager.js-->
     <section id="historySection" class="main-section" style="display: none;">
-        <div class="container py-4" style="max-width: 1140px; margin: 0 auto;">
-            
-            <!-- Directory Header Banner -->
-            <div class="text-center mb-5 p-4 rounded" style="background: linear-gradient(135deg, rgba(241,208,110,0.12) 0%, rgba(20,32,58,0.75) 100%); border: 1px solid rgba(241,208,110,0.35); border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.35); backdrop-filter: blur(20px);">
-                <div style="font-size: 3.5rem; margin-bottom: 8px; filter: drop-shadow(0 0 15px rgba(241,208,110,0.6));">📜</div>
-                <h1 style="font-size: 2.4rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px rgba(241,208,110,0.3); margin-bottom: 8px;">
-                    ทำเนียบดวงชะตาสมาชิก
-                </h1>
-                <p style="color: #CBD5E1; font-size: 1.05rem; max-width: 650px; margin: 0 auto 20px auto;">
-                    จัดการทะเบียนดวงชะตา บันทึกข้อมูลวันเดือนปีเกิด และเปิดดูผลพยากรณ์รายบุคคล
-                </p>
-
-                <!-- Search & Quick Action Bar -->
-                <div class="d-flex flex-wrap justify-content-center align-items-center gap-3" style="gap: 12px; max-width: 650px; margin: 0 auto;">
-                    <div style="flex: 1; min-width: 260px; position: relative;">
-                        <i class="fas fa-search" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #F1D06E; font-size: 1.1rem; z-index: 2;"></i>
-                        <input type="text" id="searchInput" class="form-control" 
-                            placeholder="ค้นหาด้วยชื่อ, นามสกุล หรือรหัสสมาชิก..."
-                            onkeyup="searchHistory()"
-                            style="padding-left: 48px; height: 50px; border-radius: 50px; font-size: 1rem; background: rgba(13,21,39,0.85); border: 1px solid rgba(241,208,110,0.4); color: #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.3);">
-                    </div>
-                    <button class="btn btn-gold px-4 py-2" onclick="navigateTo('mainContent')" style="height: 50px; border-radius: 50px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-user-plus"></i> เพิ่มสมาชิกใหม่
-                    </button>
-                </div>
-            </div>
-
-            <!-- Member Analytics & Stats Widgets (Integrated from adminDashboard) -->
-            <div class="row g-3 mb-4 text-white" id="memberAnalyticsContainer">
-                <div class="col-12 col-md-4 mb-3">
-                    <div class="p-3 d-flex align-items-center" style="background: linear-gradient(135deg, rgba(30,46,78,0.75) 0%, rgba(18,28,50,0.85) 100%); border: 1px solid rgba(241,208,110,0.3); border-radius: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);">
-                        <div style="width: 50px; height: 50px; border-radius: 14px; background: rgba(241,208,110,0.18); color: #F1D06E; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-right: 15px;">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div>
-                            <span class="text-white-50 small d-block">สมาชิกทั้งหมด</span>
-                            <h3 class="m-0 font-weight-bold" style="color: #FFF0A8;" id="statTotalMembers">0</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-4 mb-3">
-                    <div class="p-3 d-flex align-items-center" style="background: linear-gradient(135deg, rgba(30,46,78,0.75) 0%, rgba(18,28,50,0.85) 100%); border: 1px solid rgba(59,130,246,0.3); border-radius: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);">
-                        <div style="width: 50px; height: 50px; border-radius: 14px; background: rgba(59,130,246,0.18); color: #60A5FA; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-right: 15px;">
-                            <i class="fas fa-mars"></i>
-                        </div>
-                        <div>
-                            <span class="text-white-50 small d-block">ชาย</span>
-                            <h3 class="m-0 font-weight-bold" style="color: #93C5FD;" id="statMaleMembers">0</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-4 mb-3">
-                    <div class="p-3 d-flex align-items-center" style="background: linear-gradient(135deg, rgba(30,46,78,0.75) 0%, rgba(18,28,50,0.85) 100%); border: 1px solid rgba(236,72,153,0.3); border-radius: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);">
-                        <div style="width: 50px; height: 50px; border-radius: 14px; background: rgba(236,72,153,0.18); color: #F472B6; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-right: 15px;">
-                            <i class="fas fa-venus"></i>
-                        </div>
-                        <div>
-                            <span class="text-white-50 small d-block">หญิง</span>
-                            <h3 class="m-0 font-weight-bold" style="color: #FBCFE8;" id="statFemaleMembers">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats & Quick Actions -->
-            <div class="d-flex justify-content-between align-items-center mb-3 px-2">
-                <h5 class="text-gold m-0 font-weight-bold" style="font-size: 1.15rem;">
-                    <i class="fas fa-users mr-2"></i> รายชื่อสมาชิกที่ลงทะเบียน
-                </h5>
-                <span id="historyCount" class="badge" style="background: rgba(241,208,110,0.2); color: #FFF0A8; border: 1px solid rgba(241,208,110,0.4); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem;">
-                    กำลังโหลด...
-                </span>
-            </div>
-
-            <!-- Modern Table Container -->
-            <div class="table-responsive" style="border-radius: 20px; overflow: hidden; border: 1px solid rgba(241,208,110,0.3); box-shadow: 0 15px 40px rgba(0,0,0,0.4); background: rgba(15,23,42,0.8); backdrop-filter: blur(20px);">
-                <table class="table text-center m-0" style="background: transparent; color: #FFFFFF;">
-                    <thead>
-                        <tr style="background: linear-gradient(90deg, rgba(241,208,110,0.2) 0%, rgba(241,208,110,0.1) 100%); border-bottom: 2px solid rgba(241,208,110,0.35);">
-                            <th style="color: #FFF0A8; font-weight: 600; padding: 16px 12px; border: none; font-size: 0.95rem;">รหัสสมาชิก</th>
-                            <th style="color: #FFF0A8; font-weight: 600; padding: 16px 12px; border: none; font-size: 0.95rem; text-align: left;">ชื่อ-นามสกุล</th>
-                            <th style="color: #FFF0A8; font-weight: 600; padding: 16px 12px; border: none; font-size: 0.95rem;">วันเดือนปีเกิด</th>
-                            <th style="color: #FFF0A8; font-weight: 600; padding: 16px 12px; border: none; font-size: 0.95rem;">ปีนักษัตร</th>
-                            <th style="color: #FFF0A8; font-weight: 600; padding: 16px 12px; border: none; font-size: 0.95rem;">ยามเกิด</th>
-                            <th style="color: #FFF0A8; font-weight: 600; padding: 16px 12px; border: none; font-size: 0.95rem;">จัดการ</th>
+        <div class="card-body">
+            <h4 style="text-align: center;" >📜 ประวัติสมาชิก</h4>
+            <input type="text" id="searchInput" class="form-control mb-3" placeholder="🔍 ค้นหาชื่อหรือรหัส..."
+                onkeyup="searchHistory()">
+            <div class="table-responsive">
+                <table class="table text-center" style="background: rgb(255, 255, 255);">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>รหัสสมาชิก</th>
+                            <th>ชื่อ</th>
+                            <th>นามสกุล</th>
+                            <th>วันเกิด</th>
+                            <th>นักษัตร</th>
+                            <th>ยาม</th>
+                            <th>จัดการ</th>
                         </tr>
                     </thead>
-                    <tbody id="historyBody">
-                        <!-- Rendered by membermanager.js -->
-                    </tbody>
+                    <tbody id="historyBody"></tbody>
                 </table>
             </div>
-
-            <!-- Footer Return Button -->
-            <div class="text-center mt-5">
-                <button class="btn btn-outline-gold px-4 py-2" onclick="navigateTo('mainpage')" style="border-radius: 50px;">
-                    <i class="fas fa-chevron-left mr-2"></i> กลับหน้าห้องพยากรณ์
-                </button>
-            </div>
+            <div id="historyCount" class="text-right small text-muted"></div>
         </div>
     </section>
 
@@ -1095,82 +1013,39 @@
         </div>
     </section>
 
-    <!-- 18.คลังความรู้มหาโหรา (Grand Royal Library Edition) -->
+    <!-- 18.ความรู้-->
     <section id="knowledgePage" class="main-section" style="display: none;">
-        <div class="container py-4" style="max-width: 1140px; margin: 0 auto;">
-            
-            <!-- Library Header Banner -->
-            <div class="text-center mb-5 p-4 rounded" style="background: linear-gradient(135deg, rgba(241,208,110,0.12) 0%, rgba(20,32,58,0.7) 100%); border: 1px solid rgba(241,208,110,0.35); border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); backdrop-filter: blur(20px);">
-                <div style="font-size: 3.5rem; margin-bottom: 8px; filter: drop-shadow(0 0 15px rgba(241,208,110,0.6));">📚</div>
-                <h1 style="font-size: 2.4rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px rgba(241,208,110,0.3); margin-bottom: 8px;">
-                    หอสมุดมหาโหราศาสตร์
-                </h1>
-                <p style="color: #CBD5E1; font-size: 1.05rem; max-width: 650px; margin: 0 auto 20px auto;">
-                    รวบรวมคัมภีร์ พระเวทโบราณ เคล็ดวิชาโหราศาสตร์ไทย และศาสตร์แห่งสิริมงคลชั้นสูง
-                </p>
-
-                <!-- Search Box -->
-                <div class="mx-auto" style="max-width: 580px; position: relative;">
-                    <i class="fas fa-search" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #F1D06E; font-size: 1.1rem; z-index: 2;"></i>
-                    <input type="text" id="knowledgeSearchInput" class="form-control"
-                        placeholder="ค้นหาชื่อคัมภีร์, เคล็ดวิชา, หรือคำทำนาย..." 
-                        onkeyup="searchKnowledge()"
-                        style="padding-left: 50px; height: 54px; border-radius: 50px; font-size: 1.05rem; background: rgba(13,21,39,0.85); border: 1px solid rgba(241,208,110,0.45); color: #fff; box-shadow: 0 8px 25px rgba(0,0,0,0.35);">
-                </div>
+        <div class="card-body">
+            <h1 style="text-align: center; color: goldenrod;">📚 คลังความรู้มหาโหรา</h1>
+            <input type="text" id="knowledgeSearchInput" class="form-control mb-3"
+                placeholder="🔍 ค้นหาหัวข้อตำรา หรือเคล็ดวิชา..." onkeyup="searchKnowledge()">
+            <div class="d-flex flex-wrap justify-content-center mb-4" id="knowledgeCategoryFilter">
+                <button class="btn btn-sm btn-outline-gold m-1 active" onclick="filterKnowledge('all')">ทั้งหมด</button>
+                <button class="btn btn-sm btn-outline-gold m-1"
+                    onclick="filterKnowledge('ตำราโบราณ')">ตำราโบราณ</button>
+                <button class="btn btn-sm btn-outline-gold m-1"
+                    onclick="filterKnowledge('โหราศาสตร์')">โหราศาสตร์</button>
+                <button class="btn btn-sm btn-outline-gold m-1"
+                    onclick="filterKnowledge('วิถีสิริมงคล')">สิริมงคล</button>
+                <button class="btn btn-sm btn-outline-gold m-1"
+                    onclick="filterKnowledge('วิเคราะห์ลักษณะ')">ลักษณะบุคคล</button>
             </div>
-
-            <!-- Sleek Modern Segmented Category Tab Bar -->
-            <div class="d-flex justify-content-center mb-4">
-                <div id="knowledgeCategoryFilter" style="
-                    display: inline-flex;
-                    background: rgba(13, 21, 39, 0.7);
-                    padding: 5px;
-                    border-radius: 16px;
-                    border: 1px solid rgba(241, 208, 110, 0.25);
-                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-                    backdrop-filter: blur(16px);
-                    max-width: 100%;
-                    overflow-x: auto;
-                    -webkit-overflow-scrolling: touch;
-                ">
-                    <button class="know-tab-btn active" data-cat="all" onclick="filterKnowledge('all')">
-                        <i class="fas fa-layer-group"></i> ทั้งหมด
-                    </button>
-                    <button class="know-tab-btn" data-cat="ตำราโบราณ" onclick="filterKnowledge('ตำราโบราณ')">
-                        <i class="fas fa-scroll"></i> ตำราโบราณ
-                    </button>
-                    <button class="know-tab-btn" data-cat="โหราศาสตร์" onclick="filterKnowledge('โหราศาสตร์')">
-                        <i class="fas fa-star"></i> โหราศาสตร์ไทย
-                    </button>
-                    <button class="know-tab-btn" data-cat="วิถีสิริมงคล" onclick="filterKnowledge('วิถีสิริมงคล')">
-                        <i class="fas fa-gem"></i> วิถีสิริมงคล
-                    </button>
-                    <button class="know-tab-btn" data-cat="วิเคราะห์ลักษณะ" onclick="filterKnowledge('วิเคราะห์ลักษณะ')">
-                        <i class="fas fa-user-tag"></i> วิเคราะห์ลักษณะ
-                    </button>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-hover text-center bg-light">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>หมวดหมู่</th>
+                            <th>หัวข้อตำรา</th>
+                            <th>ประเภท</th>
+                            <th>ระดับความรู้</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="knowledgeBody">
+                    </tbody>
+                </table>
             </div>
-
-            <!-- Category Stats Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4 px-2">
-                <h5 id="knowledgeCategoryTitle" class="text-gold m-0 font-weight-bold">
-                    <i class="fas fa-book-reader mr-2"></i> คัมภีร์และบทความทั้งหมด
-                </h5>
-                <span id="knowledgeCount" class="badge" style="background: rgba(241,208,110,0.2); color: #FFF0A8; border: 1px solid rgba(241,208,110,0.4); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem;">
-                    แสดง 0 รายการ
-                </span>
-            </div>
-
-            <!-- Library Books Grid -->
-            <div class="row g-4" id="knowledgeGridContainer">
-                <!-- Cards dynamically rendered by knowledge.js -->
-            </div>
-
-            <div class="text-center mt-5">
-                <button class="btn btn-outline-gold px-4 py-2" onclick="navigateTo('mainpage')" style="border-radius: 50px;">
-                    <i class="fas fa-chevron-left mr-2"></i> กลับหน้าห้องพยากรณ์
-                </button>
-            </div>
+            <div id="knowledgeCount" class="text-right small text-muted"></div>
         </div>
     </section>
 
@@ -1566,7 +1441,7 @@
             <div class="selection-grid" style="margin-bottom: 20px;">
                 <div class="input-box">
                     <label>ตรวจเช็กฤกษ์เดินทางวันอื่นๆ</label>
-                    <select id="ubakongDay" class="form-control" onchange="renderUbakongDay()">
+                    <select id="ubakongDay" class="form-control" onchange="renderUbakongDay(); renderTravelRites()">
                         <option value="0">วันอาทิตย์</option>
                         <option value="1">วันจันทร์</option>
                         <option value="2">วันอังคาร</option>
@@ -1846,60 +1721,30 @@
 
     <!-- ไฟล์ Fortune.js-->
     <section id="zodiacdetailsection" class="main-section" style="display:none;">
-        <div class="container py-4" style="max-width: 1140px; margin: 0 auto;">
-            
-            <!-- Header Banner -->
-            <div class="text-center mb-4 p-4 rounded" style="background: linear-gradient(135deg, rgba(241,208,110,0.12) 0%, rgba(20,32,58,0.75) 100%); border: 1px solid rgba(241,208,110,0.35); border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.35); backdrop-filter: blur(20px);">
-                <div style="font-size: 3.2rem; margin-bottom: 8px; filter: drop-shadow(0 0 15px rgba(241,208,110,0.6));">🐉</div>
-                <h1 style="font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px rgba(241,208,110,0.3); margin-bottom: 8px;">
-                    ดูดวงตามปีนักษัตร (ตำราพรหมชาติ)
-                </h1>
-                <p style="color: #CBD5E1; font-size: 1.05rem; max-width: 650px; margin: 0 auto;">
-                    ทำนายโฉลกกำเนิด กมลสันดาน คู่มิตร คู่ศัตรู และคำพยากรณ์ผสาน 3 ฐานจักรราศีฉบับโบราณ
-                </p>
-            </div>
-
-            <!-- Member Selection Box -->
-            <div class="p-3 p-md-4 mb-4 rounded" style="background: linear-gradient(135deg, rgba(30,46,78,0.75) 0%, rgba(18,28,50,0.85) 100%); border: 1px solid rgba(241,208,110,0.3); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <div class="d-flex align-items-center gap-2 mb-2 mb-md-0">
-                        <span style="font-size: 1.6rem; color: #F1D06E;"><i class="fas fa-user-circle"></i></span>
-                        <div>
-                            <span class="font-weight-bold d-block" style="color: #FFF0A8; font-size: 1rem;">เลือกข้อมูลจากสมาชิก</span>
-                            <small style="color: #CBD5E1;">เลือกสมาชิกเพื่อดึงปีนักษัตร วันเกิด และเดือนเกิดมาวิเคราะห์อัตโนมัติ</small>
-                        </div>
-                    </div>
-                    <div style="min-width: 260px; flex: 1; max-width: 380px;">
-                        <select id="zodiacMemberSelect" class="form-control" onchange="autoFillZodiacFromMember(this.value)"
-                                style="border-radius: 12px; height: 46px; background: rgba(13,21,39,0.85); border: 1px solid rgba(241,208,110,0.4); color: #FFF0A8; font-weight: 500;">
-                            <option value="">— เลือกสมาชิก —</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-container mb-4 d-flex flex-wrap justify-content-center" style="gap: 8px;">
-                <button class="tab-btn active" onclick="switchZodiac('rat')">ปีชวด</button>
-                <button class="tab-btn" onclick="switchZodiac('ox')">ปีฉลู</button>
-                <button class="tab-btn" onclick="switchZodiac('tiger')">ปีขาล</button>
-                <button class="tab-btn" onclick="switchZodiac('rabbit')">ปีเถาะ</button>
-                <button class="tab-btn" onclick="switchZodiac('dragon')">ปีมะโรง</button>
-                <button class="tab-btn" onclick="switchZodiac('snake')">ปีมะเส็ง</button>
-                <button class="tab-btn" onclick="switchZodiac('horse')">ปีมะเมีย</button>
-                <button class="tab-btn" onclick="switchZodiac('goat')">ปีมะแม</button>
-                <button class="tab-btn" onclick="switchZodiac('monkey')">ปีวอก</button>
-                <button class="tab-btn" onclick="switchZodiac('rooster')">ปีระกา</button>
-                <button class="tab-btn" onclick="switchZodiac('dog')">ปีจอ</button>
-                <button class="tab-btn" onclick="switchZodiac('pig')">ปีกุน</button>
-            </div>
-
-            <div id="zodiac-content"></div>
-
-            <div class="zodiac-card-main mt-4">
-                <h1 id="zodiacBadge" class="zodiac-badge" style="display:none;"></h1>
-                <h2 id="zodiacTitle" class="section-title" style="display:none;"></h2>
-                <p id="zodiacMeta" class="zodiac-meta" style="display:none;"></p>
-                <p id="zodiacBasic" class="zodiac-basic" style="display:none;"></p>
+        <div class="container" style="text-align: center;">
+            <h1>ดูดวงตามปีนักษัตร (ตำราพรหมชาติ)</h1>
+            <h3>เลือกปีนักษัตรของคุณ</h3>
+        </div>
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchZodiac('rat')">ปีชวด</button>
+            <button class="tab-btn" onclick="switchZodiac('ox')">ปีฉลู</button>
+            <button class="tab-btn" onclick="switchZodiac('tiger')">ปีขาล</button>
+            <button class="tab-btn" onclick="switchZodiac('rabbit')">ปีเถาะ</button>
+            <button class="tab-btn" onclick="switchZodiac('dragon')">ปีมะโรง</button>
+            <button class="tab-btn" onclick="switchZodiac('snake')">ปีมะเส็ง</button>
+            <button class="tab-btn" onclick="switchZodiac('horse')">ปีมะเมีย</button>
+            <button class="tab-btn" onclick="switchZodiac('goat')">ปีมะแม</button>
+            <button class="tab-btn" onclick="switchZodiac('monkey')">ปีวอก</button>
+            <button class="tab-btn" onclick="switchZodiac('rooster')">ปีระกา</button>
+            <button class="tab-btn" onclick="switchZodiac('dog')">ปีจอ</button>
+            <button class="tab-btn" onclick="switchZodiac('pig')">ปีกุน</button>
+        </div>
+        <div class="container">
+            <div class="zodiac-card-main">
+                <h1 id="zodiacBadge" class="zodiac-badge"></h1>
+                <h2 id="zodiacTitle" class="section-title"></h2>
+                <p id="zodiacMeta" class="zodiac-meta"></p>
+                <p id="zodiacBasic" class="zodiac-basic"></p>
                 <div class="calc-form-zodiac" style="text-align: center;">
                     <div class="form-row" style="justify-content: center;">
                         <div class="form-col">
@@ -2386,42 +2231,37 @@
                 </h2>
                 <p class="text-white text-center mb-4">วิเคราะห์ปีที่ดีสำหรับธุรกิจและการลงทุน</p>
 
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <label class="text-gold font-weight-bold"><i class="fas fa-users-gear mr-2 text-warning"></i>เลือกสมาชิกจากประวัติ:</label>
+                <div class="row justify-content-center mb-3">
+                    <div class="col-md-8">
+                        <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
                         <select class="form-control bg-dark text-white border-gold member-selector-shared"
-                            style="border-radius: 12px; height: 46px;"
                             onchange="autoFillMemberData(this.value);displayBusinessFortune()">
                             <option value="">-- เลือกสมาชิก --</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-12 col-md-6 mb-3 mb-md-0">
-                        <label class="text-gold"><i class="fas fa-calendar-alt mr-2 text-warning"></i>วันเกิด:</label>
+                <div class="row justify-content-center mb-3">
+                    <div class="col-md-4">
+                        <label class="text-gold">วันเกิด:</label>
                         <input type="date" id="businessBirthday" class="form-control bg-dark text-gold border-gold"
-                               style="border-radius: 12px; height: 46px;"
                                onchange="displayBusinessFortune()">
                     </div>
-                    <div class="col-12 col-md-6">
-                        <label class="text-gold"><i class="fas fa-clock mr-2 text-warning"></i>เวลาเกิด (ถ้าทราบ):</label>
+                    <div class="col-md-4">
+                        <label class="text-gold">เวลาเกิด (ถ้าทราบ):</label>
                         <input type="time" id="businessBirthTime" class="form-control bg-dark text-gold border-gold"
-                               style="border-radius: 12px; height: 46px;"
                                onchange="displayBusinessFortune()">
                     </div>
                 </div>
 
-                <div class="text-center my-3">
-                    <small class="text-white-50">— หรือระบุปีนักษัตรและเลือกปีที่ต้องการทำนาย —</small>
+                <div class="text-center mb-3">
+                    <small class="text-white-50">— หรือเลือกปีนักษัตรด้านล่าง —</small>
                 </div>
 
-                <div class="row mb-4 align-items-end">
-                    <div class="col-12 col-md-6 mb-3 mb-md-0">
-                        <label class="text-gold"><i class="fas fa-dragon mr-2 text-warning"></i>เลือกปีนักษัตรของคุณ:</label>
-                        <select id="businessZodiac" class="form-control bg-dark text-gold border-gold"
-                                style="border-radius: 12px; height: 46px;"
-                                onchange="displayBusinessFortune()">
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6">
+                        <label class="text-gold">เลือกปีนักษัตรของคุณ:</label>
+                        <select id="businessZodiac" class="form-control bg-dark text-gold border-gold" onchange="displayBusinessFortune()">
                             <option value="">-- เลือกปีนักษัตร --</option>
                             <option value="rat">ปีชวด (หนู)</option>
                             <option value="ox">ปีฉลู (วัว)</option>
@@ -2437,29 +2277,16 @@
                             <option value="pig">ปีกุน (หมู)</option>
                         </select>
                     </div>
-                    <div class="col-12 col-md-6">
-                        <label class="text-gold"><i class="fas fa-calendar-check mr-2 text-warning"></i>ปีที่ต้องการพยากรณ์:</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-gold" type="button" onclick="changeBusinessYear(-1)">
-                                    <i class="fas fa-chevron-left"></i> ปีก่อนหน้า
-                                </button>
-                            </div>
-                            <input type="number" id="businessYear" class="form-control bg-dark text-gold border-gold text-center font-weight-bold"
-                                   style="font-size: 1.15rem; height: 46px;"
-                                   value="2026" min="2000" max="2100" onchange="displayBusinessFortune()">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-gold" type="button" onclick="changeBusinessYear(1)">
-                                    ปีถัดไป <i class="fas fa-chevron-right"></i>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="col-md-6">
+                        <label class="text-gold">เลือกปี (ค.ศ.):</label>
+                        <input type="number" id="businessYear" class="form-control bg-dark text-gold border-gold"
+                               value="2026" min="2000" max="2100" onchange="displayBusinessFortune()">
                     </div>
                 </div>
 
                 <div class="text-center mb-4">
-                    <button class="btn btn-gold btn-lg px-5" style="border-radius: 50px;" onclick="displayBusinessFortune()">
-                        <i class="fas fa-search mr-2"></i>วิเคราะห์ดวงธุรกิจและการเงิน
+                    <button class="btn btn-gold btn-lg" onclick="displayBusinessFortune()">
+                        <i class="fas fa-search mr-2"></i>วิเคราะห์ดวงธุรกิจ
                     </button>
                 </div>
 
@@ -2563,73 +2390,33 @@
     <!-- ไพ่ยิปซีเซลติกครอส 10 ใบ (Tarot Celtic Cross) -->
     <section id="tarotPage" class="main-section" style="display: none;">
         <div class="container mt-4">
-            <div class="card bg-dark border-gold p-4 shadow-lg" style="border-radius: 20px; background: linear-gradient(135deg, rgba(20,15,35,0.95) 0%, rgba(10,8,20,0.98) 100%);">
-                <h2 class="text-gold mb-2 text-center" style="font-weight: bold;">
-                    <i class="fas fa-layer-group mr-2 text-warning"></i> ทำนายไพ่ยิปซีเซลติกครอส (10 ใบ)
+            <div class="card bg-dark border-gold p-4 shadow-lg">
+                <h2 class="text-gold mb-4 text-center">
+                    <i class="fas fa-layer-group mr-2"></i> ทำนายไพ่ยิปซีเซลติกครอส (10 ใบ)
                 </h2>
-                <p class="text-center text-light mb-4">ผังพยากรณ์ชั้นสูงระดับสากล 10 ตำแหน่ง เจาะลึกอดีต ปัจจุบัน อนาคต จิตใต้สำนึก และบทสรุปชะตา</p>
+                <p class="text-center text-light">การทำนายแบบเจาะลึก 10 ใบ รวบรวมข้อมูล อดีต ปัจจุบัน อนาคต และสิ่งแวดล้อมรอบตัว</p>
                 
-                <div id="tarotPreDraw" class="text-center py-4">
-                    <div class="row justify-content-center mb-4">
-                        <div class="col-12 col-md-6">
-                            <label class="text-gold font-weight-bold mb-2"><i class="fas fa-compass mr-2 text-warning"></i>เลือกหมวดหมู่เรื่องที่ต้องการถาม:</label>
-                            <select id="tarotQuestionCategory" class="form-control bg-dark text-gold border-gold text-center font-weight-bold" style="height: 48px; border-radius: 12px; font-size: 1.05rem;">
-                                <option value="general">⭐ ภาพรวมดวงชะตาและชีวิต (General Life Spread)</option>
-                                <option value="career">💼 การงาน ธุรกิจ และความก้าวหน้า (Career & Ambition)</option>
-                                <option value="finance">💰 การเงิน โชคลาภ และการลงทุน (Wealth & Finance)</option>
-                                <option value="love">💖 ความรัก ความสัมพันธ์ และคู่ครอง (Love & Relationship)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <p class="text-warning mb-4" style="font-size: 1rem;">
-                        <i class="fas fa-hands-praying mr-1"></i> ตั้งจิตอธิษฐาน ทำสมาธิ นึกถึงคำถามหรือเรื่องที่ต้องการค้นหาคำตอบ แล้วกดปุ่มเพื่อเริ่มสับและวางผังไพ่
-                    </p>
-                    <button id="drawCelticCrossBtn" class="btn btn-gold btn-lg px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 50px; font-size: 1.15rem;" onclick="drawCelticCross()">
-                        <i class="fas fa-hand-sparkles mr-2"></i> สับและเปิดผังเซลติกครอส 10 ใบ
+                <div id="tarotPreDraw" class="text-center">
+                    <p class="text-warning">ทำสมาธิ นึกถึงเรื่องที่ต้องการทราบ แล้วกดปุ่มด้านล่างเพื่อเริ่มเปิดไพ่</p>
+                    <button id="drawCelticCrossBtn" class="btn btn-gold btn-lg mt-3" onclick="drawCelticCross()">
+                        <i class="fas fa-hand-sparkles mr-2"></i> เริ่มเปิดไพ่ 10 ใบ
                     </button>
                 </div>
 
                 <div id="tarotResult" style="display: none;">
-                    <!-- Action Bar -->
-                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap pb-3 border-bottom border-warning">
-                        <div>
-                            <span class="badge badge-warning text-dark font-weight-bold p-2 mr-2" id="tarotCategoryBadge">หมวด: ภาพรวมชีวิต</span>
-                            <small class="text-white-50">คลิกที่ไพ่แต่ละใบ หรือกดปุ่มเปิดไพ่ทั้งหมดเพื่อดูภาพรวม</small>
-                        </div>
-                        <div class="mt-2 mt-md-0 btn-group">
-                            <button class="btn btn-sm btn-outline-warning" onclick="revealAllTarotCards()">
-                                <i class="fas fa-eye mr-1"></i> เปิดไพ่ทั้งหมดพร้อมกัน
-                            </button>
-                            <button class="btn btn-sm btn-outline-light ml-2" onclick="resetTarotReading()">
-                                <i class="fas fa-redo mr-1"></i> ดูดวงใหม่
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- พื้นที่จัดเรียงไพ่ 10 ใบ Authentic Celtic Cross Layout -->
-                    <div class="celtic-cross-container mb-4">
-                        <div class="celtic-cross-layout">
-                            <!-- Card elements will be generated by JS -->
-                        </div>
+                    <!-- พื้นที่จัดเรียงไพ่ 10 ใบ -->
+                    <div class="celtic-cross-layout mt-4 mb-4">
+                        <!-- Card elements will be generated by JS -->
                     </div>
                     
-                    <!-- ส่วนแสดงคำทำนาย -->
-                    <div id="tarotReadingText" class="mt-4 p-4 rounded" style="background: rgba(10,15,30,0.85); border: 1px solid rgba(241,208,110,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <div id="tarotReadingText" class="mt-4 p-4 border-gold rounded" style="background: rgba(0,0,0,0.5);">
+                        <h4 class="text-gold text-center mb-3">คำทำนาย</h4>
                         <div id="tarotReadingContent" class="text-light"></div>
                     </div>
 
-                    <!-- ภาพรวมการอ่านไพ่ 10 ใบ (Spread Synthesis) -->
-                    <div id="tarotOverallSynthesis" class="mt-4 p-4 rounded" style="display: none; background: linear-gradient(135deg, rgba(25,30,55,0.9) 0%, rgba(15,18,35,0.95) 100%); border: 1px solid rgba(241,208,110,0.5);">
-                        <h4 class="text-gold mb-3 text-center font-weight-bold">
-                            <i class="fas fa-crystal-ball mr-2 text-warning"></i> บทวิเคราะห์สังเคราะห์ภาพรวม 10 ใบ (Spread Synthesis)
-                        </h4>
-                        <div id="tarotSynthesisContent"></div>
-                    </div>
-
-                    <div class="text-center mt-5">
-                        <button class="btn btn-outline-gold btn-lg px-4" onclick="resetTarotReading()">
-                            <i class="fas fa-redo mr-2"></i> สับไพ่อธิษฐานเปิดผังใหม่
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-light" onclick="resetTarotReading()">
+                            <i class="fas fa-redo mr-2"></i> ดูดวงใหม่
                         </button>
                     </div>
                 </div>
@@ -3504,42 +3291,21 @@
                         <i class="fas fa-times"></i>
                     </button>
                     
-                    <div id="siamsiTicket" class="card text-dark shadow-lg" style="background: url('assets/images/siamsi_bg.jpg') center/cover no-repeat; border: 3px solid #d4af37; border-radius: 16px; width: 100%; animation: slideUpFade 0.4s ease-out; box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
-                        <div class="card-body p-4 text-center" style="background: rgba(255, 253, 245, 0.88); border-radius: 13px; margin: 12px; border: 1px solid rgba(184, 134, 11, 0.4);">
-                            <div class="mb-1">
-                                <span style="color: #7a0c0e; font-size: 1.15rem; font-weight: bold; letter-spacing: 1.5px; text-shadow: 0 1px 2px rgba(212,175,55,0.4);">✦ ส ย า ม โ ห ร า ม ง ค ล ✦</span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-center mb-2">
-                                <div style="height: 1px; width: 50px; background: rgba(184,134,11,0.4);"></div>
-                                <span class="mx-2" style="color: #b8860b; font-size: 0.85rem;">❖</span>
-                                <div style="height: 1px; width: 50px; background: rgba(184,134,11,0.4);"></div>
-                            </div>
-                            <h3 class="mb-2" style="font-weight: bold; color: #5a0404; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">ใบเซียมซีที่ <span id="ticketNum"></span></h3>
-                            <div class="mb-3">
-                                <span class="badge px-3 py-2 shadow-sm" style="background: linear-gradient(135deg, #931518, #b92428); color: #f9e596; font-size: 0.95rem; font-weight: bold; border-radius: 20px; border: 1.5px solid #d4af37;">
-                                    ผลทำนาย : <span id="ticketType"></span>
-                                </span>
+                    <div id="siamsiTicket" class="card text-white shadow-lg" style="background-color: #7b1113; background-image: url('assets/images/gold-texture.jpg'); background-size: cover; background-blend-mode: multiply; border: 3px solid #d4af37; border-radius: 12px; width: 100%; animation: slideUpFade 0.4s ease-out;">
+                        <div class="card-body p-4 text-center">
+                            <h3 class="mb-3" style="font-weight: bold; color: #f9e596; border-bottom: 2px dashed #d4af37; padding-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">ใบเซียมซีที่ <span id="ticketNum"></span></h3>
+                            <div class="mb-3" style="font-size: 1.1rem; color: #fff;"><strong>ผลการเสี่ยงทาย: </strong><span id="ticketType" style="color: #f9e596; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);"></span></div>
+                            
+                            <div class="mb-4 p-3 shadow-sm" style="font-size: 1.25rem; line-height: 1.8; white-space: pre-wrap; font-style: italic; color: #333; background: rgba(255, 255, 255, 0.9); border-radius: 8px; border: 1px solid #d4af37;"><span id="ticketPoem"></span></div>
+                            
+                            <div class="text-left small mx-auto" style="line-height: 1.8; color: #fff; max-width: 95%;">
+                                <div class="d-flex mb-2 border-bottom pb-2 border-warning"><div style="min-width: 75px; color: #f9e596; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">💼 <strong>การงาน:</strong></div><div><span id="ticketWork"></span></div></div>
+                                <div class="d-flex mb-2 border-bottom pb-2 border-warning"><div style="min-width: 75px; color: #f9e596; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">❤️ <strong>ความรัก:</strong></div><div><span id="ticketLove"></span></div></div>
+                                <div class="d-flex mb-0 pt-1"><div style="min-width: 75px; color: #f9e596; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">🏥 <strong>สุขภาพ:</strong></div><div><span id="ticketHealth"></span></div></div>
                             </div>
                             
-                            <div class="mb-3 p-3 shadow-sm" style="font-size: 1.05rem; line-height: 1.8; white-space: pre-wrap; font-style: italic; color: #22110c; background: rgba(255, 255, 255, 0.85); border-radius: 10px; border: 1px solid rgba(184, 134, 11, 0.4);"><span id="ticketPoem"></span></div>
-                            
-                            <div class="text-left small mx-auto p-3 shadow-sm" style="line-height: 1.8; color: #1e1e1e; background: rgba(255, 255, 255, 0.9); border-radius: 10px; border: 1px solid rgba(184, 134, 11, 0.4); max-width: 100%;">
-                                <div class="d-flex mb-2 border-bottom pb-2" style="border-color: rgba(184, 134, 11, 0.25) !important;">
-                                    <div style="min-width: 80px; color: #7a0c0e; font-weight: bold;">💼 การงาน:</div>
-                                    <div><span id="ticketWork"></span></div>
-                                </div>
-                                <div class="d-flex mb-2 border-bottom pb-2" style="border-color: rgba(184, 134, 11, 0.25) !important;">
-                                    <div style="min-width: 80px; color: #7a0c0e; font-weight: bold;">❤️ ความรัก:</div>
-                                    <div><span id="ticketLove"></span></div>
-                                </div>
-                                <div class="d-flex mb-0 pt-1">
-                                    <div style="min-width: 80px; color: #7a0c0e; font-weight: bold;">🏥 สุขภาพ:</div>
-                                    <div><span id="ticketHealth"></span></div>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-3 pt-2 text-center" style="border-top: 1px solid rgba(184, 134, 11, 0.3);">
-                                <small style="color: #6a4010; font-weight: bold;">สยามโหรามงคล</small>
+                            <div class="mt-4 pt-3" style="border-top: 1px solid #d4af37;">
+                                <p class="small mb-0" style="color: #f9e596; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">สยามโหรามงคล</p>
                             </div>
                         </div>
                     </div>

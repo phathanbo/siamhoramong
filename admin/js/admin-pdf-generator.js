@@ -232,7 +232,7 @@ async function generateVIPReport() {
 
     // Page 1: Cover
     htmlContent += `
-        <div class="pdf-page cover-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; box-sizing: border-box; background-image: url('assets/mystical_astrology_cover.png') !important; background-size: cover !important; background-position: center !important; text-align: center; display: block; position: relative; padding: 0; border: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+        <div class="pdf-page cover-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; box-sizing: border-box; background-image: url('../assets/mystical_astrology_cover.png') !important; background-size: cover !important; background-position: center !important; text-align: center; display: block; position: relative; padding: 0; border: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
             
             <!-- Top Banner Content (Positions text precisely in the dark banner of the image) -->
             <div style="position: absolute; top: 140px; left: 0; width: 100%; text-align: center; z-index: 10;">
@@ -939,7 +939,7 @@ async function generateVIPReport() {
 
     // Page 35: Back Cover
     htmlContent += `
-        <div class="pdf-page cover-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; box-sizing: border-box; background-image: url('assets/mystical_astrology_cover.png') !important; background-size: cover !important; background-position: center !important; text-align: center; display: block; position: relative; padding: 0; border: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+        <div class="pdf-page cover-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; box-sizing: border-box; background-image: url('../assets/mystical_astrology_cover.png') !important; background-size: cover !important; background-position: center !important; text-align: center; display: block; position: relative; padding: 0; border: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
             
             <!-- Top Banner Content (Positions Siamhora at the top banner) -->
             <div style="position: absolute; top: 120px; left: 0; width: 100%; text-align: center; z-index: 5;">
@@ -1090,7 +1090,7 @@ async function generateVIPReport() {
                     print-color-adjust: exact !important;
                 }
                 .pdf-page.cover-page {
-                    background-image: url('assets/mystical_astrology_cover.png') !important;
+                    background-image: url('../assets/mystical_astrology_cover.png') !important;
                     background-color: #1a0b2e !important;
                     background-size: cover !important;
                     background-position: center !important;

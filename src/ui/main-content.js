@@ -50,13 +50,17 @@ function showmainpage() {
 
     const html = `
     
-        <p id="userGreeting" style="font-size: 2.8rem; text-align: center; text-shadow: 0 0 25px rgba(212,175,55,0.6); margin-bottom: 25px; color: #fff; font-weight: 300;">✨
-            ยินดีต้อนรับท่านเจ้าชะตา ✨</p>
+        <div class="text-center my-4">
+            <h1 id="userGreeting" style="font-size: 2.6rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 25px rgba(241,208,110,0.4); margin-bottom: 8px;">
+                ✨ ยินดีต้อนรับสู่ สยามโหรามงคล ✨
+            </h1>
+            <p style="color: #CBD5E1; font-size: 1.05rem; font-weight: 400; max-width: 600px; margin: 0 auto 20px auto;">ระบบพยากรณ์โหราศาสตร์ไทยชั้นสูง คำนวณชะตาชีวิตและฤกษ์ยามแม่นยำตามตำราโบราณ</p>
+        </div>
         
-        <section id="form" class="card shadow-lg mb-5 border-0" style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important; border: 1px solid rgba(212, 175, 55, 0.25) !important; overflow: hidden; animation: fadeIn 0.8s ease;">
+        <section id="form" class="card shadow-lg mb-5 border-0" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%); backdrop-filter: blur(28px) saturate(190%); -webkit-backdrop-filter: blur(28px) saturate(190%); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px rgba(241,208,110,0.12), inset 0 1px 0 rgba(255,255,255,0.3) !important; border: 1px solid rgba(241, 208, 110, 0.35) !important; overflow: hidden; animation: fadeIn 0.8s ease;">
             
-            <div class="card-header text-center py-4" style="background: linear-gradient(90deg, rgba(212,175,55,0.02) 0%, rgba(212,175,55,0.15) 50%, rgba(212,175,55,0.02) 100%); border-bottom: 1px solid rgba(212, 175, 55, 0.3);">
-                <h2 style="color: #d4af37; font-weight: 700; margin: 0; text-shadow: 0 2px 8px rgba(0,0,0,0.8);"><i class="fas fa-scroll mr-2"></i> กรอกข้อมูลเพื่อทำนายดวง</h2>
+            <div class="card-header text-center py-4" style="background: linear-gradient(90deg, rgba(241,208,110,0.05) 0%, rgba(241,208,110,0.2) 50%, rgba(241,208,110,0.05) 100%); border-bottom: 1px solid rgba(241, 208, 110, 0.35);">
+                <h2 style="background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; margin: 0; text-shadow: 0 2px 10px rgba(241,208,110,0.3);"><i class="fas fa-scroll mr-2" style="-webkit-text-fill-color: #F1D06E;"></i> กรอกข้อมูลเพื่อทำนายดวง</h2>
                 <p class="text-white-50 small mb-0 mt-2">กรุณาระบุข้อมูลพื้นฐานให้ครบถ้วนเพื่อความแม่นยำ</p>
             </div>
 

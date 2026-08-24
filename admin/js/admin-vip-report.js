@@ -151,16 +151,19 @@ function generateVIPReport() {
     htmlContent += `
         <div class="pdf-page cover-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; box-sizing: border-box; background-image: url('../assets/mystical_astrology_cover.png') !important; background-size: cover !important; background-position: center !important; text-align: center; display: block; position: relative; padding: 0; border: none; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
             
+            <!-- Dark overlay to improve readability of cover text -->
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(12, 8, 28, 0.45) !important; z-index: 1; pointer-events: none;"></div>
+
             <!-- Gold Frame Border -->
             <div style="position: absolute; top: 15mm; bottom: 15mm; left: 15mm; right: 15mm; border: 2px solid rgba(212, 175, 55, 0.4); pointer-events: none; z-index: 2;"></div>
             <div style="position: absolute; top: 17mm; bottom: 17mm; left: 17mm; right: 17mm; border: 1px solid rgba(212, 175, 55, 0.2); pointer-events: none; z-index: 2;"></div>
 
             <!-- Top Header Title (Fits precisely in the dark upper-third banner) -->
-            <div style="position: absolute; top: 110px; left: 0; width: 100%; text-align: center; z-index: 10; padding: 0 40px; box-sizing: border-box;">
+            <div style="position: absolute; top: 110px; left: 50%; transform: translateX(-50%); width: 80%; text-align: center; z-index: 10; padding: 25px 30px; box-sizing: border-box; background: rgba(15, 10, 30, 0.75) !important; border: 1.5px solid rgba(212, 175, 55, 0.45) !important; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.85);">
                 <div style="font-size: 14px; color: #D4AF37 !important; letter-spacing: 5px; font-weight: 600; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8); margin-bottom: 5px;">
                     EXCLUSIVELY FOR VIP MEMBERS
                 </div>
-                <div style="color: #FFFFFF !important; font-size: 40px; font-weight: 700; text-shadow: 0 4px 10px rgba(0,0,0,0.95); font-family: 'Sarabun', sans-serif;">
+                <div style="color: #FFFFFF !important; font-size: 32px; font-weight: 700; text-shadow: 0 4px 10px rgba(0,0,0,0.95); font-family: 'Sarabun', sans-serif; white-space: nowrap;">
                     รายงานวิเคราะห์ดวงชะตาฟ้าลิขิต
                 </div>
                 <div style="color: #FFDF73 !important; font-size: 24px; font-weight: 500; margin-top: 5px; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
@@ -181,17 +184,17 @@ function generateVIPReport() {
 
             <!-- Bottom Detail Card (Sits securely in the bottom dark background block) -->
             <div style="position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); width: 80%; background: rgba(10, 5, 20, 0.85) !important; border: 1px solid rgba(212, 175, 55, 0.2) !important; padding: 22px 25px; border-radius: 12px; text-align: left; box-shadow: 0 8px 25px rgba(0,0,0,0.95); z-index: 10;">
-                <div style="display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 16px; color: #E0E0E0 !important; line-height: 1.5;">
-                    <div style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;"><strong style="color:#D4AF37 !important; margin-right: 8px; font-weight: 600;">วันเกิด:</strong> วันที่ ${dobThStr}</div>
-                    <div style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;"><strong style="color:#D4AF37 !important; margin-right: 8px; font-weight: 600;">ตรงกับ:</strong> ${lunarText}</div>
-                    <div style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;"><strong style="color:#D4AF37 !important; margin-right: 8px; font-weight: 600;">เวลาเกิด:</strong> ${dobTime || 'ไม่ระบุ'} น.</div>
-                    <div style="padding-bottom: 1px;"><strong style="color:#D4AF37 !important; margin-right: 8px; font-weight: 600;">สถานที่เกิด:</strong> จังหวัด${location || 'ไม่ระบุ'}</div>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 16px; color: #FFFFFF !important; line-height: 1.5;">
+                    <div style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;"><strong style="color:#D4AF37 !important; margin-right: 8px; font-weight: 600;">วันเกิด:</strong> <span style="color: #FFFFFF !important;">วันที่ ${dobThStr}</span></div>
+                    <div style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;"><strong style="color:#D4AF37 !important; margin-right: 8px; font-weight: 600;">ตรงกับ:</strong> <span style="color: #FFFFFF !important;">${lunarText}</span></div>
+                    <div style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;"><strong style="color:#D4AF37 !important; margin-right: 8px; font-weight: 600;">เวลาเกิด:</strong> <span style="color: #FFFFFF !important;">${dobTime || 'ไม่ระบุ'} น.</span></div>
+                    <div style="padding-bottom: 1px;"><strong style="color:#D4AF37 !important; margin-right: 8px; font-weight: 600;">สถานที่เกิด:</strong> <span style="color: #FFFFFF !important;">จังหวัด${location || 'ไม่ระบุ'}</span></div>
                 </div>
             </div>
 
             <!-- Bottom Copyright Plate -->
             <div style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 90%; text-align: center; z-index: 10;">
-                <div style="font-size: 12px; color: rgba(255, 255, 255, 0.35) !important; letter-spacing: 1px;">
+                <div style="font-size: 12px; color: #A0A0A0 !important; letter-spacing: 1px;">
                     เอกสารนี้เป็นสิขสิทธิ์เฉพาะบุคคลของ สยามโหรามงคล พ.ศ. ${tYear + 543}
                 </div>
             </div>
@@ -199,14 +202,14 @@ function generateVIPReport() {
     `;
     // Page 1.5: Table of Contents
     htmlContent += `
-        <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 60px; box-sizing: border-box; background: #FFF9E6; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
+        <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 60px; box-sizing: border-box; background: #FFFFFF; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
             <h2 style="color: #B8860B; font-size: 40px; text-align: center; margin-bottom: 50px; border-bottom: 2px solid #D4AF37; padding-bottom: 20px;">สารบัญ (Table of Contents)</h2>
             
             <div style="font-size: 24px; line-height: 2.2; color: #4a235a; flex-grow: 1; padding: 0 40px;">
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; margin-bottom: 15px;"><span>พื้นดวงชะตา (ลัคนาพยากรณ์)</span><span>หน้า 3</span></div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; margin-bottom: 15px;"><span>คัมภีร์มหาทักษาสัตตเลข</span><span>หน้า 4</span></div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; margin-bottom: 15px;"><span>กราฟชีวิต (12 เรือน)</span><span>หน้า 5</span></div>
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; margin-bottom: 15px;"><span>ไพ่ยิปซีพยากรณ์ (10 ใบ)</span><span>หน้า 6</span></div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; margin-bottom: 15px;"><span>ดวงเนื้อคู่ ธุรกิจ และฮวงจุ้ยมงคล</span><span>หน้า 6</span></div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; margin-bottom: 15px;"><span>ปฏิทินจันทรคติ และฤกษ์มงคล (30 วัน)</span><span>หน้า 7</span></div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; margin-bottom: 15px;"><span>คำทำนายรายวันตลอดเดือน</span><span>หน้า 8 - ${daysInMonth + 7}</span></div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; margin-bottom: 15px;"><span>บทสรุปประจำเดือน และเลขมงคล</span><span>หน้า ${daysInMonth + 8}</span></div>
@@ -226,7 +229,7 @@ function generateVIPReport() {
         const zData = ZODIAC_DATA[ascResult.rasi];
 
         ascHtml = `
-            <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFF9E6; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
+            <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFFFFF; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
                 <div style="color: #B8860B; font-size: 36px; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #D4AF37; padding-bottom: 10px; font-weight: bold; ">พื้นดวงชะตา (ลัคนาพยากรณ์)</div>
                 
                 <div style="text-align: center; margin-bottom: 30px;">
@@ -235,7 +238,7 @@ function generateVIPReport() {
                     <div style="font-size: 18px; color: #777;">(${zData.element})</div>
                 </div>
 
-                <div style="font-size: 20px; line-height: 1.8; background: #FFF9E6; padding: 30px; border-radius: 10px; border: 2px solid #E6C27A; flex-grow: 1;">
+                <div style="font-size: 20px; line-height: 1.8; background: #FFFFFF; padding: 30px; border-radius: 10px; border: 2px solid #E6C27A; flex-grow: 1;">
                     <div style="color: #B8860B; font-size: 24px; margin-bottom: 15px; font-weight: bold; ">ลักษณะนิสัยโดยทั่วไป</div>
                     <p style="margin-bottom: 20px; color: #4a235a;">${zData.desc}</p>
                     
@@ -295,7 +298,7 @@ function generateVIPReport() {
                 }
                 tableHtml += `</tr>`;
             }
-            tableHtml += `<tr style="background:#FFF9E6;">`;
+            tableHtml += `<tr style="background:#FFFFFF;">`;
             for (let c = 0; c < 7; c++) {
                 tableHtml += `<td style="padding:5px; border:1px solid #E6C27A; border-top:3px solid #D4AF37;">
                     <div style="font-size:12px; color:#B8860B;">ฐานที่ 4</div>
@@ -354,7 +357,7 @@ function generateVIPReport() {
             }
 
             let page1Html = `
-                <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFF9E6; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
+                <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFFFFF; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
                     
                     <div style="color: #B8860B; font-size: 26px; text-align: center; margin-bottom: 8px; border-bottom: 2px solid #D4AF37; padding-bottom: 5px; font-weight: bold; ">คัมภีร์มหาทักษาสัตตเลข (๗ ตัว ๔ ฐาน)</div>
                     ${tableHtml}
@@ -416,7 +419,7 @@ function generateVIPReport() {
             }
 
             let page2Html = `
-                <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFF9E6; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
+                <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFFFFF; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
                     
                     <div style="color: #B8860B; font-size: 32px; text-align: center; margin-bottom: 10px; border-bottom: 2px solid #D4AF37; padding-bottom: 5px; font-weight: bold; ">วิเคราะห์เลขศาสตร์ (Numerology)</div>
                     <div style="font-size: 18px; line-height: 1.6; background: #FFF; padding: 20px; border-radius: 10px; border: 2px solid #E6C27A; margin-bottom: 15px;">
@@ -470,14 +473,14 @@ function generateVIPReport() {
             for (let i = 0; i < 12; i++) {
                 let color = pts[i] >= 5 ? "#28a745" : (pts[i] <= 2 ? "#dc3545" : "#B8860B");
                 boxes += `
-                    <div style="border: 2px solid ${color}; border-radius: 8px; padding: 15px; text-align: center; background: #FFF9E6;">
+                    <div style="border: 2px solid ${color}; border-radius: 8px; padding: 15px; text-align: center; background: #FFFFFF;">
                         <div style="font-size: 16px; color: #6b5b95;">${labels[i]}</div>
                         <div style="font-size: 32px; font-weight: bold; color: ${color};">${pts[i]}</div>
                     </div>
                 `;
             }
             let page3Html = `
-                <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFF9E6; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
+                <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFFFFF; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
                     <div style="color: #B8860B; font-size: 36px; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #D4AF37; padding-bottom: 10px; font-weight: bold; ">กราฟชีวิต ๑๒ ตำแหน่ง (Life Graph)</div>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; flex-grow: 1;">
                         ${boxes}
@@ -520,7 +523,7 @@ function generateVIPReport() {
             }
 
             let page4Html = `
-                <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFF9E6; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
+                <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFFFFF; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
                     
                     <!-- Soulmate -->
                     <div style="color: #B8860B; font-size: 32px; text-align: center; margin-bottom: 10px; border-bottom: 2px solid #D4AF37; padding-bottom: 5px; font-weight: bold; ">ทำนายดวงเนื้อคู่ (Soulmate) 💕</div>
@@ -569,7 +572,7 @@ function generateVIPReport() {
 
     // Page 4: Calendar of Auspicious Days (Full Month Grid)
     htmlContent += `
-        <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFF9E6; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
+        <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFFFFF; color: #4a235a; page-break-after: always; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
             <div style="color: #B8860B; font-size: 28px; text-align: center; margin-bottom: 10px; border-bottom: 2px solid #D4AF37; padding-bottom: 5px; font-weight: bold; ">ปฏิทินประจำเดือน ${monthNameTh}</div>
             <div style="font-size: 14px; text-align: center; margin-bottom: 10px; color: #666;">
                 <span style="color:#28a745; margin-right: 15px;">✅ วันธงชัย (ดีเยี่ยม)</span>
@@ -678,6 +681,12 @@ function generateVIPReport() {
     const birthDayStr = daysThArr[dobObj.getDay()];
     const birthYearAD = dobObj.getFullYear();
 
+    // Personal colors based on birth day & year (calculated once outside the loop to optimize performance)
+    let personalColors = null;
+    if (typeof calculateLuckyColors === 'function') {
+        personalColors = calculateLuckyColors(birthDayStr, birthYearAD);
+    }
+
     // YARM Helper
     const getYarmTimes = (dayOfWeek) => {
         let yarms = { work: "-", finance: "-", love: "-" };
@@ -735,11 +744,7 @@ function generateVIPReport() {
         let yarms = getYarmTimes(curDayOfWeek);
 
         // 3. Auspicious Colors (Mix of birth and current day)
-        // Personal colors based on birth day & year
-        let personalColors = null;
-        if (typeof calculateLuckyColors === 'function') {
-            personalColors = calculateLuckyColors(birthDayStr, birthYearAD);
-        }
+        // Personal colors are pre-calculated outside the loop
 
         // 4. Lucky numbers (Only on 1st and 16th)
         let luckySection = "";
@@ -777,15 +782,21 @@ function generateVIPReport() {
             };
 
             taksaDailyHtml = `
-                <div style="background: rgba(212, 175, 55, 0.05); border-left: 5px solid #D4AF37; padding: 15px; margin-top: 20px; border-radius: 5px;">
-                    <div style="color: #B8860B; margin: 0 0 10px 0; font-size: 20px; font-weight: bold; ">📜 ดวงจรรายวัน (มหาทักษาสัตตเลข)</div>
-                    <div style="font-size: 18px; color: #444;">วันนี้ตกภพ <span style="font-weight: bold; color: #D4AF37;">${currentHouse}</span> - ${houseMeanings[currentHouse]}</div>
+                <div style="background: rgba(212, 175, 55, 0.05); border-left: 5px solid #c59b27 !important; padding: 15px; margin-top: 20px; border-radius: 5px;">
+                    <div style="color: #9e7200 !important; margin: 0 0 10px 0; font-size: 20px; font-weight: bold;">📜 ดวงจรรายวัน (มหาทักษาสัตตเลข)</div>
+                    <div style="font-size: 18px; color: #111111 !important;">วันนี้ตกภพ <span style="font-weight: bold; color: #9e7200 !important;">${currentHouse}</span> - ${houseMeanings[currentHouse]}</div>
                 </div>
             `;
         }
+        // 5. Daily Note Lines calculation (7 lines on lottery days, 12 lines on other days to fill the empty space)
+        let lineCount = (d === 1 || d === 16) ? 7 : 12;
+        let linesHtml = "";
+        for (let i = 0; i < lineCount; i++) {
+            linesHtml += `<div style="border-bottom: 1px dashed #dcd6c8; height: 28px;"></div>`;
+        }
 
         htmlContent += `
-            <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFF9E6; color: #4a235a; page-break-after: always; position: relative; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
+            <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 40px; box-sizing: border-box; background: #FFFFFF; color: #4a235a; page-break-after: always; position: relative; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
                 
                 <div style="background: #FFF; padding: 15px 20px; border-radius: 10px; border: 2px solid #E6C27A; margin-bottom: 25px;">
                     <div style="color: #4a235a; font-size: 26px; margin: 0; font-weight: bold; ">
@@ -798,19 +809,19 @@ function generateVIPReport() {
                 
                 <div style="font-size: 20px; line-height: 1.8; margin-bottom: 20px; flex-grow: 1;">
                     <div style="margin-bottom: 20px;">
-                        <strong style="color: #B8860B; font-size: 22px;">💼 ด้านการงาน:</strong><br> 
-                        <span style="color: #444;">${wText}</span>
-                        ${yarms.work !== "-" ? `<div style="font-size: 14px; color: #28a745; margin-top: 5px;">⏰ เวลามงคลเจรจางาน: ${yarms.work}</div>` : ''}
+                        <strong style="color: #9e7200 !important; font-size: 22px;">💼 ด้านการงาน:</strong><br> 
+                        <span style="color: #111111 !important; font-weight: 500;">${wText}</span>
+                        ${yarms.work !== "-" ? `<div style="font-size: 14px; color: #28a745 !important; margin-top: 5px; font-weight: bold;">⏰ เวลามงคลเจรจางาน: ${yarms.work}</div>` : ''}
                     </div>
                     <div style="margin-bottom: 20px;">
-                        <strong style="color: #B8860B; font-size: 22px;">💰 ด้านการเงิน:</strong><br> 
-                        <span style="color: #444;">${fText}</span>
-                        ${yarms.finance !== "-" ? `<div style="font-size: 14px; color: #17a2b8; margin-top: 5px;">⏰ เวลามงคลเสี่ยงโชค/รับเงิน: ${yarms.finance}</div>` : ''}
+                        <strong style="color: #9e7200 !important; font-size: 22px;">💰 ด้านการเงิน:</strong><br> 
+                        <span style="color: #111111 !important; font-weight: 500;">${fText}</span>
+                        ${yarms.finance !== "-" ? `<div style="font-size: 14px; color: #17a2b8 !important; margin-top: 5px; font-weight: bold;">⏰ เวลามงคลเสี่ยงโชค/รับเงิน: ${yarms.finance}</div>` : ''}
                     </div>
                     <div style="margin-bottom: 20px;">
-                        <strong style="color: #B8860B; font-size: 22px;">❤️ ด้านความรัก:</strong><br> 
-                        <span style="color: #444;">${lText}</span>
-                        ${yarms.love !== "-" ? `<div style="font-size: 14px; color: #e83e8c; margin-top: 5px;">⏰ เวลามงคลพบปะคนรัก: ${yarms.love}</div>` : ''}
+                        <strong style="color: #9e7200 !important; font-size: 22px;">❤️ ด้านความรัก:</strong><br> 
+                        <span style="color: #111111 !important; font-weight: 500;">${lText}</span>
+                        ${yarms.love !== "-" ? `<div style="font-size: 14px; color: #e83e8c !important; margin-top: 5px; font-weight: bold;">⏰ เวลามงคลพบปะคนรัก: ${yarms.love}</div>` : ''}
                     </div>
                 </div>
                 
@@ -831,6 +842,14 @@ function generateVIPReport() {
                 </div>
                 ` : ''}
 
+                <!-- Notebook Lines for Daily Notes -->
+                <div style="margin-top: auto; border-top: 1px dashed #E6C27A; padding-top: 15px; margin-bottom: 15px;">
+                    <strong style="color: #9e7200 !important; font-size: 16px; display: flex; align-items: center; gap: 8px; margin-bottom: 10px;"><i class="fas fa-pen-fancy"></i> บันทึกประจำวัน / Note:</strong>
+                    <div style="margin-top: 5px; display: flex; flex-direction: column; gap: 0;">
+                        ${linesHtml}
+                    </div>
+                </div>
+
                 ${luckySection}
             </div>
         `;
@@ -845,16 +864,16 @@ function generateVIPReport() {
     htmlContent += `
         <div class="pdf-page" style="width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; padding: 60px; box-sizing: border-box; background: #FFF; color: #333; border: 15px solid #D4AF37; display: flex; flex-direction: column;">
             <div style="text-align: right; color: #999; font-size: 16px;">หน้า ${daysInMonth + 8} / ${daysInMonth + 9}</div>
-            <h2 style="color: #B8860B; font-size: 36px; text-align: center; margin-bottom: 40px; margin-top: 40px;">บทสรุปประจำเดือน และเลขมงคล</h2>
+            <h2 style="color: #9e7200 !important; font-size: 36px; text-align: center; margin-bottom: 40px; margin-top: 40px;">บทสรุปประจำเดือน และเลขมงคล</h2>
             
             <div style="background: rgba(212, 175, 55, 0.1); padding: 40px; border-radius: 20px; text-align: center; margin-bottom: 50px;">
-                <div style="font-size: 28px; color: #555; margin-bottom: 20px;">กลุ่มเลขมงคลโดดเด่นประจำเดือนของคุณ</div>
-                <div style="font-size: 60px; color: #D4AF37; font-weight: bold; letter-spacing: 10px;">${monthlyLucky1}${monthlyLucky2}${monthlyLucky3}</div>
-                <div style="font-size: 22px; color: #666; margin-top: 20px;">สามารถนำไปประยุกต์ใช้ในการเสี่ยงโชค หรือตั้งเป็นรหัสผ่านเพื่อเสริมดวง</div>
+                <div style="font-size: 28px; color: #111111 !important; margin-bottom: 20px; font-weight: bold;">กลุ่มเลขมงคลโดดเด่นประจำเดือนของคุณ</div>
+                <div style="font-size: 60px; color: #9e7200 !important; font-weight: bold; letter-spacing: 10px;">${monthlyLucky1}${monthlyLucky2}${monthlyLucky3}</div>
+                <div style="font-size: 22px; color: #111111 !important; margin-top: 20px;">สามารถนำไปประยุกต์ใช้ในการเสี่ยงโชค หรือตั้งเป็นรหัสผ่านเพื่อเสริมดวง</div>
             </div>
 
-            <h3 style="font-size: 28px; color: #B8860B; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">🙏 บทสวดมนต์แนะนำประจำเดือน</h3>
-            <div style="font-size: 22px; line-height: 1.8; color: #444; background: #f9f9f9; padding: 30px; border-radius: 10px;">
+            <h3 style="font-size: 28px; color: #9e7200 !important; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">🙏 บทสวดมนต์แนะนำประจำเดือน</h3>
+            <div style="font-size: 22px; line-height: 1.8; color: #111111 !important; background: #f9f9f9; padding: 30px; border-radius: 10px;">
                 <strong>พระคาถาชินบัญชร (แบบย่อ)</strong><br>
                 ชินะปัญชะระปะริตตัง มังรักขะตุ สัพพะทา (สวด 3 จบ หรือ 9 จบ ก่อนนอน)<br><br>
                 <em>อานิสงส์:</em> ช่วยเสริมสร้างความเป็นสิริมงคล แคล้วคลาดปลอดภัยจากภยันตรายทั้งปวง และช่วยดึงดูดโชคลาภให้เข้ามาอย่างไม่ขาดสายตลอดทั้งเดือน
@@ -973,11 +992,14 @@ function generateVIPReport() {
     // Remove the generator modal since we are now in preview
     /* No modal to remove anymore */
 
-    // Inject @media print CSS if not exists
-    if (!document.getElementById('vipPrintStyle')) {
-        const style = document.createElement('style');
+    // Inject @media print CSS (always update to prevent caching issues)
+    let style = document.getElementById('vipPrintStyle');
+    if (!style) {
+        style = document.createElement('style');
         style.id = 'vipPrintStyle';
-        style.innerHTML = `
+        document.head.appendChild(style);
+    }
+    style.innerHTML = `
             @media print {
                 
                 @page {
@@ -1018,12 +1040,27 @@ function generateVIPReport() {
                     box-sizing: border-box !important;
                     page-break-after: always !important;
                     box-shadow: none !important;
-                    border: 15px solid #D4AF37 !important;
+                    border: 15px solid #c59b27 !important;
                     overflow: hidden !important;
-                    background-color: #FFF9E6 !important;
-                    color: #4a235a !important;
+                    background-color: #FFFFFF !important;
+                    color: #2c053b !important;
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
+                }
+                /* Print contrast optimizations to prevent faded look */
+                .pdf-page:not(.cover-page) p, 
+                .pdf-page:not(.cover-page) td, 
+                .pdf-page:not(.cover-page) span:not([style*="color"]) {
+                    color: #111111 !important;
+                    font-weight: 500 !important;
+                }
+                .pdf-page:not(.cover-page) h2, 
+                .pdf-page:not(.cover-page) h3, 
+                .pdf-page:not(.cover-page) strong {
+                    color: #9e7200 !important;
+                }
+                .pdf-page:not(.cover-page) i {
+                    color: #c59b27 !important;
                 }
                 .pdf-page.cover-page {
                     background-image: url('../assets/mystical_astrology_cover.png') !important;
@@ -1036,28 +1073,44 @@ function generateVIPReport() {
                 }
             }
             @media screen {
-                .pdf-page {
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-                    transform: scale(0.65);
-                    transform-origin: top center;
-                    margin-bottom: -100mm;
-                    border-radius: 10px;
-                }
                 #vipPdfPreviewContent {
-                    padding-bottom: 110mm !important;
+                    background: #110e24 !important;
+                    padding: 30px 0 !important;
+                    width: 100% !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: center !important;
+                    gap: 30px !important;
                 }
-                /* Hide sidebar when printing */
+                .pdf-page {
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
+                    border-radius: 0px !important;
+                    transform: none !important;
+                    margin: 0 auto !important;
+                    width: 210mm !important;
+                    height: 297mm !important;
+                    max-height: 297mm !important;
+                    box-sizing: border-box !important;
+                    background-color: #FFFFFF !important;
+                    border: 15px solid #D4AF37 !important;
+                }
+                .pdf-page.cover-page {
+                    background-image: url('../assets/mystical_astrology_cover.png') !important;
+                    background-color: #1a0b2e !important;
+                    background-size: cover !important;
+                    background-position: center !important;
+                    border: 15px solid #1a0b2e !important;
+                    color: #FFF !important;
+                    padding: 60px 40px !important;
+                }
             }
             @media print {
                 html, body { background: #fff !important; overflow: visible !important; height: auto !important; display: block !important; }
                 .sidebar, .header, #vipPdfPreviewNav, .back-btn { display: none !important; }
                 .content { padding: 0 !important; margin: 0 !important; display: block !important; overflow: visible !important; height: auto !important; width: 100% !important; }
                 .preview-area { padding: 0 !important; margin: 0 !important; background: none !important; border: none !important; border-radius: 0 !important; display: block !important; overflow: visible !important; height: auto !important; width: 100% !important; position: static !important; }
-                #vipPdfPreviewContent { margin: 0 !important; padding: 0 !important; overflow: visible !important; height: auto !important; width: 100% !important; display: block !important; }
             }
         `;
-        document.head.appendChild(style);
-    }
 }
 
 window.changeMonth = function(delta) {

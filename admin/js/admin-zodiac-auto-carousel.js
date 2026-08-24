@@ -80,22 +80,20 @@ if (typeof DEFAULT_DAILY_FORTUNE_DB === 'undefined') {
     };
 }
 
-if (typeof ZODIAC_LIST === 'undefined') {
-    var ZODIAC_LIST = [
-        { id: '1', name: 'ราศีเมษ', dateRange: '13 เม.ย. - 13 พ.ค.', icon: '♈' },
-        { id: '2', name: 'ราศีพฤษภ', dateRange: '14 พ.ค. - 13 มิ.ย.', icon: '♉' },
-        { id: '3', name: 'ราศีเมถุน', dateRange: '14 มิ.ย. - 14 ก.ค.', icon: '♊' },
-        { id: '4', name: 'ราศีกรกฎ', dateRange: '15 ก.ค. - 16 ส.ค.', icon: '♋' },
-        { id: '5', name: 'ราศีสิงห์', dateRange: '17 ส.ค. - 16 ก.ย.', icon: '♌' },
-        { id: '6', name: 'ราศีกันย์', dateRange: '17 ก.ย. - 16 ต.ค.', icon: '♍' },
-        { id: '7', name: 'ราศีตุลย์', dateRange: '17 ต.ค. - 15 พ.ย.', icon: '♎' },
-        { id: '8', name: 'ราศีพิจิก', dateRange: '16 พ.ย. - 15 ธ.ค.', icon: '♏' },
-        { id: '9', name: 'ราศีธนู', dateRange: '16 ธ.ค. - 13 ม.ค.', icon: '♐' },
-        { id: '10', name: 'ราศีมังกร', dateRange: '14 ม.ค. - 12 ก.พ.', icon: '♑' },
-        { id: '11', name: 'ราศีกุมภ์', dateRange: '13 ก.พ. - 13 มี.ค.', icon: '♒' },
-        { id: '12', name: 'ราศีมีน', dateRange: '14 มี.ค. - 12 เม.ย.', icon: '♓' }
-    ];
-}
+const CAROUSEL_ZODIAC_LIST = [
+    { id: '1', name: 'ราศีเมษ', dateRange: '13 เม.ย. - 13 พ.ค.', icon: '♈' },
+    { id: '2', name: 'ราศีพฤษภ', dateRange: '14 พ.ค. - 13 มิ.ย.', icon: '♉' },
+    { id: '3', name: 'ราศีเมถุน', dateRange: '14 มิ.ย. - 14 ก.ค.', icon: '♊' },
+    { id: '4', name: 'ราศีกรกฎ', dateRange: '15 ก.ค. - 16 ส.ค.', icon: '♋' },
+    { id: '5', name: 'ราศีสิงห์', dateRange: '17 ส.ค. - 16 ก.ย.', icon: '♌' },
+    { id: '6', name: 'ราศีกันย์', dateRange: '17 ก.ย. - 16 ต.ค.', icon: '♍' },
+    { id: '7', name: 'ราศีตุลย์', dateRange: '17 ต.ค. - 15 พ.ย.', icon: '♎' },
+    { id: '8', name: 'ราศีพิจิก', dateRange: '16 พ.ย. - 15 ธ.ค.', icon: '♏' },
+    { id: '9', name: 'ราศีธนู', dateRange: '16 ธ.ค. - 13 ม.ค.', icon: '♐' },
+    { id: '10', name: 'ราศีมังกร', dateRange: '14 ม.ค. - 12 ก.พ.', icon: '♑' },
+    { id: '11', name: 'ราศีกุมภ์', dateRange: '13 ก.พ. - 13 มี.ค.', icon: '♒' },
+    { id: '12', name: 'ราศีมีน', dateRange: '14 มี.ค. - 12 เม.ย.', icon: '♓' }
+];
 
 const SEVEN_DAYS_LIST = [
     { id: '0', name: 'วันอาทิตย์ (สีแดง)', color: '#FF0000', bg: '#ffe5e5', border: '#ff4d4d' },
@@ -149,7 +147,7 @@ function updateSubOptions() {
     if (category === 'zodiac') {
         targetGroup.style.display = 'flex';
         label.innerText = 'เลือกราศี';
-        ZODIAC_LIST.forEach(z => {
+        CAROUSEL_ZODIAC_LIST.forEach(z => {
             targetSelect.innerHTML += `<option value="${z.id}">${z.name} (${z.dateRange})</option>`;
         });
     } else if (category === 'sevendays') {
@@ -356,12 +354,12 @@ function generateTarotTemplate(dateObj, dateThai, container) {
 
 function generateZodiacAllTemplate(dateObj, dateThai, container) {
     container.className = 'canvas-container template-combined-all';
-    container.style.backgroundImage = "url('assets/zodiac_bg.png')";
+    container.style.backgroundImage = "url('../assets/zodiac_bg.png')";
 
     const predictions = (typeof generateDailyZodiacFortunes === 'function') ? generateDailyZodiacFortunes(dateObj) : [];
 
     let gridHtml = '';
-    ZODIAC_LIST.forEach(z => {
+    CAROUSEL_ZODIAC_LIST.forEach(z => {
         const pred = predictions.find(p => p.id == z.id) || { description: "มีสิ่งดีๆ รออยู่", good: "ดวงเปิดรับโชค" };
         // Truncate the description to fit the grid
         const shortDesc = pred.description.length > 50 ? pred.description.substring(0, 50) + "..." : pred.description;
@@ -392,7 +390,7 @@ function generateZodiacAllTemplate(dateObj, dateThai, container) {
 
 function generateSevendaysAllTemplate(dateObj, dateThai, container) {
     container.className = 'canvas-container template-combined-all';
-    container.style.backgroundImage = "url('assets/sevendays_bg.png')";
+    container.style.backgroundImage = "url('../assets/sevendays_bg.png')";
 
     const baseMeanings = [
         "งานราบรื่น เงินดี รักสดใส",
@@ -430,7 +428,7 @@ function generateSevendaysAllTemplate(dateObj, dateThai, container) {
 
 function generateThaiAscendantAllTemplate(dateObj, dateThai, container) {
     container.className = 'canvas-container template-combined-all';
-    container.style.backgroundImage = "url('assets/zodiac_bg.png')"; // Reusing starry background for Astro
+    container.style.backgroundImage = "url('../assets/zodiac_bg.png')"; // Reusing starry background for Astro
 
     const ascendants = ["เมษ", "พฤษภ", "เมถุน", "กรกฎ", "สิงห์", "กันย์", "ตุลย์", "พิจิก", "ธนู", "มังกร", "กุมภ์", "มีน"];
     
@@ -468,7 +466,7 @@ function generateThaiAscendantAllTemplate(dateObj, dateThai, container) {
 
 function generateThaiAnimalAllTemplate(dateObj, dateThai, container) {
     container.className = 'canvas-container template-combined-all';
-    container.style.backgroundImage = "url('assets/sevendays_bg.png')";
+    container.style.backgroundImage = "url('../assets/sevendays_bg.png')";
 
     const animals = ["ชวด 🐀", "ฉลู 🐂", "ขาล 🐅", "เถาะ 🐇", "มะโรง 🐉", "มะเส็ง 🐍", "มะเมีย 🐎", "มะแม 🐐", "วอก 🐒", "ระกา 🐓", "จอ 🐕", "กุน 🐖"];
     const baseMeanings = [
@@ -505,7 +503,7 @@ async function drawZodiacCanvas(ctx, dateObj, dateThai) {
     const pred = predictions.find(p => p.id == targetId);
     if (!pred) throw new Error("ไม่พบข้อมูลราศี");
 
-    const bgImg = new Image(); bgImg.src = 'assets/zodiac_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/zodiac_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -566,7 +564,7 @@ async function drawSevendaysCanvas(ctx, dateObj, dateThai) {
     const workDesc = baseMeanings[(seed + 1) % baseMeanings.length];
     const finDesc = baseMeanings[(seed + 2) % baseMeanings.length];
 
-    const bgImg = new Image(); bgImg.src = 'assets/sevendays_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/sevendays_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -597,7 +595,7 @@ async function drawSevendaysCanvas(ctx, dateObj, dateThai) {
 
 async function drawTarotCanvas(ctx, dateObj, dateThai) {
     const card = window.currentDrawnCard || tarotCards[Math.floor(Math.random() * tarotCards.length)];
-    const bgImg = new Image(); bgImg.src = 'assets/tarot_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/tarot_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -654,7 +652,7 @@ async function drawTarotCanvas(ctx, dateObj, dateThai) {
 }
 
 async function drawZodiacAllCanvas(ctx, dateObj, dateThai) {
-    const bgImg = new Image(); bgImg.src = 'assets/zodiac_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/zodiac_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -668,7 +666,7 @@ async function drawZodiacAllCanvas(ctx, dateObj, dateThai) {
     let startX = 60, startY = 200, cardW = 310, cardH = 190, gap = 15;
     
     for (let i=0; i<12; i++) {
-        const z = ZODIAC_LIST[i];
+        const z = CAROUSEL_ZODIAC_LIST[i];
         const p = predictions.find(pr => pr.id == z.id) || { description: "มีสิ่งดีๆ รออยู่", good: "ดวงเปิดรับโชค" };
         const cx = startX + (i % 3) * (cardW + gap);
         const cy = startY + Math.floor(i / 3) * (cardH + gap);
@@ -695,7 +693,7 @@ async function drawZodiacAllCanvas(ctx, dateObj, dateThai) {
 }
 
 async function drawSevendaysAllCanvas(ctx, dateObj, dateThai) {
-    const bgImg = new Image(); bgImg.src = 'assets/sevendays_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/sevendays_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -770,7 +768,7 @@ async function drawSevendaysAllCanvas(ctx, dateObj, dateThai) {
 }
 
 async function drawThaiAscendantAllCanvas(ctx, dateObj, dateThai) {
-    const bgImg = new Image(); bgImg.src = 'assets/zodiac_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/zodiac_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     
@@ -800,7 +798,7 @@ async function drawThaiAscendantAllCanvas(ctx, dateObj, dateThai) {
 }
 
 async function drawThaiAnimalAllCanvas(ctx, dateObj, dateThai) {
-    const bgImg = new Image(); bgImg.src = 'assets/sevendays_bg.png';
+    const bgImg = new Image(); bgImg.src = '../assets/sevendays_bg.png';
     await new Promise(r => { bgImg.onload=r; bgImg.onerror=r; });
     ctx.drawImage(bgImg, 0, 0, 1080, 1080);
     

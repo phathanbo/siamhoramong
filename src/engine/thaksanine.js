@@ -149,7 +149,7 @@ const meaningDesc = {
   กาลกิณี: "อุปสรรค ความขัดข้อง โชคร้าย ความเสื่อม",
 };
 
-function getElementRelation(e1, e2) {
+function getThaksaElementRelation(e1, e2) {
   if (e1 === e2)
     return {
       text: "เป็นกลาง",
@@ -258,7 +258,7 @@ function createDetailedSection(title, pos, unit, value) {
   html += `<br><h4 class="font-bold text-gold">รายละเอียดนิยาม ๘ ประการ</h4><br><div class="cell">`;
   for (let i = 0; i < 8; i++) {
     const p = (pos + i) % 9;
-    const rel = getElementRelation(mainElement, elements[p]);
+    const rel = getThaksaElementRelation(mainElement, elements[p]);
     html += `
         <div style="border-left: 4px solid ${rel.color === 'text-green-600' ? '#16a34a' : rel.color === 'text-red-600' ? '#dc2626' : '#4b5563'}; padding: 8px 12px; background-color: ${rel.color === 'text-green-600' ? '#e6ffec' : rel.color === 'text-red-600' ? '#ffe6e6' : '#e6f0ff'}; border-radius: 8px; color: #333; margin-bottom: 8px;">
         <span style="font-weight: bold;">${meanings[i]} → ${planetNames[p]} (${elements[p]})</span>

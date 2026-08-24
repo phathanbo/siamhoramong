@@ -1,6 +1,18 @@
 "use strict";
 
 /**
+ * แปลงปี พ.ศ. เป็น ค.ศ. แบบปลอดภัย
+ */
+function toCE(year) {
+    if (!year || isNaN(year)) return new Date().getFullYear();
+    year = parseInt(year, 10);
+    return year > 2400 ? year - 543 : year;
+}
+if (typeof window !== 'undefined' && !window.toCE) {
+    window.toCE = toCE;
+}
+
+/**
  * ข้อมูลธาตุตามวันเกิด (ดาวเคราะห์)
  * dayIndex: 0 = อาทิตย์, 1 = จันทร์, ..., 6 = เสาร์
  */

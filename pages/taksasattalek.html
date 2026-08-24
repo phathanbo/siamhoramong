@@ -8,7 +8,7 @@
     <title>คัมภีร์มหาทักษาสัตตเลข โดย สยามโหรามงคล</title>
 
 
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SweetAlert2 -->
@@ -18,37 +18,105 @@
     <!-- html2pdf.js -->
     <script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/modern-theme.css">
     <style>
         body {
             margin: 0;
             padding: 20px;
-            font-family: 'Sarabun', 'Sarabun', sans-serif;
-            background-color: var(--deep);
-            color: var(--text);
+            font-family: 'Prompt', sans-serif !important;
+            background-color: var(--modern-bg-base, #0c1424);
+            color: #FFFFFF;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(159, 122, 234, 0.22) 0%, transparent 50%),
+                radial-gradient(circle at 85% 85%, rgba(241, 208, 110, 0.25) 0%, transparent 50%),
+                linear-gradient(180deg, #0d1527 0%, #15223c 50%, #0f182d 100%);
+            background-attachment: fixed;
         }
 
         .container {
             max-width: 1400px;
             margin: auto;
-            background: transparent;
-            border-radius: 20px;
-            padding: 25px;
+            background: linear-gradient(135deg, rgba(30, 46, 78, 0.75) 0%, rgba(18, 28, 50, 0.85) 100%);
+            border-radius: 28px;
+            padding: 35px;
+            border: 1px solid rgba(241, 208, 110, 0.35);
+            backdrop-filter: blur(28px) saturate(190%);
+            -webkit-backdrop-filter: blur(28px) saturate(190%);
+            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.45), 0 0 35px rgba(241, 208, 110, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            animation: fadeInPage 0.8s ease-out;
         }
 
-        h1,
-        h2,
-        h3 {
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #CBD5E1;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+            background: rgba(255, 255, 255, 0.08);
+            padding: 10px 22px;
+            border-radius: 50px;
+            border: 1px solid rgba(241, 208, 110, 0.3);
+            font-weight: 500;
+        }
+        .back-btn:hover {
+            color: #0c1424;
+            background: linear-gradient(135deg, #FFF0A8 0%, #E8C15A 100%);
+            border-color: #FFF0A8;
+            transform: translateX(-4px);
+            box-shadow: 0 8px 20px rgba(241, 208, 110, 0.4);
+        }
+
+        h1 {
             text-align: center;
-            color: var(--gold-lt);
-            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+            color: #FFF0A8;
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 25px rgba(241, 208, 110, 0.35);
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: #CBD5E1;
+            margin-bottom: 30px;
+            font-size: 1.05rem;
+            font-weight: 400;
+        }
+
+        /* Group Panels */
+        .premium-group-box {
+            background: linear-gradient(135deg, rgba(20, 32, 58, 0.7) 0%, rgba(13, 21, 39, 0.8) 100%);
+            border: 1px solid rgba(241, 208, 110, 0.3);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        .premium-group-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, transparent, #F1D06E, transparent);
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 18px;
+            margin-bottom: 10px;
         }
 
         .input-box {
@@ -57,118 +125,129 @@
         }
 
         label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--gold);
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #FFF0A8;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
         }
 
         input,
         select {
-            padding: 12px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            background: rgba(15, 20, 30, 0.6);
-            color: var(--text);
-            font-size: 1rem;
-            backdrop-filter: blur(8px);
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(241, 208, 110, 0.35);
+            background: rgba(13, 21, 39, 0.85);
+            color: #FFFFFF;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         input:focus, select:focus {
-            border-color: var(--gold);
+            border-color: #F1D06E;
             outline: none;
-            box-shadow: 0 0 0 3px var(--gold-glow);
+            box-shadow: 0 0 0 3px rgba(241, 208, 110, 0.35);
+            background: rgba(20, 32, 58, 0.95);
         }
-        option { background: var(--deep); color: var(--text); }
+        option { background: #0e172a; color: #FFFFFF; }
 
         button {
-            padding: 12px;
-            border: 1px solid var(--gold);
+            padding: 12px 28px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
             border-radius: 50px;
-            background: linear-gradient(135deg, var(--gold) 0%, #b8860b 100%);
-            color: #111;
+            background: linear-gradient(135deg, #FFF0A8 0%, #E8C15A 50%, #C49224 100%);
+            color: #0c1424;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            font-family: 'Prompt', sans-serif;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 6px 20px rgba(241, 208, 110, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
         button:hover {
-            background: linear-gradient(135deg, #f9e596, var(--gold));
             transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 10px 30px rgba(241, 208, 110, 0.6), inset 0 2px 0 rgba(255, 255, 255, 0.8);
+            filter: brightness(1.1);
         }
         button:active {
             transform: translateY(0px) scale(0.98);
-            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.2);
-            transition-duration: 0.1s;
         }
 
+        /* Tables styling */
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin-top: 20px;
-            background: var(--surface);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
+            background: rgba(13, 21, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
             overflow: hidden;
+            border: 1px solid rgba(241, 208, 110, 0.3);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.35);
         }
 
         th,
         td {
-            border: 1px solid var(--border);
-            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 14px 10px;
             text-align: center;
-            color: var(--text);
+            color: #FFFFFF;
+            transition: all 0.2s;
         }
 
         th {
-            background: rgba(15, 23, 42, 0.8);
-            color: var(--gold);
+            background: rgba(241, 208, 110, 0.18);
+            color: #FFF0A8;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(241, 208, 110, 0.35);
         }
 
         .big {
-            font-size: 22px;
+            font-size: 24px;
             color: var(--gold-lt);
-            font-weight: bold;
+            font-weight: 700;
+            text-shadow: 0 2px 6px rgba(212,175,55,0.3);
         }
 
         .house {
-            font-size: 12px;
+            font-size: 12.5px;
             color: var(--muted);
-            margin-top: 5px;
+            margin-top: 6px;
         }
 
         .grid-report {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
             margin-top: 30px;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         .good {
-            color: var(--green);
+            color: #2ecc71;
             font-weight: bold;
         }
 
         .bad {
-            color: var(--accent);
+            color: #e74c3c;
             font-weight: bold;
         }
 
         .warn {
-            color: var(--gold);
+            color: #f39c12;
             font-weight: bold;
         }
 
         .footer {
-            margin-top: 20px;
+            margin-top: 35px;
             text-align: center;
             color: var(--muted);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 20px;
         }
 
         /* =========================================================
@@ -179,8 +258,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            border-bottom: 2px dashed var(--border);
-            padding-bottom: 15px;
+            border-bottom: 1px dashed rgba(212, 175, 55, 0.2);
+            padding-bottom: 18px;
         }
 
         .calendar-header h3 {
@@ -193,76 +272,77 @@
         }
 
         .calendar-nav-btn {
-            background: #8e44ad;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
+            background: rgba(142, 68, 173, 0.2);
+            color: #e0b0ff;
+            border: 1px solid rgba(142, 68, 173, 0.4);
+            padding: 8px 18px;
             border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 10px rgba(142, 68, 173, 0.2);
+            font-size: 13.5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(142, 68, 173, 0.1);
         }
 
         .calendar-nav-btn:hover {
-            background: #732d91;
-            transform: translateY(-2px);
+            background: rgba(142, 68, 173, 0.4);
+            border-color: rgba(142, 68, 173, 0.6);
+            transform: translateY(-1px);
         }
 
         .calendar-month-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: bold;
-            color: #e0e0e0;
-            background: #f4ecf7;
-            padding: 6px 18px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 20px;
             border-radius: 20px;
-            border: 1px solid rgba(142, 68, 173, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .calendar-grid-weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 10px;
             text-align: center;
-            font-weight: bold;
-            color: #aaaaaa;
-            margin-bottom: 10px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 12px;
             font-size: 14px;
         }
 
         .calendar-grid-days {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 10px;
         }
 
         .calendar-day-cell {
             position: relative;
-            background: rgba(15, 20, 30, 0.5);
-            border: 1px solid var(--border);
-            border-radius: 10px;
+            background: rgba(15, 20, 30, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
             aspect-ratio: 1.1;
-            padding: 8px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .calendar-day-cell:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            border-color: var(--gold-glow);
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            border-color: rgba(212, 175, 55, 0.4);
             z-index: 5;
         }
 
         .calendar-day-cell.selected-day {
             border: 2px solid var(--gold) !important;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3) !important;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.35) !important;
             transform: translateY(-4px);
-            background: rgba(212, 175, 55, 0.1) !important;
+            background: rgba(212, 175, 55, 0.12) !important;
             z-index: 6;
         }
 
@@ -275,15 +355,15 @@
 
         .calendar-day-number {
             font-size: 16px;
-            font-weight: bold;
-            color: var(--text);
+            font-weight: 700;
+            color: rgba(255,255,255,0.9);
         }
 
         .calendar-day-status-badge {
             font-size: 10px;
             font-weight: bold;
-            padding: 2px 4px;
-            border-radius: 4px;
+            padding: 3px 6px;
+            border-radius: 6px;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
@@ -292,17 +372,18 @@
 
         /* Auspicious Statuses */
         .status-auspicious-great {
-            background: rgba(46, 204, 113, 0.1);
-            border: 1px solid rgba(46, 204, 113, 0.4);
+            background: rgba(46, 204, 113, 0.12);
+            border: 1px solid rgba(46, 204, 113, 0.35);
         }
         .status-auspicious-great .calendar-day-status-badge {
             background: #2ecc71;
-            color: #fff;
+            color: #000;
+            font-weight: 800;
         }
 
         .status-auspicious-good {
-            background: rgba(52, 152, 219, 0.1);
-            border: 1px solid rgba(52, 152, 219, 0.4);
+            background: rgba(52, 152, 219, 0.12);
+            border: 1px solid rgba(52, 152, 219, 0.35);
         }
         .status-auspicious-good .calendar-day-status-badge {
             background: #3498db;
@@ -310,8 +391,8 @@
         }
 
         .status-inauspicious {
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.4);
+            background: rgba(231, 76, 60, 0.12);
+            border: 1px solid rgba(231, 76, 60, 0.35);
         }
         .status-inauspicious .calendar-day-status-badge {
             background: #e74c3c;
@@ -319,42 +400,42 @@
         }
 
         .status-neutral {
-            background: rgba(15, 20, 30, 0.4);
-            border: 1px solid var(--border);
+            background: rgba(15, 20, 30, 0.3);
+            border: 1px solid rgba(255,255,255,0.06);
         }
         .status-neutral .calendar-day-status-badge {
-            background: rgba(255,255,255,0.15);
-            color: #fff;
+            background: rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.7);
         }
 
         /* Tooltip style */
         .calendar-tooltip-area {
             margin-top: 15px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 15px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 12px;
+            padding: 18px;
             min-height: 70px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             transition: all 0.3s ease;
         }
         .kaliyoke-card.thongchai {
             border-left: 4px solid #2ecc71 !important;
-            background: rgba(46, 204, 113, 0.1) !important;
+            background: rgba(46, 204, 113, 0.08) !important;
         }
         .kaliyoke-card.athibadi {
             border-left: 4px solid #3498db !important;
-            background: rgba(52, 152, 219, 0.1) !important;
+            background: rgba(52, 152, 219, 0.08) !important;
         }
         .kaliyoke-card.ubat {
             border-left: 4px solid #e67e22 !important;
-            background: rgba(230, 126, 34, 0.1) !important;
+            background: rgba(230, 126, 34, 0.08) !important;
         }
         .kaliyoke-card.lokawinas {
             border-left: 4px solid #e74c3c !important;
-            background: rgba(231, 76, 60, 0.1) !important;
+            background: rgba(231, 76, 60, 0.08) !important;
         }
 
         /* Upgraded Premium Styling additions */
@@ -364,34 +445,34 @@
         }
         .sd-cell:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            background: rgba(142, 68, 173, 0.05) !important;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+            background: rgba(212, 175, 55, 0.08) !important;
         }
         .badge-transit {
             position: absolute;
-            top: 2px;
-            right: 2px;
+            top: 3px;
+            right: 3px;
             font-size: 9px;
-            padding: 2px 4px;
+            padding: 2px 5px;
             border-radius: 4px;
-            color: #fff;
-            font-weight: bold;
+            color: #000;
+            font-weight: 800;
         }
         .badge-sri { background: #2ecc71; }
-        .badge-kali { background: #e74c3c; }
+        .badge-kali { background: #e74c3c; color: #fff; }
         
         /* Premium Export Button styling */
         .btn-export {
             background: linear-gradient(135deg, #d35400 0%, #e67e22 100%);
             color: #fff;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 14px 28px;
+            border-radius: 50px;
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(211, 84, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(211, 84, 0, 0.25);
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -399,22 +480,30 @@
         }
         .btn-export:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(211, 84, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(211, 84, 0, 0.4);
             background: linear-gradient(135deg, #b33e00 0%, #d35400 100%);
         }
         
         /* Reusing Card from style.css but with extra tweaks */
         .card, .premium-card, .kaliyoke-card, .calendar-card {
-            border-left: 4px solid var(--gold) !important;
+            background: rgba(15, 23, 42, 0.65);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-left: 5px solid var(--gold) !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            margin-bottom: 25px;
         }
         .premium-card h3 {
             text-align: left;
             margin-top: 0;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
             padding-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 10px;
+            color: var(--gold-lt);
         }
         .premium-card-accent {
             border-left-color: var(--gold-lt) !important;
@@ -426,16 +515,19 @@
         .flex-stages {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 18px;
         }
         .stage-item {
             border-radius: 12px;
-            padding: 15px;
-            border: 1px solid var(--border);
-            transition: all 0.2s ease;
+            padding: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            background: rgba(10, 15, 25, 0.4);
+            transition: all 0.3s;
         }
         .stage-item:hover {
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.25);
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -443,147 +535,148 @@
 <body>
 
     <div id="mahataksasattalek" class="container">
-    <a class="nav-link text-white" href="../index.html" style="cursor: pointer;">กลับหน้า 🔮 สยามโหรามงคล</a>
-
+        <a class="back-btn" href="../index.html"><i class="fa-solid fa-arrow-left"></i> กลับหน้า 🔮 สยามโหรามงคล</a>
 
         <h1>📜 คัมภีร์มหาทักษาสัตตเลข</h1>
+        <p class="page-subtitle">วิเคราะห์โครงดวงชะตาสัตตเลข ฐาน ๔ ฐาน ๙ และการคำนวณกำลังดาวแบบบูรณาการ</p>
 
-        <div style="margin:12px 0 20px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;backdrop-filter:blur(10px);">
-          <label style="display:block;font-weight:600;color:var(--gold-lt);font-size:0.9rem;margin-bottom:8px;" for="birthDay">👥 เลือกสมาชิกจากประวัติ</label>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <select id="sattalekMemberSelect" onchange="autoFillSattalek(this.value)"
-                    style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;background:rgba(15,20,30,0.6);color:var(--text);">
-              <option value="">— เลือกสมาชิก —</option>
-            </select>
-          </div>
+        <!-- ระบบเลือกประวัติสมาชิกแบบพรีเมียม -->
+        <div style="margin: 15px 0 28px; padding: 20px 24px; background: linear-gradient(135deg, rgba(20, 32, 58, 0.7) 0%, rgba(13, 21, 39, 0.8) 100%); border: 1px solid rgba(241, 208, 110, 0.3); border-radius: 20px; backdrop-filter: blur(20px); box-shadow: 0 12px 35px rgba(0,0,0,0.35);">
+            <label style="display: block; font-weight: 600; color: #FFF0A8; font-size: 1rem; margin-bottom: 10px;" for="sattalekMemberSelect">
+                <i class="fa-solid fa-users-gear" style="color: #F1D06E; margin-right: 8px;"></i> เลือกสมาชิกจากประวัติ
+            </label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <select id="sattalekMemberSelect" onchange="autoFillSattalek(this.value)"
+                        style="flex: 1; padding: 14px 18px; border: 1px solid rgba(241, 208, 110, 0.35); border-radius: 14px; font-size: 1rem; background: rgba(13, 21, 39, 0.85); color: #FFFFFF;">
+                    <option value="">— เลือกสมาชิก —</option>
+                </select>
+            </div>
         </div>
 
-        <div class="form-grid">
-            <div class="input-box">
-                <label>วันเกิด</label>
+        <!-- กล่องข้อมูลดวงชะตากำเนิด -->
+        <div class="premium-group-box">
+            <h3 style="margin-top: 0; color: var(--gold-lt); font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-cake-candles" style="color: var(--gold);"></i> 👤 ข้อมูลชะตากำเนิด (Natal Chart Details)
+            </h3>
+            <div class="form-grid">
+                <div class="input-box">
+                    <label>วันเกิด (สัปดาห์)</label>
+                    <select id="birthDay" onchange="processDestiny()">
+                        <option value="1">อาทิตย์</option>
+                        <option value="2">จันทร์</option>
+                        <option value="3">อังคาร</option>
+                        <option value="4">พุธ</option>
+                        <option value="5">พฤหัส</option>
+                        <option value="6">ศุกร์</option>
+                        <option value="7">เสาร์</option>
+                    </select>
+                </div>
 
-                <select id="birthDay" onchange="processDestiny()">
+                <div class="input-box">
+                    <label for="birthDateSatta">วันที่เกิด (สุริยคติ)</label>
+                    <input type="number" id="birthDateSatta" min="1" max="31" value="1" onchange="processDestiny()" oninput="processDestiny()">
+                </div>
 
-                    <option value="1">อาทิตย์</option>
-                    <option value="2">จันทร์</option>
-                    <option value="3">อังคาร</option>
-                    <option value="4">พุธ</option>
-                    <option value="5">พฤหัส</option>
-                    <option value="6">ศุกร์</option>
-                    <option value="7">เสาร์</option>
+                <div class="input-box">
+                    <label for="birthMonth">เดือนเกิด (ไทย)</label>
+                    <select id="birthMonth" onchange="processDestiny()">
+                        <option value="5">เดือน 5 (เมษายน)</option>
+                        <option value="6">เดือน 6 (พฤษภาคม)</option>
+                        <option value="7">เดือน 7 (มิถุนายน)</option>
+                        <option value="8">เดือน 8 (กรกฎาคม)</option>
+                        <option value="9">เดือน 9 (สิงหาคม)</option>
+                        <option value="10">เดือน 10 (กันยายน)</option>
+                        <option value="11">เดือน 11 (ตุลาคม)</option>
+                        <option value="12">เดือน 12 (พฤศจิกายน)</option>
+                        <option value="1">เดือน 1 (ธันวาคม)</option>
+                        <option value="2">เดือน 2 (มกราคม)</option>
+                        <option value="3">เดือน 3 (กุมภาพันธ์)</option>
+                        <option value="4">เดือน 4 (มีนาคม)</option>
+                    </select>
+                </div>
 
-                </select>
+                <div class="input-box">
+                    <label for="birthYear">ปีนักษัตร</label>
+                    <select id="birthYear" onchange="processDestiny()">
+                        <option value="1">ชวด</option>
+                        <option value="2">ฉลู</option>
+                        <option value="3">ขาล</option>
+                        <option value="4">เถาะ</option>
+                        <option value="5">มะโรง</option>
+                        <option value="6">มะเส็ง</option>
+                        <option value="7">มะเมีย</option>
+                        <option value="1">มะแม</option>
+                        <option value="2">วอก</option>
+                        <option value="3">ระกา</option>
+                        <option value="4">จอ</option>
+                        <option value="5">กุน</option>
+                    </select>
+                </div>
 
+                <div class="input-box">
+                    <label for="birthTime">เวลาเกิด (น.)</label>
+                    <input type="time" id="birthTime" value="06:00" onchange="processDestiny()">
+                </div>
+
+                <div class="input-box">
+                    <label for="currentAge">อายุย่างปีนี้</label>
+                    <input type="number" id="currentAge" value="25" onchange="processDestiny()" oninput="processDestiny()">
+                </div>
             </div>
+        </div>
 
-            <div class="input-box">
+        <!-- กล่องข้อมูลดาวจร -->
+        <div class="premium-group-box">
+            <h3 style="margin-top: 0; color: var(--gold-lt); font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-arrows-spin" style="color: var(--gold);"></i> 🗓️ ตั้งค่าเกณฑ์จรปัจจุบัน (Transit Configurations)
+            </h3>
+            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                <div class="input-box">
+                    <label for="targetMonth">เดือนจรปัจจุบัน (ไทย)</label>
+                    <select id="targetMonth" onchange="processDestiny()">
+                        <option value="5">เดือน 5 (เมษายน)</option>
+                        <option value="6">เดือน 6 (พฤษภาคม)</option>
+                        <option value="7">เดือน 7 (มิถุนายน)</option>
+                        <option value="8">เดือน 8 (กรกฎาคม)</option>
+                        <option value="9">เดือน 9 (สิงหาคม)</option>
+                        <option value="10">เดือน 10 (กันยายน)</option>
+                        <option value="11">เดือน 11 (ตุลาคม)</option>
+                        <option value="12">เดือน 12 (พฤศจิกายน)</option>
+                        <option value="1">เดือน 1 (ธันวาคม)</option>
+                        <option value="2">เดือน 2 (มกราคม)</option>
+                        <option value="3">เดือน 3 (กุมภาพันธ์)</option>
+                        <option value="4">เดือน 4 (มีนาคม)</option>
+                    </select>
+                </div>
 
-                <label for="birthDateSatta">วันที่เกิด</label>
+                <div class="input-box">
+                    <label for="targetDate">วันจรปัจจุบัน (วันที่)</label>
+                    <input type="number" id="targetDate" min="1" max="31" value="1" onchange="processDestiny()" oninput="processDestiny()">
+                </div>
 
-                <input type="number" id="birthDateSatta" min="1" max="31" value="1" onchange="processDestiny()"
-                    oninput="processDestiny()">
-
+                <div class="input-box">
+                    <label>&nbsp;</label>
+                    <button onclick="calculateAllHoroModules()" style="width: 100%;">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> คำนวณดวงชะตา
+                    </button>
+                </div>
             </div>
+        </div>
 
-            <div class="input-box">
+        <!-- สะพานข้อมูลจำลองสำหรับเครื่องยนต์พยากรณ์ร่วม (Hidden Horo Bridge) -->
+        <div style="display: none;" aria-hidden="true">
+            <!-- สำหรับ horoscope-seven.js -->
+            <input type="hidden" id="input-day">
+            <input type="hidden" id="input-month">
+            <input type="hidden" id="input-zodiac">
+            <input type="hidden" id="input-birthtime">
+            <input type="hidden" id="input-age">
 
-                <label for="birthMonth">เดือนเกิด (ไทย)</label>
-
-                <select id="birthMonth" onchange="processDestiny()">
-                    <option value="5">เดือน 5 (เมษายน)</option>
-                    <option value="6">เดือน 6 (พฤษภาคม)</option>
-                    <option value="7">เดือน 7 (มิถุนายน)</option>
-                    <option value="8">เดือน 8 (กรกฎาคม)</option>
-                    <option value="9">เดือน 9 (สิงหาคม)</option>
-                    <option value="10">เดือน 10 (กันยายน)</option>
-                    <option value="11">เดือน 11 (ตุลาคม)</option>
-                    <option value="12">เดือน 12 (พฤศจิกายน)</option>
-                    <option value="1">เดือน 1 (ธันวาคม)</option>
-                    <option value="2">เดือน 2 (มกราคม)</option>
-                    <option value="3">เดือน 3 (กุมภาพันธ์)</option>
-                    <option value="4">เดือน 4 (มีนาคม)</option>
-                </select>
-
-            </div>
-
-            <div class="input-box">
-
-                <label for="birthYear">ปีนักษัตร</label>
-
-                <select id="birthYear" onchange="processDestiny()">
-
-                    <option value="1">ชวด</option>
-                    <option value="2">ฉลู</option>
-                    <option value="3">ขาล</option>
-                    <option value="4">เถาะ</option>
-                    <option value="5">มะโรง</option>
-                    <option value="6">มะเส็ง</option>
-                    <option value="7">มะเมีย</option>
-                    <option value="1">มะแม</option>
-                    <option value="2">วอก</option>
-                    <option value="3">ระกา</option>
-                    <option value="4">จอ</option>
-                    <option value="5">กุน</option>
-
-                </select>
-
-            </div>
-
-            <div class="input-box">
-
-                <label for="currentAge">อายุย่างปีนี้</label>
-
-                <input type="number" id="currentAge" value="25" onchange="processDestiny()" oninput="processDestiny()">
-
-            </div>
-
-            <div class="input-box">
-
-                <label for="birthTime">เวลาเกิด (น.)</label>
-
-                <input type="time" id="birthTime" value="06:00" onchange="processDestiny()">
-
-            </div>
-
-            <div class="input-box">
-
-                <label for="targetMonth">เดือนจร (ปัจจุบัน)</label>
-
-                <select id="targetMonth" onchange="processDestiny()">
-                    <option value="5">เดือน 5 (เมษายน)</option>
-                    <option value="6">เดือน 6 (พฤษภาคม)</option>
-                    <option value="7">เดือน 7 (มิถุนายน)</option>
-                    <option value="8">เดือน 8 (กรกฎาคม)</option>
-                    <option value="9">เดือน 9 (สิงหาคม)</option>
-                    <option value="10">เดือน 10 (กันยายน)</option>
-                    <option value="11">เดือน 11 (ตุลาคม)</option>
-                    <option value="12">เดือน 12 (พฤศจิกายน)</option>
-                    <option value="1">เดือน 1 (ธันวาคม)</option>
-                    <option value="2">เดือน 2 (มกราคม)</option>
-                    <option value="3">เดือน 3 (กุมภาพันธ์)</option>
-                    <option value="4">เดือน 4 (มีนาคม)</option>
-                </select>
-
-            </div>
-
-            <div class="input-box">
-
-                <label for="targetDate">วันจร (ปัจจุบัน)</label>
-
-                <input type="number" id="targetDate" min="1" max="31" value="1" onchange="processDestiny()"
-                    oninput="processDestiny()">
-
-            </div>           
-
-            <div class="input-box">
-
-                <label for="horaryTime">&nbsp;</label>
-                <button onclick="processDestiny(true)" style="width: 100%;">
-                    คำนวณดวง
-                </button>
-
-            </div>
-
+            <!-- สำหรับ seven-digits.js -->
+            <input type="hidden" id="sdDay">
+            <input type="hidden" id="sdMonth">
+            <input type="hidden" id="sdYear">
+            <input type="hidden" id="sdAge">
         </div>
 
             
@@ -609,103 +702,141 @@
         <!-- Loading Spinner สำหรับรอดึงข้อมูล -->
         <loading-spinner id="calcSpinner" text="กำลังผูกดวงชะตาและประมวลผลทักษา..." is-active="false"></loading-spinner>
 
-        <!-- Capture Area for Exporting Image -->
-        <div id="captureArea" style="background:transparent; padding:15px; margin-top:30px;">
-            <div id="tableArea"></div>
-            <div id="topReportArea" style="margin-top:30px; display:flex; flex-direction:column; gap:20px;"></div>
-            <div id="reportArea" class="grid-report"></div>
-        </div>
-
-        <!-- Premium Export Button -->
-        <div style="text-align: center; margin: 25px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
-            <button id="btnExport" class="btn-export" onclick="promptExportOptions()">
-                <i class="fa-solid fa-download"></i> บันทึกภาพผังดวงและคำทำนาย (PNG)
-            </button>
-            <button id="btnExportVIP" class="btn-export" style="background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%); color: #000; font-weight: bold; box-shadow: 0 4px 15px rgba(212,175,55,0.4);" onclick="generateUltimatePremiumPDF()">
-                <i class="fa-solid fa-file-pdf"></i> สร้างรายงาน (PDF แบบ VIP)
-            </button>
-        </div>
-
-        <div id="auspiciousCalendarArea"></div>
-
-        <!-- 👑 เครื่องมือค้นหาและวิเคราะห์กาลโยครายปี -->
-        <div class="calendar-card card" style="margin-top: 30px;">
-            <div class="calendar-header" style="border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 15px;">
-                <h3 style="color: var(--gold-lt); margin: 0; display: flex; align-items: center; gap: 8px;">
-                    <span>👑</span> เครื่องมือวิเคราะห์กาลโยครายปี (Yearly Kaliyoke Analyser)
-                </h3>
-                <div style="display: flex; gap: 8px; align-items: center; background: rgba(15, 20, 30, 0.6); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border);">
-                    <label style="font-size: 13.5px; font-weight: bold; color: var(--gold); margin-right: 5px;" for="yearkarayokInput">ป้อนปี พ.ศ. จร:</label>
-                    <input type="number" id="yearkarayokInput" min="1182" max="3000" style="padding: 6px 12px; width: 90px; border-radius: 15px; border: 1px solid var(--border); outline: none; font-weight: bold; text-align: center;" placeholder="พ.ศ.">
-                    <button onclick="displayKaliyoke()" style="padding: 6px 14px; border-radius: 15px; font-size: 13.5px;">
-                        ค้นหา
-                    </button>
-                </div>
+        <!-- ==================== ระบบแท็บหลักสำหรับดูระบบทำนายทั้ง 3 แบบ ==================== -->
+        <!-- ==================== ระบบแท็บหลักสำหรับดูระบบทำนายทั้ง 5 แบบ ==================== -->
+        <div class="main-tabs-container" style="margin-top: 35px;">
+            <div class="custom-main-tabs d-flex flex-wrap justify-content-center p-2 mb-4" 
+                 style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; background: rgba(13, 21, 39, 0.7); border: 1px solid rgba(241, 208, 110, 0.3); border-radius: 50px; padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); backdrop-filter: blur(20px);">
+                <button id="main-tab-taksasatta-btn" onclick="switchMainTab('taksasatta')" class="tab-pill-btn active">
+                    <i class="fa-solid fa-dharmachakra mr-1"></i> มหาทักษาสัตตเลข
+                </button>
+                <button id="main-tab-horoseven-btn" onclick="switchMainTab('horoseven')" class="tab-pill-btn">
+                    <i class="fa-solid fa-scroll mr-1"></i> เลข ๗ ตัว ฐาน ๔
+                </button>
+                <button id="main-tab-sevendigits-btn" onclick="switchMainTab('sevendigits')" class="tab-pill-btn">
+                    <i class="fa-solid fa-calculator mr-1"></i> วิเคราะห์เลข ๗ ตัว ๔ ฐาน
+                </button>
+                <button id="main-tab-calendar-btn" onclick="switchMainTab('calendar')" class="tab-pill-btn">
+                    <i class="fa-solid fa-calendar-days mr-1"></i> ปฏิทินฤกษ์มงคลรายเดือน
+                </button>
+                <button id="main-tab-kaliyoke-btn" onclick="switchMainTab('kaliyoke')" class="tab-pill-btn">
+                    <i class="fa-solid fa-crown mr-1"></i> วิเคราะห์กาลโยครายปี
+                </button>
             </div>
-            
-            <p style="font-size: 14px; color:var(--muted); margin-top:0; margin-bottom: 18px; line-height:1.6;">
-                วิเคราะห์เกณฑ์ <b>กาลโยคประจำปี</b> แจกแจงตำแหน่งดาววันดี-ร้ายสากล (ธงชัย, อธิบดี, อุบาทว์, โลกาวินาศ) พร้อมแสดงยาม มงคลราศี ดิถีจร และฤกษ์มงคลตามคัมภีร์ดึกดำบรรพ์
-            </p>
 
-            <div id="kaliyoke-resultArea" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 15px;"></div>
-        </div>
-
-
-        <!-- ปุ่มนำทาง (Web Component) -->
-        <nav-buttons></nav-buttons>
-
-    </div>
-
-    <!-- Web Component สำหรับ Loading Spinner -->
-    <script>
-        if (!customElements.get('loading-spinner')) {
-            class LoadingSpinner extends HTMLElement {
-                static get observedAttributes() { return ['text', 'is-active']; }
-                connectedCallback() { this.render(); }
-                attributeChangedCallback() { this.render(); }
-                render() {
-                    const text = this.getAttribute('text') || 'กำลังประมวลผลคำทำนาย...';
-                    const isActive = this.getAttribute('is-active') !== 'false';
-                    
-                    this.style.display = isActive ? 'block' : 'none';
-                    this.innerHTML = `
-                        <div style="text-align: center; width: 100%; padding: 3rem 0; animation: fadeIn 0.5s ease;">
-                            <div style="display: inline-block; width: 3rem; height: 3rem; border: 4px solid rgba(212, 175, 55, 0.2); border-top-color: #d4af37; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                            <p style="margin-top: 1rem; color: rgba(212, 175, 55, 0.8); font-weight: 300; letter-spacing: 1px;">${text}</p>
-                        </div>
-                    `;
+            <style>
+                .tab-pill-btn {
+                    background: transparent;
+                    border: none;
+                    color: #CBD5E1;
+                    padding: 10px 22px;
+                    font-weight: 600;
+                    border-radius: 50px;
+                    cursor: pointer;
+                    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                    font-size: 0.95rem;
+                    font-family: 'Prompt', sans-serif;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    box-shadow: none;
                 }
-            }
-            customElements.define('loading-spinner', LoadingSpinner);
-        }
-    </script>
+                .tab-pill-btn:hover {
+                    color: #FFF0A8;
+                    background: rgba(241, 208, 110, 0.12);
+                    transform: translateY(-2px);
+                }
+                .tab-pill-btn.active {
+                    background: linear-gradient(135deg, #FFF0A8 0%, #E8C15A 50%, #C49224 100%) !important;
+                    color: #0c1424 !important;
+                    box-shadow: 0 6px 20px rgba(241, 208, 110, 0.45) !important;
+                    transform: translateY(-1px);
+                }
+                .main-tab-pane {
+                    animation: fadeInHoro 0.4s ease-in-out;
+                }
+                @keyframes fadeInHoro {
+                    from { opacity: 0; transform: translateY(8px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                /* ซ่อนหน้าจอป้อนข้อมูลซ้ำซ้อนของ Seven Digits */
+                #sevenDigitsInput {
+                    display: none !important;
+                }
+            </style>
 
-        </div>
+            <!-- แท็บคอนเทนต์ -->
+            <div class="main-tab-content">
+                <!-- แท็บที่ 1: มหาทักษาสัตตเลข -->
+                <div class="main-tab-pane" id="main-pane-taksasatta">
+                    <!-- Capture Area for Exporting Image -->
+                    <div id="captureArea" style="background:transparent; padding:15px; margin-top:10px;">
+                        <div id="tableArea"></div>
+                        <div id="topReportArea" style="margin-top:30px; display:flex; flex-direction:column; gap:20px;"></div>
+                        <div id="reportArea" class="grid-report"></div>
+                    </div>
 
-        <div id="auspiciousCalendarArea"></div>
+                    <!-- Premium Export Button (สำหรับแชร์ผังมหาทักษาสัตตเลข) -->
+                    <div style="text-align: center; margin: 25px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+                        <button id="btnExport" class="btn-export" onclick="promptExportOptions()">
+                            <i class="fa-solid fa-download"></i> บันทึกภาพผังดวงและคำทำนาย (PNG)
+                        </button>
+                        <button id="btnExportVIP" class="btn-export" style="background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%); color: #000; font-weight: bold; box-shadow: 0 4px 15px rgba(212,175,55,0.4);" onclick="generateUltimatePremiumPDF()">
+                            <i class="fa-solid fa-file-pdf"></i> สร้างรายงาน (PDF แบบ VIP)
+                        </button>
+                    </div>
+                </div>
 
-        <!-- 👑 เครื่องมือค้นหาและวิเคราะห์กาลโยครายปี -->
-        <div class="calendar-card card" style="margin-top: 30px;">
-            <div class="calendar-header" style="border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 15px;">
-                <h3 style="color: var(--gold-lt); margin: 0; display: flex; align-items: center; gap: 8px;">
-                    <span>👑</span> เครื่องมือวิเคราะห์กาลโยครายปี (Yearly Kaliyoke Analyser)
-                </h3>
-                <div style="display: flex; gap: 8px; align-items: center; background: rgba(15, 20, 30, 0.6); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border);">
-                    <label style="font-size: 13.5px; font-weight: bold; color: var(--gold); margin-right: 5px;" for="yearkarayokInput">ป้อนปี พ.ศ. จร:</label>
-                    <input type="number" id="yearkarayokInput" min="1182" max="3000" style="padding: 6px 12px; width: 90px; border-radius: 15px; border: 1px solid var(--border); outline: none; font-weight: bold; text-align: center;" placeholder="พ.ศ.">
-                    <button onclick="displayKaliyoke()" style="padding: 6px 14px; border-radius: 15px; font-size: 13.5px;">
-                        ค้นหา
-                    </button>
+                <!-- แท็บที่ 2: เลข ๗ ตัว ฐาน ๔ (ตำราโบราณ) -->
+                <div class="main-tab-pane" id="main-pane-horoseven" style="display: none;">
+                    <div id="result-area" style="margin-top: 15px;">
+                        <div class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-hourglass-start display-4 d-block mb-3 text-gold opacity-50"></i>
+                            <p class="fs-5">กรุณากดปุ่ม "คำนวณดวง" เพื่อรับการพยากรณ์ระบบเลข ๗ ตัว ฐาน ๔</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- แท็บที่ 3: เลข ๗ ตัว ฐาน ๙/๔ -->
+                <div class="main-tab-pane" id="main-pane-sevendigits" style="display: none;">
+                    <div id="sevenPage" style="margin-top: 15px;">
+                        <div class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-hourglass-start display-4 d-block mb-3 text-gold opacity-50"></i>
+                            <p class="fs-5">กรุณากดปุ่ม "คำนวณดวง" เพื่อรับการพยากรณ์วิเคราะห์หลักเลข ๗ ตัว</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- แท็บที่ 4: ปฏิทินฤกษ์มงคลรายเดือน -->
+                <div class="main-tab-pane" id="main-pane-calendar" style="display: none;">
+                    <div id="auspiciousCalendarArea" style="margin-top: 15px;"></div>
+                </div>
+
+                <!-- แท็บที่ 5: วิเคราะห์กาลโยครายปี -->
+                <div class="main-tab-pane" id="main-pane-kaliyoke" style="display: none;">
+                    <div class="calendar-card card" style="margin-top: 15px; border-left: 5px solid var(--gold) !important;">
+                        <div class="calendar-header" style="border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 15px;">
+                            <h3 style="color: var(--gold-lt); margin: 0; display: flex; align-items: center; gap: 8px;">
+                                <span>👑</span> เครื่องมือวิเคราะห์กาลโยครายปี (Yearly Kaliyoke Analyser)
+                            </h3>
+                            <div style="display: flex; gap: 8px; align-items: center; background: rgba(15, 20, 30, 0.6); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border);">
+                                <label style="font-size: 13.5px; font-weight: bold; color: var(--gold); margin-right: 5px;" for="yearkarayokInput">ป้อนปี พ.ศ. จร:</label>
+                                <input type="number" id="yearkarayokInput" min="1182" max="3000" style="padding: 6px 12px; width: 90px; border-radius: 15px; border: 1px solid var(--border); outline: none; font-weight: bold; text-align: center; color: #fff; background: rgba(0,0,0,0.5);" placeholder="พ.ศ.">
+                                <button onclick="displayKaliyoke()" style="padding: 6px 14px; border-radius: 15px; font-size: 13.5px;">
+                                    ค้นหา
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p style="font-size: 14px; color:var(--muted); margin-top: 12px; margin-bottom: 18px; line-height:1.6;">
+                            วิเคราะห์เกณฑ์ <b>กาลโยคประจำปี</b> แจกแจงตำแหน่งดาววันดี-ร้ายสากล (ธงชัย, อธิบดี, อุบาทว์, โลกาวินาศ) พร้อมแสดงยาม มงคลราศี ดิถีจร และฤกษ์มงคลตามคัมภีร์ดึกดำบรรพ์
+                        </p>
+
+                        <div id="kaliyoke-resultArea" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 15px;"></div>
+                    </div>
                 </div>
             </div>
-            
-            <p style="font-size: 14px; color:var(--muted); margin-top:0; margin-bottom: 18px; line-height:1.6;">
-                วิเคราะห์เกณฑ์ <b>กาลโยคประจำปี</b> แจกแจงตำแหน่งดาววันดี-ร้ายสากล (ธงชัย, อธิบดี, อุบาทว์, โลกาวินาศ) พร้อมแสดงยาม มงคลราศี ดิถีจร และฤกษ์มงคลตามคัมภีร์ดึกดำบรรพ์
-            </p>
-
-            <div id="kaliyoke-resultArea" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 15px;"></div>
         </div>
-
 
         <!-- ปุ่มนำทาง (Web Component) -->
         <nav-buttons></nav-buttons>
@@ -737,6 +868,7 @@
     </script>
 
     <script charset="UTF-8" src="../src/engine/horoscope-seven.js"></script>
+    <script charset="UTF-8" src="../src/engine/seven-digits.js"></script>
     <script charset="UTF-8" src="../src/utils/utils-helpers.js"></script>
     <script charset="UTF-8" type="module" src="../src/ui/membermanager.js"></script>
     <script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -744,6 +876,82 @@
     <script charset="UTF-8" src="../src/engine/taksasattalek.js"></script>
     <script charset="UTF-8" src="../admin/js/premium-pdf-generator.js"></script>
 
-</body>
+    <script>
+        // ฟังก์ชันสลับแท็บหลัก
+        function switchMainTab(tabId) {
+            document.getElementById('main-pane-taksasatta').style.display = 'none';
+            document.getElementById('main-pane-horoseven').style.display = 'none';
+            document.getElementById('main-pane-sevendigits').style.display = 'none';
+            document.getElementById('main-pane-calendar').style.display = 'none';
+            document.getElementById('main-pane-kaliyoke').style.display = 'none';
 
+            document.getElementById('main-pane-' + tabId).style.display = 'block';
+
+            document.getElementById('main-tab-taksasatta-btn').classList.remove('active');
+            document.getElementById('main-tab-horoseven-btn').classList.remove('active');
+            document.getElementById('main-tab-sevendigits-btn').classList.remove('active');
+            document.getElementById('main-tab-calendar-btn').classList.remove('active');
+            document.getElementById('main-tab-kaliyoke-btn').classList.remove('active');
+
+            document.getElementById('main-tab-' + tabId + '-btn').classList.add('active');
+        }
+
+        // ฟังก์ชันสะพานเชื่อมสำหรับการคำนวณข้อมูลร่วม
+        function calculateAllHoroModules() {
+            // 1. ดึงค่าจากฟอร์มหลักของ taksasattalek.html
+            const bDay = document.getElementById('birthDay').value; 
+            const bDate = document.getElementById('birthDateSatta').value;
+            const bMonth = document.getElementById('birthMonth').value; 
+            const bYear = document.getElementById('birthYear').value; 
+            const age = document.getElementById('currentAge').value;
+            const time = document.getElementById('birthTime').value;
+
+            // ตรวจสอบความถูกต้องพื้นฐาน
+            if (!bDay || !bMonth || !bYear) {
+                Swal.fire('กรุณากรอกข้อมูล', 'กรุณาระบุข้อมูลเกิดให้ครบถ้วนก่อนคำนวณ', 'warning');
+                return;
+            }
+
+            // 2. สะพานสำหรับ horoscope-seven.js (วันอาทิตย์=0 ... เสาร์=6)
+            document.getElementById('input-day').value = parseInt(bDay) - 1; 
+            document.getElementById('input-month').value = bMonth;
+            document.getElementById('input-zodiac').value = parseInt(bYear) - 1; 
+            document.getElementById('input-age').value = age;
+            document.getElementById('input-birthtime').value = time;
+
+            // 3. สะพานสำหรับ seven-digits.js
+            document.getElementById('sdDay').value = parseInt(bDay) - 1;
+            document.getElementById('sdMonth').value = bMonth;
+            document.getElementById('sdYear').value = parseInt(bYear) - 1;
+            document.getElementById('sdAge').value = age;
+
+            // 4. แสดง Loading Spinner
+            const spinner = document.getElementById('calcSpinner');
+            if (spinner) spinner.setAttribute('is-active', 'true');
+
+            setTimeout(() => {
+                try {
+                    // 5. คำนวณมหาทักษาสัตตเลข
+                    if (typeof processDestiny === 'function') {
+                        processDestiny();
+                    }
+
+                    // 6. คำนวณเลข 7 ตัว ฐาน 4 (ตำราโบราณ)
+                    if (typeof calculateHoroscope === 'function') {
+                        calculateHoroscope();
+                    }
+
+                    // 7. คำนวณเลข 7 ตัว ฐาน 9 (seven-digits)
+                    if (typeof calculateSevenDigits === 'function') {
+                        calculateSevenDigits();
+                    }
+                } catch (err) {
+                    console.error("Error during calculations: ", err);
+                } finally {
+                    if (spinner) spinner.setAttribute('is-active', 'false');
+                }
+            }, 200);
+        }
+    </script>
+</body>
 </html>

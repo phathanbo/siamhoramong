@@ -1,29 +1,34 @@
 "use strict";
+(() => {
 // Shared matrix for the 7-digit bases (4 rows). Declared here to
 // avoid ReferenceError when assigning inside functions (module/strict mode).
-let globalRows = [];
+if (typeof window.globalRows === 'undefined') { window.globalRows = []; }
 // ทักษาจรลำดับ (สำหรับคำนวณดาวศรี/กาลกิณี)
-const thaksaOrder = [1, 2, 3, 4, 7, 5, 8, 6];
-const thaksaNames = ["บริวาร", "อายุ", "เดช", "ศรี", "มูละ", "อุตสาหะ", "มนตรี", "กาลกิณี"];
+if (typeof window.thaksaOrder === 'undefined') { window.thaksaOrder = [1, 2, 3, 4, 7, 5, 8, 6]; }
+if (typeof window.thaksaNames === 'undefined') { window.thaksaNames = ["บริวาร", "อายุ", "เดช", "ศรี", "มูละ", "อุตสาหะ", "มนตรี", "กาลกิณี"]; }
 
 // ชื่อภพเต็มสำหรับแต่ละฐาน (แถว: วัน, เดือน, ปี)
-const posNamesFull = [
-    ["อัตตา", "หินะ", "ธนัง", "ปิตา", "มาตา", "โภคา", "มัชฌิมา"],
-    ["ตะนุ", "กดุมพะ", "สหัชชะ", "พันธุ", "ปุตตะ", "อริ", "ปัตตนิ"],
-    ["มรณะ", "สุภะ", "กัมมะ", "ลาภะ", "พยายะ", "ทาสี", "ทาสา"]
-];
+if (typeof window.posNamesFull === 'undefined') {
+    window.posNamesFull = [
+        ["อัตตา", "หินะ", "ธนัง", "ปิตา", "มาตา", "โภคา", "มัชฌิมา"],
+        ["ตะนุ", "กดุมพะ", "สหัชชะ", "พันธุ", "ปุตตะ", "อริ", "ปัตตนิ"],
+        ["มรณะ", "สุภะ", "กัมมะ", "ลาภะ", "พยายะ", "ทาสี", "ทาสา"]
+    ];
+}
 
 // มหาโบท (ใช้โดย getMahaBot)
-const mahaBotNames = ["สิทธิโชค", "มหาชัย", "ราชา", "มัชฌิมา", "อุบาทว์", "โลกาวินาศ", "เจดีย์"];
-const mahaBotMeanings = {
-    "สิทธิโชค": "ความสำเร็จ โชคลาภ ได้ผลประโยชน์สมใจนึก ทำกิจการใดมักจะราบรื่นรุ่งเรือง",
-    "มหาชัย": "มีชัยชนะเหนือกิเลสหรือคู่แข่ง ได้รับเกียรติยศชื่อเสียงอันโดดเด่นในสายงาน",
-    "ราชา": "วาสนาสูงส่ง ได้รับการเกื้อหนุนจากผู้ใหญ่หรือผู้มีอำนาจ ทำสิ่งใดมักโดดเด่นมีสง่าราศี",
-    "มัชฌิมา": "ชีวิตดำเนินไปอย่างเรียบง่าย ปานกลาง ไม่เด่นดังมากนักแต่มีความสงบมั่นคงดี",
-    "อุบาทว์": "ระวังเคราะห์กรรม อุปสรรค สิ่งขัดขวางไม่คาดคิด หรือโรคภัยแฝงเร้นเข้ามาเบียดเบียน",
-    "โลกาวินาศ": "ระวังการสูญเสีย ความล้มเหลว หรือการเปลี่ยนแปลงครั้งใหญ่ที่ไม่ได้เตรียมใจ",
-    "เจดีย์": "มีความศักดิ์สิทธิ์ ความคิดใฝ่คุณธรรม หรือมีสัมผัสพิเศษ มักพบความสุขทางจิตใจอย่างลึกซึ้ง"
-};
+if (typeof window.mahaBotNames === 'undefined') { window.mahaBotNames = ["สิทธิโชค", "มหาชัย", "ราชา", "มัชฌิมา", "อุบาทว์", "โลกาวินาศ", "เจดีย์"]; }
+if (typeof window.mahaBotMeanings === 'undefined') {
+    window.mahaBotMeanings = {
+        "สิทธิโชค": "ความสำเร็จ โชคลาภ ได้ผลประโยชน์สมใจนึก ทำกิจการใดมักจะราบรื่นรุ่งเรือง",
+        "มหาชัย": "มีชัยชนะเหนือกิเลสหรือคู่แข่ง ได้รับเกียรติยศชื่อเสียงอันโดดเด่นในสายงาน",
+        "ราชา": "วาสนาสูงส่ง ได้รับการเกื้อหนุนจากผู้ใหญ่หรือผู้มีอำนาจ ทำสิ่งใดมักโดดเด่นมีสง่าราศี",
+        "มัชฌิมา": "ชีวิตดำเนินไปอย่างเรียบง่าย ปานกลาง ไม่เด่นดังมากนักแต่มีความสงบมั่นคงดี",
+        "อุบาทว์": "ระวังเคราะห์กรรม อุปสรรค สิ่งขัดขวางไม่คาดคิด หรือโรคภัยแฝงเร้นเข้ามาเบียดเบียน",
+        "โลกาวินาศ": "ระวังการสูญเสีย ความล้มเหลว หรือการเปลี่ยนแปลงครั้งใหญ่ที่ไม่ได้เตรียมใจ",
+        "เจดีย์": "มีความศักดิ์สิทธิ์ ความคิดใฝ่คุณธรรม หรือมีสัมผัสพิเศษ มักพบความสุขทางจิตใจอย่างลึกซึ้ง"
+    };
+}
 
 // Compatibility alias: some modules expect `sdMeanings` (without underscore)
 // (will be assigned after `sd_Meanings` is defined below)
@@ -69,7 +74,7 @@ const sd_Meanings = {
 };
 
 // Alias for modules that expect `sdMeanings`
-const sdMeanings = sd_Meanings;
+if (typeof window.sdMeanings === 'undefined') { window.sdMeanings = sd_Meanings; }
 
 const sd_Linkage = {
     "อัตตา-หินะ": "มักทำเรื่องเสื่อมเสียให้ตัวเอง หรือมีจุดบกพร่องที่ต้องแก้ไขตลอดชีวิต",
@@ -970,7 +975,7 @@ function calculateSevenDigits() {
     const ageInput = document.getElementById('sdAge') ? document.getElementById('sdAge').value : ""; 
     const age = ageInput ? parseInt(ageInput) : null;
     // ตรวจสอบความครบถ้วน
-    if (!day || !month || !year) {
+    if (isNaN(day) || isNaN(month) || isNaN(year)) {
         Swal.fire('กรุณากรอกข้อมูล', 'กรุณาระบุวัน เดือน ปีเกิดให้ครบถ้วน', 'warning');
         return;
     }
@@ -1370,3 +1375,14 @@ document.addEventListener('keypress', function (e) {
         }
     }
 })};
+
+// Expose public API to global window object
+window.calculateSevenDigits = calculateSevenDigits;
+window.showseven = showseven;
+if (typeof getMahaBot === 'function') window.getMahaBot = getMahaBot;
+if (typeof getLifeSummary === 'function') window.getLifeSummary = getLifeSummary;
+if (typeof analyzeSevenDigits === 'function') window.analyzeSevenDigits = analyzeSevenDigits;
+if (typeof calculateLuckScore === 'function') window.calculateLuckScore = calculateLuckScore;
+if (typeof analyzeStars === 'function') window.analyzeStars = analyzeStars;
+if (typeof showSevenDigitsPage === 'function') window.showSevenDigitsPage = showSevenDigitsPage;
+})();

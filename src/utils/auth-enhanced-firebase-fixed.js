@@ -672,14 +672,9 @@ function startPackageCountdown(session) {
 function navigateToProfile() {
     const session = getSession();
 
-    // ถ้าเป็น Admin ให้ไปแดชบอร์ด
+    // ถ้าเป็น Admin ให้ไปหน้าระบบจัดการหลังบ้าน (Admin Dashboard)
     if (session && typeof isAdmin === 'function' && isAdmin()) {
-        if (typeof openAdminDashboard === 'function') {
-            openAdminDashboard();
-        } else {
-            console.warn('⚠️ Admin Dashboard not loaded yet, redirecting to admin.html');
-            window.location.href = 'admin.html';
-        }
+        window.location.href = 'admin/index.html';
         return;
     }
 

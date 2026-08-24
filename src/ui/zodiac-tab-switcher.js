@@ -254,25 +254,182 @@ function switchZodiac(animal) {
 }
 
 /**
+ * 👥 โหลดรายชื่อสมาชิกเข้าสู่ Dropdown สำหรับหน้าดูดวงตามปีนักษัตร
+ */
+function populateZodiacMemberDropdown() {
+    const memberSelect = document.getElementById('zodiacMemberSelect');
+    if (!memberSelect) return;
+
+    try {
+        const allHistory = JSON.parse(localStorage.getItem('horo_history')) || [];
+        let members = allHistory;
+        
+        if (typeof filterHistoryByCurrentUser === 'function') {
+            members = filterHistoryByCurrentUser(allHistory);
+        }
+
+        memberSelect.innerHTML = '<option value="">— เลือกสมาชิก —</option>';
+
+        if (members.length === 0) {
+            const opt = document.createElement('option');
+            opt.disabled = true;
+            opt.innerText = '(ยังไม่มีประวัติสมาชิก)';
+            memberSelect.appendChild(opt);
+            return;
+        }
+
+        members.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.id || item.memberId;
+            const zodiacLabel = item.zodiac ? ` [${item.zodiac}]` : '';
+            opt.innerText = `👤 ${item.name || 'ไม่ระบุชื่อ'} ${item.lastName || ''}${zodiacLabel}`;
+            memberSelect.appendChild(opt);
+        });
+    } catch (e) {
+        console.warn('⚠️ populateZodiacMemberDropdown error:', e);
+    }
+}
+
+/**
+ * 🔄 Auto-fill zodiac, day, and month when user selects a member
+ */
+function autoFillZodiacFromMember(memberId) {
+    if (!memberId) return;
+
+    try {
+        const allHistory = JSON.parse(localStorage.getItem('horo_history')) || [];
+        const target = allHistory.find(m => (m.id == memberId || m.memberId == memberId));
+
+        if (!target) {
+            console.warn('⚠️ ไม่พบข้อมูลสมาชิก ID:', memberId);
+            return;
+        }
+
+        // 1. แปลงปีนักษัตรเป็น animalKey
+        const zodiacMap = {
+            'ชวด': 'rat', 'ปีชวด': 'rat', 'หนู': 'rat',
+            'ฉลู': 'ox', 'ปีฉลู': 'ox', 'วัว': 'ox',
+            'ขาล': 'tiger', 'ปีขาล': 'tiger', 'เสือ': 'tiger',
+            'เถาะ': 'rabbit', 'ปีเถาะ': 'rabbit', 'กระต่าย': 'rabbit',
+            'มะโรง': 'dragon', 'ปีมะโรง': 'dragon', 'งูใหญ่': 'dragon', 'มังกร': 'dragon',
+            'มะเส็ง': 'snake', 'ปีมะเส็ง': 'snake', 'งูเล็ก': 'snake', 'งู': 'snake',
+            'มะเมีย': 'horse', 'ปีมะเมีย': 'horse', 'ม้า': 'horse',
+            'มะแม': 'goat', 'ปีมะแม': 'goat', 'แพะ': 'goat',
+            'วอก': 'monkey', 'ปีวอก': 'monkey', 'ลิง': 'monkey',
+            'ระกา': 'rooster', 'ปีระกา': 'rooster', 'ไก่': 'rooster',
+            'จอ': 'dog', 'ปีจอ': 'dog', 'สุนัข': 'dog', 'หมา': 'dog',
+            'กุน': 'pig', 'ปีกุน': 'pig', 'หมู': 'pig'
+        };
+
+        let selectedAnimal = 'rat';
+        if (target.zodiac && zodiacMap[target.zodiac.trim()]) {
+            selectedAnimal = zodiacMap[target.zodiac.trim()];
+        } else if (target.birthdate) {
+            let birthDateObj = typeof safeParseThaiDate === 'function' ? safeParseThaiDate(target.birthdate) : (typeof parseBirthdate === 'function' ? parseBirthdate(target.birthdate) : new Date(target.birthdate));
+            if (birthDateObj && !isNaN(birthDateObj.getTime())) {
+                const yearCE = birthDateObj.getFullYear();
+                const animalKeys = ['rat', 'ox', 'tiger', 'rabbit', 'dragon', 'snake', 'horse', 'goat', 'monkey', 'rooster', 'dog', 'pig'];
+                const idx = (yearCE - 4) % 12;
+                if (idx >= 0 && idx < 12) selectedAnimal = animalKeys[idx];
+            }
+        }
+
+        // สลับแท็บปีนักษัตร
+        switchZodiac(selectedAnimal);
+
+        // 2. ตั้งค่าวันเกิด (0=อาทิตย์, 1=จันทร์ ... 4=พฤหัสบดี, 5=ศุกร์, 6=เสาร์)
+        const daySelect = document.getElementById('dynamicDay');
+        if (daySelect) {
+            let dayIdx = null;
+            if (typeof getAstrologicalDayOfWeek === 'function' && target.birthdate) {
+                dayIdx = getAstrologicalDayOfWeek(target.birthdate, target.birthtime || '12:00');
+            } else if (target.birthdate) {
+                let d = typeof safeParseThaiDate === 'function' ? safeParseThaiDate(target.birthdate) : (typeof parseBirthdate === 'function' ? parseBirthdate(target.birthdate) : new Date(target.birthdate));
+                if (d && !isNaN(d.getTime())) dayIdx = d.getDay();
+            }
+
+            if (dayIdx !== null && dayIdx !== undefined && !isNaN(dayIdx)) {
+                daySelect.value = String(dayIdx);
+            }
+        }
+
+        // 3. ตั้งค่าเดือนเกิดไทย (1 - 12 ตามตำราพรหมชาติ: เดือน 1=ธ.ค. ... เดือน 4=มี.ค. เดือน 5=เม.ย.)
+        const monthSelect = document.getElementById('dynamicMonth');
+        if (monthSelect) {
+            let thaiMonthVal = null;
+            
+            // ถ้าสมาชิกมีบันทึก birthMonththai ไว้โดยตรง ให้ใช้ค่านั้นเป็นหลัก
+            if (target.birthMonththai && !isNaN(parseInt(target.birthMonththai, 10))) {
+                thaiMonthVal = parseInt(target.birthMonththai, 10);
+            } else if (target.birthdate) {
+                // ถ้าไม่มี ให้คำนวณจาก birthdate แปลงเดือนสากลเป็นเดือนไทย (ม.ค.=เดือน 2 ... มี.ค.=เดือน 4, เม.ย.=เดือน 5, ธ.ค.=เดือน 1)
+                let d = typeof safeParseThaiDate === 'function' ? safeParseThaiDate(target.birthdate) : (typeof parseBirthdate === 'function' ? parseBirthdate(target.birthdate) : new Date(target.birthdate));
+                if (d && !isNaN(d.getTime())) {
+                    const solarMonth = d.getMonth() + 1; // 1 = ม.ค., 2 = ก.พ., 3 = มี.ค. ... 12 = ธ.ค.
+                    // ปฏิทินจันทรคติไทยโดยประมาณ: เดือนไทย = (solarMonth + 1) % 12 || 12 (ธ.ค. -> 1, ม.ค. -> 2, มี.ค. -> 4, เม.ย. -> 5)
+                    thaiMonthVal = (solarMonth === 12) ? 1 : (solarMonth + 1);
+                }
+            }
+
+            if (thaiMonthVal !== null && !isNaN(thaiMonthVal)) {
+                monthSelect.value = String(thaiMonthVal);
+            }
+        }
+
+        // 4. ประมวลผลคำทำนายอัตโนมัติ
+        calculateDynamicFortune();
+
+        // แจ้งเตือนสั้นๆ ให้ผู้ใช้ทราบ
+        if (typeof Swal !== 'undefined') {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            });
+            Toast.fire({
+                icon: 'success',
+                title: `โหลดข้อมูล ${target.name || ''} เรียบร้อย`
+            });
+        }
+    } catch (err) {
+        console.error('❌ autoFillZodiacFromMember error:', err);
+    }
+}
+
+/**
  * 🎯 Initialize zodiac tabs
  */
 function initZodiacTabs() {
-    // ตรวจสอบและเติมตัวเลือกเดือนใน dynamicMonth หากยังไม่มีตัวเลือก
+    // เติมตัวเลือกเดือนใน dynamicMonth ตามตำราพรหมชาติไทยโบราณ (เดือน ๑ - ๑๒)
     const monthSelect = document.getElementById('dynamicMonth');
-    if (monthSelect && monthSelect.options.length <= 1) {
-        const months = [
-            'เดือน 1 (มกราคม - ปลายหนาว/ต้นปี)', 'เดือน 2 (กุมภาพันธ์ - ลมว่าว/อบอุ่น)', 'เดือน 3 (มีนาคม - เข้าสู่ฤดูใบไม้ผลิ)', 'เดือน 4 (เมษายน - สงกรานต์/ร้อนเรืองฤทธิ์)',
-            'เดือน 5 (พฤษภาคม - แรกนาขวัญ/ต้นฝน)', 'เดือน 6 (มิถุนายน - ฝนชุ่มฉ่ำดิน)', 'เดือน 7 (กรกฎาคม - เข้าพรรษา/อุดมน้ำ)', 'เดือน 8 (สิงหาคม - เมฆฝนหล่อเลี้ยง)',
-            'เดือน 9 (กันยายน - ปลายฝนต้นหนาว)', 'เดือน 10 (ตุลาคม - ออกพรรษา/ลมหนาวเยือน)', 'เดือน 11 (พฤศจิกายน - ลอยกระทง/น้ำนอง)', 'เดือน 12 (ธันวาคม - ส่งท้ายปี/หนาวเย็น)'
+    if (monthSelect) {
+        const thaiLunarMonths = [
+            { val: 1, text: 'เดือน ๑ (ธันวาคม - เดือนอ้าย/ต้นฤดูหนาว)' },
+            { val: 2, text: 'เดือน ๒ (มกราคม - เดือนยี่/หนาวเย็น)' },
+            { val: 3, text: 'เดือน ๓ (กุมภาพันธ์ - ลมว่าว/อบอุ่น)' },
+            { val: 4, text: 'เดือน ๔ (มีนาคม - เข้าสู่ฤดูร้อน)' },
+            { val: 5, text: 'เดือน ๕ (เมษายน - สงกรานต์/ขึ้นปีใหม่ไทย)' },
+            { val: 6, text: 'เดือน ๖ (พฤษภาคม - แรกนาขวัญ/ต้นฤดูฝน)' },
+            { val: 7, text: 'เดือน ๗ (มิถุนายน - ฝนฉ่ำแผ่นดิน)' },
+            { val: 8, text: 'เดือน ๘ (กรกฎาคม - เข้าพรรษา/อุดมสายน้ำ)' },
+            { val: 9, text: 'เดือน ๙ (สิงหาคม - เมฆฝนหล่อเลี้ยง)' },
+            { val: 10, text: 'เดือน ๑๐ (กันยายน - สารทไทย/ผลผลิตงอกงาม)' },
+            { val: 11, text: 'เดือน ๑๑ (ตุลาคม - ออกพรรษา/ลมหนาวแรก)' },
+            { val: 12, text: 'เดือน ๑๒ (พฤศจิกายน - ลอยกระทง/น้ำนองเต็มตลิ่ง)' }
         ];
         monthSelect.innerHTML = '';
-        months.forEach((m, idx) => {
+        thaiLunarMonths.forEach(m => {
             const opt = document.createElement('option');
-            opt.value = idx + 1;
-            opt.innerText = m;
+            opt.value = m.val;
+            opt.innerText = m.text;
             monthSelect.appendChild(opt);
         });
     }
+
+    // เติมตัวเลือกรายชื่อสมาชิก
+    populateZodiacMemberDropdown();
 
     // ตั้งค่าเริ่มต้นให้แสดง 'rat' (ปีชวด)
     switchZodiac('rat');
@@ -313,16 +470,16 @@ function calculateDynamicFortune() {
         'พระศุกร์ (เทวดาผู้บันดาลความสุข สุนทรียภาพ ความรัก และโชคลาภการเงินเนืองนอง)',
         'พระเสาร์ (เทวดาผู้มีความสุขุมลุ่มลึก อดทนหนักแน่น มั่นคงดุจศิลา แต่มักคิดมากและจริงจัง)'
     ];
-    const dayName = dayNames[dayNum];
-    const dayAngelDesc = dayAngels[dayNum];
+    const dayName = dayNames[dayNum] || 'ไม่ระบุวัน';
+    const dayAngelDesc = dayAngels[dayNum] || '';
 
-    // 📋 ชื่อเดือนและอิทธิพลตามฤดูกาลโหราศาสตร์ไทยโบราณ
+    // 📋 ชื่อเดือนไทยและอิทธิพลตามฤดูกาลโหราศาสตร์ไทยโบราณ
     const monthNames = [
-        'มกราคม (เดือน ๑ โบรณ)', 'กุมภาพันธ์ (เดือน ๒)', 'มีนาคม (เดือน ๓)', 'เมษายน (เดือน ๔)',
-        'พฤษภาคม (เดือน ๕)', 'มิถุนายน (เดือน ๖)', 'กรกฎาคม (เดือน ๗)', 'สิงหาคม (เดือน ๘)',
-        'กันยายน (เดือน ๙)', 'ตุลาคม (เดือน ๑๐)', 'พฤศจิกายน (เดือน ๑๑)', 'ธันวาคม (เดือน ๑๒)'
+        'เดือน ๑ (อ้าย - ธันวาคม)', 'เดือน ๒ (ยี่ - มกราคม)', 'เดือน ๓ (กุมภาพันธ์)', 'เดือน ๔ (มีนาคม)',
+        'เดือน ๕ (เมษายน)', 'เดือน ๖ (พฤษภาคม)', 'เดือน ๗ (มิถุนายน)', 'เดือน ๘ (กรกฎาคม)',
+        'เดือน ๙ (สิงหาคม)', 'เดือน ๑๐ (กันยายน)', 'เดือน ๑๑ (ตุลาคม)', 'เดือน ๑๒ (พฤศจิกายน)'
     ];
-    const monthName = monthNames[month - 1];
+    const monthName = monthNames[month - 1] || `เดือน ${month}`;
 
     // วิเคราะห์อิทธิพลฤดูกาลและธาตุแท้ตามเดือนเกิดโบราณ (แบบยาวละเอียด)
     let seasonAnalysis = "";

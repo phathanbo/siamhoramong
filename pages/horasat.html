@@ -13,128 +13,541 @@
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         @media print {
-            @page { size: A4; margin: 1cm; }
+            @page {
+                size: A4 portrait;
+                /* เว้นระยะขอบกระดาษมาตรฐานรูปเล่มหนังสือ: ซ้าย 28mm (เผื่อเย็บเล่ม/สันหนังสือ), ขวา 22mm, บน 25mm, ล่าง 25mm */
+                margin: 25mm 22mm 25mm 28mm;
+            }
             body {
                 background: #ffffff !important;
                 color: #1a2a1e !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 padding: 0 !important;
+                margin: 0 !important;
+                font-family: 'Sarabun', 'Prompt', serif !important;
+                font-size: 10.5pt !important;
+                line-height: 1.75 !important;
             }
             body::before { display: none !important; }
-            .form-card, .back-btn, #calcBtn, #printBtn, #saveImgChartBtn, .no-print, .filter-tabs, .note, footer { display: none !important; }
-            .container { box-shadow: none !important; margin: 0 !important; padding: 0 !important; border: none !important; background: transparent !important; max-width: 100% !important; }
-            
-            /* PDF Clean Elements */
-            .header-banner h1 { background: none !important; -webkit-text-fill-color: #0b3c1d !important; color: #0b3c1d !important; filter: none !important; font-size: 2rem !important; }
-            .header-banner .subtitle { color: #2d5a3d !important; }
-            .tag-badge { background: #e8f5e9 !important; border-color: #2e7d32 !important; color: #1b5e20 !important; }
-            .birth-card { background: #f9fbf9 !important; border: 1px solid #c8e6c9 !important; border-left: 4px solid #2e7d32 !important; color: #1b2e20 !important; box-shadow: none !important; }
-            .birth-card b { color: #0d47a1 !important; }
-            .layout { background: #ffffff !important; border: 1px solid #a5d6a7 !important; box-shadow: none !important; page-break-after: always !important; }
-            .wheel-wrap { background: #ffffff !important; border: 1px solid #c8e6c9 !important; box-shadow: none !important; }
-            table.chart-table th { color: #0b3c1d !important; border-bottom-color: #2e7d32 !important; }
-            table.chart-table td { color: #1a2a1e !important; border-bottom-color: #e0e0e0 !important; }
-            .prediction-section { background: #ffffff !important; border: 1px solid #c8e6c9 !important; border-left: 4px solid #2e7d32 !important; box-shadow: none !important; page-break-inside: avoid !important; margin-bottom: 16px !important; }
-            .section-header h3 { color: #0b3c1d !important; }
-            .export-btn-sm { display: none !important; }
-
-            /* Flat Straight 2D Covers */
-            .print-cover-page {
-                display: block !important;
-                position: relative;
+            .form-card, .back-btn, #calcBtn, #printBtn, #saveImgChartBtn, .no-print, .filter-tabs, .note, footer, .export-btn-sm, .accordion-icon { display: none !important; }
+            .container {
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 4mm 0 4mm !important;
+                border: none !important;
+                background: transparent !important;
+                max-width: 100% !important;
                 width: 100% !important;
-                height: 99vh !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* Book Title & Web Headers */
+            .header-banner,
+            #predictionResult > h2,
+            #predictionResult > div[style*="text-align: center"] {
+                display: none !important; /* Replaced by book preface & chapter banners */
+            }
+
+            /* Flat 2D Vector Graphic Book Covers */
+            .print-cover-page, .print-backcover-page {
+                display: block !important;
+                position: relative !important;
+                width: 100% !important;
+                height: 94vh !important;
                 page-break-after: always !important;
+                break-after: page !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                box-sizing: border-box;
-                overflow: hidden;
-                background: #04160a !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
+                background: #ffffff !important;
             }
-            .print-cover-img-full {
-                position: absolute;
-                top: 0; left: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                z-index: 1;
+            .print-backcover-page {
+                page-break-before: always !important;
+                break-before: page !important;
             }
-            .print-cover-overlay-straight {
-                position: absolute;
-                inset: 0;
-                z-index: 2;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                align-items: center;
-                padding: 70px 40px 60px;
+            .book-cover-container {
+                width: 100% !important;
+                height: 100% !important;
+                background: linear-gradient(150deg, #062615 0%, #03180c 50%, #010d06 100%) !important;
+                padding: 14mm 12mm !important;
+                box-sizing: border-box !important;
+                color: #ffd88a !important;
+                position: relative !important;
+            }
+            .book-cover-outer-border {
+                width: 100% !important;
+                height: 100% !important;
+                border: 2.5px solid #d4af37 !important;
+                border-radius: 8px !important;
+                padding: 4px !important;
+                box-sizing: border-box !important;
+                position: relative !important;
+            }
+            .book-cover-inner-border {
+                width: 100% !important;
+                height: 100% !important;
+                border: 1px solid rgba(255, 216, 138, 0.4) !important;
+                border-radius: 5px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 24px 20px !important;
+                box-sizing: border-box !important;
+                text-align: center !important;
+                position: relative !important;
+            }
+            .book-cover-corner {
+                position: absolute !important;
+                font-size: 13pt !important;
+                color: #d4af37 !important;
+                line-height: 1 !important;
+            }
+            .book-cover-corner.tl { top: 6px; left: 8px; }
+            .book-cover-corner.tr { top: 6px; right: 8px; }
+            .book-cover-corner.bl { bottom: 6px; left: 8px; }
+            .book-cover-corner.br { bottom: 6px; right: 8px; }
+            
+            .book-cover-top-ribbon {
+                font-family: 'Chakra Petch', sans-serif !important;
+                font-size: 10.5pt !important;
+                letter-spacing: 3px !important;
+                color: #ffd88a !important;
+                background: rgba(212, 175, 55, 0.15) !important;
+                border: 1px solid rgba(212, 175, 55, 0.4) !important;
+                padding: 4px 18px !important;
+                border-radius: 20px !important;
+                display: inline-block !important;
+                margin-bottom: 10px !important;
+            }
+            .book-cover-main-title {
+                font-family: 'Chakra Petch', sans-serif !important;
+                font-size: 24pt !important;
+                font-weight: 700 !important;
+                color: #ffd88a !important;
+                letter-spacing: 2px !important;
+                margin: 4px 0 !important;
+                text-shadow: 0 2px 10px rgba(0,0,0,0.8) !important;
+            }
+            .book-cover-sub-title {
+                font-size: 12pt !important;
+                color: #e8f5e9 !important;
+                margin-bottom: 4px !important;
+            }
+            .book-cover-author {
+                font-size: 10pt !important;
+                color: #a5d6a7 !important;
+            }
+            .book-cover-mandala {
+                width: 130px !important;
+                height: 130px !important;
+                margin: 10px auto !important;
+                display: block !important;
+            }
+            .book-cover-client-card {
+                background: rgba(0, 40, 15, 0.8) !important;
+                border: 1.5px solid #d4af37 !important;
+                border-radius: 8px !important;
+                padding: 12px 24px !important;
+                margin: 8px 0 !important;
+                display: inline-block !important;
+                box-sizing: border-box !important;
+                width: 88% !important;
+            }
+            .book-cover-client-badge {
+                font-family: 'Chakra Petch', sans-serif !important;
+                font-size: 8.5pt !important;
+                color: #ffd88a !important;
+                letter-spacing: 2px !important;
+                margin-bottom: 3px !important;
+            }
+            .book-cover-client-name {
+                font-family: 'Chakra Petch', sans-serif !important;
+                font-size: 13pt !important;
+                font-weight: bold !important;
+                color: #ffffff !important;
+                letter-spacing: 1px !important;
+            }
+            .book-cover-client-meta {
+                font-size: 9.5pt !important;
+                color: #ffd88a !important;
+                margin-top: 3px !important;
+            }
+            .book-cover-pub-title {
+                font-family: 'Chakra Petch', sans-serif !important;
+                font-size: 11pt !important;
+                font-weight: bold !important;
+                color: #ffd88a !important;
+                letter-spacing: 1px !important;
+            }
+            .book-cover-pub-sub {
+                font-size: 8.5pt !important;
+                color: #a5d6a7 !important;
+                margin-top: 2px !important;
+            }
+            .back-layout {
+                justify-content: space-around !important;
+            }
+            .book-backcover-lotus {
+                font-size: 36pt !important;
+                margin-bottom: 10px !important;
+            }
+            .book-backcover-pali {
+                font-family: 'Chakra Petch', sans-serif !important;
+                font-size: 13pt !important;
+                font-weight: bold !important;
+                color: #ffd88a !important;
+                margin-bottom: 6px !important;
+            }
+            .book-backcover-meaning {
+                font-size: 11pt !important;
+                color: #c8e6c9 !important;
+                font-style: italic !important;
+                margin-bottom: 12px !important;
+            }
+            .book-backcover-quote {
+                font-size: 10pt !important;
+                color: #e8f5e9 !important;
+                line-height: 1.65 !important;
+                max-width: 85% !important;
+                margin: 0 auto !important;
+            }
+
+            /* Print Preface Page (หน้าคำนำ & คาถาบูชาครู & สังเขปดวงชะตา) */
+            .print-preface-page {
+                display: block !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                padding: 6mm 10mm 12mm 10mm !important;
+                min-height: 85vh;
+                box-sizing: border-box !important;
+            }
+            .book-preface-frame {
+                border: 2px solid #b8860b;
+                border-radius: 10px;
+                padding: 26px 22px;
+                position: relative;
+                background: #fdfdf9 !important;
                 text-align: center;
                 box-sizing: border-box;
             }
-            .print-cover-title-text {
+            .book-preface-frame::before {
+                content: '';
+                position: absolute;
+                inset: 4px;
+                border: 1px solid rgba(184, 134, 11, 0.4);
+                border-radius: 6px;
+                pointer-events: none;
+            }
+            .book-preface-ornament {
+                font-size: 1.2rem;
+                color: #b8860b;
+                letter-spacing: 8px;
+                margin-bottom: 6px;
+            }
+            .book-preface-badge {
                 font-family: 'Chakra Petch', sans-serif;
-                font-size: 2.5rem;
-                font-weight: 700;
-                color: #ffd88a;
-                text-shadow: 0 4px 14px rgba(0,0,0,0.95);
-                letter-spacing: 2px;
-                text-transform: uppercase;
-                margin-top: 20px;
-            }
-            .print-cover-sub-text {
-                font-size: 1.25rem;
-                color: #e8f5e9;
-                text-shadow: 0 2px 10px rgba(0,0,0,0.95);
-                margin-top: 10px;
-            }
-            .print-cover-footer-text {
-                font-size: 1.15rem;
-                color: #ffd88a;
+                font-size: 0.9rem;
+                color: #1b5e20;
+                background: #e8f5e9;
+                border: 1px solid #a5d6a7;
+                padding: 3px 14px;
+                border-radius: 15px;
+                display: inline-block;
+                margin-bottom: 10px;
                 font-weight: 600;
-                text-shadow: 0 2px 10px rgba(0,0,0,0.95);
-                background: rgba(4, 25, 12, 0.8);
-                padding: 10px 32px;
-                border-radius: 30px;
-                border: 1px solid rgba(255, 216, 138, 0.4);
+            }
+            .book-preface-title {
+                font-family: 'Chakra Petch', sans-serif;
+                font-size: 1.7rem;
+                color: #0b3c1d;
+                font-weight: bold;
+                margin-bottom: 4px;
+            }
+            .book-preface-subtitle {
+                font-size: 0.98rem;
+                color: #4a7a5a;
+                margin-bottom: 14px;
+            }
+            .book-divider-gold {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 12px 0;
+            }
+            .book-divider-gold::before, .book-divider-gold::after {
+                content: '';
+                flex: 1;
+                border-bottom: 1px solid #d4af37;
+            }
+            .book-divider-gold span {
+                padding: 0 12px;
+                color: #b8860b;
+                font-size: 1rem;
+            }
+            .book-katha-box {
+                background: #fbf8f0 !important;
+                border: 1px solid #e2d2b0;
+                border-left: 4px solid #b8860b;
+                border-radius: 6px;
+                padding: 14px 18px;
+                margin: 16px 0;
+                text-align: center;
+            }
+            .book-katha-title {
+                font-family: 'Chakra Petch', sans-serif;
+                font-size: 1rem;
+                color: #795548;
+                font-weight: bold;
+                margin-bottom: 6px;
+            }
+            .book-katha-text {
+                font-family: 'Sarabun', serif;
+                font-size: 1rem;
+                font-style: italic;
+                color: #3e2723;
+                line-height: 1.65;
+                margin-bottom: 6px;
+            }
+            .book-katha-sub {
+                font-size: 0.85rem;
+                color: #5d4037;
+            }
+            .book-preface-summary {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                text-align: left;
+                margin-top: 16px;
+            }
+            .book-preface-summary .birth-card-item {
+                background: #fbfbf8 !important;
+                border: 1px solid #e0e0d5 !important;
+                border-left: 4px solid #2e7d32 !important;
+                padding: 8px 12px !important;
+                font-size: 0.92rem !important;
+                border-radius: 4px;
+            }
+            .book-preface-footer {
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.82rem;
+                color: #78909c;
+                margin-top: 20px;
+                border-top: 1px dashed #d4af37;
+                padding-top: 8px;
             }
 
+            /* Astrological Wheel & Table Page */
+            .layout {
+                background: #ffffff !important;
+                border: 1.5px solid #b8860b !important;
+                border-radius: 8px !important;
+                box-shadow: none !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                padding: 14px 18px !important;
+                margin: 4mm 0 8mm 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                box-sizing: border-box !important;
+            }
+            .layout::before {
+                content: '❖ แผนผังจักรราศีกำเนิดและดวงจรสมผุสจริง ❖';
+                font-family: 'Chakra Petch', sans-serif;
+                font-size: 1.15rem;
+                font-weight: bold;
+                color: #0b3c1d;
+                margin-bottom: 8px;
+                text-align: center;
+                display: block;
+                width: 100%;
+                border-bottom: 1px solid #e0e0d5;
+                padding-bottom: 4px;
+            }
+            .wheel-wrap {
+                background: #ffffff !important;
+                border: 1px solid #d4af37 !important;
+                border-radius: 50% !important;
+                box-shadow: none !important;
+                padding: 6px !important;
+                margin: 0 auto 12px !important;
+                display: inline-block !important;
+            }
+            table.chart-table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                font-size: 9.5pt !important;
+            }
+            table.chart-table th {
+                background: #f5f8f5 !important;
+                color: #0b3c1d !important;
+                border-bottom: 2px solid #2e7d32 !important;
+                padding: 5px 8px !important;
+                font-weight: bold !important;
+            }
+            table.chart-table td {
+                color: #1a2a1e !important;
+                border-bottom: 1px solid #e0e0e0 !important;
+                padding: 4px 8px !important;
+            }
+            #birthCard { display: none !important; } /* Replaced by Preface summary */
+
+            /* Prediction Content Container */
+            #predictionContent {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            /* Book Chapter Layout (Flowing Chapters) */
+            .book-chapter-banner {
+                display: block !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+                margin: 28px 0 18px 0 !important;
+                text-align: center !important;
+                padding: 14px 18px !important;
+                border-top: 2px solid #b8860b !important;
+                border-bottom: 2px solid #b8860b !important;
+                background: #fafaf5 !important;
+                position: relative !important;
+                box-sizing: border-box !important;
+                clear: both !important;
+            }
+            .book-chapter-badge {
+                font-family: 'Chakra Petch', sans-serif;
+                font-size: 0.85rem;
+                color: #795548;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                margin-bottom: 3px;
+            }
+            .book-chapter-title {
+                font-family: 'Chakra Petch', sans-serif;
+                font-size: 1.3rem !important;
+                font-weight: bold !important;
+                color: #0b3c1d !important;
+                margin: 3px 0 !important;
+                letter-spacing: 0.5px;
+            }
+            .book-chapter-desc {
+                font-size: 0.9rem;
+                color: #556b2f;
+                font-style: italic;
+            }
+
+            /* Prediction Sections inside Book (Academic Book Layout) */
+            .prediction-section {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                page-break-inside: auto !important;
+                break-inside: auto !important;
+                margin-bottom: 26px !important;
+                padding: 0 !important;
+                box-sizing: border-box !important;
+            }
+            .section-header {
+                border: none !important;
+                border-bottom: 2px solid #2e7d32 !important;
+                padding-bottom: 6px !important;
+                margin: 26px 0 14px 0 !important;
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }
+            .section-header h3 {
+                color: #0b3c1d !important;
+                font-family: 'Chakra Petch', 'Sarabun', serif !important;
+                font-size: 12.5pt !important;
+                font-weight: 700 !important;
+                letter-spacing: 0.3px !important;
+            }
+            .accordion-content {
+                display: block !important;
+            }
+            .prediction-grid {
+                display: block !important;
+                margin-top: 8px !important;
+            }
+            .birth-card {
+                display: block !important;
+                background: transparent !important;
+                border: none !important;
+                border-bottom: 1px solid #eaefe9 !important;
+                color: #1a1a1a !important;
+                padding: 10px 0 !important;
+                margin-bottom: 10px !important;
+                font-family: 'Sarabun', serif !important;
+                font-size: 11pt !important;
+                line-height: 1.8 !important;
+                text-align: justify !important;
+                box-sizing: border-box !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .birth-card:last-child {
+                border-bottom: none !important;
+            }
+            .birth-card b {
+                color: #0b3c1d !important;
+                font-weight: 700 !important;
+            }
+            
+            /* Special Book Scripture Callout Boxes */
+            #section-poison .birth-card,
+            #section-phintu .birth-card,
+            #section-cancel .birth-card {
+                background: #fbfbf6 !important;
+                border: 1px solid #d4af37 !important;
+                border-left: 4px solid #b8860b !important;
+                padding: 12px 16px !important;
+                margin: 10px 0 !important;
+                border-radius: 4px !important;
+            }
+
+            .birth-card span[style*="font-size:1.2em"] {
+                color: #2e7d32 !important;
+                font-size: 0.85em !important;
+            }
+            .birth-card span[style*="border-radius"] {
+                background: #f5f8f5 !important;
+                border: 1px solid #795548 !important;
+                color: #0b3c1d !important;
+                padding: 1px 6px !important;
+                font-size: 9pt !important;
+            }
+
+            /* Back Cover - Pure Artwork */
             .print-backcover-page {
                 display: block !important;
-                position: relative;
+                position: relative !important;
                 width: 100% !important;
-                height: 99vh !important;
+                height: 98vh !important;
                 page-break-before: always !important;
+                break-before: page !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                box-sizing: border-box;
-                overflow: hidden;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
                 background: #04160a !important;
             }
             .print-backcover-img-full {
-                position: absolute;
-                top: 0; left: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                z-index: 1;
-            }
-            .print-backcover-overlay-straight {
-                position: absolute;
-                inset: 0;
-                z-index: 2;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
-                align-items: center;
-                padding: 60px 40px;
-                text-align: center;
-                box-sizing: border-box;
+                position: absolute !important;
+                top: 0 !important; left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+                z-index: 1 !important;
             }
         }
 
         /* Non-print cover hiding */
-        .print-cover-page, .print-backcover-page { display: none; }
+        .print-cover-page, .print-preface-page, .print-backcover-page { display: none; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -447,6 +860,39 @@
             color: #c8ffd4;
             box-shadow: 0 0 15px rgba(0,200,80,0.25);
         }
+        /* === BOOK CHAPTER BANNER (Screen) === */
+        .book-chapter-banner {
+            margin: 35px 0 20px;
+            padding: 16px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(0,40,15,0.6) 100%);
+            border-top: 1.5px solid rgba(212,175,55,0.5);
+            border-bottom: 1.5px solid rgba(212,175,55,0.5);
+            border-radius: 6px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+        }
+        .book-chapter-badge {
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 0.82rem;
+            color: #ffd88a;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .book-chapter-title {
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 4px 0;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            letter-spacing: 0.5px;
+        }
+        .book-chapter-desc {
+            font-size: 0.92rem;
+            color: #a8d5b5;
+            font-style: italic;
+        }
 
         /* === PREDICTION SECTIONS (always open) === */
         .prediction-section {
@@ -547,15 +993,86 @@
 </head>
 
 <body>
-    <!-- Print Cover Page (Flat Straight 2D) -->
+    <!-- Print Cover Page (Flat 2D Pure Graphic Book Cover) -->
     <div class="print-cover-page">
-        <img src="../assets/images/flat_straight_cover.jpg" alt="หน้าปกตำราโหราศาสตร์ไทย" class="print-cover-img-full">
-        <div class="print-cover-overlay-straight">
-            <div>
-                <div class="print-cover-title-text">📘 รายงานผลผูกดวงชะตาพยากรณ์</div>
-                <div class="print-cover-sub-text">ตามตำราโหราศาสตร์ไทย อาจารย์สิงห์โต สุริยาอารักษ์</div>
+        <div class="book-cover-container">
+            <div class="book-cover-outer-border">
+                <div class="book-cover-inner-border">
+                    <div class="book-cover-corner tl">❖</div>
+                    <div class="book-cover-corner tr">❖</div>
+                    <div class="book-cover-corner bl">❖</div>
+                    <div class="book-cover-corner br">❖</div>
+                    
+                    <div class="book-cover-header">
+                        <div class="book-cover-top-ribbon">✦ คัมภีร์ผูกดวงชะตาสมผุสจริง ✦</div>
+                        <h1 class="book-cover-main-title">ตำราโหราศาสตร์ไทย</h1>
+                        <div class="book-cover-sub-title">ฉบับคัมภีร์ดวงชะตาพยากรณ์เฉพาะบุคคล</div>
+                        <div class="book-cover-author">ตามหลักตำราโหราศาสตร์ อาจารย์สิงห์โต สุริยาอารักษ์</div>
+                    </div>
+
+                    <div class="book-cover-center-symbol">
+                        <!-- Sacred 12 Zodiac Wheel Vector -->
+                        <svg viewBox="0 0 200 200" class="book-cover-mandala">
+                            <circle cx="100" cy="100" r="92" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="4 3" />
+                            <circle cx="100" cy="100" r="84" fill="none" stroke="#ffd88a" stroke-width="1.5" />
+                            <circle cx="100" cy="100" r="68" fill="rgba(212,175,55,0.12)" stroke="#d4af37" stroke-width="1" />
+                            <circle cx="100" cy="100" r="46" fill="rgba(4,25,12,0.8)" stroke="#ffd88a" stroke-width="1.5" />
+                            <g stroke="#d4af37" stroke-width="1" opacity="0.6">
+                                <line x1="100" y1="16" x2="100" y2="184" />
+                                <line x1="16" y1="100" x2="184" y2="100" />
+                                <line x1="26" y1="26" x2="174" y2="174" />
+                                <line x1="174" y1="26" x2="26" y2="174" />
+                                <line x1="16" y1="58" x2="184" y2="142" />
+                                <line x1="16" y1="142" x2="184" y2="58" />
+                                <line x1="58" y1="16" x2="142" y2="184" />
+                                <line x1="142" y1="16" x2="58" y2="184" />
+                            </g>
+                            <circle cx="100" cy="100" r="22" fill="#d4af37" />
+                            <circle cx="100" cy="100" r="16" fill="#04160a" />
+                            <text x="100" y="106" font-family="'Chakra Petch', sans-serif" font-size="16" fill="#ffd88a" text-anchor="middle" font-weight="bold">๑</text>
+                        </svg>
+                    </div>
+
+                    <div class="book-cover-client-card">
+                        <div class="book-cover-client-badge">บันทึกชะตาประจำบุคคล</div>
+                        <div class="book-cover-client-name" id="printCoverClientName">เจ้าชะตา: -</div>
+                        <div class="book-cover-client-meta" id="printCoverBirthDetail">วันเวลาตกฟาก: - | ลัคนาสถิต: -</div>
+                    </div>
+
+                    <div class="book-cover-footer">
+                        <div class="book-cover-pub-title">สำนักสยามโหรามงคล · สำนักโหรหลวงรัตนโกสินทร์</div>
+                        <div class="book-cover-pub-sub">เอกสารรายงานผลผูกดวงชะตาสมผุสจริงมาตรฐานชั้นสูง</div>
+                    </div>
+                </div>
             </div>
-            <div class="print-cover-footer-text">สยามโหรามงคล · เอกสารพยากรณ์ฉบับเต็ม</div>
+        </div>
+    </div>
+
+    <!-- Print Preface Page (หน้าคำนำ & คาถาบูชาครู) -->
+    <div class="print-preface-page">
+        <div class="book-preface-frame">
+            <div class="book-preface-ornament">❖ ❖ ❖</div>
+            <div class="book-preface-badge">คัมภีร์โหราศาสตร์ไทยชั้นสูง</div>
+            <h2 class="book-preface-title">บทนำและคำนิยมแห่งดวงชะตา</h2>
+            <div class="book-preface-subtitle">เรียบเรียงตามหลักโหราศาสตร์ไทยโบราณ อาจารย์สิงห์โต สุริยาอารักษ์</div>
+            <div class="book-divider-gold"><span>✦</span></div>
+            
+            <div class="book-katha-box">
+                <div class="book-katha-title">บทบูชาพระเคราะห์และครูโหราจารย์</div>
+                <p class="book-katha-text">
+                    "นะโม เม สัพพะเทวานัง สัพพะพรัหมา จะ มหาเทวา สุริยัญจะ จันทัง จะ อังคารัง จะ พุธัญจะ พฤหัสบดี จะ สุกกัญจะ เสารัญจะ ราหู เกตุญจะ มหาลาภัง สัพพะทุกขัง สัพพะภะยัง สัพพะโรคัง วินาสสันติ"
+                </p>
+                <div class="book-katha-sub">ขออัญเชิญเดชานุภาพแห่งพระเคราะห์ทั้งเก้าและทวยเทพสถิต จงช่วยอภิบาลคุ้มครองเจ้าชะตาให้ประสบแต่ความสุขสิริมงคล</div>
+            </div>
+
+            <div class="book-preface-summary" id="printPrefaceSummary">
+                <!-- Dynamically filled with birth info -->
+            </div>
+            
+            <div class="book-preface-footer">
+                <span>คำนวณตำแหน่งดาวจริง ณ พิกัดตกฟากประเทศไทย (UTC+7)</span>
+                <span>สำนักสยามโหรามงคล</span>
+            </div>
         </div>
     </div>
 
@@ -673,13 +1190,32 @@
         <footer>สร้างด้วย astronomy-engine · สยามโหรามงคล</footer>
     </div>
 
-    <!-- Print Back Cover Page (Flat Straight 2D) -->
+    <!-- Print Back Cover Page (Flat 2D Pure Graphic Back Cover) -->
     <div class="print-backcover-page">
-        <img src="../assets/images/flat_straight_back.jpg" alt="ปกหลังตำราโหราศาสตร์ไทย" class="print-backcover-img-full">
-        <div class="print-backcover-overlay-straight">
-            <div style="background: rgba(4, 25, 12, 0.85); padding: 14px 30px; border-radius: 12px; border: 1px solid rgba(255,216,138,0.4); width: 85%;">
-                <div style="font-family: 'Chakra Petch', sans-serif; font-size: 1.4rem; color: #ffd88a; font-weight: bold;">สยามโหรามงคล (Siam Hora Mangkon)</div>
-                <div style="font-size: 0.9rem; color: #c8ffd4; margin-top: 4px;">สงวนลิขสิทธิ์คำนวณผูกดวงชะตาสมผุสจริง · บริการพยากรณ์โหราศาสตร์ไทยมาตรฐาน</div>
+        <div class="book-cover-container">
+            <div class="book-cover-outer-border">
+                <div class="book-cover-inner-border back-layout">
+                    <div class="book-cover-corner tl">❖</div>
+                    <div class="book-cover-corner tr">❖</div>
+                    <div class="book-cover-corner bl">❖</div>
+                    <div class="book-cover-corner br">❖</div>
+
+                    <div class="book-backcover-center">
+                        <div class="book-backcover-lotus">🪷</div>
+                        <div class="book-backcover-pali">" นกฺขตฺตํ ปฏิมเนนฺตํ อตฺโถ พาลํ อุปจฺจคา "</div>
+                        <div class="book-backcover-meaning">ประโยชน์ย่อมล่วงเลยคนเขลา ผู้มัวแต่นั่งคอยฤกษ์ยาม</div>
+                        <div class="book-divider-gold"><span>✦</span></div>
+                        <p class="book-backcover-quote">
+                            โหราศาสตร์ไทย คือประทีปปัญญาที่ส่องให้เห็นแผนผังแห่งกรรม<br>
+                            เพื่อเตรียมพร้อมรับมืออุปสรรค เสริมสร้างความดีงาม และดำเนินชีวิตด้วยความไม่ประมาท
+                        </p>
+                    </div>
+
+                    <div class="book-backcover-footer">
+                        <div class="book-cover-pub-title">สยามโหรามงคล (Siam Hora Mangkon)</div>
+                        <div class="book-cover-pub-sub">สงวนลิขสิทธิ์ระบบคำนวณและประมวลผลดวงชะตาสมผุสจริงตามหลักโหราศาสตร์ไทย</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1519,6 +2055,30 @@
     <div><b>วันที่ทำนายจร:</b> ${td} ${monthNamesTh[tmo - 1]} ${ty + 543} เวลา ${String(thh).padStart(2, '0')}:${String(tmm).padStart(2, '0')} น.</div>
   `;
 
+            // อัปเดตข้อมูลบนหน้าปกและหน้าคำนำสำหรับพิมพ์รูปเล่มหนังสือ
+            const memberSelectEl = document.getElementById("memberSelect");
+            const clientName = memberSelectEl && memberSelectEl.selectedIndex > 0 
+                ? (memberSelectEl.options[memberSelectEl.selectedIndex].text.split(' — ')[0] || 'คุณลูกค้า')
+                : 'เจ้าชะตา';
+                
+            const coverClientNameEl = document.getElementById("printCoverClientName");
+            if (coverClientNameEl) coverClientNameEl.innerText = `เจ้าชะตา: ${clientName}`;
+            
+            const coverBirthDetailEl = document.getElementById("printCoverBirthDetail");
+            if (coverBirthDetailEl) coverBirthDetailEl.innerText = `วันเวลาตกฟาก: ${d} ${monthNamesTh[mo - 1]} ${beYear} (${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')} น.) | ลัคนา: ราศี${lagS.sign}`;
+
+            const prefaceSummaryEl = document.getElementById("printPrefaceSummary");
+            if (prefaceSummaryEl) {
+                prefaceSummaryEl.innerHTML = `
+                    <div class="birth-card-item"><b>👤 นามเจ้าชะตา:</b> ${clientName}</div>
+                    <div class="birth-card-item"><b>📅 วันตกฟาก:</b> ${d} ${monthNamesTh[mo - 1]} ${beYear} (${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')} น.)</div>
+                    <div class="birth-card-item"><b>🗺️ พิกัดสถานที่เกิด:</b> ${placeName} (lat ${lat}, lon ${lon})</div>
+                    <div class="birth-card-item"><b>🌟 ลัคนาสถิต:</b> ราศี${lagS.sign} (${lagS.deg}° ${lagS.min}')</div>
+                    <div class="birth-card-item"><b>🔮 ฤกษ์คำนวณจร:</b> ${td} ${monthNamesTh[tmo - 1]} ${ty + 543} เวลา ${String(thh).padStart(2, '0')}:${String(tmm).padStart(2, '0')} น.</div>
+                    <div class="birth-card-item"><b>📜 คัมภีร์หลัก:</b> ตำราโหราศาสตร์ไทย อ.สิงห์โต สุริยาอารักษ์</div>
+                `;
+            }
+
             // ---------- ตารางดาว ----------
             const tbody = document.getElementById("chartTableBody");
             let rowsHtml = "";
@@ -1748,6 +2308,15 @@
                 const signToRulerKey = { 0: 'mars', 1: 'venus', 2: 'mercury', 3: 'moon', 4: 'sun', 5: 'mercury', 6: 'venus', 7: 'mars', 8: 'jupiter', 9: 'saturn', 10: 'rahu', 11: 'jupiter' };
 
                 
+                // ================= บรรพที่ ๑ : คัมภีร์ลัคนา ตนุลัคน์ และรากฐานชีวิต =================
+                predHtml += `
+                    <div class="book-chapter-banner">
+                        <div class="book-chapter-badge">คัมภีร์โหราศาสตร์ไทย ภาคที่ ๑</div>
+                        <h2 class="book-chapter-title">บรรพที่ ๑ · คัมภีร์ลัคนา ตนุลัคน์ และรากฐานชีวิต</h2>
+                        <div class="book-chapter-desc">วิจารณ์กำเนิด ลัคนาสถิตราศี ตนุเศษจิตใต้สำนึก และรากฐานธาตุแห่งชะตา</div>
+                    </div>
+                `;
+
                 // ================= 1. พื้นดวงชะตาเปรียบเหมือน "ต้นไม้ใหญ่" & ร่างกาย =================
                 if (ayanamsaPredictions.treeAnalogy) {
                     let treeHtml = "";
@@ -1819,12 +2388,29 @@
                         dignityHtml = `<div class="birth-card" style="margin-bottom: 0;"><b>ดาวเคราะห์สถิตเรือนปกติ:</b> ในดวงชะตานี้ ดาวเคราะห์อยู่ในสภาวะปกติทั่วไป</div>`;
                     }
 
+                    predHtml += `
+                        <div class="book-chapter-banner">
+                            <div class="book-chapter-badge">คัมภีร์โหราศาสตร์ไทย ภาคที่ ๒</div>
+                            <h2 class="book-chapter-title">บรรพที่ ๒ · คัมภีร์พลังดวงดาวและมาตรฐานจักรราศี</h2>
+                            <div class="book-chapter-desc">มาตรฐานดาวเคราะห์ ๑๒ ตำแหน่ง โยคเกณฑ์ คู่มิตร-ศัตรู และพินทุบาทว์</div>
+                        </div>
+                    `;
+
                     predHtml += `<div class="prediction-section pred-card-item" id="section-dignities" data-category="dignities">`;
                     predHtml += `<div class="section-header"><h3>🏆 มาตรฐานดาวเคราะห์ 12 ตำแหน่ง <small style="font-weight:400; color:#4a7a5a; font-size:0.8em;">(ตามตำรา หน้า 60-95)</small></h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-dignities', 'ดวงชะตา-มาตรฐานดาว.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                     predHtml += `<div class="prediction-grid">${dignityHtml}</div></div>`;
                 }
 
                 
+                // ================= บรรพที่ ๓ : คัมภีร์ ๑๒ ภพเรือนชะตาชีวิต =================
+                predHtml += `
+                    <div class="book-chapter-banner">
+                        <div class="book-chapter-badge">คัมภีร์โหราศาสตร์ไทย ภาคที่ ๓</div>
+                        <h2 class="book-chapter-title">บรรพที่ ๓ · คัมภีร์ ๑๒ ภพเรือนชะตาชีวิต</h2>
+                        <div class="book-chapter-desc">วิเคราะห์ละเอียด ๑๒ ภพเรือนชะตา (ตนุ ถึง วินาศ) และดาวเจ้าเรือน</div>
+                    </div>
+                `;
+
                 // 2. เรื่องราวชีวิต (12 ภพ)
                 predHtml += `<div class="prediction-section" id="section-houses" class="pred-card-item" data-category="houses">`;
                 predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ffd88a;">✨ เรื่องราวชีวิต (คำพยากรณ์ 12 ภพ) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-houses', 'ดวงชะตา-12ภพ.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
@@ -2045,6 +2631,15 @@
                         spouseHtml = `<div class="birth-card" style="margin-bottom: 0;">ดาวเจ้าเรือนปัตนิและดาวดวงอื่นอยู่ในเกณฑ์ปกติ การสมรสเป็นไปตามจังหวะชีวิตทั่วไป</div>`;
                     }
                     
+                    // ================= บรรพที่ ๔ : คัมภีร์วิถีชีวิต คู่ครอง การงาน และสุขภาพ =================
+                    predHtml += `
+                        <div class="book-chapter-banner">
+                            <div class="book-chapter-badge">คัมภีร์โหราศาสตร์ไทย ภาคที่ ๔</div>
+                            <h2 class="book-chapter-title">บรรพที่ ๔ · คัมภีร์วิถีชีวิต คู่ครอง การงาน และสุขภาพ</h2>
+                            <div class="book-chapter-desc">เจาะลึกชะตาความรัก วาสนาความสำเร็จ การงาน และโรคภัยประจำดาว</div>
+                        </div>
+                    `;
+
                     predHtml += `<div class="prediction-section" id="section-spouse" class="pred-card-item" data-category="spouse-career">`;
                     predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ff7096;">💍 หมวดคำทำนายเรื่องคู่ครองและการสมรส (ตามตำรา หน้า 124-136) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-spouse', 'ดวงชะตา-คู่ครอง.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                     predHtml += `<div class="accordion-content"><div class="prediction-grid">${spouseHtml}</div></div></div>`;
@@ -2329,6 +2924,15 @@
                 });
                 predHtml += `</div></div></div>`; // Close section
 
+
+                // ================= บรรพที่ ๕ : คัมภีร์ดวงจร (Transit) และมหาทักษาพยากรณ์ =================
+                predHtml += `
+                    <div class="book-chapter-banner">
+                        <div class="book-chapter-badge">คัมภีร์โหราศาสตร์ไทย ภาคที่ ๕</div>
+                        <h2 class="book-chapter-title">บรรพที่ ๕ · คัมภีร์ดวงจร (Transit) และมหาทักษาพยากรณ์</h2>
+                        <div class="book-chapter-desc">อิทธิพลดวงจรปัจจุบัน มหาทักษาเสวยอายุ และการเสริมสิริมงคล</div>
+                    </div>
+                `;
 
                 // 6. คำพยากรณ์ดวงจร (Transit Major)
                 predHtml += `<div class="prediction-section" id="section-transit-major" class="pred-card-item" data-category="transit" style="border-color: rgba(255, 123, 84, 0.3);">`;

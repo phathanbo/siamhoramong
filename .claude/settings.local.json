@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '/^function navigateTo/,/^}/ {print NR\": \"$0}' script.js)",
+      "WebSearch",
+      "Bash(xargs -I {} basename \"{}\")"
+    ]
+  }
+}
