@@ -10,10 +10,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome & SweetAlert2 -->
+    <!-- FontAwesome & SweetAlert2 & QRCode & Tarot Data -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="../src/data/tarot-data.js"></script>
 
     <style>
         :root {
@@ -427,6 +429,150 @@
             align-items: center;
             gap: 10px;
             margin: 20px auto;
+            transition: all 0.2s ease;
+        }
+        .btn-export-full:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(15,23,42,0.3);
+        }
+
+        /* 🌟 Pro Quick Navigation Bar */
+        .pro-quick-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            scrollbar-width: thin;
+        }
+        .pro-quick-nav::-webkit-scrollbar {
+            height: 6px;
+        }
+        .pro-quick-nav::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .pro-nav-pill {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            color: #334155;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            text-decoration: none;
+        }
+        .pro-nav-pill:hover, .pro-nav-pill.active {
+            background: #1e1b4b;
+            color: #ffffff;
+            border-color: #1e1b4b;
+            transform: translateY(-1px);
+        }
+
+        /* 🌟 VIP Dossier Modal & Print Styling */
+        .vip-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            overflow-y: auto;
+            padding: 30px 16px;
+        }
+        .vip-modal-content {
+            background: #ffffff;
+            max-width: 960px;
+            margin: 0 auto;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 2px solid #d97706;
+            overflow: hidden;
+        }
+        .vip-dossier-header {
+            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            color: #ffffff;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            border-bottom: 4px solid #f59e0b;
+        }
+        .vip-dossier-body {
+            padding: 32px;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm 12mm;
+            }
+            html, body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                height: auto !important;
+                min-height: auto !important;
+                overflow: visible !important;
+                font-size: 13px !important;
+            }
+            /* Hide entire normal background web page and headers */
+            header, .top-navbar, .container, footer, .bureau-toolbar, .pro-quick-nav, .no-print, .vip-dossier-header, .modal-backdrop {
+                display: none !important;
+            }
+
+            /* Display ONLY active modal without fixed/backdrop overlay */
+            body.is-printing-vip #vipDossierModal,
+            body.is-printing-ritual #ritualPrescriptionModal {
+                display: block !important;
+                position: static !important;
+                background: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+                box-shadow: none !important;
+            }
+
+            body.is-printing-vip #vipDossierModal .vip-modal-content,
+            body.is-printing-ritual #ritualPrescriptionModal .vip-modal-content {
+                display: block !important;
+                position: static !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+            }
+
+            body.is-printing-vip #vipDossierPrintArea,
+            body.is-printing-ritual #ritualPrintArea {
+                display: block !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                visibility: visible !important;
+            }
+
+            /* Prevent awkward page breaks */
+            table, tr, td, th, h3, .form-group, .house-table {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
         }
     </style>
 </head>
@@ -482,6 +628,52 @@
                     </button>
                 </div>
             </div>
+        </div>
+
+        <!-- 🏛️ Bureau Master Toolbar (โต๊ะพยากรณ์ประจำสำนัก) -->
+        <div class="bureau-toolbar" style="background: linear-gradient(135deg, #1e1b4b, #312e81); border: 2px solid #fbbf24; border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); color: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.6rem; filter: drop-shadow(0 0 8px rgba(251,191,36,0.8));">🏛️</span>
+                <div>
+                    <strong style="font-size: 1.05rem; color: #fef08a; font-family: 'Cinzel', 'Sarabun', serif; letter-spacing: 0.5px;">โต๊ะพยากรณ์อาจารย์โหร (Consultant Studio Desk)</strong>
+                    <div style="font-size: 0.8rem; color: #cbd5e1;">เครื่องมือจัดการสำนัก, สมุดบันทึกเคส, ใบสั่งเสริมดวง, ไพ่เสี่ยงทายถามสด และคิดค่าครู</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-sm" style="background: #3b82f6; color: white; border: none; border-radius: 8px; padding: 8px 14px; font-weight: bold; cursor: pointer;" onclick="openCaseNotesModal()">
+                    <i class="fas fa-edit"></i> 📝 สมุดบันทึกเคส
+                </button>
+                <button type="button" class="btn btn-sm" style="background: #10b981; color: white; border: none; border-radius: 8px; padding: 8px 14px; font-weight: bold; cursor: pointer;" onclick="openRitualPrescriptionModal()">
+                    <i class="fas fa-hands-praying"></i> 🕯️ ออกใบสั่งเสริมดวง
+                </button>
+                <button type="button" class="btn btn-sm" style="background: #ec4899; color: white; border: none; border-radius: 8px; padding: 8px 14px; font-weight: bold; cursor: pointer;" onclick="openTarotLiveModal()">
+                    <i class="fas fa-hat-wizard"></i> 🃏 ไพ่เสี่ยงทายถามสด
+                </button>
+                <button type="button" class="btn btn-sm" style="background: #06b6d4; color: white; border: none; border-radius: 8px; padding: 8px 14px; font-weight: bold; cursor: pointer;" onclick="openMobileSyncModal()">
+                    <i class="fas fa-qrcode"></i> 📱 ส่งผลดวงเข้ามือถือ
+                </button>
+                <button type="button" class="btn btn-sm" style="background: #f59e0b; color: #1e1b4b; border: none; border-radius: 8px; padding: 8px 14px; font-weight: bold; cursor: pointer;" onclick="openBillingModal()">
+                    <i class="fas fa-receipt"></i> 💳 คิดค่าครู & QR รับเงิน
+                </button>
+            </div>
+        </div>
+
+        <!-- 🌟 Pro Systems Quick-Nav Navigation -->
+        <div class="pro-quick-nav">
+            <a href="#chartCaptureArea" class="pro-nav-pill active"><i class="fas fa-dharmachakra text-primary"></i> ชาร์ตดวง & นวางค์</a>
+            <a href="#sectionNatalHouses" class="pro-nav-pill"><i class="fas fa-crown text-warning"></i> 12 ภพ & 5 มิติชีวิต</a>
+            <a href="#sectionMahadashaPro" class="pro-nav-pill"><i class="fas fa-hourglass-half text-danger"></i> มหาทักษา 108 ปี & ชันษาจร</a>
+            <a href="#sectionSynastryPro" class="pro-nav-pill"><i class="fas fa-heart" style="color:#ec4899;"></i> สมพงษ์คู่ 5 มิติ</a>
+            <a href="#sectionAuspiciousPro" class="pro-nav-pill"><i class="fas fa-calendar-check text-success"></i> ฤกษ์มงคล 30 วัน & ยามอุบากอง</a>
+            <a href="#sectionTransitsPro" class="pro-nav-pill"><i class="fas fa-meteor text-warning"></i> ดาวใหญ่ย้ายราศี (๕,๗,๘,๐)</a>
+            <a href="#sectionNumerologyPro" class="pro-nav-pill"><i class="fas fa-gem" style="color:#0284c7;"></i> เลขศาสตร์ & ฮวงจุ้ย</a>
+            <a href="#sectionSpecialYogasPro" class="pro-nav-pill"><i class="fas fa-certificate text-warning"></i> 👑 เกณฑ์พิเศษ & ฆาตชะตา</a>
+            <a href="#sectionMissionElectionPro" class="pro-nav-pill"><i class="fas fa-bullseye text-danger"></i> 🎯 ฤกษ์ 8 ภารกิจ</a>
+            <a href="#sectionTalismanWallpaperPro" class="pro-nav-pill"><i class="fas fa-mobile-alt" style="color:#a855f7;"></i> 📱 วอลเปเปอร์สายมู</a>
+            <a href="#sectionSacredTemplesPro" class="pro-nav-pill"><i class="fas fa-gopuram text-success"></i> 🗺️ 9 วัดเสริมดวง</a>
+            <button type="button" class="pro-nav-pill" style="background:#d97706; color:white; border-color:#d97706; font-weight:bold;" onclick="openVipDossierModal()">
+                <i class="fas fa-file-pdf"></i> 📜 พิมพ์เล่มรายงาน VIP Dossier
+            </button>
         </div>
 
         <!-- Result Charts Container -->
@@ -568,12 +760,15 @@
             <button class="btn-export-full" onclick="exportChartImage()">
                 <i class="fas fa-download"></i> บันทึกภาพชาร์ตดวงชะตาทั้งหมด (HD PNG)
             </button>
+            <button class="btn-export-full" style="background:#d97706; margin-left:10px;" onclick="openVipDossierModal()">
+                <i class="fas fa-file-pdf"></i> สร้างเล่มรายงาน VIP Dossier
+            </button>
         </div>
 
         <!-- Professional Predictions Section (100% Deterministic & Rule-based) -->
         <div id="predictionResultsArea" class="reading-container">
             <!-- 1. ภาพรวมพื้นดวงชะตา -->
-            <div class="reading-section">
+            <div id="sectionNatalHouses" class="reading-section">
                 <div class="reading-title"><i class="fas fa-crown text-warning"></i> คำทำนายภาพรวม & พื้นดวงกำเนิด (Natal Analysis)</div>
                 <div id="readBasic"></div>
             </div>
@@ -607,6 +802,122 @@
             <div class="reading-section">
                 <div class="reading-title"><i class="fas fa-star-and-crescent text-warning"></i> คลังพยากรณ์ชั้นครู & ศาสตร์มหาทักษาชั้นสูง (Supreme Astrology Analysis)</div>
                 <div id="readAdvancedDoctrinesArea" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:14px; margin-top:12px;"></div>
+            </div>
+
+            <!-- 🌟 PRO SYSTEM 2: มหาทักษาเสวยอายุ 108 ปี & ชันษาจร -->
+            <div id="sectionMahadashaPro" class="reading-section" style="border-top: 4px solid #ef4444;">
+                <div class="reading-title"><i class="fas fa-hourglass-half text-danger"></i> ระบบมหาทักษาเสวยอายุ (108 ปี) & ชันษาจรประจำปี (Mahadasha & Profections)</div>
+                <div id="readMahadashaArea"></div>
+            </div>
+
+            <!-- 🌟 PRO SYSTEM 1: ระบบสมพงษ์ดวงชะตา & ซ้อนวงล้อ (Synastry Matrix) -->
+            <div id="sectionSynastryPro" class="reading-section" style="border-top: 4px solid #ec4899;">
+                <div class="reading-title"><i class="fas fa-heart" style="color:#ec4899;"></i> ระบบผูกดวงคู่สมพงษ์เชิงลึก 5 มิติ & ซ้อนวงล้อ (VIP Synastry Matrix)</div>
+                
+                <!-- Synastry Input Box -->
+                <div style="background:#fdf2f8; border:1.5px solid #fbcfe8; border-radius:12px; padding:20px; margin-bottom:20px;">
+                    <div style="font-weight:700; color:#9d174d; margin-bottom:12px; font-size:1.05rem;">
+                        <i class="fas fa-user-plus"></i> เลือกหรือระบุข้อมูลฝ่ายที่ 2 (คู่รัก / หุ้นส่วนธุรกิจ):
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label style="color:#be185d;"><i class="fas fa-users"></i> ดึงจากประวัติสมาชิก:</label>
+                            <select id="synastryMemberSelect" class="form-control" style="border:1.5px solid #f472b6; background:#fff;" onchange="onSelectSynastryMember(this.value)">
+                                <option value="">-- เลือกสมาชิกฝ่ายที่ 2 --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ชื่อฝ่ายที่ 2</label>
+                            <input type="text" id="synastryName2" class="form-control" placeholder="ชื่อคู่ครอง / หุ้นส่วน" value="คู่สมพงษ์">
+                        </div>
+                        <div class="form-group">
+                            <label>วันเกิด (ค.ศ. / พ.ศ.)</label>
+                            <input type="date" id="synastryBirthDate2" class="form-control" value="1996-08-20">
+                        </div>
+                        <div class="form-group">
+                            <label>เวลาเกิด (น.)</label>
+                            <input type="time" id="synastryBirthTime2" class="form-control" value="10:30">
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn" style="background:linear-gradient(135deg, #ec4899, #be185d); color:white; padding:11px 20px; border-radius:8px; font-weight:700; border:none; cursor:pointer; width:100%;" onclick="calculateSynastryNow()">
+                                <i class="fas fa-heartbeat"></i> คำนวณสมพงษ์คู่
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="readSynastryResultArea"></div>
+            </div>
+
+            <!-- 🌟 PRO SYSTEM 3: ปฏิทินฤกษ์มงคลเฉพาะบุคคล 30 วัน & ยามอุบากอง -->
+            <div id="sectionAuspiciousPro" class="reading-section" style="border-top: 4px solid #10b981;">
+                <div class="reading-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div><i class="fas fa-calendar-check text-success"></i> ปฏิทินฤกษ์มงคลเฉพาะบุคคล 30 วัน & ยามอุบากอง (Personalized Muhurtha)</div>
+                    <div style="font-size:0.85rem; display:flex; gap:6px;">
+                        <button class="btn btn-sm" style="background:#f1f5f9; padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;" onclick="filterAuspiciousCalendar('ALL')">ทั้งหมด</button>
+                        <button class="btn btn-sm" style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:6px; border:1px solid #86efac; font-weight:bold;" onclick="filterAuspiciousCalendar('EXCELLENT')">เฉพาะวันมหาฤกษ์ (A+)</button>
+                    </div>
+                </div>
+                <div id="readAuspiciousArea"></div>
+            </div>
+
+            <!-- 🌟 PRO SYSTEM 4: ปฏิทินดาวใหญ่ย้ายราศี & แจ้งเตือนกระทบดวง -->
+            <div id="sectionTransitsPro" class="reading-section" style="border-top: 4px solid #f59e0b;">
+                <div class="reading-title"><i class="fas fa-meteor text-warning"></i> ปฏิทินดาวใหญ่ย้ายราศี & ผลกระทบต่อลัคนา (Major Ingress Alert: ๕, ๗, ๘, ๐)</div>
+                <div id="readMajorTransitsArea"></div>
+            </div>
+
+            <!-- 🌟 PRO SYSTEM 5: เลขศาสตร์ & อัญมณีฮวงจุ้ยเฉพาะบุคคล -->
+            <div id="sectionNumerologyPro" class="reading-section" style="border-top: 4px solid #0284c7;">
+                <div class="reading-title"><i class="fas fa-gem" style="color:#0284c7;"></i> เลขศาสตร์รหัสชีวิต & อัญมณีฮวงจุ้ยเฉพาะดวงชะตา (Personalized Elements)</div>
+                <div id="readNumerologyArea"></div>
+            </div>
+
+            <!-- 👑 MASTER SYSTEM 1: เกณฑ์พิเศษ & ฆาตชะตา & ดวงพินทุบาทว์ (Classical Yogas & Afflictions) -->
+            <div id="sectionSpecialYogasPro" class="reading-section" style="border-top: 4px solid #eab308; background: #fffdf5;">
+                <div class="reading-title"><i class="fas fa-crown text-warning"></i> เกณฑ์พิเศษชั้นครู & ฆาตชะตาโบราณ (Classical Yogas & Afflictions)</div>
+                <div id="readSpecialYogasArea"></div>
+            </div>
+
+            <!-- 🎯 MASTER SYSTEM 2: ระบบค้นหาฤกษ์มงคลเฉพาะ 8 ภารกิจ (Mission-Specific Auspicious Picker) -->
+            <div id="sectionMissionElectionPro" class="reading-section" style="border-top: 4px solid #dc2626; background: #ffffff;">
+                <div class="reading-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div><i class="fas fa-bullseye text-danger"></i> ระบบค้นหาฤกษ์มงคลเฉพาะ 8 ภารกิจชีวิต (Mission-Specific Election)</div>
+                    <small style="color:#64748b; font-weight:normal;">คำนวณตัดวันกาลกิณี & จับคู่ยามอุบากอง 60 วันล่วงหน้า</small>
+                </div>
+                <!-- Mission Picker Pills -->
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; margin-bottom:16px;">
+                    <button type="button" class="btn btn-sm mission-btn active" style="background:#dc2626; color:white; border-radius:20px; font-weight:bold; padding:6px 14px;" onclick="changeMissionElection('car')">🚗 ออกรถใหม่</button>
+                    <button type="button" class="btn btn-sm mission-btn" style="background:#f1f5f9; color:#334155; border-radius:20px; font-weight:bold; padding:6px 14px;" onclick="changeMissionElection('house')">🏠 ขึ้นบ้านใหม่</button>
+                    <button type="button" class="btn btn-sm mission-btn" style="background:#f1f5f9; color:#334155; border-radius:20px; font-weight:bold; padding:6px 14px;" onclick="changeMissionElection('wedding')">💍 แต่งงาน/หมั้น</button>
+                    <button type="button" class="btn btn-sm mission-btn" style="background:#f1f5f9; color:#334155; border-radius:20px; font-weight:bold; padding:6px 14px;" onclick="changeMissionElection('business')">🏢 เปิดกิจการ/ร้าน</button>
+                    <button type="button" class="btn btn-sm mission-btn" style="background:#f1f5f9; color:#334155; border-radius:20px; font-weight:bold; padding:6px 14px;" onclick="changeMissionElection('contract')">💼 เซ็นสัญญา/ปิดดีล</button>
+                    <button type="button" class="btn btn-sm mission-btn" style="background:#f1f5f9; color:#334155; border-radius:20px; font-weight:bold; padding:6px 14px;" onclick="changeMissionElection('travel')">✈️ เดินทางไกล</button>
+                    <button type="button" class="btn btn-sm mission-btn" style="background:#f1f5f9; color:#334155; border-radius:20px; font-weight:bold; padding:6px 14px;" onclick="changeMissionElection('surgery')">🩺 ผ่าตัด/ศัลยกรรม</button>
+                    <button type="button" class="btn btn-sm mission-btn" style="background:#f1f5f9; color:#334155; border-radius:20px; font-weight:bold; padding:6px 14px;" onclick="changeMissionElection('wealth')">💰 เปิดบัญชี/ลงทุน</button>
+                </div>
+                <div id="readMissionElectionArea"></div>
+            </div>
+
+            <!-- 📱 MASTER SYSTEM 3: วอลเปเปอร์สายมูมงคลเฉพาะบุคคล 1080x1920 (Personalized Talisman Wallpaper) -->
+            <div id="sectionTalismanWallpaperPro" class="reading-section" style="border-top: 4px solid #a855f7; background: #faf5ff;">
+                <div class="reading-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div><i class="fas fa-mobile-alt" style="color:#a855f7;"></i> เครื่องสร้างวอลเปเปอร์สายมูมงคลเฉพาะบุคคล (1080 x 1920 HD)</div>
+                    <button type="button" class="btn btn-sm" style="background:#7e22ce; color:white; border-radius:20px; font-weight:bold; padding:6px 16px; border:none; cursor:pointer;" onclick="downloadTalismanWallpaper()">
+                        <i class="fas fa-download"></i> ดาวน์โหลดวอลเปเปอร์ HD
+                    </button>
+                </div>
+                <p style="color:#64748b; font-size:0.9rem; margin-bottom:14px;">ระบบดึงดาวกำเนิด, สีมงคลเปิดทรัพย์, อักขระยันต์เลขศาสตร์ 168/789 และชื่อเจ้าชะตา สร้างเป็นภาพ Wallpaper หน้าจอมือถือเสริมดวงเฉพาะบุคคล:</p>
+                <div style="display:flex; justify-content:center; align-items:center; padding:10px;">
+                    <canvas id="talismanWallpaperCanvas" width="1080" height="1920" style="max-width:320px; width:100%; height:auto; border-radius:24px; box-shadow:0 12px 30px rgba(0,0,0,0.25); border:3px solid #e9d5ff;"></canvas>
+                </div>
+            </div>
+
+            <!-- 🗺️ MASTER SYSTEM 4: พิกัด 9 วัด & สิ่งศักดิ์สิทธิ์ประจำดวงชะตา (Sacred Temple Geo-Navigator) -->
+            <div id="sectionSacredTemplesPro" class="reading-section" style="border-top: 4px solid #059669; background: #f0fdf4;">
+                <div class="reading-title"><i class="fas fa-gopuram text-success"></i> พิกัดสิ่งศักดิ์สิทธิ์ & ไหว้พระเสริมดวงตรงจุดเกิด (Sacred Temple Navigator)</div>
+                <p style="color:#64748b; font-size:0.9rem; margin-bottom:14px;">สถานที่ศักดิ์สิทธิ์ที่ถูกโฉลกกับดาวศรี, ดาวเดช และดาวกำเนิด ช่วยเปิดทางสว่างและสะเดาะเคราะห์ได้เร็วที่สุด:</p>
+                <div id="readSacredTemplesArea" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;"></div>
             </div>
 
             <!-- 3. คำทำนายในอายุแต่ละปี (1-100 ปี) -->
@@ -721,6 +1032,235 @@
                 <div id="publicAnimalGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px; margin-top:12px;"></div>
             </div>
         </div> <!-- End of publicDailyModeContainer -->
+    </div> <!-- End of container -->
+
+    <!-- =========================================================================
+         🏛️ MODALS CONTAINER (Placed outside .container for clean A4 printing)
+         ========================================================================= -->
+
+    <!-- 🌟 PRO SYSTEM 6: VIP Full Dossier Modal Popup -->
+    <div id="vipDossierModal" class="vip-modal-overlay">
+        <div class="vip-modal-content">
+            <div class="vip-dossier-header">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 style="font-size:1.6rem; color:#f8fafc; font-family:'Cinzel', serif;">
+                        <i class="fas fa-scroll text-warning"></i> VIP ASTROLOGICAL DOSSIER
+                    </h2>
+                    <button class="btn btn-sm no-print" style="background:rgba(255,255,255,0.2); color:white; border:none; border-radius:50%; width:36px; height:36px; cursor:pointer; font-size:1.2rem;" onclick="closeVipDossierModal()">✕</button>
+                </div>
+                <p style="color:#cbd5e1; font-size:0.95rem; margin-top:6px;">เล่มรายงานผลการวิเคราะห์ดวงชะตาชีวิตฉบับสมบูรณ์ • สยามโหรามงคล Certified</p>
+                <div class="no-print" style="margin-top:16px;">
+                    <button class="btn btn-sm" style="background:#d97706; color:white; padding:8px 20px; border-radius:20px; font-weight:bold; border:none; cursor:pointer; margin-right:8px;" onclick="printVipDossier()">
+                        <i class="fas fa-print"></i> พิมพ์ / บันทึกเป็น PDF (A4)
+                    </button>
+                    <button class="btn btn-sm" style="background:#475569; color:white; padding:8px 16px; border-radius:20px; font-weight:bold; border:none; cursor:pointer;" onclick="closeVipDossierModal()">
+                        ปิดหน้าต่าง
+                    </button>
+                </div>
+            </div>
+            <div id="vipDossierPrintArea" class="vip-dossier-body">
+                <!-- Dynamic VIP Dossier Content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 🏛️ BUREAU MODAL 1: Case Notes & Consultation Records -->
+    <div id="caseNotesModal" class="vip-modal-overlay">
+        <div class="vip-modal-content" style="max-width: 750px;">
+            <div class="vip-dossier-header" style="background: linear-gradient(135deg, #1e3a8a, #172554);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 style="font-size:1.4rem; color:#f8fafc;">
+                        <i class="fas fa-edit text-warning"></i> สมุดบันทึกเคส & ประวัติลูกดวง (Case Notes)
+                    </h2>
+                    <button class="btn btn-sm" style="background:rgba(255,255,255,0.2); color:white; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer;" onclick="closeCaseNotesModal()">✕</button>
+                </div>
+                <p style="color:#93c5fd; font-size:0.9rem; margin-top:4px;">
+                    บันทึกคำแนะนำลับเฉพาะบุคคลสำหรับอาจารย์โหร เพื่อติดตามผลการพยากรณ์
+                </p>
+            </div>
+            <div class="vip-dossier-body">
+                <div style="margin-bottom: 14px;">
+                    <label style="font-weight:bold; color:#1e293b;">เจ้าชะตา:</label>
+                    <span id="caseNotesClientName" style="font-weight:bold; color:#2563eb; font-size:1.05rem;">-</span>
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label>หัวข้อที่ลูกดวงเข้ามาปรึกษา:</label>
+                    <input type="text" id="caseTopicInput" class="form-control" placeholder="เช่น การเปลี่ยนงาน, แก้ดวงความรัก, ซื้อบ้านใหม่">
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label>บันทึกคำทำนายและคำแนะนำของอาจารย์ (Private Case Notes):</label>
+                    <textarea id="caseNotesTextarea" class="form-control" rows="5" placeholder="พิมพ์บันทึกรายละเอียดคำพยากรณ์ จุดที่ทักลูกดวง และแนวทางแก้ไข..."></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label>วันนัดหมายตรวจดวงชะตาซ้ำ / ติดตามผล:</label>
+                    <input type="date" id="caseFollowUpDate" class="form-control" style="max-width:240px;">
+                </div>
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <button type="button" class="btn" style="background:#2563eb; color:white; padding:10px 24px; border-radius:8px; font-weight:bold; border:none; cursor:pointer;" onclick="saveCurrentCaseNote()">
+                        <i class="fas fa-save"></i> บันทึกข้อมูลเคสนี้
+                    </button>
+                    <button type="button" class="btn" style="background:#ef4444; color:white; padding:10px 18px; border-radius:8px; font-weight:bold; border:none; cursor:pointer;" onclick="clearCurrentCaseNote()">
+                        ล้างข้อความ
+                    </button>
+                </div>
+                <hr style="border:0; border-top:1px solid #e2e8f0; margin:20px 0;">
+                <h4 style="font-size:1.05rem; color:#1e1b4b; margin-bottom:10px;"><i class="fas fa-history text-primary"></i> ประวัติการบันทึกเคสที่ผ่านมา:</h4>
+                <div id="caseNotesHistoryList" style="max-height:220px; overflow-y:auto; font-size:0.9rem;">
+                    <!-- List of past case notes -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🏛️ BUREAU MODAL 2: Ritual & Remedial Prescription -->
+    <div id="ritualPrescriptionModal" class="vip-modal-overlay">
+        <div class="vip-modal-content" style="max-width: 820px;">
+            <div class="vip-dossier-header" style="background: linear-gradient(135deg, #065f46, #064e3b);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 style="font-size:1.4rem; color:#f8fafc; font-family:'Cinzel', serif;">
+                        <i class="fas fa-hands-praying text-warning"></i> ใบสั่งเสริมดวง & เคล็ดพิธีกรรมประจำตัว
+                    </h2>
+                    <button class="btn btn-sm no-print" style="background:rgba(255,255,255,0.2); color:white; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer;" onclick="closeRitualPrescriptionModal()">✕</button>
+                </div>
+                <p style="color:#a7f3d0; font-size:0.9rem; margin-top:4px;">
+                    คำนวณจำนวนสัตว์ปล่อยตามกำลังดาว • พระประจำวันเกิด • บทสวดมนต์ และของถวายสังฆทาน
+                </p>
+                <div class="no-print" style="margin-top:12px;">
+                    <button class="btn btn-sm" style="background:#d97706; color:white; padding:6px 18px; border-radius:20px; font-weight:bold; border:none; cursor:pointer;" onclick="printRitualPrescription()">
+                        <i class="fas fa-print"></i> พิมพ์ใบสั่งเสริมดวง (A4)
+                    </button>
+                </div>
+            </div>
+            <div id="ritualPrintArea" class="vip-dossier-body">
+                <!-- Dynamic Ritual Content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 🏛️ BUREAU MODAL 3: Live Tarot Divination Companion -->
+    <div id="tarotLiveModal" class="vip-modal-overlay">
+        <div class="vip-modal-content" style="max-width: 850px;">
+            <div class="vip-dossier-header" style="background: linear-gradient(135deg, #831843, #500724);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 style="font-size:1.4rem; color:#f8fafc;">
+                        <i class="fas fa-hat-wizard text-warning"></i> โต๊ะไพ่เสี่ยงทายถามสด (Tarot Divination Companion)
+                    </h2>
+                    <button class="btn btn-sm" style="background:rgba(255,255,255,0.2); color:white; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer;" onclick="closeTarotLiveModal()">✕</button>
+                </div>
+                <p style="color:#fbcfe8; font-size:0.9rem; margin-top:4px;">
+                    เปิดไพ่ตอบคำถามเฉพาะหน้าแบบ Real-time ร่วมกับการทำนายผังดวงชะตาไทย
+                </p>
+            </div>
+            <div class="vip-dossier-body">
+                <div style="background:#fdf2f8; border:1px solid #fbcfe8; border-radius:10px; padding:16px; margin-bottom:16px;">
+                    <label style="font-weight:bold; color:#9d174d; font-size:0.95rem;">คำถามที่ลูกดวงต้องการเปิดไพ่เสี่ยงทาย:</label>
+                    <div style="display:flex; gap:10px; margin-top:6px;">
+                        <input type="text" id="tarotQuestionInput" class="form-control" placeholder="เช่น จะได้งานใหม่ในเดือนนี้ไหม?, ความรักกับคนนี้เป็นอย่างไร?" value="ภาพรวมสถานการณ์ที่กำลังเผชิญ">
+                        <button type="button" class="btn btn-sm" style="background:#ec4899; color:white; font-weight:bold; padding:8px 18px; border-radius:8px; border:none; cursor:pointer; white-space:nowrap;" onclick="drawLiveTarotCards(1)">
+                            สุ่ม 1 ใบ
+                        </button>
+                        <button type="button" class="btn btn-sm" style="background:#be185d; color:white; font-weight:bold; padding:8px 18px; border-radius:8px; border:none; cursor:pointer; white-space:nowrap;" onclick="drawLiveTarotCards(3)">
+                            สุ่ม 3 ใบ
+                        </button>
+                    </div>
+                </div>
+                <div id="tarotCardsDisplayArea" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-top:16px;">
+                    <!-- Drawn Tarot Cards -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🏛️ BUREAU MODAL 4: Mobile QR Sync -->
+    <div id="mobileSyncModal" class="vip-modal-overlay">
+        <div class="vip-modal-content" style="max-width: 500px; text-align:center;">
+            <div class="vip-dossier-header" style="background: linear-gradient(135deg, #0e7490, #155e75);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 style="font-size:1.3rem; color:#f8fafc;">
+                        <i class="fas fa-qrcode text-warning"></i> ส่งผลดวงเข้ามือถือลูกดวง
+                    </h2>
+                    <button class="btn btn-sm" style="background:rgba(255,255,255,0.2); color:white; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer;" onclick="closeMobileSyncModal()">✕</button>
+                </div>
+                <p style="color:#cffafe; font-size:0.85rem; margin-top:4px;">สแกนเพื่อเปิดดูผังดวงชะตาและคำทำนายบนสมาร์ทโฟน</p>
+            </div>
+            <div class="vip-dossier-body">
+                <div id="mobileSyncQrContainer" style="display:inline-block; padding:16px; background:#fff; border:2px solid #06b6d4; border-radius:12px; margin:14px 0; box-shadow:0 4px 12px rgba(0,0,0,0.08);"></div>
+                <div style="font-size:0.95rem; color:#1e293b; font-weight:bold; margin-bottom:6px;" id="mobileSyncClientLabel">
+                    คุณ เจ้าชะตา
+                </div>
+                <div style="font-size:0.85rem; color:#64748b; line-height:1.6; margin-bottom:16px;">
+                    ให้ลูกดวงเปิดกล้องมือถือหรือแอป LINE สแกน QR Code นี้<br>เพื่อรับผลการทำนายและปฏิทินฤกษ์มงคล 30 วันไปอ่านที่บ้านได้ทันที
+                </div>
+                <button type="button" class="btn btn-sm" style="background:#0e7490; color:white; padding:8px 20px; border-radius:8px; border:none; cursor:pointer; font-weight:bold;" onclick="copyMobileSyncLink()">
+                    <i class="fas fa-copy"></i> คัดลอกลิงก์ส่งทางแชท LINE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🏛️ BUREAU MODAL 5: Bureau Billing & PromptPay -->
+    <div id="billingModal" class="vip-modal-overlay">
+        <div class="vip-modal-content" style="max-width: 600px;">
+            <div class="vip-dossier-header" style="background: linear-gradient(135deg, #78350f, #451a03);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 style="font-size:1.35rem; color:#f8fafc;">
+                        <i class="fas fa-receipt text-warning"></i> คิดค่าครู & ออกใบเสร็จสำนัก
+                    </h2>
+                    <button class="btn btn-sm no-print" style="background:rgba(255,255,255,0.2); color:white; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer;" onclick="closeBillingModal()">✕</button>
+                </div>
+                <p style="color:#fde68a; font-size:0.85rem; margin-top:4px;">ระบบสร้าง QR PromptPay รับเงินค่าครู และพิมพ์ใบเสร็จรับเงิน</p>
+            </div>
+            <div class="vip-dossier-body">
+                <!-- Package selector pills -->
+                <div style="margin-bottom:14px;">
+                    <label style="font-weight:bold; color:#1e293b; font-size:0.9rem;">เลือกแพ็กเกจการพยากรณ์:</label>
+                    <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-top:6px;">
+                        <button type="button" class="btn btn-sm" style="background:#fef3c7; color:#92400e; border:1px solid #fde68a; padding:8px; border-radius:8px; font-weight:bold;" onclick="selectFeePackage('ตรวจดวงชะตาพื้นฐาน 12 ภพ', 599)">
+                            🌟 พื้นฐาน 12 ภพ (599.-)
+                        </button>
+                        <button type="button" class="btn btn-sm" style="background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe; padding:8px; border-radius:8px; font-weight:bold;" onclick="selectFeePackage('เจาะลึก 12 เดือน + มหาทักษา 108 ปี', 1299)">
+                            📅 เจาะลึกรายปี (1,299.-)
+                        </button>
+                        <button type="button" class="btn btn-sm" style="background:#fdf2f8; color:#9d174d; border:1px solid #fbcfe8; padding:8px; border-radius:8px; font-weight:bold;" onclick="selectFeePackage('ผูกดวงคู่สมพงษ์เชิงลึก 5 มิติ', 1999)">
+                            💖 สมพงษ์คู่ 5 มิติ (1,999.-)
+                        </button>
+                        <button type="button" class="btn btn-sm" style="background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; padding:8px; border-radius:8px; font-weight:bold;" onclick="selectFeePackage('วางฤกษ์มงคลเฉพาะบุคคล + Dossier', 2500)">
+                            👑 วางฤกษ์ VIP (2,500.-)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Amount and Details -->
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:14px;">
+                    <div class="form-group">
+                        <label>รายการบริการ:</label>
+                        <input type="text" id="billingPackageName" class="form-control" value="ตรวจดวงชะตาพื้นฐาน 12 ภพ">
+                    </div>
+                    <div class="form-group">
+                        <label>จำนวนเงินค่าครู (บาท):</label>
+                        <input type="number" id="billingAmount" class="form-control" value="599" onchange="updatePromptPayDisplay()">
+                    </div>
+                </div>
+
+                <!-- QR Payment Preview -->
+                <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; padding:16px; text-align:center; margin-bottom:16px;">
+                    <div style="font-weight:bold; color:#1e1b4b; font-size:1.1rem; margin-bottom:4px;">
+                        ยอดชำระ: <span id="displayBillingAmount" style="color:#d97706; font-size:1.4rem;">599</span> บาท
+                    </div>
+                    <div style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">สแกนผ่านแอปธนาคารทุกแห่ง (PromptPay QR)</div>
+                    <div id="billingQrContainer" style="display:inline-block; padding:10px; background:#fff; border:1px solid #cbd5e1; border-radius:8px;"></div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <button type="button" class="btn btn-sm" style="background:#16a34a; color:white; padding:10px 20px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;" onclick="recordPaymentSuccess()">
+                        <i class="fas fa-check-circle"></i> บันทึกรับเงิน & ออกใบเสร็จ
+                    </button>
+                    <button type="button" class="btn btn-sm" style="background:#475569; color:white; padding:10px 16px; border-radius:8px; border:none; cursor:pointer;" onclick="closeBillingModal()">
+                        ปิดหน้าต่าง
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -1105,6 +1645,17 @@
                 `;
             }
 
+            // 🌟 6 Pro Systems Rendering
+            renderMahadashaAndChansa();
+            calculateSynastryNow(true); // silent initial calculation
+            renderAuspiciousAndUbakong();
+            renderMajorTransitsAlerts();
+            renderLuckyAndNumerology();
+            renderSpecialYogas();
+            renderMissionElection(currentSelectedMission || 'car');
+            renderTalismanWallpaper();
+            renderSacredTemples();
+
             // แสดงคำทำนายรายปีและรายเดือนแบบ Dynamic
             renderDynamicYearAndMonths();
 
@@ -1124,6 +1675,1303 @@
                 <div style="margin-bottom: 8px;">${reading.thaksaLifeGuide.dechaNote}</div>
                 <div>${reading.thaksaLifeGuide.kalaNote}</div>
             `;
+        }
+
+        // =========================================================================
+        // 🌟 PRO 1: Mahadasha (มหาทักษาเสวยอายุ 108 ปี) & Chansa Jor
+        // =========================================================================
+        function renderMahadashaAndChansa() {
+            if (!currentHoroData) return;
+            const area = document.getElementById('readMahadashaArea');
+            if (!area) return;
+
+            const dashaData = ThaiHoroProEngine.calculateMahadashaCycles(
+                currentHoroData.birthPlanetNum,
+                selectedAgeYang,
+                currentHoroData.asc.rasiIndex
+            );
+
+            area.innerHTML = `
+                <!-- 1. ชันษาจรประจำปี -->
+                <div style="background:linear-gradient(135deg, #fff1f2, #ffe4e6); border:1.5px solid #fecdd3; border-radius:12px; padding:18px; margin-bottom:18px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                        <span style="font-weight:bold; font-size:1.1rem; color:#9f1239;">
+                            <i class="fas fa-compass"></i> ชันษาจรประจำปี (Annual Profection - อายุย่าง ${selectedAgeYang} ปี)
+                        </span>
+                        <span style="background:#be123c; color:white; padding:3px 12px; border-radius:12px; font-size:0.8rem; font-weight:bold;">
+                            ตกภพ${dashaData.chansaJor.houseName} (ราศี${dashaData.chansaJor.rasiName})
+                        </span>
+                    </div>
+                    <div style="font-size:0.95rem; color:#881337; line-height:1.7;">
+                        ${dashaData.chansaJor.prediction}
+                    </div>
+                </div>
+
+                <!-- 2. ดาวเสวยอายุ & ดาวแทรกปัจจุบัน -->
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin-bottom:18px;">
+                    <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:16px; border-left:5px solid #dc2626;">
+                        <div style="font-size:0.85rem; color:#991b1b; font-weight:bold;">ดาวใหญ่เสวยอายุ (Major Dasha)</div>
+                        <div style="font-size:1.25rem; font-weight:bold; color:#7f1d1d; margin:4px 0;">
+                            ${dashaData.currentMajor.majorName} (เสวย ${dashaData.currentMajor.years} ปี)
+                        </div>
+                        <div style="font-size:0.85rem; color:#b91c1c; margin-bottom:6px;">
+                            ช่วงอายุ ${dashaData.currentMajor.startAge} - ${dashaData.currentMajor.endAge} ปี (${dashaData.currentMajor.element})
+                        </div>
+                        <div style="font-size:0.9rem; color:#334155; line-height:1.6;">
+                            ${dashaData.currentMajor.desc}
+                        </div>
+                    </div>
+
+                    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:16px; border-left:5px solid #d97706;">
+                        <div style="font-size:0.85rem; color:#92400e; font-weight:bold;">ดาวแทรกย่อย (Sub Antardasha)</div>
+                        <div style="font-size:1.25rem; font-weight:bold; color:#78350f; margin:4px 0;">
+                            ${dashaData.currentSub.name} (แทรก ${dashaData.currentSub.subYears} ปี)
+                        </div>
+                        <div style="font-size:0.85rem; color:#b45309; margin-bottom:6px;">
+                            ช่วงอายุ ${dashaData.currentSub.startAge} - ${dashaData.currentSub.endAge} ปี
+                        </div>
+                        <div style="font-size:0.9rem; color:#334155; line-height:1.6;">
+                            ส่งผลให้จังหวะชีวิตในระยะนี้มีอิทธิพลของดาว${dashaData.currentSub.name} เข้ามาเสริมหรือถ่วงดุล ควรใช้ชีวิตด้วยความรอบคอบ
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. ตารางวงรอบมหาทักษา 108 ปี -->
+                <div style="overflow-x:auto;">
+                    <table class="house-table" style="font-size:0.9rem;">
+                        <thead>
+                            <tr style="background:#f8fafc;">
+                                <th>ลำดับ</th>
+                                <th>ดาวเสวยอายุ</th>
+                                <th>ธาตุ</th>
+                                <th>จำนวนปี</th>
+                                <th>ช่วงอายุ (ปี)</th>
+                                <th>สถานะ</th>
+                                <th>คำพยากรณ์หลัก</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${dashaData.timeline.map((t, idx) => `
+                                <tr style="${t.isCurrent ? 'background:#fef2f2; font-weight:600;' : ''}">
+                                    <td style="text-align:center;">${idx + 1}</td>
+                                    <td><strong>${t.majorName}</strong></td>
+                                    <td>ธาตุ${t.element}</td>
+                                    <td style="text-align:center;">${t.years} ปี</td>
+                                    <td style="text-align:center;">${t.startAge} - ${t.endAge}</td>
+                                    <td style="text-align:center;">
+                                        ${t.isCurrent ? '<span style="background:#dc2626; color:white; padding:2px 8px; border-radius:10px; font-size:0.75rem;">กำลังเสวย</span>' : '<span style="color:#94a3b8;">-</span>'}
+                                    </td>
+                                    <td style="font-size:0.85rem; color:#475569;">${t.desc}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // =========================================================================
+        // 🌟 PRO 2: Synastry & Compatibility Engine (สมพงษ์ 5 มิติ)
+        // =========================================================================
+        function initSynastryDropdown() {
+            const sel = document.getElementById('synastryMemberSelect');
+            if (!sel) return;
+            sel.innerHTML = '<option value="">-- เลือกสมาชิกฝ่ายที่ 2 --</option>';
+            globalMembersList.forEach((m, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                const nameDisplay = `${m.name || 'ไม่ระบุชื่อ'} ${m.lastName || ''}`.trim();
+                opt.textContent = `👤 ${nameDisplay} (เกิด: ${m.birthdate || '-'})`;
+                sel.appendChild(opt);
+            });
+        }
+
+        function onSelectSynastryMember(idx) {
+            if (idx === "" || idx === undefined) return;
+            const member = globalMembersList[idx];
+            if (!member) return;
+
+            document.getElementById('synastryName2').value = `${member.name || ''} ${member.lastName || ''}`.trim() || "คู่สมพงษ์";
+            document.getElementById('synastryBirthDate2').value = formatToDateInputValue(member.birthdate);
+            let bTime = member.birthtime || "10:30";
+            if (bTime.includes('T')) bTime = bTime.split('T')[1];
+            document.getElementById('synastryBirthTime2').value = bTime.substring(0, 5);
+
+            calculateSynastryNow();
+        }
+
+        function calculateSynastryNow(isSilent = false) {
+            if (!currentHoroData) return;
+            const bDate2 = document.getElementById('synastryBirthDate2').value;
+            const bTime2 = document.getElementById('synastryBirthTime2').value || "12:00";
+            const name2 = document.getElementById('synastryName2').value || "ฝ่ายที่ 2";
+            const name1 = document.getElementById('targetName').value || "เจ้าชะตา";
+
+            if (!bDate2) {
+                if (!isSilent) Swal.fire('แจ้งเตือน', 'กรุณาระบุวันเกิดของฝ่ายที่ 2', 'warning');
+                return;
+            }
+
+            const p2HoroData = ThaiHoroProEngine.calculateFullHoroscope(bDate2, bTime2);
+            const synastry = ThaiHoroProEngine.calculateSynastryCompatibility(currentHoroData, p2HoroData);
+            if (!synastry) return;
+
+            const area = document.getElementById('readSynastryResultArea');
+            if (!area) return;
+
+            area.innerHTML = `
+                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:24px; box-shadow:0 4px 16px rgba(0,0,0,0.05);">
+                    <!-- Header Score & Gauge -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; border-bottom:1px solid #f1f5f9; padding-bottom:18px; margin-bottom:18px;">
+                        <div>
+                            <div style="font-size:1.25rem; font-weight:bold; color:#1e1b4b;">
+                                💖 ผลการผูกดวงคู่สมพงษ์ระหว่าง <span style="color:#d97706;">${name1}</span> & <span style="color:#be185d;">${name2}</span>
+                            </div>
+                            <div style="font-size:0.9rem; color:#64748b; margin-top:4px;">
+                                ${name1} (ลัคนาราศี${currentHoroData.asc.rasiName}) ⟷ ${name2} (ลัคนาราศี${p2HoroData.asc.rasiName})
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="${synastry.gradeBadge} font-size:1.1rem; font-weight:bold; padding:6px 18px; border-radius:20px; display:inline-block;">
+                                ${synastry.gradeTitle} (${synastry.totalScore}%)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div style="background:#f1f5f9; border-radius:10px; height:14px; width:100%; overflow:hidden; margin-bottom:20px;">
+                        <div style="background:linear-gradient(90deg, #ec4899, #10b981); height:100%; width:${synastry.totalScore}%; transition:width 1s ease;"></div>
+                    </div>
+
+                    <!-- 4 Pillars Breakdown -->
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; margin-bottom:18px;">
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; border-top:4px solid #3b82f6;">
+                            <div style="display:flex; justify-content:space-between; font-weight:bold; color:#1e3a8a; font-size:0.95rem; margin-bottom:6px;">
+                                <span>🔥 ธาตุสมพงษ์</span>
+                                <span>${synastry.elementAnalysis.score}/25</span>
+                            </div>
+                            <div style="font-size:0.88rem; color:#475569; line-height:1.6;">${synastry.elementAnalysis.desc}</div>
+                        </div>
+
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; border-top:4px solid #10b981;">
+                            <div style="display:flex; justify-content:space-between; font-weight:bold; color:#065f46; font-size:0.95rem; margin-bottom:6px;">
+                                <span>✨ ทักษา & ดาวคู่มิตร</span>
+                                <span>${synastry.thaksaAnalysis.score}/25</span>
+                            </div>
+                            <div style="font-size:0.88rem; color:#475569; line-height:1.6;">${synastry.thaksaAnalysis.desc}</div>
+                        </div>
+
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; border-top:4px solid #8b5cf6;">
+                            <div style="display:flex; justify-content:space-between; font-weight:bold; color:#5b21b6; font-size:0.95rem; margin-bottom:6px;">
+                                <span>💍 ภพสัมพันธ์ & ลัคนา</span>
+                                <span>${synastry.houseAnalysis.score}/25</span>
+                            </div>
+                            <div style="font-size:0.88rem; color:#475569; line-height:1.6;">${synastry.houseAnalysis.desc}</div>
+                        </div>
+
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; border-top:4px solid #f59e0b;">
+                            <div style="display:flex; justify-content:space-between; font-weight:bold; color:#92400e; font-size:0.95rem; margin-bottom:6px;">
+                                <span>💰 การเงิน & ธุรกิจร่วม</span>
+                                <span>${synastry.financeAnalysis.score}/25</span>
+                            </div>
+                            <div style="font-size:0.88rem; color:#475569; line-height:1.6;">${synastry.financeAnalysis.desc}</div>
+                        </div>
+                    </div>
+
+                    <!-- Remedial Advice -->
+                    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:14px; font-size:0.93rem; color:#78350f; line-height:1.7;">
+                        ${synastry.relationshipAdvice}
+                    </div>
+                </div>
+            `;
+        }
+
+        // =========================================================================
+        // 🌟 PRO 3: Personalized Muhurtha & Ubakong Matrix
+        // =========================================================================
+        let currentAuspiciousFilter = 'ALL';
+
+        function renderAuspiciousAndUbakong() {
+            if (!currentHoroData) return;
+            const area = document.getElementById('readAuspiciousArea');
+            if (!area) return;
+
+            const calendar = ThaiHoroProEngine.calculatePersonalAuspiciousCalendar(currentHoroData.birthPlanetNum, new Date(), 30);
+            const todayUbakong = ThaiHoroProEngine.calculateUbakongForDay(new Date().getDay());
+
+            const filtered = (currentAuspiciousFilter === 'EXCELLENT') 
+                ? calendar.filter(c => c.status === 'EXCELLENT') 
+                : calendar;
+
+            area.innerHTML = `
+                <!-- 1. ยามอุบากองวันนี้ Realtime -->
+                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                    <div style="font-weight:bold; font-size:1.05rem; color:#1e1b4b; margin-bottom:12px;">
+                        ⏰ ตารางยามอุบากองมงคลประจำวันนี้ (5 ช่วงยาม):
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
+                        ${todayUbakong.map(u => `
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; border-left:4px solid ${u.color};">
+                                <div style="font-size:0.8rem; color:#64748b;">${u.slotName} (${u.time})</div>
+                                <div style="font-weight:bold; color:${u.color}; font-size:0.95rem; margin-top:2px;">
+                                    ${u.icon} ${u.desc}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- 2. ปฏิทินฤกษ์มงคล 30 วัน -->
+                <div style="font-weight:bold; font-size:1rem; color:#1e1b4b; margin-bottom:10px;">
+                    📅 ปฏิทินฤกษ์เฉพาะบุคคล 30 วันล่วงหน้า (${filtered.length} วัน):
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; max-height:420px; overflow-y:auto; padding-right:4px;">
+                    ${filtered.map(c => `
+                        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:12px; box-shadow:0 1px 4px rgba(0,0,0,0.02);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                <strong style="color:#1e293b;"><i class="fas fa-calendar-alt text-primary" style="font-size:0.85rem; margin-right:4px;"></i>${c.dateThaiDisplay || `วัน${c.dayName} ที่ ${c.dateStr}`}</strong>
+                                <span style="${c.badgeStyle} font-size:0.75rem; padding:2px 8px; border-radius:6px;">${c.statusText}</span>
+                            </div>
+                            <div style="font-size:0.85rem; color:#475569; line-height:1.5;">${c.action}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function filterAuspiciousCalendar(type) {
+            currentAuspiciousFilter = type;
+            renderAuspiciousAndUbakong();
+        }
+
+        // =========================================================================
+        // 🌟 PRO 4: Major Transits Alert (๕, ๗, ๘, ๐)
+        // =========================================================================
+        function renderMajorTransitsAlerts() {
+            if (!currentHoroData) return;
+            const area = document.getElementById('readMajorTransitsArea');
+            if (!area) return;
+
+            const transits = ThaiHoroProEngine.calculateMajorTransitsAlert(currentHoroData.asc.rasiIndex);
+
+            area.innerHTML = `
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+                    ${transits.map(t => `
+                        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px; box-shadow:0 2px 10px rgba(0,0,0,0.04); border-top:4px solid ${t.badgeColor};">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <strong style="font-size:1.05rem; color:#1e1b4b;">${t.name}</strong>
+                                <span style="background:#f1f5f9; color:#475569; font-size:0.8rem; padding:2px 8px; border-radius:6px; font-weight:bold;">${t.thNum}</span>
+                            </div>
+                            <div style="font-size:0.85rem; color:#d97706; font-weight:bold; margin-bottom:6px;">
+                                📍 ${t.aspectTitle}
+                            </div>
+                            <div style="font-size:0.9rem; color:#334155; line-height:1.6; margin-bottom:10px;">
+                                ${t.impact}
+                            </div>
+                            <div style="background:#f8fafc; border:1px dashed #cbd5e1; padding:8px 10px; border-radius:6px; font-size:0.83rem; color:#15803d;">
+                                🙏 <strong>เคล็ดลับไหว้เสริมดวง:</strong> ${t.ritual}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // =========================================================================
+        // 🌟 PRO 5: Personalized Numerology & Fengshui
+        // =========================================================================
+        function renderLuckyAndNumerology() {
+            if (!currentHoroData) return;
+            const area = document.getElementById('readNumerologyArea');
+            if (!area) return;
+
+            const checkInput = document.getElementById('customNumberInput') ? document.getElementById('customNumberInput').value : '';
+            const numData = ThaiHoroProEngine.analyzePersonalLuckyElements(
+                currentHoroData.birthPlanetNum,
+                currentHoroData.asc.rasiIndex,
+                checkInput
+            );
+
+            area.innerHTML = `
+                <!-- 1. ตัวตรวจเบอร์โทร & ทะเบียนรถ -->
+                <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:18px; margin-bottom:20px;">
+                    <div style="font-weight:bold; color:#0369a1; font-size:1.05rem; margin-bottom:8px;">
+                        <i class="fas fa-calculator"></i> ตรวจสอบเบอร์มือถือ / ทะเบียนรถ เทียบกับดวงชะตา:
+                    </div>
+                    <div style="display:flex; gap:10px; max-width:480px; margin-bottom:10px;">
+                        <input type="text" id="customNumberInput" class="form-control" placeholder="พิมพ์เบอร์โทร เช่น 0812345678" value="${checkInput || ''}">
+                        <button type="button" class="btn btn-sm" style="background:#0284c7; color:white; font-weight:bold; padding:8px 18px; border-radius:8px; border:none; cursor:pointer;" onclick="renderLuckyAndNumerology()">
+                            ตรวจเลข
+                        </button>
+                    </div>
+                    ${numData.numCheckResult ? `
+                        <div style="background:#ffffff; border:1px solid #7dd3fc; border-radius:8px; padding:12px; font-size:0.92rem; line-height:1.7;">
+                            <div>🔢 <strong>ผลรวมตัวเลข:</strong> <span style="font-size:1.1rem; font-weight:bold; color:#0369a1;">${numData.numCheckResult.sum}</span> — ${numData.numCheckResult.sumMeaning}</div>
+                            <div style="margin-top:4px;">${numData.numCheckResult.warning}</div>
+                        </div>
+                    ` : '<div style="font-size:0.85rem; color:#64748b;">(พิมพ์ตัวเลขเพื่อวิเคราะห์พลังคู่เลขและตรวจสอบว่ามีเลขกาลกิณีต้องห้ามหรือไม่)</div>'}
+                </div>
+
+                <!-- 2. รหัสเลขมงคลประจำดวง -->
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; margin-bottom:20px;">
+                    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:14px; border-left:4px solid #10b981;">
+                        <strong style="color:#065f46; font-size:0.95rem;">✨ เลขมงคลนำโชค (ดาวศรี/มนตรี/เดช):</strong>
+                        <div style="font-size:1.3rem; font-weight:bold; color:#15803d; margin:4px 0;">${numData.luckyCodes.singleLucky}</div>
+                        <div style="font-size:0.85rem; color:#64748b;">ใช้เป็นเลขท้าย, รหัสผ่าน, หรือตัวเลขนำทาง</div>
+                    </div>
+
+                    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:14px; border-left:4px solid #3b82f6;">
+                        <strong style="color:#1e3a8a; font-size:0.95rem;">💰 คู่เลขเปิดทรัพย์มหาเศรษฐี:</strong>
+                        <div style="font-size:1.15rem; font-weight:bold; color:#1d4ed8; margin:4px 0;">${numData.luckyCodes.wealthPairs}</div>
+                        <div style="font-size:0.85rem; color:#64748b;">เหมาะสำหรับเบอร์โทรติดต่อธุรกิจการเงิน</div>
+                    </div>
+
+                    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:14px; border-left:4px solid #ec4899;">
+                        <strong style="color:#9d174d; font-size:0.95rem;">💖 คู่เลขมหาเสน่ห์เมตตา:</strong>
+                        <div style="font-size:1.15rem; font-weight:bold; color:#be185d; margin:4px 0;">${numData.luckyCodes.charmPairs}</div>
+                        <div style="font-size:0.85rem; color:#64748b;">เสริมเสน่ห์ ความรัก และการเจรจา</div>
+                    </div>
+
+                    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:14px; border-left:4px solid #ef4444;">
+                        <strong style="color:#991b1b; font-size:0.95rem;">⚠️ เลขกาลกิณี (ควรหลีกเลี่ยง):</strong>
+                        <div style="font-size:1.3rem; font-weight:bold; color:#b91c1c; margin:4px 0;">${numData.luckyCodes.forbiddenDigit}</div>
+                        <div style="font-size:0.85rem; color:#64748b;">ควรเลี่ยงในเลข 4 ตัวท้ายเบอร์โทรหรือทะเบียนรถ</div>
+                    </div>
+                </div>
+
+                <!-- 3. อัญมณีประจำวาสนา & ทิศฮวงจุ้ย -->
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px;">
+                        <div style="font-weight:bold; color:#1e1b4b; font-size:1rem; margin-bottom:6px;">
+                            💎 อัญมณีเสริมวาสนาประจำตัว:
+                        </div>
+                        <div style="font-size:1.1rem; font-weight:bold; color:#d97706; margin-bottom:4px;">
+                            ${numData.gemology.name} (${numData.gemology.color})
+                        </div>
+                        <div style="font-size:0.9rem; color:#475569; line-height:1.6;">
+                            ${numData.gemology.desc}
+                        </div>
+                    </div>
+
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px;">
+                        <div style="font-weight:bold; color:#1e1b4b; font-size:1rem; margin-bottom:6px;">
+                            🧭 ทิศมงคลฮวงจุ้ยประจำธาตุ (${currentHoroData.asc.element}):
+                        </div>
+                        <div style="font-size:0.9rem; color:#334155; line-height:1.7;">
+                            <div>🌟 <strong>ทิศเปิดทรัพย์:</strong> ${numData.fengshui.bestDirection}</div>
+                            <div>🪑 <strong>โต๊ะทำงาน:</strong> ${numData.fengshui.deskTip}</div>
+                            <div>🛏️ <strong>ทิศหัวนอน:</strong> ${numData.fengshui.bedTip}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // =========================================================================
+        // 👑 MASTER 1: เกณฑ์พิเศษ & ฆาตชะตา & ดวงพินทุบาทว์ (Classical Yogas)
+        // =========================================================================
+        function renderSpecialYogas() {
+            if (!currentHoroData) return;
+            const area = document.getElementById('readSpecialYogasArea');
+            if (!area) return;
+
+            const data = ThaiHoroProEngine.calculateSpecialYogasAndAfflictions(currentHoroData);
+            if (!data) return;
+
+            area.innerHTML = `
+                <div style="background:#ffffff; border:1px solid #fef08a; border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.03);">
+                    <!-- Summary banner -->
+                    <div style="font-size:0.98rem; color:#854d0e; background:#fefce8; padding:12px 16px; border-radius:8px; border:1px solid #fef08a; margin-bottom:18px; line-height:1.7;">
+                        ✨ <strong>บทสรุปวาสนา:</strong> ${data.summaryText}
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:14px; margin-bottom:18px;">
+                        <!-- 1. เกณฑ์มงคลพิเศษ (Yogas) -->
+                        <div style="background:#f8fafc; border:1.5px solid #bbf7d0; border-radius:10px; padding:16px;">
+                            <div style="font-weight:bold; color:#166534; font-size:1.05rem; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                                <i class="fas fa-certificate text-success"></i> 1. เกณฑ์มงคลชั้นครู & วาสนาโดดเด่น
+                            </div>
+                            ${data.yogas.length ? data.yogas.map(y => `
+                                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:8px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                        <strong style="color:#047857; font-size:0.95rem;">${y.name}</strong>
+                                        <span style="background:#dcfce7; color:#15803d; font-size:0.75rem; font-weight:bold; padding:2px 8px; border-radius:10px;">${y.badge}</span>
+                                    </div>
+                                    <div style="font-size:0.88rem; color:#475569; line-height:1.6;">${y.desc}</div>
+                                </div>
+                            `).join('') : '<div style="color:#64748b; font-size:0.9rem;">โครงสร้างดวงเป็นกลาง ไม่มีเกณฑ์เบียดเบียนหรือเกณฑ์พิเศษเด่นชัด</div>'}
+                        </div>
+
+                        <!-- 2. จุดพินทุบาทว์ & ข้อควรระวัง (Afflictions) -->
+                        <div style="background:#f8fafc; border:1.5px solid #fecaca; border-radius:10px; padding:16px;">
+                            <div style="font-weight:bold; color:#991b1b; font-size:1.05rem; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                                <i class="fas fa-shield-alt text-danger"></i> 2. เกณฑ์พินทุบาทว์ & จุดดวงแตกที่ต้องแก้เคล็ด
+                            </div>
+                            ${data.afflictions.length ? data.afflictions.map(a => `
+                                <div style="background:#ffffff; border:1px solid #fee2e2; border-radius:8px; padding:12px; margin-bottom:8px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                        <strong style="color:#b91c1c; font-size:0.95rem;">${a.name}</strong>
+                                        <span style="background:#fee2e2; color:#b91c1c; font-size:0.75rem; font-weight:bold; padding:2px 8px; border-radius:10px;">${a.badge}</span>
+                                    </div>
+                                    <div style="font-size:0.88rem; color:#475569; line-height:1.6;">${a.desc}</div>
+                                </div>
+                            `).join('') : '<div style="color:#15803d; font-size:0.9rem; background:#f0fdf4; padding:10px; border-radius:8px;">✅ ยอดเยี่ยมมาก! ดวงชะตานี้ไม่มีเกณฑ์พินทุบาทว์ร้ายแรง เบาใจเรื่องคู่ครองและคดีความได้</div>'}
+                        </div>
+                    </div>
+
+                    <!-- 3. ฆาตประจำราศีลัคนา -->
+                    <div style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:8px; padding:12px 16px; font-size:0.9rem; color:#334155; line-height:1.7;">
+                        ☠️ <strong>เกณฑ์ฆาตประจำราศีลัคนา (${currentHoroData.asc.rasiName}):</strong> ดาวที่ต้องระวังคือ <strong>${data.ghataInfo.planet}</strong> — ${data.ghataInfo.desc}
+                    </div>
+                </div>
+            `;
+        }
+
+        // =========================================================================
+        // 🎯 MASTER 2: ค้นหาฤกษ์มงคลเฉพาะ 8 ภารกิจชีวิต (Mission-Specific Election)
+        // =========================================================================
+        let currentSelectedMission = 'car';
+
+        function changeMissionElection(missionKey) {
+            currentSelectedMission = missionKey;
+            const btns = document.querySelectorAll('.mission-btn');
+            btns.forEach(b => {
+                b.style.background = '#f1f5f9';
+                b.style.color = '#334155';
+            });
+            if (event && event.currentTarget) {
+                event.currentTarget.style.background = '#dc2626';
+                event.currentTarget.style.color = '#ffffff';
+            }
+            renderMissionElection(missionKey);
+        }
+
+        function renderMissionElection(missionKey = 'car') {
+            if (!currentHoroData) return;
+            const area = document.getElementById('readMissionElectionArea');
+            if (!area) return;
+
+            const res = ThaiHoroProEngine.findMissionSpecificAuspiciousDates(currentHoroData, missionKey, 60);
+            if (!res || !res.auspiciousDays.length) {
+                area.innerHTML = '<div style="color:#64748b; padding:14px; text-align:center;">ไม่พบวันมงคลที่ผ่านเกณฑ์ในช่วง 60 วันนี้</div>';
+                return;
+            }
+
+            area.innerHTML = `
+                <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px 16px; margin-bottom:14px; color:#991b1b; font-size:0.92rem;">
+                    🎯 <strong>เป้าหมายฤกษ์:</strong> ${res.missionInfo.name} — <span style="color:#7f1d1d;">${res.missionInfo.targetDesc}</span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+                    ${res.auspiciousDays.map(d => `
+                        <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-radius:10px; padding:14px; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                <strong style="font-size:1rem; color:#1e1b4b;">📅 ${d.shortDateStr}</strong>
+                                <span style="font-size:0.8rem; color:#16a34a; font-weight:bold;">${d.rating}</span>
+                            </div>
+                            <div style="font-size:0.88rem; color:#334155; line-height:1.6; margin-bottom:6px;">
+                                ⏰ <strong>ช่วงเวลาฤกษ์ที่ดีที่สุด:</strong> <span style="color:#b45309; font-weight:bold;">${d.bestTimeSlot}</span><br>
+                                🧭 <strong>ยามอุบากอง:</strong> <span style="color:#15803d; font-weight:bold;">${d.ubakongResult}</span> — <small style="color:#475569;">${d.ubakongMeaning}</small>
+                            </div>
+                            <div style="font-size:0.82rem; color:#64748b; background:#f8fafc; padding:6px 10px; border-radius:6px;">
+                                💡 ${d.advice}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // =========================================================================
+        // 📱 MASTER 3: วอลเปเปอร์สายมูมงคลเฉพาะบุคคล (1080 x 1920 HD)
+        // =========================================================================
+        function renderTalismanWallpaper() {
+            if (!currentHoroData) return;
+            const canvas = document.getElementById('talismanWallpaperCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = 1080, h = 1920;
+
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const birthDay = currentHoroData.birthDayOfWeek;
+            const ascRasi = currentHoroData.asc.rasiName;
+
+            // 1. Royal Dark Mystic Background
+            const bgGrad = ctx.createLinearGradient(0, 0, w, h);
+            bgGrad.addColorStop(0, "#090d16");
+            bgGrad.addColorStop(0.3, "#1e1b4b");
+            bgGrad.addColorStop(0.7, "#2e1065");
+            bgGrad.addColorStop(1, "#070a10");
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, w, h);
+
+            // 2. Glowing Radial Sunlight
+            const radGrad = ctx.createRadialGradient(w/2, h/2 - 100, 50, w/2, h/2 - 100, 600);
+            radGrad.addColorStop(0, "rgba(251, 191, 36, 0.35)");
+            radGrad.addColorStop(0.5, "rgba(217, 119, 6, 0.15)");
+            radGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+            ctx.fillStyle = radGrad;
+            ctx.fillRect(0, 0, w, h);
+
+            // 3. Golden Ornate Border Frame
+            ctx.strokeStyle = "rgba(245, 158, 11, 0.7)";
+            ctx.lineWidth = 14;
+            ctx.strokeRect(50, 50, w - 100, h - 100);
+
+            ctx.strokeStyle = "rgba(254, 240, 138, 0.9)";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(70, 70, w - 140, h - 140);
+
+            // Corner Lotus Dots
+            const corners = [[70, 70], [w - 70, 70], [70, h - 70], [w - 70, h - 70]];
+            corners.forEach(([cx, cy]) => {
+                ctx.fillStyle = "#fef08a";
+                ctx.beginPath();
+                ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // 4. Header Seal
+            ctx.fillStyle = "#fef08a";
+            ctx.font = "bold 46px 'Cinzel', serif";
+            ctx.textAlign = "center";
+            ctx.fillText("SIAM HORA MANGALA", w/2, 180);
+
+            ctx.fillStyle = "#fcd34d";
+            ctx.font = "32px 'Sarabun', sans-serif";
+            ctx.fillText("พระยันต์มหาโภคทรัพย์ & หนุนชะตาราศีเฉพาะบุคคล", w/2, 235);
+
+            // 5. Centerpiece Sacred Mandala Circle
+            const centerY = h/2 - 100;
+            ctx.strokeStyle = "rgba(251, 191, 36, 0.85)";
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.arc(w/2, centerY, 340, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = "rgba(254, 240, 138, 0.5)";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(w/2, centerY, 365, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Inner Yantra Star Lines
+            ctx.strokeStyle = "rgba(251, 191, 36, 0.4)";
+            ctx.lineWidth = 2;
+            for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 4) {
+                const x1 = w/2 + Math.cos(angle) * 100;
+                const y1 = centerY + Math.sin(angle) * 100;
+                const x2 = w/2 + Math.cos(angle) * 340;
+                const y2 = centerY + Math.sin(angle) * 340;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }
+
+            // Sacred Center Syllable (โอม & นะโมพุทธายะ)
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 90px 'Cinzel', 'Sarabun', serif";
+            ctx.fillText("ॐ", w/2, centerY - 80);
+
+            ctx.fillStyle = "#fef08a";
+            ctx.font = "bold 58px 'Sarabun', sans-serif";
+            ctx.fillText("นะ ชา ลี ติ", w/2, centerY + 10);
+
+            ctx.fillStyle = "#93c5fd";
+            ctx.font = "bold 36px 'Sarabun', sans-serif";
+            ctx.fillText(`ลัคนาราศี${ascRasi} • เทวดาพิทักษ์ดวง`, w/2, centerY + 80);
+
+            ctx.fillStyle = "#34d399";
+            ctx.font = "bold 42px 'Sarabun', sans-serif";
+            ctx.fillText("168  •  456  •  789", w/2, centerY + 160);
+
+            // 6. Client Name & Personalized Blessings
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 54px 'Sarabun', sans-serif";
+            ctx.fillText(`คุณ ${targetName}`, w/2, h/2 + 370);
+
+            ctx.fillStyle = "#fde047";
+            ctx.font = "36px 'Sarabun', sans-serif";
+            ctx.fillText("มั่งคั่ง ร่ำรวย แคล้วคลาด ปลอดภัย ศิริมงคลตลอดกาล", w/2, h/2 + 440);
+
+            ctx.fillStyle = "#94a3b8";
+            ctx.font = "30px 'Sarabun', sans-serif";
+            ctx.fillText("สยามโหรามงคล Certified Talisman • เสริมบารมีชีวิต", w/2, h/2 + 500);
+
+            // 7. Bottom Seal
+            ctx.strokeStyle = "rgba(251, 191, 36, 0.8)";
+            ctx.strokeRect(w/2 - 220, h - 220, 440, 90);
+            ctx.fillStyle = "#fef08a";
+            ctx.font = "bold 34px 'Sarabun', sans-serif";
+            ctx.fillText("👑 CERTIFIED BLESSING", w/2, h - 165);
+        }
+
+        function downloadTalismanWallpaper() {
+            const canvas = document.getElementById('talismanWallpaperCanvas');
+            if (!canvas) return;
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const link = document.createElement('a');
+            link.download = `siamhora_wallpaper_${targetName}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // =========================================================================
+        // 🗺️ MASTER 4: พิกัด 9 วัด & สิ่งศักดิ์สิทธิ์ประจำดวงชะตา (Sacred Temples)
+        // =========================================================================
+        function renderSacredTemples() {
+            if (!currentHoroData) return;
+            const area = document.getElementById('readSacredTemplesArea');
+            if (!area) return;
+
+            const shrines = ThaiHoroProEngine.getSacredTempleRecommendations(currentHoroData);
+            if (!shrines || !shrines.length) return;
+
+            area.innerHTML = shrines.map(s => `
+                <div style="background:#ffffff; border:1.5px solid #a7f3d0; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+                    <span style="background:#ecfdf5; color:#047857; padding:3px 10px; border-radius:12px; font-size:0.8rem; font-weight:bold; display:inline-block; margin-bottom:8px;">
+                        ${s.role}
+                    </span>
+                    <div style="font-weight:bold; color:#065f46; font-size:1.05rem; margin-bottom:6px;">
+                        📍 ${s.name}
+                    </div>
+                    <div style="font-size:0.9rem; color:#334155; line-height:1.6; margin-bottom:8px;">
+                        ${s.highlight}
+                    </div>
+                    <div style="font-size:0.82rem; color:#475569; background:#f8fafc; padding:8px 10px; border-radius:6px;">
+                        🕯️ <strong>ของไหว้แนะนำ:</strong> ${s.items}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // =========================================================================
+        // 🌟 PRO 6: VIP Astrological Dossier (PDF & Print Modal) - Comprehensive Multi-Section
+        // =========================================================================
+        function openVipDossierModal() {
+            if (!currentHoroData) return;
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const modal = document.getElementById('vipDossierModal');
+            const printArea = document.getElementById('vipDossierPrintArea');
+            if (!modal || !printArea) return;
+
+            const reading = currentHoroData.reading;
+            const planets = currentHoroData.birthPlanets || {};
+            const dasha = ThaiHoroProEngine.calculateMahadashaCycles(currentHoroData.birthPlanetNum, selectedAgeYang, currentHoroData.asc.rasiIndex);
+            const num = ThaiHoroProEngine.analyzePersonalLuckyElements(currentHoroData.birthPlanetNum, currentHoroData.asc.rasiIndex);
+            const ritual = ThaiHoroProEngine.generateRitualPrescription(currentHoroData);
+            const bYear = currentHoroData.birthDate.getFullYear();
+            const yearData = ThaiHoroProEngine.calculateSingleYearPrediction(currentHoroData.birthPlanetNum, selectedAgeYang, bYear);
+            const monthlyData = ThaiHoroProEngine.calculateMonthlyPredictionsForYear(currentHoroData.asc.rasiIndex, currentHoroData.birthPlanetNum, selectedAgeYang);
+
+            const bDateStr = document.getElementById('targetBirthDate').value;
+            const bTimeStr = document.getElementById('targetBirthTime').value;
+
+            printArea.innerHTML = `
+                <div style="border:2px solid #d4af37; padding:28px; border-radius:12px; background:#fff; color:#1e293b; line-height:1.7;">
+                    
+                    <!-- Cover Header -->
+                    <div style="text-align:center; border-bottom:2px double #d4af37; padding-bottom:18px; margin-bottom:24px;">
+                        <div style="font-size:2rem; font-weight:bold; color:#1e1b4b; font-family:'Cinzel', serif; letter-spacing:1px;">
+                            SIAM HORA MANGALA
+                        </div>
+                        <div style="font-size:1.2rem; color:#d97706; font-weight:bold; margin-top:2px;">
+                            เล่มรายงานผลการวิเคราะห์ดวงชะตาชีวิตฉบับสมบูรณ์ (VIP Astrological Dossier)
+                        </div>
+                        <div style="font-size:0.95rem; color:#475569; margin-top:6px; background:#f8fafc; padding:8px; border-radius:8px; display:inline-block; border:1px solid #e2e8f0;">
+                            เจ้าชะตา: <strong style="color:#1e1b4b;">คุณ ${targetName}</strong> | วันเกิด: <strong style="color:#1e1b4b;">${bDateStr}</strong> เวลา: <strong style="color:#1e1b4b;">${bTimeStr} น.</strong> | อายุย่าง: <strong style="color:#2563eb;">${selectedAgeYang} ปี</strong>
+                        </div>
+                    </div>
+
+                    <!-- 1. ข้อมูลลัคนาและโครงสร้างดวงกำเนิด -->
+                    <div style="margin-bottom:24px;">
+                        <h3 style="color:#1e1b4b; border-bottom:1.5px solid #e2e8f0; padding-bottom:6px; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                            <span style="color:#d97706;">✦</span> 1. โครงสร้างดวงกำเนิด & ลัคนาพยากรณ์ (Natal Identity)
+                        </h3>
+                        <div style="font-size:0.95rem; background:#f8fafc; padding:12px 16px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;">
+                            <strong>ลัคนาสถิต:</strong> ราศี${reading.basicSummary.ascName} (${currentHoroData.asc.deg}° ${currentHoroData.asc.min}') | 
+                            <strong>นวางค์ลัคนา:</strong> ราศี${reading.basicSummary.navamshaAsc} | 
+                            <strong>ตรียางค์ลัคนา:</strong> ราศี${reading.basicSummary.drekkanaAsc} | 
+                            <strong>ดาวตนุลัคน์:</strong> ดาว${reading.basicSummary.lordName} (สถิตภพ ${reading.basicSummary.lordInHouse})
+                        </div>
+                        <p style="font-size:0.95rem; text-indent:24px;">${reading.basicSummary.character}</p>
+                    </div>
+
+                    <!-- 2. ตารางพิกัดดวงดาวกำเนิด 10 ดวง & มาตรฐานดาว -->
+                    <div style="margin-bottom:24px;">
+                        <h3 style="color:#1e1b4b; border-bottom:1.5px solid #e2e8f0; padding-bottom:6px; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                            <span style="color:#d97706;">✦</span> 2. พิกัดดาวพระเคราะห์กำเนิด & มาตรฐานดาว (Planetary Dignities)
+                        </h3>
+                        <div style="overflow-x:auto;">
+                            <table class="house-table" style="font-size:0.88rem; width:100%; margin-top:8px;">
+                                <thead>
+                                    <tr style="background:#f1f5f9;">
+                                        <th>ดาว</th>
+                                        <th>สัญลักษณ์</th>
+                                        <th>ราศีที่สถิต</th>
+                                        <th>องศา / ลิปดา</th>
+                                        <th>นวางค์</th>
+                                        <th>ตรียางค์</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${Object.keys(planets).map(pKey => {
+                                        const p = planets[pKey];
+                                        return `
+                                            <tr>
+                                                <td style="font-weight:bold; color:#1e1b4b;">ดาว${p.name}</td>
+                                                <td style="text-align:center; font-weight:bold; color:#4f46e5;">${p.num}</td>
+                                                <td>ราศี${p.rasiName} (${p.element})</td>
+                                                <td style="text-align:center;">${p.deg}° ${p.min}'</td>
+                                                <td style="text-align:center;">ราศี${p.navamsha ? (p.navamsha.rasiName || p.navamsha) : '-'}</td>
+                                                <td style="text-align:center;">ราศี${p.drekkana ? (p.drekkana.rasiName || p.drekkana) : '-'}</td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 3. วิเคราะห์ 12 ภพชะตาชีวิต -->
+                    <div style="margin-bottom:24px;">
+                        <h3 style="color:#1e1b4b; border-bottom:1.5px solid #e2e8f0; padding-bottom:6px; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                            <span style="color:#d97706;">✦</span> 3. วิเคราะห์ความหมาย 12 ภพชะตาชีวิต (The 12 Natal Houses)
+                        </h3>
+                        <div style="overflow-x:auto;">
+                            <table class="house-table" style="font-size:0.85rem; width:100%; margin-top:8px;">
+                                <thead>
+                                    <tr style="background:#f1f5f9;">
+                                        <th style="width:120px;">ภพ</th>
+                                        <th style="width:100px;">ราศี / ดาวเจ้าเรือน</th>
+                                        <th style="width:100px;">ดาวสถิต</th>
+                                        <th>คำทำนายตามหลักโหร</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${reading.housesAnalysis.map(h => `
+                                        <tr style="vertical-align:top;">
+                                            <td><strong>${h.name}</strong><br><small style="color:#64748b;">${h.meaning.split(' ')[0]}</small></td>
+                                            <td>ราศี${h.rasi}<br><small style="color:#4f46e5;">ดาว${h.lord} (ภพ ${h.lordInHouse})</small></td>
+                                            <td style="text-align:center;">${h.occupants}</td>
+                                            <td style="line-height:1.6;">${h.meaning}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 4. เจาะลึก 5 มิติชีวิตเฉพาะบุคคล -->
+                    ${reading.lifeAspects ? `
+                        <div style="margin-bottom:24px;">
+                            <h3 style="color:#1e1b4b; border-bottom:1.5px solid #e2e8f0; padding-bottom:6px; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                                <span style="color:#d97706;">✦</span> 4. เจาะลึก 5 มิติชีวิตเฉพาะบุคคล (Personal Destiny Core)
+                            </h3>
+                            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-top:10px; font-size:0.9rem;">
+                                <div style="background:#f8fafc; border-left:4px solid #3b82f6; padding:12px; border-radius:6px;">
+                                    <strong style="color:#1e3a8a;">💼 1. อาชีพ & การงาน:</strong><br>
+                                    ${reading.lifeAspects.career.title}<br>
+                                    <small style="color:#475569;">💡 ${reading.lifeAspects.career.advice}</small>
+                                </div>
+                                <div style="background:#f8fafc; border-left:4px solid #10b981; padding:12px; border-radius:6px;">
+                                    <strong style="color:#065f46;">👥 2. พี่น้อง & ญาติมิตร:</strong><br>
+                                    เกณฑ์จำนวน: ${reading.lifeAspects.siblings.estimate}<br>
+                                    <small style="color:#475569;">🤝 ${reading.lifeAspects.siblings.bond}</small>
+                                </div>
+                                <div style="background:#f8fafc; border-left:4px solid #f59e0b; padding:12px; border-radius:6px;">
+                                    <strong style="color:#92400e;">👨‍👩‍👧 3. บิดามารดา:</strong><br>
+                                    พ่อ: ${reading.lifeAspects.parents.father}<br>
+                                    แม่: ${reading.lifeAspects.parents.mother}
+                                </div>
+                                <div style="background:#f8fafc; border-left:4px solid #ec4899; padding:12px; border-radius:6px;">
+                                    <strong style="color:#9d174d;">💖 4. คู่ครอง & ชีวิตสมรส:</strong><br>
+                                    ${reading.lifeAspects.spouse.desc}
+                                </div>
+                                <div style="background:#f8fafc; border-left:4px solid #ef4444; padding:12px; border-radius:6px; grid-column:1 / -1;">
+                                    <strong style="color:#991b1b;">🩺 5. สุขภาพ & โรคภัยที่ต้องระวัง:</strong><br>
+                                    ${reading.lifeAspects.health.advice}
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- 5. มหาทักษาเสวยอายุ 108 ปี & ชันษาจร -->
+                    <div style="margin-bottom:24px;">
+                        <h3 style="color:#1e1b4b; border-bottom:1.5px solid #e2e8f0; padding-bottom:6px; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                            <span style="color:#d97706;">✦</span> 5. มหาทักษาเสวยอายุ & ชันษาจรประจำปี (อายุย่าง ${selectedAgeYang} ปี พ.ศ. ${yearData.yearBE})
+                        </h3>
+                        <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px; margin-top:8px; font-size:0.92rem;">
+                            <strong>📍 ชันษาจรปีนี้:</strong> ตกภพ${dasha.chansaJor.houseName} (ราศี${dasha.chansaJor.rasiName}) — ${dasha.chansaJor.prediction}<br>
+                            <strong>👑 ดาวใหญ่เสวยอายุ:</strong> ${dasha.currentMajor.majorName} (เสวย ${dasha.currentMajor.years} ปี) — ${dasha.currentMajor.desc}<br>
+                            <strong>✨ ดาวแทรกย่อย:</strong> ${dasha.currentSub.name} (แทรก ${dasha.currentSub.subYears} ปี)
+                        </div>
+                    </div>
+
+                    <!-- 6. จังหวะชีวิต 12 เดือนประจำปีนี้ -->
+                    <div style="margin-bottom:24px;">
+                        <h3 style="color:#1e1b4b; border-bottom:1.5px solid #e2e8f0; padding-bottom:6px; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                            <span style="color:#d97706;">✦</span> 6. จังหวะชีวิต 12 เดือน (ประจำวัยอายุย่าง ${selectedAgeYang} ปี)
+                        </h3>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; margin-top:10px; font-size:0.85rem;">
+                            ${monthlyData.map(m => `
+                                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:8px 10px;">
+                                    <strong>เดือน${m.monthName}</strong> <small style="color:#64748b;">(ภพ${m.houseName})</small><br>
+                                    <span style="color:#334155; line-height:1.5;">${m.text}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- 7. เลขศาสตร์ อัญมณี และทิศฮวงจุ้ย -->
+                    <div style="margin-bottom:24px;">
+                        <h3 style="color:#1e1b4b; border-bottom:1.5px solid #e2e8f0; padding-bottom:6px; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                            <span style="color:#d97706;">✦</span> 7. เลขศาสตร์ รหัสชีวิต & ฮวงจุ้ยมงคล (Personalized Elements)
+                        </h3>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; margin-top:8px; font-size:0.9rem;">
+                            <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:8px;">
+                                <strong>✨ เลขมงคลนำโชค:</strong> <span style="color:#15803d; font-weight:bold; font-size:1.1rem;">${num.luckyCodes.singleLucky}</span><br>
+                                <strong>💰 คู่เลขเปิดทรัพย์:</strong> <span style="color:#15803d; font-weight:bold;">${num.luckyCodes.wealthPairs}</span><br>
+                                <strong>💖 คู่เลขมหาเสน่ห์:</strong> <span style="color:#be185d; font-weight:bold;">${num.luckyCodes.charmPairs}</span><br>
+                                <strong>⚠️ เลขกาลกิณีควรเลี่ยง:</strong> <span style="color:#b91c1c; font-weight:bold;">${num.luckyCodes.forbiddenDigit}</span>
+                            </div>
+                            <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:10px; border-radius:8px;">
+                                <strong>💎 อัญมณีประจำตัว:</strong> <span style="color:#1e40af; font-weight:bold;">${num.gemology.name}</span> (${num.gemology.color})<br>
+                                <small style="color:#475569;">${num.gemology.desc}</small><br>
+                                <strong>🧭 ทิศเปิดทรัพย์ฮวงจุ้ย:</strong> <span style="color:#1e40af; font-weight:bold;">${num.fengshui.bestDirection}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 8. เคล็ดลับการบำเพ็ญบุญและพิธีกรรมเสริมดวง -->
+                    ${ritual ? `
+                        <div style="margin-bottom:24px;">
+                            <h3 style="color:#1e1b4b; border-bottom:1.5px solid #e2e8f0; padding-bottom:6px; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                                <span style="color:#d97706;">✦</span> 8. เคล็ดลับการบำเพ็ญบุญ & สัตว์ปล่อยสะเดาะเคราะห์ (Ritual Prescription)
+                            </h3>
+                            <div style="font-size:0.9rem; line-height:1.7; background:#fffbeb; border:1px solid #fde68a; padding:12px; border-radius:8px; margin-top:8px;">
+                                • <strong>สัตว์ปล่อยเสริมดวง:</strong> ปล่อย ${ritual.animalRelease.targetCountSri} ตัว (เสริมดาวศรี) หรือ ${ritual.animalRelease.targetCountAge} ตัว (ต่ออายุขัย)<br>
+                                • <strong>พระพุทธรูปประจำตัว:</strong> ${ritual.buddhaAndChants.birthBuddha} | คาถา: <strong>${ritual.buddhaAndChants.birthChant}</strong><br>
+                                • <strong>ของสังฆทานมงคล:</strong> ${ritual.sanghadanaOfferings.essentialItems.join(', ')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- 9. เกณฑ์พิเศษ & พิกัดสิ่งศักดิ์สิทธิ์ประจำดวงชะตา -->
+                    <div style="margin-bottom:24px;">
+                        <h3 style="color:#1e1b4b; border-bottom:1.5px solid #e2e8f0; padding-bottom:6px; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                            <span style="color:#d97706;">✦</span> 9. เกณฑ์พิเศษชั้นครู & พิกัดสิ่งศักดิ์สิทธิ์ประจำดวงชะตา (Special Yogas & Shrines)
+                        </h3>
+                        <div style="font-size:0.9rem; background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:8px; margin-top:8px; line-height:1.7;">
+                            <strong>👑 เกณฑ์วาสนา:</strong> ${ThaiHoroProEngine.calculateSpecialYogasAndAfflictions(currentHoroData).summaryText}<br>
+                            <strong>📍 สิ่งศักดิ์สิทธิ์เปิดทรัพย์:</strong> ${ThaiHoroProEngine.getSacredTempleRecommendations(currentHoroData).map(t => `${t.name} (${t.role})`).join(' • ')}
+                        </div>
+                    </div>
+
+                    <!-- Official Bureau Signature & Stamp -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:36px; border-top:1.5px double #d4af37; padding-top:20px;">
+                        <div style="color:#64748b; font-size:0.85rem; line-height:1.6;">
+                            <strong>สยามโหรามงคล สำนักพยากรณ์และที่ปรึกษาชะตาชีวิต</strong><br>
+                            ผู้ออกเอกสาร: สยามโหรามงคล Certified Astrological Engine<br>
+                            วันที่ออกเอกสาร: ${new Date().toLocaleDateString('th-TH')}
+                        </div>
+                        <div style="text-align:center; border:2px solid #d97706; padding:10px 24px; border-radius:10px; color:#d97706; font-weight:bold; font-size:0.95rem; box-shadow:0 2px 8px rgba(217,119,6,0.15);">
+                            👑 สยามโหรามงคล<br>CERTIFIED DOSSIER
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        function closeVipDossierModal() {
+            const modal = document.getElementById('vipDossierModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function printVipDossier() {
+            document.body.classList.add('is-printing-vip');
+            const cleanUp = () => {
+                document.body.classList.remove('is-printing-vip');
+                window.removeEventListener('afterprint', cleanUp);
+            };
+            window.addEventListener('afterprint', cleanUp);
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        }
+
+        function printRitualPrescription() {
+            document.body.classList.add('is-printing-ritual');
+            const cleanUp = () => {
+                document.body.classList.remove('is-printing-ritual');
+                window.removeEventListener('afterprint', cleanUp);
+            };
+            window.addEventListener('afterprint', cleanUp);
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        }
+
+        // =========================================================================
+        // 🏛️ BUREAU FUNCTION 1: Case Notes & Consultation CRM
+        // =========================================================================
+        function openCaseNotesModal() {
+            const modal = document.getElementById('caseNotesModal');
+            if (!modal) return;
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const bDate = document.getElementById('targetBirthDate').value || '';
+            document.getElementById('caseNotesClientName').textContent = `${targetName} (เกิด: ${bDate})`;
+
+            loadCaseNotesHistory();
+            modal.style.display = 'block';
+        }
+
+        function closeCaseNotesModal() {
+            const modal = document.getElementById('caseNotesModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function getCaseNotesStorageKey() {
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const bDate = document.getElementById('targetBirthDate').value || '';
+            return `case_note_${targetName}_${bDate}`;
+        }
+
+        function saveCurrentCaseNote() {
+            const topic = document.getElementById('caseTopicInput').value.trim();
+            const notes = document.getElementById('caseNotesTextarea').value.trim();
+            const followUp = document.getElementById('caseFollowUpDate').value;
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const bDate = document.getElementById('targetBirthDate').value || '';
+
+            if (!notes && !topic) {
+                Swal.fire('แจ้งเตือน', 'กรุณาระบุหัวข้อหรือบันทึกคำทำนายก่อนบันทึก', 'warning');
+                return;
+            }
+
+            const allNotes = JSON.parse(localStorage.getItem('bureau_all_case_notes')) || [];
+            const newRecord = {
+                id: Date.now(),
+                clientName: targetName,
+                birthDate: bDate,
+                topic: topic || "ตรวจดวงชะตาทั่วไป",
+                notes: notes,
+                followUpDate: followUp || "-",
+                savedAt: new Date().toLocaleString('th-TH')
+            };
+
+            allNotes.unshift(newRecord);
+            localStorage.setItem('bureau_all_case_notes', JSON.stringify(allNotes));
+
+            Swal.fire({
+                icon: 'success',
+                title: 'บันทึกเคสสำเร็จ',
+                text: 'บันทึกประวัติการให้คำปรึกษาลงสมุดบันทึกของสำนักเรียบร้อยแล้ว',
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            loadCaseNotesHistory();
+        }
+
+        function clearCurrentCaseNote() {
+            document.getElementById('caseTopicInput').value = '';
+            document.getElementById('caseNotesTextarea').value = '';
+            document.getElementById('caseFollowUpDate').value = '';
+        }
+
+        function loadCaseNotesHistory() {
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const allNotes = JSON.parse(localStorage.getItem('bureau_all_case_notes')) || [];
+            const filtered = allNotes.filter(n => n.clientName === targetName);
+            const listDiv = document.getElementById('caseNotesHistoryList');
+            if (!listDiv) return;
+
+            if (filtered.length === 0) {
+                listDiv.innerHTML = '<div style="color:#94a3b8; text-align:center; padding:12px;">ยังไม่มีบันทึกเคสเดิมของลูกดวงท่านนี้</div>';
+                return;
+            }
+
+            listDiv.innerHTML = filtered.map(n => `
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <strong style="color:#1e40af;">📌 ${n.topic}</strong>
+                        <span style="font-size:0.75rem; color:#64748b;">${n.savedAt}</span>
+                    </div>
+                    <div style="font-size:0.88rem; color:#334155; line-height:1.6; white-space:pre-wrap;">${n.notes}</div>
+                    ${n.followUpDate !== '-' ? `<div style="font-size:0.8rem; color:#d97706; margin-top:4px;">📅 นัดหมายติดตามผล: ${n.followUpDate}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // =========================================================================
+        // 🏛️ BUREAU FUNCTION 2: Ritual & Remedial Prescription
+        // =========================================================================
+        function openRitualPrescriptionModal() {
+            if (!currentHoroData) return;
+            const modal = document.getElementById('ritualPrescriptionModal');
+            const printArea = document.getElementById('ritualPrintArea');
+            if (!modal || !printArea) return;
+
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const ritual = ThaiHoroProEngine.generateRitualPrescription(currentHoroData);
+            if (!ritual) return;
+
+            printArea.innerHTML = `
+                <div style="border:2px solid #059669; padding:24px; border-radius:12px; background:#fff;">
+                    <!-- Temple Seal Header -->
+                    <div style="text-align:center; border-bottom:2px double #059669; padding-bottom:16px; margin-bottom:20px;">
+                        <div style="font-size:1.6rem; font-weight:bold; color:#065f46; font-family:'Cinzel', serif;">
+                            สยามโหรามงคล สำนักพยากรณ์
+                        </div>
+                        <div style="font-size:1.1rem; color:#d97706; font-weight:bold; margin-top:2px;">
+                            ใบสั่งเสริมดวงชะตา & เคล็ดพิธีกรรมบำเพ็ญบุญเฉพาะบุคคล (Ritual Prescription)
+                        </div>
+                        <div style="font-size:0.9rem; color:#475569; margin-top:4px;">
+                            เจ้าชะตา: <strong>คุณ ${targetName}</strong> | ดาวกำเนิด: <strong>${ritual.birthPlanetInfo.name}</strong> | อายุย่าง: <strong>${ritual.ageYang} ปี</strong>
+                        </div>
+                    </div>
+
+                    <!-- 1. การปล่อยสัตว์สะเดาะเคราะห์ตามกำลังดาว -->
+                    <div style="margin-bottom:18px;">
+                        <h3 style="font-size:1.05rem; color:#065f46; border-bottom:1px solid #e2e8f0; padding-bottom:4px; margin-bottom:8px;">
+                            🐟 1. จำนวนสัตว์ปล่อยเสริมบารมีสะเดาะเคราะห์ (ตามกำลังดาว)
+                        </h3>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:10px;">
+                            <div style="background:#ecfdf5; border:1px solid #a7f3d0; padding:10px; border-radius:8px;">
+                                <strong style="color:#047857; font-size:0.85rem;">✨ เสริมโชคลาภ (ดาวศรี ${ritual.sriPlanetInfo.name}):</strong>
+                                <div style="font-size:1.2rem; font-weight:bold; color:#065f46;">ปล่อย ${ritual.animalRelease.targetCountSri} ตัว</div>
+                            </div>
+                            <div style="background:#fef2f2; border:1px solid #fecaca; padding:10px; border-radius:8px;">
+                                <strong style="color:#991b1b; font-size:0.85rem;">⚠️ สะเดาะเคราะห์ (ดาวกาลกิณี ${ritual.kalaPlanetInfo.name}):</strong>
+                                <div style="font-size:1.2rem; font-weight:bold; color:#b91c1c;">ปล่อย ${ritual.animalRelease.targetCountKala} ตัว</div>
+                            </div>
+                            <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:10px; border-radius:8px;">
+                                <strong style="color:#1e40af; font-size:0.85rem;">🌿 ต่ออายุขัย (เท่าอายุย่าง + 1):</strong>
+                                <div style="font-size:1.2rem; font-weight:bold; color:#1d4ed8;">ปล่อย ${ritual.animalRelease.targetCountAge} ตัว</div>
+                            </div>
+                        </div>
+                        <div style="font-size:0.85rem; color:#475569; background:#f8fafc; padding:10px; border-radius:6px; line-height:1.6;">
+                            <strong>ชนิดสัตว์ที่แนะนำ:</strong> ${ritual.animalRelease.recommendedAnimals.map(a => `<strong>${a.name}</strong> (${a.meaning})`).join(' • ')}
+                        </div>
+                    </div>
+
+                    <!-- 2. พระประจำวันเกิดและบทสวด -->
+                    <div style="margin-bottom:18px;">
+                        <h3 style="font-size:1.05rem; color:#065f46; border-bottom:1px solid #e2e8f0; padding-bottom:4px; margin-bottom:8px;">
+                            🙏 2. พระประจำวันเกิด & พระคาถาบูชาดวงชะตา
+                        </h3>
+                        <div style="font-size:0.9rem; line-height:1.7; color:#334155;">
+                            <div>• <strong>พระพุทธรูปปางประจำตัว:</strong> ${ritual.buddhaAndChants.birthBuddha}</div>
+                            <div>• <strong>พระคาถาประจำดาวกำเนิด:</strong> <span style="color:#b45309; font-weight:bold;">${ritual.buddhaAndChants.birthChant}</span></div>
+                            <div>• <strong>พระคาถาเสริมโชคลาภ (ศรี):</strong> <span style="color:#047857; font-weight:bold;">${ritual.buddhaAndChants.sriChant}</span></div>
+                            <div>• <strong>บทสวดมหาเจริญ:</strong> ${ritual.buddhaAndChants.mahaMantra}</div>
+                            <div>• <strong>ลักษณะวัดที่ถูกโฉลกกับดวง:</strong> ${ritual.buddhaAndChants.suggestedTempleType}</div>
+                        </div>
+                    </div>
+
+                    <!-- 3. สังฆทานและมหาทานบารมี -->
+                    <div style="margin-bottom:18px;">
+                        <h3 style="font-size:1.05rem; color:#065f46; border-bottom:1px solid #e2e8f0; padding-bottom:4px; margin-bottom:8px;">
+                            🕯️ 3. สิ่งของถวายสังฆทาน & การบำเพ็ญมหาทาน
+                        </h3>
+                        <div style="font-size:0.9rem; line-height:1.7; color:#334155;">
+                            <div>• <strong>สีดอกไม้บูชาพระ:</strong> ${ritual.sanghadanaOfferings.flowerColor}</div>
+                            <div>• <strong>ของสังฆทานมงคล:</strong> ${ritual.sanghadanaOfferings.essentialItems.join(', ')}</div>
+                            <div>• <strong>มหาทานเสริมบารมี:</strong> ${ritual.greatCharity.join(' • ')}</div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Stamp -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed #cbd5e1; padding-top:14px; margin-top:20px;">
+                        <div style="font-size:0.8rem; color:#64748b;">
+                            อาจารย์ผู้ให้คำปรึกษา: สยามโหรามงคล Certified Astrologer<br>
+                            วันที่ออกใบสั่งเสริมดวง: ${new Date().toLocaleDateString('th-TH')}
+                        </div>
+                        <div style="border:1.5px solid #059669; color:#059669; padding:4px 16px; border-radius:6px; font-weight:bold; font-size:0.85rem; text-align:center;">
+                            สยามโหรามงคล<br>RITUAL PRESCRIBED
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        function closeRitualPrescriptionModal() {
+            const modal = document.getElementById('ritualPrescriptionModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        // =========================================================================
+        // 🏛️ BUREAU FUNCTION 3: Live Tarot Companion
+        // =========================================================================
+        function openTarotLiveModal() {
+            const modal = document.getElementById('tarotLiveModal');
+            if (!modal) return;
+            drawLiveTarotCards(1);
+            modal.style.display = 'block';
+        }
+
+        function closeTarotLiveModal() {
+            const modal = document.getElementById('tarotLiveModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function drawLiveTarotCards(count = 1) {
+            const display = document.getElementById('tarotCardsDisplayArea');
+            if (!display) return;
+            const q = document.getElementById('tarotQuestionInput').value || 'คำถามเสี่ยงทาย';
+
+            if (typeof tarotCards === 'undefined' || !tarotCards.length) {
+                display.innerHTML = '<div style="color:#ef4444; padding:20px;">ไม่พบฐานข้อมูลไพ่ทาโรต์</div>';
+                return;
+            }
+
+            // Shuffle and pick
+            const shuffled = [...tarotCards].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, count);
+            const labels = count === 3 ? ["1. อดีต / รากเหง้า", "2. ปัจจุบัน / อุปสรรค", "3. อนาคต / บทสรุป"] : ["คำตอบของไพ่เสี่ยงทาย"];
+
+            display.innerHTML = selected.map((card, idx) => `
+                <div style="background:#ffffff; border:1.5px solid #fbcfe8; border-radius:12px; padding:14px; box-shadow:0 4px 14px rgba(0,0,0,0.05); text-align:center;">
+                    <span style="background:#fdf2f8; color:#be185d; padding:2px 10px; border-radius:12px; font-size:0.8rem; font-weight:bold; display:inline-block; margin-bottom:8px;">
+                        ${labels[idx]}
+                    </span>
+                    <div style="height:220px; display:flex; align-items:center; justify-content:center; margin-bottom:10px;">
+                        <img src="${card.img}" alt="${card.name}" style="max-height:100%; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.15);" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg'">
+                    </div>
+                    <div style="font-weight:bold; color:#1e1b4b; font-size:1.05rem; margin-bottom:4px;">
+                        ${card.name}
+                    </div>
+                    <div style="font-size:0.85rem; color:#475569; line-height:1.6; text-align:left; background:#faf5ff; padding:8px 10px; border-radius:6px;">
+                        ${count === 3 && idx === 0 ? card.past : count === 3 && idx === 1 ? card.present : count === 3 && idx === 2 ? card.future : card.meaning}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // =========================================================================
+        // 🏛️ BUREAU FUNCTION 4: Client Mobile Sync via QR Code
+        // =========================================================================
+        function openMobileSyncModal() {
+            const modal = document.getElementById('mobileSyncModal');
+            const qrContainer = document.getElementById('mobileSyncQrContainer');
+            if (!modal || !qrContainer) return;
+
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const bDate = document.getElementById('targetBirthDate').value || '';
+            const bTime = document.getElementById('targetBirthTime').value || '12:00';
+
+            document.getElementById('mobileSyncClientLabel').textContent = `คุณ ${targetName} (${bDate} ${bTime} น.)`;
+
+            // Build shareable url
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('name', targetName);
+            currentUrl.searchParams.set('bdate', bDate);
+            currentUrl.searchParams.set('btime', bTime);
+
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: currentUrl.toString(),
+                width: 180,
+                height: 180,
+                colorDark: "#0e7490",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+
+            modal.style.display = 'block';
+        }
+
+        function closeMobileSyncModal() {
+            const modal = document.getElementById('mobileSyncModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function copyMobileSyncLink() {
+            const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const bDate = document.getElementById('targetBirthDate').value || '';
+            const bTime = document.getElementById('targetBirthTime').value || '12:00';
+
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('name', targetName);
+            currentUrl.searchParams.set('bdate', bDate);
+            currentUrl.searchParams.set('btime', bTime);
+
+            navigator.clipboard.writeText(currentUrl.toString());
+            Swal.fire('คัดลอกสำเร็จ', 'คัดลอกลิงก์ผลดวงชะตาสำหรับส่งให้ลูกดวงแล้ว', 'success');
+        }
+
+        // =========================================================================
+        // 🏛️ BUREAU FUNCTION 5: Bureau Billing & PromptPay
+        // =========================================================================
+        function openBillingModal() {
+            const modal = document.getElementById('billingModal');
+            if (!modal) return;
+            updatePromptPayDisplay();
+            modal.style.display = 'block';
+        }
+
+        function closeBillingModal() {
+            const modal = document.getElementById('billingModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function selectFeePackage(name, price) {
+            document.getElementById('billingPackageName').value = name;
+            document.getElementById('billingAmount').value = price;
+            updatePromptPayDisplay();
+        }
+
+        function updatePromptPayDisplay() {
+            const amt = parseFloat(document.getElementById('billingAmount').value) || 599;
+            document.getElementById('displayBillingAmount').textContent = amt.toLocaleString('th-TH');
+
+            const qrContainer = document.getElementById('billingQrContainer');
+            if (!qrContainer) return;
+
+            // Generate PromptPay QR code
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: `https://promptpay.io/0812345678/${amt}.png`,
+                width: 160,
+                height: 160,
+                colorDark: "#1e1b4b",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        }
+
+        function recordPaymentSuccess() {
+            const amt = parseFloat(document.getElementById('billingAmount').value) || 599;
+            const pkgName = document.getElementById('billingPackageName').value || 'ตรวจดวงชะตา';
+            const clientName = document.getElementById('targetName').value || 'เจ้าชะตา';
+
+            const allPayments = JSON.parse(localStorage.getItem('bureau_payments')) || [];
+            allPayments.unshift({
+                id: 'REC-' + Date.now(),
+                clientName: clientName,
+                packageName: pkgName,
+                amount: amt,
+                status: 'PAID',
+                date: new Date().toLocaleString('th-TH')
+            });
+            localStorage.setItem('bureau_payments', JSON.stringify(allPayments));
+
+            Swal.fire({
+                icon: 'success',
+                title: 'บันทึกการรับเงินสำเร็จ',
+                text: `บันทึกรายรับค่าครูจำนวน ${amt.toLocaleString()} บาท เรียบร้อยแล้ว`,
+                confirmButtonText: 'พิมพ์ใบเสร็จ'
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    window.print();
+                }
+            });
+            closeBillingModal();
         }
 
         // คำนวณและแสดงผลคำทำนายรายปี (1-100) และ 12 เดือนที่แปรผันตามอายุย่างที่เลือก
@@ -1464,7 +3312,20 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Check for URL query params (e.g. from Mobile Sync or Share Link)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('name')) {
+                document.getElementById('targetName').value = urlParams.get('name');
+            }
+            if (urlParams.has('bdate')) {
+                document.getElementById('targetBirthDate').value = urlParams.get('bdate');
+            }
+            if (urlParams.has('btime')) {
+                document.getElementById('targetBirthTime').value = urlParams.get('btime');
+            }
+
             initMemberDropdown();
+            initSynastryDropdown();
             processHoroscopeCalculation();
         });
     </script>

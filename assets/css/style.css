@@ -1486,29 +1486,35 @@ body {
 }
 
 #promchartsection .calc-box select,
-#promchartsection .calc-box input[type="number"] {
+#promchartsection .calc-box input[type="number"],
+#promchartsection .calc-box .form-control {
     background: #f8fafc !important;
     color: #1e293b !important;
     border: 1.5px solid #e2e8f0 !important;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 1rem;
+    border-radius: 12px !important;
+    padding: 10px 16px !important;
+    font-size: 1rem !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    line-height: 1.5 !important;
+    box-sizing: border-box !important;
     transition: border-color 0.2s, box-shadow 0.2s;
-    width: 100%;
+    width: 100% !important;
+    display: block !important;
 }
 
 #promchartsection .calc-box select:focus,
-#promchartsection .calc-box input[type="number"]:focus {
+#promchartsection .calc-box input[type="number"]:focus,
+#promchartsection .calc-box .form-control:focus {
     border-color: #6366f1 !important;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
     outline: none;
 }
 
-#promchartsection .calc-box .input-group {
-    margin-bottom: 18px;
-}
-
+#promchartsection .calc-box .input-group,
 #promchartsection .calc-box .form-group {
+    display: block;
+    width: 100%;
     margin-bottom: 18px;
 }
 

@@ -1696,23 +1696,23 @@
         <div class="container">
             <h2 class="title">🎡 ทำนายดวงชะตาตามอายุ (ตำราพรหมชาติ)</h2>
             <div class="calc-box">
-            <div class="form-group mb-3">
+                <div class="form-group mb-3">
                     <label>เลือกสมาชิกจากประวัติ:</label>
                     <select class="form-control member-selector-shared"
                         onchange="autoFillMemberData(this.value);calculatePromchart()">
                         <option value="">-- เลือกสมาชิก --</option>
                     </select>
-            </div>
-                <div class="input-group">
+                </div>
+                <div class="form-group mb-3">
                     <label>ระบุเพศ:</label>
-                    <select id="userGender">
+                    <select id="userGender" class="form-control">
                         <option value="male">ชาย (นับเวียนขวา)</option>
                         <option value="female">หญิง (นับเวียนซ้าย)</option>
                     </select>
                 </div>
-                <div class="input-group">
+                <div class="form-group mb-3">
                     <label>อายุปัจจุบัน (ปี):</label>
-                    <input type="number" id="userAgeprom" placeholder="ตัวอย่าง: 25" min="1">
+                    <input type="number" id="userAgeprom" class="form-control" placeholder="ตัวอย่าง: 25" min="1">
                 </div>
                 <button onclick="calculatePromchart()" class="btn-predict">✨ ทำนายดวงปีนี้</button>
             </div>

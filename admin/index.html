@@ -82,6 +82,60 @@
         <!-- Quick Tools Container -->
         <div id="adminQuickToolsContainer"></div>
 
+        <!-- 🏛️ Bureau Operations & Revenue Stats (สถิติสำนักพยากรณ์ & ค่าครู) -->
+        <div class="admin-glass-card" style="border: 2px solid rgba(251,191,36,0.5);">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0 font-weight-bold" style="color: #FFF0A8;">
+                    <i class="fas fa-landmark mr-2 text-warning"></i> สถิติการดำเนินงานสำนักพยากรณ์ (Bureau Operations)
+                </h4>
+                <a href="../pages/thai-horoscope-pro.html" class="btn btn-sm btn-warning font-weight-bold" style="border-radius: 20px;">
+                    <i class="fas fa-external-link-alt mr-1"></i> เปิดโต๊ะพยากรณ์
+                </a>
+            </div>
+            <p style="color: #CBD5E1; font-size: 0.95rem;">สรุปยอดรายรับค่าครู, ประวัติการให้คำปรึกษา และสมุดบันทึกเคสของอาจารย์</p>
+            
+            <!-- Summary Stats Counters -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4 mb-2">
+                    <div class="p-3 text-center rounded" style="background: rgba(16,185,129,0.15); border: 1px solid #10B981;">
+                        <small class="text-white-50">รายรับค่าครูสะสม (PromptPay / Direct)</small>
+                        <h3 id="bureauTotalRevenue" class="font-weight-bold my-1 text-success">0 ฿</h3>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <div class="p-3 text-center rounded" style="background: rgba(59,130,246,0.15); border: 1px solid #3B82F6;">
+                        <small class="text-white-50">เคสที่บันทึกคำทำนาย (Case Notes)</small>
+                        <h3 id="bureauTotalCases" class="font-weight-bold my-1 text-primary">0 เคส</h3>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <div class="p-3 text-center rounded" style="background: rgba(245,158,11,0.15); border: 1px solid #F59E0B;">
+                        <small class="text-white-50">รายการออกใบเสร็จค่าครู (Receipts)</small>
+                        <h3 id="bureauTotalReceipts" class="font-weight-bold my-1 text-warning">0 รายการ</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Bureau Payments Table -->
+            <div class="table-responsive" style="border-radius: 16px; border: 1px solid rgba(241,208,110,0.25);">
+                <table class="table table-dark-glass table-hover m-0">
+                    <thead>
+                        <tr>
+                            <th>รหัสใบเสร็จ</th>
+                            <th>ชื่อลูกดวง (Client)</th>
+                            <th>แพ็กเกจการพยากรณ์</th>
+                            <th>ยอดค่าครู (บาท)</th>
+                            <th>วันที่รับเงิน</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bureauPaymentsTableBody">
+                        <tr><td colspan="6" class="text-center py-3 text-white-50">ยังไม่มีประวัติการรับเงินค่าครู</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- ตรวจสอบการชำระเงิน (Payments) -->
         <div class="admin-glass-card">
             <div class="d-flex justify-content-between align-items-center mb-3">

@@ -226,7 +226,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // ----------------------------------------------------
+    // 🏛️ ส่วนของสถิติสำนักพยากรณ์ & ค่าครู (Bureau Operations)
+    // ----------------------------------------------------
+    function loadBureauOperationsData() {
+        try {
+            const bureauPayments = JSON.parse(localStorage.getItem('bureau_payments')) || [];
+            const bureauCaseNotes = JSON.parse(localStorage.getItem('bureau_all_case_notes')) || [];
+
+            let totalRev = 0;
+            bureauPayments.forEach(p => {
+                totalRev += (parseFloat(p.amount) || 0);
+            });
+
+            const revEl = document.getElementById('bureauTotalRevenue');
+            const casesEl = document.getElementById('bureauTotalCases');
+            const receiptsEl = document.getElementById('bureauTotalReceipts');
+            const tbody = document.getElementById('bureauPaymentsTableBody');
+
+            if (revEl) revEl.innerText = `${totalRev.toLocaleString('th-TH')} ฿`;
+            if (casesEl) casesEl.innerText = `${bureauCaseNotes.length} เคส`;
+            if (receiptsEl) receiptsEl.innerText = `${bureauPayments.length} รายการ`;
+
+            if (tbody) {
+                if (bureauPayments.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-white-50">ยังไม่มีประวัติการรับเงินค่าครู (สามารถบันทึกได้จากหน้าโต๊ะพยากรณ์)</td></tr>';
+                } else {
+                    tbody.innerHTML = bureauPayments.slice(0, 10).map(p => `
+                        <tr>
+                            <td class="font-weight-bold text-gold">${p.id || '-'}</td>
+                            <td><strong>${p.clientName || 'เจ้าชะตา'}</strong></td>
+                            <td>${p.packageName || 'ตรวจดวงชะตา'}</td>
+                            <td class="text-success font-weight-bold">${(parseFloat(p.amount) || 0).toLocaleString()} ฿</td>
+                            <td><small class="text-white-50">${p.date || '-'}</small></td>
+                            <td><span class="badge badge-success px-2 py-1">ชำระแล้ว</span></td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        } catch (e) {
+            console.error("Error loading bureau operations:", e);
+        }
+    }
+
     // โหลดครั้งแรก
     loadVocabularies();
     loadPendingPayments();
+    loadBureauOperationsData();
 });

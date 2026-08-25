@@ -387,6 +387,14 @@ const ThaiHoroProEngine = (function() {
             jor: jorThaksa,
             birthPlanetNum: birthPlanetNum,
             jorStartPlanet: THAKSA_ORDER[jorIdx],
+            boriwanKamnerd: originalThaksa["บริวาร"],
+            ayuKamnerd: originalThaksa["อายุ"],
+            dechaKamnerd: originalThaksa["เดช"],
+            sriKamnerd: originalThaksa["ศรี"],
+            mulaKamnerd: originalThaksa["มูละ"],
+            utsaKamnerd: originalThaksa["อุตสาหะ"],
+            montriKamnerd: originalThaksa["มนตรี"],
+            kalakiniKamnerd: originalThaksa["กาลกิณี"],
             dechaJor: jorThaksa["เดช"],
             sriJor: jorThaksa["ศรี"],
             kalakiniJor: jorThaksa["กาลกิณี"],
@@ -1462,6 +1470,893 @@ const ThaiHoroProEngine = (function() {
         return data;
     }
 
+    // =========================================================================
+    // 🌟 PRO SYSTEM 1: VIP Deep Synastry & Compatibility Engine (สมพงษ์ 5 มิติ)
+    // =========================================================================
+    function calculateSynastryCompatibility(p1Data, p2Data) {
+        if (!p1Data || !p2Data) return null;
+
+        const asc1 = p1Data.asc ? p1Data.asc.rasiIndex : 0;
+        const asc2 = p2Data.asc ? p2Data.asc.rasiIndex : 0;
+        const elem1 = ZODIAC_SIGNS[asc1].element;
+        const elem2 = ZODIAC_SIGNS[asc2].element;
+
+        // 1. ธาตุสมพงษ์ (Elemental Harmony) 25 คะแนน
+        let elemScore = 15;
+        let elemDesc = "";
+        if (elem1 === elem2) {
+            elemScore = 24;
+            elemDesc = `ธาตุเดียวกัน (${elem1} กับ ${elem2}) มีอุปนิสัยและจังหวะชีวิตเข้ากันได้ง่าย มีความเข้าใจซึ่งกันและกันอย่างลึกซึ้ง`;
+        } else if ((elem1 === "ไฟ" && elem2 === "ลม") || (elem1 === "ลม" && elem2 === "ไฟ")) {
+            elemScore = 25;
+            elemDesc = `ธาตุส่งเสริมกัน (ไฟกับลม) ลมช่วยโหมไฟให้รุ่งโรจน์ ต่างฝ่ายต่างช่วยเติมไฟในการสร้างอนาคตและแรงบันดาลใจ`;
+        } else if ((elem1 === "ดิน" && elem2 === "น้ำ") || (elem1 === "น้ำ" && elem2 === "ดิน")) {
+            elemScore = 25;
+            elemDesc = `ธาตุเกื้อหนุนกัน (ดินกับน้ำ) น้ำทำให้ดินชุ่มชื้น ดินช่วยโอบอุ้มน้ำ สร้างความมั่นคงและโภคทรัพย์ให้แก่ครอบครัว`;
+        } else if ((elem1 === "ไฟ" && elem2 === "น้ำ") || (elem1 === "น้ำ" && elem2 === "ไฟ")) {
+            elemScore = 10;
+            elemDesc = `ธาตุขัดแย้ง (ไฟกับน้ำ) ดุจน้ำกับไฟ ต้องอาศัยความใจเย็น ไม่ควรใช้อารมณ์ปะทะกันเมื่อมีข้อคิดเห็นต่าง`;
+        } else if ((elem1 === "ดิน" && elem2 === "ลม") || (elem1 === "ลม" && elem2 === "ดิน")) {
+            elemScore = 14;
+            elemDesc = `ธาตุต่างรูปแบบ (ดินกับลม) ฝ่ายหนึ่งเน้นความมั่นคง อีกฝ่ายเน้นการปรับตัว ต้องอาศัยการสื่อสารปรับจูนกัน`;
+        } else {
+            elemScore = 18;
+            elemDesc = `ธาตุผสานกันได้ (${elem1} กับ ${elem2}) ประคับประคองชีวิตคู่ได้อย่างราบรื่น`;
+        }
+
+        // 2. ทักษาดาวกำเนิด & ดาวคู่มิตร-คู่ศัตรู 25 คะแนน
+        const p1Num = p1Data.birthPlanetNum;
+        const p2Num = p2Data.birthPlanetNum;
+        const p1Thaksa = p1Data.thaksa;
+        const p2Thaksa = p2Data.thaksa;
+
+        let thaksaScore = 18;
+        let thaksaDesc = "";
+        const isP2SriToP1 = (p2Num === p1Thaksa.sriKamnerd);
+        const isP2MontriToP1 = (p2Num === p1Thaksa.montriKamnerd);
+        const isP2KalaToP1 = (p2Num === p1Thaksa.kalakiniKamnerd);
+        const isP1SriToP2 = (p1Num === p2Thaksa.sriKamnerd);
+        const isP1KalaToP2 = (p1Num === p2Thaksa.kalakiniKamnerd);
+
+        if (isP2KalaToP1 && isP1KalaToP2) {
+            thaksaScore = 6;
+            thaksaDesc = `ตกภูมิ "กาลกิณีคู่" ต่อกันทั้งสองฝ่าย มีเกณฑ์ขัดแย้งทางวาจาหรือมุมมองชีวิต ต้องใช้สติและความอดทนสูง`;
+        } else if (isP2KalaToP1 || isP1KalaToP2) {
+            thaksaScore = 10;
+            thaksaDesc = `ฝ่ายหนึ่งตกภูมิ "กาลกิณี" ของอีกฝ่าย อาจมีความเห็นไม่ตรงกันในบางเรื่อง ควรให้เกียรติและรับฟังซึ่งกันและกัน`;
+        } else if (isP2SriToP1 || isP1SriToP2) {
+            thaksaScore = 25;
+            thaksaDesc = `ตกภูมิ "ศรีมหาลาภ" เกื้อหนุนกัน นำพาสิริมงคล โชคลาภ ความเจริญรุ่งเรือง และโภคทรัพย์มาสู่ครอบครัว`;
+        } else if (isP2MontriToP1) {
+            thaksaScore = 23;
+            thaksaDesc = `ฝ่ายที่ 2 ตกภูมิ "มนตรี" คอยเป็นที่พึ่งพา อุปถัมภ์ชูชุบ และให้คำปรึกษาที่ดีแก่ฝ่ายที่ 1 เสมอ`;
+        } else {
+            thaksaScore = 19;
+            thaksaDesc = `ทักษาสมดุล เป็นมิตรภาพที่เกื้อหนุนตามธรรมชาติ`;
+        }
+
+        // 3. สมพงษ์ภพสัมพันธ์ (ลัคนา & ภพปัตนิ) 25 คะแนน
+        const houseDiff = (asc2 - asc1 + 12) % 12;
+        let houseScore = 18;
+        let houseDesc = "";
+        if (houseDiff === 0) {
+            houseScore = 24;
+            houseDesc = `ลัคนาสถิตราศีเดียวกัน (กุมลัคน์) ดุจเงาสะท้อนของกันและกัน คิดอ่านคล้ายกัน รู้ใจกันโดยไม่ต้องพูด`;
+        } else if (houseDiff === 6) {
+            houseScore = 25;
+            houseDesc = `ลัคนาเล็งกันพอดี (ภพปัตนิ) เป็นคู่สร้างคู่สมตามตำราโบราณ เติมเต็มส่วนที่ขาดหายของกันและกันอย่างสมบูรณ์แบบ`;
+        } else if (houseDiff === 4 || houseDiff === 8) {
+            houseScore = 24;
+            houseDesc = `ลัคนาตรีโกณถึงกัน (ภพปุตตะ/ศุภะ) หนุนนำความก้าวหน้า เกียรติยศ และความสุขความเจริญร่วมกัน`;
+        } else if (houseDiff === 2 || houseDiff === 10) {
+            houseScore = 20;
+            houseDesc = `ลัคนาเป็นโยคหน้า-โยคหลัง (ภพกดุมภะ/ลาภะ) เด่นเรื่องการสร้างฐานะ ช่วยกันหาเงินหาทอง`;
+        } else if (houseDiff === 5 || houseDiff === 7) {
+            houseScore = 12;
+            houseDesc = `ลัคนาเข้ามุมอริ-มรณะ (ภพที่ ๖ หรือ ๘) ต้องปรับตัวเรื่องทัศนคติการใช้ชีวิตและเวลาส่วนตัว`;
+        } else {
+            houseScore = 16;
+            houseDesc = `ความสัมพันธ์อยู่ในเกณฑ์ราบรื่น สามารถปรับตัวเข้าหากันได้ดี`;
+        }
+
+        // 4. สมพงษ์ด้านการเงิน & ธุรกิจร่วม 25 คะแนน
+        let financeScore = 20;
+        let financeDesc = "ช่วยกันเก็บออมและต่อยอดธุรกิจได้อย่างมั่นคง";
+        if (isP2SriToP1 || isP1SriToP2 || houseDiff === 1 || houseDiff === 10) {
+            financeScore = 24;
+            financeDesc = "ดวงเสริมทรัพย์มหาศาล ยิ่งอยู่ด้วยกันยิ่งร่ำรวย เงินทองหมุนเวียนคล่องตัว โชคลาภเปิดกว้าง";
+        } else if (isP2KalaToP1 || isP1KalaToP2) {
+            financeScore = 14;
+            financeDesc = "ควรแยกกระเป๋าเงินหรือวางแผนการเงินร่วมกันอย่างรอบคอบ หลีกเลี่ยงการค้ำประกันหรือลงทุนเสี่ยงร่วมกัน";
+        }
+
+        const totalScore = elemScore + thaksaScore + houseScore + financeScore;
+        let gradeBadge = "";
+        let gradeTitle = "";
+        if (totalScore >= 88) {
+            gradeTitle = "คู่บุญบารมีระดับมหาเศรษฐี (Excellent Match)";
+            gradeBadge = "background:linear-gradient(135deg, #10b981, #059669); color:white;";
+        } else if (totalScore >= 75) {
+            gradeTitle = "คู่เกื้อหนุนส่งเสริมมงคล (Great Harmony)";
+            gradeBadge = "background:linear-gradient(135deg, #3b82f6, #1d4ed8); color:white;";
+        } else if (totalScore >= 60) {
+            gradeTitle = "คู่ร่วมสร้างฐานะพึ่งพา (Good Match)";
+            gradeBadge = "background:linear-gradient(135deg, #f59e0b, #d97706); color:white;";
+        } else if (totalScore >= 45) {
+            gradeTitle = "คู่ที่ต้องปรับความเข้าใจ (Requires Adjustment)";
+            gradeBadge = "background:linear-gradient(135deg, #f97316, #ea580c); color:white;";
+        } else {
+            gradeTitle = "คู่ที่ต้องใช้ความอดทนและเมตตา (Challenging Bond)";
+            gradeBadge = "background:linear-gradient(135deg, #ef4444, #b91c1c); color:white;";
+        }
+
+        return {
+            totalScore: Math.min(100, Math.max(20, totalScore)),
+            gradeTitle: gradeTitle,
+            gradeBadge: gradeBadge,
+            elementAnalysis: { score: elemScore, desc: elemDesc },
+            thaksaAnalysis: { score: thaksaScore, desc: thaksaDesc },
+            houseAnalysis: { score: houseScore, desc: houseDesc },
+            financeAnalysis: { score: financeScore, desc: financeDesc },
+            relationshipAdvice: `✨ <strong>คำแนะนำเสริมดวงคู่:</strong> ${totalScore >= 75 ? "ดวงชะตาเกื้อหนุนกันดีเยี่ยม แนะนำให้ร่วมกันทำบุญสร้างโบสถ์วิหาร หรือบริจาคทานด้านการศึกษาจะยิ่งเปิดทางทรัพย์มหาศาล" : "ควรหมั่นชวนกันทำบุญถวายน้ำดื่ม หลอดไฟ หรือไหว้พระประธานร่วมกัน เพื่อปรับธาตุความสัมพันธ์ให้ร่มเย็นและมั่นคงยืนยาว"}`
+        };
+    }
+
+    // =========================================================================
+    // 🌟 PRO SYSTEM 2: Mahadasha (มหาทักษาเสวยอายุ) & Chansa Jor (ชันษาจร)
+    // =========================================================================
+    function calculateMahadashaCycles(birthPlanetNum, currentAgeYang, ascRasiIndex) {
+        // รอบดาวเสวยอายุรวม 108 ปี
+        const DASHA_PERIODS = [
+            { planet: 1, years: 6, name: "พระอาทิตย์ (๑)", element: "ไฟ", desc: "เด่นด้านยศศักดิ์ อำนาจ บารมี เกียรติยศชื่อเสียง ผู้ใหญ่สนับสนุน" },
+            { planet: 2, years: 15, name: "พระจันทร์ (๒)", element: "ดิน", desc: "เด่นด้านเสน่ห์ เมตตามหานิยม สตรีอุปถัมภ์ มีความสุขกายสบายใจ" },
+            { planet: 3, years: 8, name: "พระอังคาร (๓)", element: "ลม", desc: "เด่นด้านความกล้าหาญ การต่อสู้ แข่งขัน ต้องเหน็ดเหนื่อยฝ่าฟัน ระวังโทสะ" },
+            { planet: 4, years: 17, name: "พระพุธ (๔)", element: "น้ำ", desc: "เด่นด้านปัญญา การค้าขาย การเจรจาติดต่อ สื่อสาร นิติกรรมสัญญาสำเร็จผล" },
+            { planet: 7, years: 10, name: "พระเสาร์ (๗)", element: "ไฟ", desc: "เด่นด้านความมั่นคง อสังหาริมทรัพย์ แต่ต้องใช้ความอดทนสูง ระวังความเครียด" },
+            { planet: 5, years: 19, name: "พระพฤหัสบดี (๕)", element: "ดิน", desc: "มหาศุภมงคล ได้รับความสำเร็จ ยศตำแหน่ง ที่อยู่อาศัยใหม่ จิตใจผ่องใสในธรรม" },
+            { planet: 8, years: 12, name: "พระราหู (๘)", element: "ลม", desc: "การเปลี่ยนแปลงครั้งใหญ่ ลาภลอย โชคต่างแดน การเสี่ยงโชค ระวังความลุ่มหลง" },
+            { planet: 6, years: 21, name: "พระศุกร์ (๖)", element: "น้ำ", desc: "โภคทรัพย์มหาศาล ความรักสมหวัง การเงินหมุนเวียนคล่องตัว ศิลปะความสุข" }
+        ];
+
+        // หา Index เริ่มต้นจากดาวกำเนิด
+        let startIdx = DASHA_PERIODS.findIndex(d => d.planet === birthPlanetNum);
+        if (startIdx === -1) startIdx = 0;
+
+        const timeline = [];
+        let accumulatedAge = 0;
+
+        for (let i = 0; i < 8; i++) {
+            const curDasha = DASHA_PERIODS[(startIdx + i) % 8];
+            const startAge = accumulatedAge + 1;
+            const endAge = accumulatedAge + curDasha.years;
+            accumulatedAge = endAge;
+
+            const isCurrent = (currentAgeYang >= startAge && currentAgeYang <= endAge);
+
+            // คำนวณดาวแทรกย่อย (Antardasha)
+            const subPeriods = [];
+            let subStartAge = startAge;
+            for (let j = 0; j < 8; j++) {
+                const subDasha = DASHA_PERIODS[(startIdx + i + j) % 8];
+                const subYears = (curDasha.years * subDasha.years) / 108;
+                const subEndAge = subStartAge + subYears;
+                const isSubCurrent = (currentAgeYang >= subStartAge && currentAgeYang <= subEndAge);
+                subPeriods.push({
+                    planet: subDasha.planet,
+                    name: subDasha.name,
+                    subYears: subYears.toFixed(1),
+                    startAge: subStartAge.toFixed(1),
+                    endAge: subEndAge.toFixed(1),
+                    isSubCurrent: isSubCurrent
+                });
+                subStartAge = subEndAge;
+            }
+
+            timeline.push({
+                majorPlanet: curDasha.planet,
+                majorName: curDasha.name,
+                years: curDasha.years,
+                element: curDasha.element,
+                startAge: startAge,
+                endAge: endAge,
+                desc: curDasha.desc,
+                isCurrent: isCurrent,
+                subPeriods: subPeriods
+            });
+        }
+
+        // ค้นหาช่วงปัจจุบัน
+        const currentMajor = timeline.find(t => t.isCurrent) || timeline[0];
+        const currentSub = currentMajor.subPeriods.find(s => s.isSubCurrent) || currentMajor.subPeriods[0];
+
+        // คำนวณชันษาจร (Annual Profection)
+        const ascIdx = (ascRasiIndex !== undefined) ? ascRasiIndex : 0;
+        const chansaHouseIdx = (currentAgeYang - 1) % 12;
+        const chansaRasiIdx = (ascIdx + chansaHouseIdx) % 12;
+        const chansaHouseName = HOUSES_12[chansaHouseIdx].name;
+        const chansaHouseMeaning = HOUSES_12[chansaHouseIdx].meaning;
+        const chansaRasiName = ZODIAC_SIGNS[chansaRasiIdx].th;
+
+        return {
+            timeline: timeline,
+            currentMajor: currentMajor,
+            currentSub: currentSub,
+            chansaJor: {
+                houseIdx: chansaHouseIdx,
+                houseName: chansaHouseName,
+                houseMeaning: chansaHouseMeaning,
+                rasiName: chansaRasiName,
+                prediction: `ในปีนี้อายุย่าง ${currentAgeYang} ปี ชันษาจรประจำปีตกที่ <strong>ภพ${chansaHouseName} (ราศี${chansaRasiName})</strong> บ่งชี้ว่าแกนหลักของชีวิตจะมุ่งเน้นไปที่เรื่อง ${chansaHouseMeaning} เป็นจุดเปลี่ยนผ่านสำคัญที่ต้องใช้สติและคว้าโอกาส`
+            }
+        };
+    }
+
+    // =========================================================================
+    // 🌟 PRO SYSTEM 3: Personalized Muhurtha (ฤกษ์มงคลเฉพาะบุคคล) & Ubakong
+    // =========================================================================
+    function calculatePersonalAuspiciousCalendar(birthPlanetNum, startDateStr, daysCount) {
+        const start = startDateStr ? new Date(startDateStr) : new Date();
+        const count = daysCount || 30;
+        const calendar = [];
+
+        // ลำดับทักษาประจำวัน (0: อาทิตย์, 1: จันทร์, 2: อังคาร, 3: พุธกลางวัน, 4: พฤหัสบดี, 5: ศุกร์, 6: เสาร์, 7: ราหู)
+        const dayPlanetMap = [1, 2, 3, 4, 5, 6, 7];
+        const thaiDays = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
+
+        // คำนวณทักษาของเจ้าชะตา
+        const baseThaksa = calculateThaksa(birthPlanetNum, 30); // ภูมิกำเนิด
+
+        for (let i = 0; i < count; i++) {
+            const curDate = new Date(start);
+            curDate.setDate(curDate.getDate() + i);
+
+            const dayOfWeek = curDate.getDay();
+            const planetOfToday = dayPlanetMap[dayOfWeek];
+            const dateStr = curDate.toISOString().split('T')[0];
+
+            let status = "NORMAL";
+            let statusText = "วันฤกษ์ปานกลาง";
+            let badgeStyle = "background:#f1f5f9; color:#475569;";
+            let recommendedAction = "ดำเนินกิจวัตรตามปกติ ติดต่อประสานงานทั่วไป";
+
+            if (planetOfToday === baseThaksa.sriKamnerd) {
+                status = "EXCELLENT";
+                statusText = "🌟 วันมหาฤกษ์ (ศรีมงคล)";
+                badgeStyle = "background:#dcfce7; color:#15803d; border:1px solid #86efac; font-weight:bold;";
+                recommendedAction = "เหมาะสำหรับ: ออกรถใหม่, โอนบ้าน, เซ็นสัญญาใหญ่, เปิดร้านค้า, เสี่ยงโชค";
+            } else if (planetOfToday === baseThaksa.montriKamnerd) {
+                status = "GREAT";
+                statusText = "✨ วันมงคล (มนตรีอุปถัมภ์)";
+                badgeStyle = "background:#e0e7ff; color:#3730a3; border:1px solid #a5b4fc; font-weight:bold;";
+                recommendedAction = "เหมาะสำหรับ: เข้าพบผู้ใหญ่, สมัครงาน, สัมภาษณ์, ขอความช่วยเหลือ, เจรจาการค้า";
+            } else if (planetOfToday === baseThaksa.dechaKamnerd) {
+                status = "GOOD";
+                statusText = "💪 วันอำนาจบารมี (เดชมงคล)";
+                badgeStyle = "background:#fef3c7; color:#92400e; border:1px solid #fde68a; font-weight:bold;";
+                recommendedAction = "เหมาะสำหรับ: เริ่มต้นโครงการใหม่, แข่งขันประมูลงาน, สอบเลื่อนขั้น, แสดงวิสัยทัศน์";
+            } else if (planetOfToday === baseThaksa.mulaKamnerd) {
+                status = "STABLE";
+                statusText = "🏡 วันสร้างรากฐาน (มูละ)";
+                badgeStyle = "background:#fef9c3; color:#854d0e; border:1px solid #fef08a; font-weight:bold;";
+                recommendedAction = "เหมาะสำหรับ: ซื้อที่ดิน, ตกแต่งบ้าน, จัดฮวงจุ้ย, ออมเงิน, ลงทุนระยะยาว";
+            } else if (planetOfToday === baseThaksa.ayuKamnerd) {
+                status = "HEALTH";
+                statusText = "🌿 วันสุขภาพมงคล (อายุ)";
+                badgeStyle = "background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; font-weight:bold;";
+                recommendedAction = "เหมาะสำหรับ: พักผ่อนฟื้นฟู, ตรวจสุขภาพ, ทำบุญปล่อยปลา, เสริมพลังกายและใจ";
+            } else if (planetOfToday === baseThaksa.boriwanKamnerd) {
+                status = "FRIEND";
+                statusText = "👥 วันมิตรภาพ (บริวาร)";
+                badgeStyle = "background:#f0f9ff; color:#0369a1; border:1px solid #bae6fd; font-weight:bold;";
+                recommendedAction = "เหมาะสำหรับ: สังสรรค์เพื่อนฝูง, ประชุมทีมงาน, หาหุ้นส่วน, จัดกิจกรรมครอบครัว";
+            } else if (planetOfToday === baseThaksa.utsaKamnerd) {
+                status = "EFFORT";
+                statusText = "🔨 วันลุยงาน (อุตสาหะ)";
+                badgeStyle = "background:#f3e8ff; color:#6b21a8; border:1px solid #e9d5ff; font-weight:bold;";
+                recommendedAction = "เหมาะสำหรับ: ลุยงานหนัก, สะสางงานคั่งค้าง, งานที่ต้องใช้ความเพียรและความคิด";
+            } else if (planetOfToday === baseThaksa.kalakiniKamnerd) {
+                status = "AVOID";
+                statusText = "⚠️ วันกาลกิณี (ควรหลีกเลี่ยง)";
+                badgeStyle = "background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; font-weight:bold;";
+                recommendedAction = "ควรเลี่ยง: การทำสัญญาสำคัญ, ออกรถ, ขึ้นบ้านใหม่, ผ่าตัด (หากเลี่ยงได้)";
+            }
+
+            const thaiShortMonths = [
+                "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
+                "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
+            ];
+            const dNum = curDate.getDate();
+            const mShort = thaiShortMonths[curDate.getMonth()];
+            const yShort = String(curDate.getFullYear() + 543).slice(-2);
+            const dateThaiDisplay = `วัน${thaiDays[dayOfWeek]} ${dNum} ${mShort} ${yShort}`;
+
+            calendar.push({
+                date: curDate,
+                dateStr: dateStr,
+                dateThaiDisplay: dateThaiDisplay,
+                dayName: thaiDays[dayOfWeek],
+                dayNum: dNum,
+                monthShort: mShort,
+                yearShort: yShort,
+                status: status,
+                statusText: statusText,
+                badgeStyle: badgeStyle,
+                action: recommendedAction
+            });
+        }
+
+        return calendar;
+    }
+
+    function calculateUbakongForDay(dayOfWeekIndex) {
+        // ยามอุบากอง 5 ยาม: เช้า (06.00-08.24), สาย (08.25-10.48), บ่าย (10.49-13.12), เย็น (13.13-15.36), ค่ำ (15.37-18.00)
+        const UBAKONG_MEANINGS = {
+            "ปลอด": { text: "ยามปลอด (ดีเลิศ ปลอดโปร่ง ไร้อุปสรรค)", icon: "✨", color: "#10b981" },
+            "สองศูนย์": { text: "สองศูนย์ผีรุม (ปานกลาง ต้องระวังความเหนื่อยยาก)", icon: "⏳", color: "#f59e0b" },
+            "สี่ศูนย์": { text: "สี่ศูนย์กินบ่เซา (โชคลาภ อุดมสมบูรณ์ ได้ทรัพย์)", icon: "💰", color: "#2563eb" },
+            "ศุภะ": { text: "ยามศุภะ (มิ่งขวัญ สิริมงคล ความเจริญ)", icon: "👑", color: "#8b5cf6" },
+            "อุบาทว์": { text: "ยามอุบาทว์ (ระวังอุปสรรค ติดขัด)", icon: "⚠️", color: "#ef4444" }
+        };
+
+        const MATRIX = [
+            // อาทิตย์ (0)
+            ["ปลอด", "สองศูนย์", "สี่ศูนย์", "ศุภะ", "อุบาทว์"],
+            // จันทร์ (1)
+            ["อุบาทว์", "ปลอด", "สองศูนย์", "สี่ศูนย์", "ศุภะ"],
+            // อังคาร (2)
+            ["ศุภะ", "อุบาทว์", "ปลอด", "สองศูนย์", "สี่ศูนย์"],
+            // พุธ (3)
+            ["สี่ศูนย์", "ศุภะ", "อุบาทว์", "ปลอด", "สองศูนย์"],
+            // พฤหัสบดี (4)
+            ["สองศูนย์", "สี่ศูนย์", "ศุภะ", "อุบาทว์", "ปลอด"],
+            // ศุกร์ (5)
+            ["ปลอด", "ศุภะ", "สี่ศูนย์", "สองศูนย์", "อุบาทว์"],
+            // เสาร์ (6)
+            ["อุบาทว์", "สองศูนย์", "ปลอด", "สี่ศูนย์", "ศุภะ"]
+        ];
+
+        const times = [
+            { time: "06:00 - 08:24 น.", name: "ยามเช้า" },
+            { time: "08:25 - 10:48 น.", name: "ยามสาย" },
+            { time: "10:49 - 13:12 น.", name: "ยามบ่าย" },
+            { time: "13:13 - 15:36 น.", name: "ยามเย็น" },
+            { time: "15:37 - 18:00 น.", name: "ยามค่ำ" }
+        ];
+
+        const dayRow = MATRIX[dayOfWeekIndex % 7];
+        return times.map((t, idx) => {
+            const key = dayRow[idx];
+            const info = UBAKONG_MEANINGS[key] || { text: key, icon: "•", color: "#64748b" };
+            return {
+                time: t.time,
+                slotName: t.name,
+                statusKey: key,
+                desc: info.text,
+                icon: info.icon,
+                color: info.color
+            };
+        });
+    }
+
+    // =========================================================================
+    // 🌟 PRO SYSTEM 4: Major Transits (ปฏิทินดาวใหญ่ย้ายราศี ๕, ๗, ๘, ๐)
+    // =========================================================================
+    function calculateMajorTransitsAlert(ascRasiIndex) {
+        const ascIdx = (ascRasiIndex !== undefined) ? ascRasiIndex : 0;
+
+        // ตำแหน่งดาวใหญ่จรปัจจุบันและการเคลื่อนย้าย
+        const transits = [
+            {
+                planetNum: 5,
+                thNum: "๕",
+                name: "ดาวพฤหัสบดี (ประธานศุภเคราะห์)",
+                currentRasi: "พฤษภ",
+                nextRasi: "มิถุน",
+                moveDate: "30 เมษายน 2568",
+                houseFromAsc: (1 - ascIdx + 12) % 12,
+                element: "ดิน",
+                badgeColor: "#d97706",
+                impact: "เป็นมหาศุภมงคล มอบสติปัญญา ผู้ใหญ่เมตตา โชคลาภ และโอกาสขยับขยายหน้าที่การงาน",
+                ritual: "ไหว้พระพรหม หรือทำบุญถวายสังฆทานการศึกษา หลอดไฟ หนังสือสวดมนต์"
+            },
+            {
+                planetNum: 7,
+                thNum: "๗",
+                name: "ดาวเสาร์ (ประธานบาปเคราะห์)",
+                currentRasi: "กุมภ์",
+                nextRasi: "มีน",
+                moveDate: "19 พฤษภาคม 2568",
+                houseFromAsc: (10 - ascIdx + 12) % 12,
+                element: "ไฟ",
+                badgeColor: "#795548",
+                impact: "สร้างรากฐานชีวิตระยะยาว ทรัพย์สินที่ดิน แม้ต้องทำงานหนักแต่จะส่งผลสำเร็จถาวร",
+                ritual: "ไหว้พระปางนาคปรก หรือร่วมทำบุญสร้างโบสถ์ ซื้อที่ดินถวายวัด"
+            },
+            {
+                planetNum: 8,
+                thNum: "๘",
+                name: "พระราหู (จอมทัพแห่งการเปลี่ยนแปลง)",
+                currentRasi: "มีน",
+                nextRasi: "กุมภ์",
+                moveDate: "5 พฤษภาคม 2568",
+                houseFromAsc: (11 - ascIdx + 12) % 12,
+                element: "ลม",
+                badgeColor: "#475569",
+                impact: "เกิดการพลิกผันสู่สิ่งใหม่ ลาภผลกะทันหัน เด่นเรื่องงานออนไลน์ เทคโนโลยี และต่างประเทศ",
+                ritual: "ไหว้พระราหูด้วยของดำ 8 อย่าง หรือทำบุญปล่อยนกปล่อยปลา ถวายน้ำดื่ม"
+            },
+            {
+                planetNum: 0,
+                thNum: "๐",
+                name: "ดาวมฤตยู (เทพแห่งการปฏิรูป)",
+                currentRasi: "พฤษภ",
+                nextRasi: "มิถุน",
+                moveDate: "สถิตยาวนาน 7 ปี",
+                houseFromAsc: (1 - ascIdx + 12) % 12,
+                element: "อากาศธาตุ",
+                badgeColor: "#0f766e",
+                impact: "การล้างระบบเดิมเพื่อสร้างนวัตกรรมใหม่ การตื่นรู้ทางความคิด และการพัฒนาตนเองระดับก้าวกระโดด",
+                ritual: "สวดมนต์บทมหาจักรพรรดิ บริจาคโลหิต หรือทำบุญโรงพยาบาล"
+            }
+        ];
+
+        return transits.map(t => {
+            const hName = HOUSES_12[t.houseFromAsc].name;
+            const hMeaning = HOUSES_12[t.houseFromAsc].meaning;
+            return {
+                ...t,
+                houseName: hName,
+                houseMeaning: hMeaning,
+                aspectTitle: `จรเข้าสู่ ภพ${hName} (${hMeaning})`,
+                fullAdvice: `เมื่อ${t.name} สถิตในภพ${hName} ของลัคนา จะส่งผลให้เรื่อง ${hMeaning} มีการขยับขยายและเปลี่ยนแปลงสำคัญ แนะนำให้ ${t.ritual}`
+            };
+        });
+    }
+
+    // =========================================================================
+    // 🌟 PRO SYSTEM 5: Personalized Numerology & Lucky Elements (เลขศาสตร์ & อัญมณีฮวงจุ้ย)
+    // =========================================================================
+    function analyzePersonalLuckyElements(birthPlanetNum, ascRasiIndex, checkInputNumber) {
+        const baseThaksa = calculateThaksa(birthPlanetNum, 30);
+        const ascIdx = (ascRasiIndex !== undefined) ? ascRasiIndex : 0;
+        const ascRasi = ZODIAC_SIGNS[ascIdx];
+
+        // 1. เลขศาสตร์ประจำตัว
+        const sriNum = baseThaksa.sriKamnerd;
+        const montriNum = baseThaksa.montriKamnerd;
+        const dechaNum = baseThaksa.dechaKamnerd;
+        const kalaNum = baseThaksa.kalakiniKamnerd;
+
+        const luckyCodes = {
+            singleLucky: `${sriNum}, ${montriNum}, ${dechaNum}`,
+            wealthPairs: `${sriNum}${montriNum}, ${montriNum}${sriNum}, ${sriNum}9, 9${sriNum}, 45, 59`,
+            charmPairs: `${sriNum}6, 6${sriNum}, 24, 42, 36, 63`,
+            forbiddenDigit: kalaNum
+        };
+
+        // 2. วิเคราะห์เบอร์โทรศัพท์ / ทะเบียนรถ (ถ้ามีการกรอก)
+        let numCheckResult = null;
+        if (checkInputNumber) {
+            const digits = String(checkInputNumber).replace(/\D/g, '');
+            if (digits.length >= 2) {
+                let sum = 0;
+                for (let ch of digits) sum += parseInt(ch, 10);
+
+                const hasKalakini = digits.includes(String(kalaNum));
+                numCheckResult = {
+                    digits: digits,
+                    sum: sum,
+                    hasKalakini: hasKalakini,
+                    sumMeaning: (sum === 45 || sum === 54 || sum === 59 || sum === 65 || sum === 42 || sum === 51) 
+                        ? `ผลรวม ${sum} เป็นยอดมงคลมหาเศรษฐี ผู้ใหญ่อุปถัมภ์ สติปัญญาเลิศล้ำ`
+                        : `ผลรวม ${sum} มีพลังขับเคลื่อนชีวิตที่โดดเด่น ส่งผลให้งานและเงินมีความคล่องตัว`,
+                    warning: hasKalakini ? `⚠️ ตรวจพบเลข ${kalaNum} ซึ่งเป็นดาวกาลกิณีประจำดวงของคุณ อาจทำให้เหนื่อยใจหรือมีอุปสรรคแฝง` : `✨ ยอดเยี่ยม! ไม่พบเลขกาลกิณี (${kalaNum}) ในชุดตัวเลขนี้`
+                };
+            }
+        }
+
+        // 3. อัญมณีประจำวาสนา
+        const GEMS_MAP = {
+            1: { name: "ทับทิม (Ruby)", color: "สีแดงสด / ชมพูเข้ม", desc: "เสริมอำนาจ วาสนา บารมี ความเป็นผู้นำ และเกียรติยศ" },
+            2: { name: "มุกดาหาร (Moonstone) / ไข่มุก", color: "สีขาวนวล / ประกายรุ้ง", desc: "เสริมเสน่ห์ เมตตามหานิยม ความร่มเย็น และการเจรจา" },
+            3: { name: "โกเมน (Garnet) / ปะการังแดง", color: "สีแดงส้ม / แดงเลือดหมู", desc: "เสริมความกล้าหาญ พละกำลัง เอาชนะคู่แข่ง อุปสรรคทั้งปวง" },
+            4: { name: "มรกต (Emerald) / หยกเขียว", color: "สีเขียวมรกต", desc: "เสริมสติปัญญา วาทศิลป์ การค้าขาย และการลงทุนงอกเงย" },
+            5: { name: "บุษราคัม (Yellow Sapphire)", color: "สีเหลืองบุษราคัม / ทอง", desc: "มหาศุภมงคลสูงสุด เสริมปัญญา คุณธรรม ผู้ใหญ่เกื้อหนุน" },
+            6: { name: "ไพลิน (Blue Sapphire) / เพชร", color: "สีฟ้า / ประกายใส", desc: "เสริมโภคทรัพย์ ความรัก ความสุข และความมั่งคั่งร่ำรวย" },
+            7: { name: "นิลดำ (Onyx) / อเมทิสต์ (Amethyst)", color: "สีม่วงเข้ม / ดำเงา", desc: "เสริมความอดทน ที่ดิน อสังหาริมทรัพย์ และความมั่นคงถาวร" },
+            8: { name: "ไพฑูรย์ (Cat's Eye) / หยกดำ", color: "สีเทาควันบุหรี่ / น้ำตาลเข้ม", desc: "เสริมโชคลาภกะทันหัน ชัยชนะในการเก็งกำไร แคล้วคลาด" }
+        };
+
+        const gem = GEMS_MAP[birthPlanetNum] || GEMS_MAP[5];
+
+        // 4. ฮวงจุ้ยและทิศมงคล
+        const FENGSHUI_MAP = {
+            "ไฟ": { bestDirection: "ทิศใต้ (ทักษิณ) & ทิศตะวันออก", avoidDirection: "ทิศเหนือ", deskTip: "วางโคมไฟสีอบอุ่นหรือคริสตัลทางทิศใต้ของโต๊ะทำงาน", bedTip: "หันหัวนอนไปทางทิศตะวันออกหรือทิศใต้" },
+            "ดิน": { bestDirection: "ทิศตะวันตกเฉียงใต้ & ตะวันออกเฉียงเหนือ", avoidDirection: "ทิศตะวันตก", deskTip: "วางหินมงคลหรือกระถางเซรามิกบนโต๊ะทำงาน", bedTip: "หันหัวนอนไปทางทิศตะวันออกเฉียงเหนือ" },
+            "ลม": { bestDirection: "ทิศตะวันตกเฉียงเหนือ & ทิศเหนือ", avoidDirection: "ทิศใต้", deskTip: "โต๊ะทำงานต้องโล่ง โปร่ง มีพัดลมระบายอากาศที่ดี", bedTip: "หันหัวนอนไปทางทิศเหนือหรือทิศตะวันตกเฉียงเหนือ" },
+            "น้ำ": { bestDirection: "ทิศเหนือ & ทิศตะวันออกเฉียงใต้", avoidDirection: "ทิศใต้", deskTip: "วางน้ำพุตั้งโต๊ะขนาดเล็กหรือแก้วน้ำใสทางทิศเหนือ", bedTip: "หันหัวนอนไปทางทิศเหนือหรือทิศตะวันออก" }
+        };
+
+        const fengshui = FENGSHUI_MAP[ascRasi.element] || FENGSHUI_MAP["ไฟ"];
+
+        return {
+            luckyCodes: luckyCodes,
+            numCheckResult: numCheckResult,
+            gemology: gem,
+            fengshui: fengshui,
+            colors: {
+                sriColor: PLANET_DEFS[sriNum].colorName,
+                sriHex: PLANET_DEFS[sriNum].color,
+                montriColor: PLANET_DEFS[montriNum].colorName,
+                montriHex: PLANET_DEFS[montriNum].color,
+                dechaColor: PLANET_DEFS[dechaNum].colorName,
+                dechaHex: PLANET_DEFS[dechaNum].color,
+                kalaColor: PLANET_DEFS[kalaNum].colorName,
+                kalaHex: PLANET_DEFS[kalaNum].color
+            }
+        };
+    }
+
+    // =========================================================================
+    // 🌟 BUREAU SYSTEM: Ritual & Remedial Prescription Engine (ใบสั่งเสริมดวง)
+    // =========================================================================
+    function generateRitualPrescription(horoData) {
+        if (!horoData) return null;
+
+        const birthPlanet = horoData.birthPlanetNum || 1;
+        const ascRasi = horoData.asc.rasiIndex || 0;
+        const thaksa = calculateThaksa(birthPlanet, horoData.ageYang || 30);
+
+        const PLANET_POWERS = {
+            1: { power: 6, name: "พระอาทิตย์", buddha: "ปางถวายเนตร", chant: "อะ วิช สุ นุต สา ติ (สวด 6 จบ)", focus: "เกียรติยศ ผู้นำ หัวใจ สายตา" },
+            2: { power: 15, name: "พระจันทร์", buddha: "ปางห้ามญาติ", chant: "อิ ระ ชา คะ ตะ ระ สา (สวด 15 จบ)", focus: "เสน่ห์ ความราบรื่น สุขภาพสตรี จิตใจ" },
+            3: { power: 8, name: "พระอังคาร", buddha: "ปางไสยาสน์ (นอน)", chant: "ติ หัง จะ โต โร ถิ นัง (สวด 8 จบ)", focus: "ชนะอุปสรรค อุบัติเหตุ คดีความ กล้าหาญ" },
+            4: { power: 17, name: "พระพุธ (กลางวัน)", buddha: "ปางอุ้มบาตร", chant: "ปิ สัม ระ โล ปุ สัต พุท (สวด 17 จบ)", focus: "การค้า การเจรจา เอกสารสัญญา ปัญญา" },
+            7: { power: 10, name: "พระเสาร์", buddha: "ปางนาคปรก", chant: "โส มา ณะ กะ ริ ถา โธ (สวด 10 จบ)", focus: "ปลดหนี้สิน อสังหาริมทรัพย์ ความทุกข์ใจ โรคเรื้อรัง" },
+            5: { power: 19, name: "พระพฤหัสบดี", buddha: "ปางสมาธิ", chant: "ภะ สัม สัม วิ สะ เท ภะ (สวด 19 จบ)", focus: "สติปัญญา ผู้ใหญ่เมตตา ความเจริญก้าวหน้า โชคลาภ" },
+            8: { power: 12, name: "พระราหู (พุธกลางคืน)", buddha: "ปางป่าเลไลยก์", chant: "คะ พุท ปัน ทู ธัม วะ คะ (สวด 12 จบ)", focus: "แก้เคราะห์ราหู ลาภลอย ค้าขายต่างแดน ธุรกิจสีเทา" },
+            6: { power: 21, name: "พระศุกร์", buddha: "ปางรำพึง", chant: "วา โธ โน อะ มะ มะ วา (สวด 21 จบ)", focus: "การเงิน ความรัก ความสุข ศิลปะ โภคทรัพย์" }
+        };
+
+        const bData = PLANET_POWERS[birthPlanet] || PLANET_POWERS[1];
+        const kalaData = PLANET_POWERS[thaksa.kalakiniKamnerd] || PLANET_POWERS[7];
+        const sriData = PLANET_POWERS[thaksa.sriKamnerd] || PLANET_POWERS[5];
+
+        return {
+            birthPlanetInfo: bData,
+            sriPlanetInfo: sriData,
+            kalaPlanetInfo: kalaData,
+            ageYang: horoData.ageYang,
+            // 1. สัตว์ปล่อยเสริมดวง
+            animalRelease: {
+                targetCountSri: sriData.power,
+                targetCountKala: kalaData.power,
+                targetCountAge: (horoData.ageYang || 30) + 1,
+                recommendedAnimals: [
+                    { name: "ปลาไหล", meaning: "การงาน การเงิน การดำเนินชีวิตลื่นไหล ไร้อุปสรรคติดขัด" },
+                    { name: "ปลาดุก", meaning: "แคล้วคลาดปลอดภัย เอาชนะศัตรูคู่แข่งทั้งปวง" },
+                    { name: "ปลานิล / ปลาหมอ", meaning: "เพิ่มพูนทรัพย์สิน เงินทองไม่รั่วไหล สุขภาพแข็งแรง" },
+                    { name: "เต่า", meaning: "ต่อชะตาชีวิต สะเดาะเคราะห์ต่ออายุ สุขภาพแข็งแรงยืนยาว" },
+                    { name: "หอยขม", meaning: "ปลดเปลื้องความขื่นขม ความทุกข์ยากลำบากใจในชีวิต" }
+                ]
+            },
+            // 2. พระพุทธรูปและบทสวด
+            buddhaAndChants: {
+                birthBuddha: bData.buddha,
+                birthChant: bData.chant,
+                sriChant: sriData.chant,
+                mahaMantra: "พระคาถาชินบัญชร & พระคาถามงคลจักรวาฬ 8 ทิศ",
+                suggestedTempleType: (ascRasi % 4 === 0) ? "วัดริมน้ำ พระอารามหลวงริมแม่น้ำเจ้าพระยา" : (ascRasi % 4 === 1) ? "วัดบนภูเขา วัดที่มีเจดีย์สูงตระหง่าน" : (ascRasi % 4 === 2) ? "วัดโบราณสถานเก่าแก่ศักดิ์สิทธิ์" : "วัดที่มีพระพุทธรูปปางมารวิชัยองค์ใหญ่"
+            },
+            // 3. ของถวายสังฆทานเสริมดวง
+            sanghadanaOfferings: {
+                flowerColor: sriData.name === "พระพฤหัสบดี" ? "ดอกบัวสีขาว หรือดอกดาวเรืองสีเหลืองทอง" : "ดอกไม้สีมงคลตามดาวศรี (" + sriData.name + ")",
+                essentialItems: [
+                    "หลอดไฟ หรือ เทียนพรรษา (เปิดทางสว่างไสวให้ปัญญาและการงาน)",
+                    "ยารักษาโรค หรือ ยาบรรเทาปวด (ตัดวิบากกรรมด้านโรคภัยไข้เจ็บ)",
+                    "น้ำดื่มสะอาด 1 แพ็ค (เสริมความร่มเย็น เงินทองไหลมาเทมา)",
+                    "ผ้าไตรจีวร หรือ ผ้าอาบน้ำฝน (เสริมบารมี เกียรติยศ และความมั่นคง)"
+                ]
+            },
+            // 4. การทำทานบารมีใหญ่
+            greatCharity: [
+                "ร่วมบุญสมทบทุนซื้อโลงศพ / ผ้าห่อศพไร้ญาติ",
+                "ไถ่ชีวิตโค-กระบือ หรือ ช่วยเหลือสัตว์พิการ",
+                "บริจาคค่าน้ำ-ค่าไฟ หรือ ชำระหนี้สงฆ์แก่วัดยากจน"
+            ]
+        };
+    }
+
+    // =========================================================================
+    // 🌟 MASTER FEATURE 1: เกณฑ์พิเศษ & ฆาตชะตา & ดวงพินทุบาทว์ (Classical Yogas & Afflictions)
+    // =========================================================================
+    function calculateSpecialYogasAndAfflictions(horoData) {
+        if (!horoData || !horoData.asc || !horoData.birthPlanets) return null;
+
+        const ascRasi = horoData.asc.rasiIndex;
+        const planets = horoData.birthPlanets;
+        const p1 = planets[1], p2 = planets[2], p3 = planets[3], p4 = planets[4];
+        const p5 = planets[5], p6 = planets[6], p7 = planets[7], p8 = planets[8], p9 = planets[9], p0 = planets[0];
+
+        const yogas = [];
+        const afflictions = [];
+        const protections = [];
+
+        // Helper: House from Ascendant (1 to 12)
+        function getHouse(planetRasi) {
+            return ((planetRasi - ascRasi + 12) % 12) + 1;
+        }
+
+        const h1 = getHouse(p1.rasi), h2 = getHouse(p2.rasi), h3 = getHouse(p3.rasi), h4 = getHouse(p4.rasi);
+        const h5 = getHouse(p5.rasi), h6 = getHouse(p6.rasi), h7 = getHouse(p7.rasi), h8 = getHouse(p8.rasi);
+
+        // 1. ดวงปทุมเกณฑ์ (บัวพ้นน้ำ - อุดมสมบูรณ์ ตกอับไม่ได้)
+        // ตำรา: พฤหัสบดีกุมลัคน์ หรือ พฤหัสบดี/จันทร์เป็น 1, 4, 7, 10 แก่ลัคน์
+        if (h5 === 1 || h5 === 4 || h5 === 7 || h5 === 10) {
+            yogas.push({
+                name: "🌸 ปทุมเกณฑ์ (บัวพ้นน้ำ - มหาเสน่ห์ & ผู้อุปถัมภ์)",
+                badge: "มงคลสูงสุด",
+                desc: `ดาวพฤหัสบดี (๕) สถิตภพที่ ${h5} เข้าเกณฑ์จตุสดัยแก่ลัคนา เป็นบัวพ้นน้ำ ชะตาชีวิตตกอับไม่ได้ มักมีผู้หลักผู้ใหญ่หรือเทพเทวาคอยค้ำชูหนุนนำในยามคับขันเสมอ`
+            });
+        }
+        if (h2 === 1 || h2 === 4 || h2 === 7 || h2 === 10) {
+            yogas.push({
+                name: "🌕 จันทร์ปทุมเกณฑ์ (มหาเสน่ห์เมตตามหานิยม)",
+                badge: "มหาเสน่ห์",
+                desc: `ดาวจันทร์ (๒) สถิตภพศูนย์กลางจักรราศี ส่งกระแสเมตตามหานิยมสูง เป็นที่รักใคร่ของผู้คน มีวาจาและกิริยาเป็นเสน่ห์ผูกใจคน`
+            });
+        }
+
+        // 2. จันทร์ - ครุ - สุริยา (๑, ๒, ๕ ส่งกำลังถึงกัน - ดวงมหาเศรษฐี/ผู้นำ)
+        const diff12 = Math.abs(p1.rasi - p2.rasi) % 4;
+        const diff15 = Math.abs(p1.rasi - p5.rasi) % 4;
+        if (h1 === 1 || h5 === 1 || diff15 === 0 || (h1 === 10 && h5 === 1)) {
+            yogas.push({
+                name: "👑 จันทร์-ครุ-สุริยา & มหาอุดมเกณฑ์ (ผู้นำมหาเศรษฐี)",
+                badge: "มหาอำนาจ",
+                desc: `ดวงดาวชั้นหัวหน้า (อาทิตย์และพฤหัสบดี) ทำมุมเกื้อหนุนวาสนา ส่งผลให้เป็นผู้มีสติปัญญาเฉลียวฉลาด บารมีสูงเด่น มักได้เป็นผู้นำองค์กรหรือมีกิจการรุ่งเรืองใหญ่โต`
+            });
+        }
+
+        // 3. เกณฑ์องค์เกณฑ์ & อุดมเกณฑ์ ตามธาตุราศีลัคนา
+        // นรราศี (เมถุน กันย์ ตุลย์ ธนู กุมภ์): อาทิตย์ จันทร์ พฤหัส ศุกร์ กุมลัคน์
+        const isNora = [2, 5, 6, 8, 10].includes(ascRasi);
+        const isAumpu = [3, 7, 11].includes(ascRasi); // กรกฎ พิจิก มีน
+        const isPat = [0, 1, 9].includes(ascRasi); // เมษ พฤษภ มังกร
+        const isKeet = (ascRasi === 7); // พิจิก
+
+        if (isNora && (h1 === 1 || h5 === 1 || h6 === 1)) {
+            yogas.push({
+                name: "🌟 นรองค์เกณฑ์ (เกียรติยศชื่อเสียงเกริกไกร)",
+                badge: "มงคลเลิศ",
+                desc: `ลัคนาสถิตนรราศีและมีดาวศุภเคราะห์กุมลัคน์ เป็นบุคคลที่มีเกียรติ มียศฐาบรรดาศักดิ์ เป็นที่เคารพนับถือในสังคม`
+            });
+        } else if (isAumpu && (h4 === 1 || h6 === 1 || h2 === 4)) {
+            yogas.push({
+                name: "🌊 อัมพุอุดมเกณฑ์ (อุดมด้วยโภคทรัพย์สมบัติ)",
+                badge: "คลังสมบัติ",
+                desc: `ลัคนาสถิตอัมพุราศี (ราศีธาตุน้ำ) เข้าเกณฑ์อุดมสมบูรณ์ด้วยทรัพย์สิน เงินทองไหลมาเทมาดั่งสายน้ำ มีกินมีใช้ไม่รู้สิ้น`
+            });
+        }
+
+        // 4. เกณฑ์พินทุบาทว์ (ดวงแตก / ดวงร้าว / อภัพคู่)
+        // เสาร์เพ่งเล็งลัคน์แล้อสูรินทร์ (๗ เล็งลัคน์ หรือ ๘ เล็งลัคน์ - ภพ ๗)
+        if (h7 === 7) {
+            afflictions.push({
+                name: "⚠️ เสาร์เล็งลัคน์ (พินทุบาทว์คู่ครอง & หุ้นส่วน)",
+                badge: "ระวังคู่ครอง",
+                severity: "high",
+                desc: `ดาวเสาร์ (๗) สถิตภพปัตนิ (เล็งลัคนา) ตำรากล่าวว่า 'เสาร์เพ่งเล็งลัคน์แล้อสูรินทร์' มักมีวิบากกรรมเรื่องคู่ครอง แต่งงานช้า หรือคู่ครองมีนิสัยเข้มงวด/อายุต่างกันมาก ควรแต่งงานหลังอายุ 30 หรือเลือกคู่ที่เป็นพ่อม่าย/แม่ม่าย/ต่างชาติต่างภาษาจะแก้เคล็ดได้ดี`
+            });
+        }
+        if (h8 === 7) {
+            afflictions.push({
+                name: "⚠️ ราหูเล็งลัคน์ (พินทุบาทว์ลุ่มหลง & การถูกหลอกลวง)",
+                badge: "ระวังหุ้นส่วน",
+                severity: "high",
+                desc: `ดาวราหู (๘) สถิตภพปัตนิ ระวังเรื่องการร่วมหุ้นทำธุรกิจ และความรักที่อาจเข้ามาแบบกะทันหันแต่ฉาบฉวย ต้องมีสติและตรวจเอกสารสัญญาอย่างรอบคอบเสมอ`
+            });
+        }
+        if (h3 === 7 || h3 === 8) {
+            afflictions.push({
+                name: "⚡ ภุมมะกระทบเรือน (อารมณ์ร้อน & ความขัดแย้ง)",
+                badge: "ระวังอารมณ์",
+                severity: "medium",
+                desc: `ดาวอังคาร (๓) อยู่ในตำแหน่งที่มีพลังรุนแรง ต้องระวังความใจร้อนและคำพูดที่ตรงเกินไป อาจทำให้เสียมิตรภาพหรือเกิดคดีความได้`
+            });
+        }
+
+        // 5. ฆาตชะตาตามราศีลัคนา (Classical Ghatas)
+        const ghataMap = {
+            0: { planet: "พระพฤหัสบดี (๕)", desc: "ระวังช่วงอายุที่ดาวพฤหัสบดีตกกาลกิณีจร หรือมีเรื่องขัดแย้งกับผู้ใหญ่" },
+            1: { planet: "พระเสาร์ (๗)", desc: "ระวังโรคเกี่ยวกับกระดูก เส้นประสาท หรือความทุกข์ใจสะสม" },
+            2: { planet: "พระอังคาร (๓)", desc: "ระวังอุบัติเหตุจากของมีคม หรือไฟลวกในยามเดินทาง" },
+            3: { planet: "พระราหู (๘)", desc: "ระวังการถูกชักจูงในสิ่งผิดกฎหมาย หรือการพนันขันต่อ" },
+            4: { planet: "พระจันทร์ (๒)", desc: "ระวังปัญหาสุขภาพเกี่ยวกับช่องท้อง สายตา และอารมณ์แปรปรวน" },
+            5: { planet: "พระเสาร์ (๗)", desc: "ระวังความตึงเครียดเรื่องงาน และการแบกรับภาระแทนผู้อื่น" },
+            6: { planet: "พระพฤหัสบดี (๕)", desc: "ระวังเรื่องคดีความ เอกสารสัญญา หรือความประมาทเลินเล่อ" },
+            7: { planet: "พระอังคาร (๓)", desc: "ระวังการทะเลาะเบาะแว้ง และการผ่าตัดกะทันหัน" },
+            8: { planet: "พระศุกร์ (๖)", desc: "ระวังปัญหาเรื่องการเงินรั่วไหล และความลุ่มหลงในกิเลส" },
+            9: { planet: "พระพุธ (๔)", desc: "ระวังเรื่องคำพูด สัญญาปากเปล่า และโรคทางเดินหายใจ" },
+            10: { planet: "พระอาทิตย์ (๑)", desc: "ระวังโรคหัวใจ ความดัน และการถูกผู้น้อยหักหลัง" },
+            11: { planet: "พระราหู (๘)", desc: "ระวังเรื่องมัวเมา คดีความ หรือการลงทุนที่มีความเสี่ยงสูง" }
+        };
+
+        const ghataInfo = ghataMap[ascRasi] || { planet: "ดาวเสาร์ (๗)", desc: "ระวังความประมาท" };
+
+        return {
+            yogas,
+            afflictions,
+            ghataInfo,
+            summaryText: yogas.length > 0 
+                ? `ดวงชะตานี้มี <strong>${yogas[0].name}</strong> เป็นเกราะกำบังวาสนา แม้เผชิญอุปสรรคใดก็สามารถพลิกฟื้นกลับมาร่ำรวยและประสบความสำเร็จได้เสมอ`
+                : `โครงสร้างดวงชะตามีความสมดุล สามารถสร้างความเจริญก้าวหน้าได้ด้วยความเพียรและสติปัญญา`
+        };
+    }
+
+    // =========================================================================
+    // 🌟 MASTER FEATURE 2: ระบบค้นหาฤกษ์มงคลเฉพาะ 8 ภารกิจ (Mission-Specific Auspicious Picker)
+    // =========================================================================
+    function findMissionSpecificAuspiciousDates(horoData, missionKey = 'all', daysCount = 60) {
+        if (!horoData || !horoData.thaksa) return [];
+
+        const missions = {
+            car: { name: "🚗 ฤกษ์ออกรถใหม่ & ซื้อยานพาหนะ", goodDays: [1, 4, 5], badDays: [3, 7], favPlanets: [5, 6, 4], targetDesc: "ขับขี่ปลอดภัย แคล้วคลาด ร่ำรวยโชคลาภ" },
+            house: { name: "🏠 ฤกษ์ขึ้นบ้านใหม่ / ลงเสาเอก / ซื้ออสังหาฯ", goodDays: [1, 4, 5], badDays: [2, 7], favPlanets: [5, 2, 4], targetDesc: "อยู่อบอุ่น ร่มเย็น เงินทองไหลมาเทมา ครอบครัวรุ่งเรือง" },
+            wedding: { name: "💍 ฤกษ์หมั้นหมาย / แต่งงาน / สู่ขอ", goodDays: [1, 4, 5], badDays: [3, 7], favPlanets: [6, 4, 2], targetDesc: "คู่ชีวิตครองรักยั่งยืน สมพงษ์เกื้อหนุน ทรัพย์สินเพิ่มพูน" },
+            business: { name: "🏢 ฤกษ์เปิดกิจการ / เปิดร้าน / จดทะเบียนบริษัท", goodDays: [1, 4, 5], badDays: [0, 7], favPlanets: [1, 5, 4], targetDesc: "ลูกค้าแน่นร้าน ค้าขายคล่อง กำไรมหาศาล ชื่อเสียงโด่งดัง" },
+            contract: { name: "💼 ฤกษ์เจรจาธุรกิจ / ปิดดีลใหญ่ / เซ็นสัญญา", goodDays: [1, 4, 5], badDays: [0, 7], favPlanets: [4, 5, 6], targetDesc: "เจรจาราบรื่น ได้เปรียบในสัญญา ปิดยอดขายสำเร็จตามเป้า" },
+            travel: { name: "✈️ ฤกษ์เดินทางไกล / ข้ามน้ำข้ามทะเล / ไปต่างประเทศ", goodDays: [1, 4, 5], badDays: [3, 7], favPlanets: [1, 3, 5], targetDesc: "การเดินทางราบรื่น ปลอดภัยไร้อุปสรรค บรรลุวัตถุประสงค์" },
+            surgery: { name: "🩺 ฤกษ์ผ่าตัด / เสริมความงาม / รักษาโรค", goodDays: [1, 4, 5], badDays: [3, 0], favPlanets: [2, 6, 5], targetDesc: "แผลหายไว สวยงามสมใจ ไร้โรคแทรกซ้อน สุขภาพแข็งแรง" },
+            wealth: { name: "💰 ฤกษ์เปิดบัญชีธนาคาร / ลงทุน / เสริมคลังสมบัติ", goodDays: [1, 4, 5], badDays: [0, 7], favPlanets: [4, 5, 6], targetDesc: "เงินทองงอกเงย มีเงินเก็บก้อนโต เสี่ยงโชคเฮง รวยเร็ว" }
+        };
+
+        const currentMission = missions[missionKey] || missions['business'];
+        const results = [];
+        const today = new Date();
+
+        const birthKalaNum = horoData.thaksa.kalakini ? horoData.thaksa.kalakini.num : -1;
+        const birthSriNum = horoData.thaksa.sri ? horoData.thaksa.sri.num : -1;
+
+        const DAY_PLANET_MAP = [1, 2, 3, 4, 5, 6, 7]; // อา-ส
+
+        for (let i = 1; i <= daysCount; i++) {
+            const checkDate = new Date(today);
+            checkDate.setDate(today.getDate() + i);
+
+            const dayOfWeek = checkDate.getDay();
+            const dayPlanet = DAY_PLANET_MAP[dayOfWeek];
+
+            // Filter out birth Kalakini day
+            if (dayPlanet === birthKalaNum) continue;
+
+            // Calculate Ubakong matrix for this day
+            const ubakong = calculateUbakongForDay(dayOfWeek);
+            const bestSlot = ubakong.find(u => u.statusKey === "ปลอด" || u.statusKey === "สี่ศูนย์" || u.statusKey === "ศุภะ") || ubakong[0];
+
+            // Scoring system (0-100)
+            let score = 70;
+            if (dayPlanet === birthSriNum) score += 20;
+            if (currentMission.goodDays.includes(dayOfWeek)) score += 10;
+            if (currentMission.badDays.includes(dayOfWeek)) score -= 20;
+
+            if (score >= 80) {
+                const thaiDayName = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"][dayOfWeek];
+                const thaiMonthShort = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."][checkDate.getMonth()];
+                const thaiYearShort = String(checkDate.getFullYear() + 543).slice(-2);
+                const shortDateStr = `${thaiDayName} ${checkDate.getDate()} ${thaiMonthShort} ${thaiYearShort}`;
+
+                results.push({
+                    date: checkDate,
+                    shortDateStr: shortDateStr,
+                    missionName: currentMission.name,
+                    targetDesc: currentMission.targetDesc,
+                    score: score,
+                    rating: score >= 90 ? "⭐⭐⭐⭐⭐ (ฤกษ์มหาจักรพรรดิ)" : "⭐⭐⭐⭐ (ฤกษ์ดีมาก)",
+                    bestTimeSlot: bestSlot.time,
+                    ubakongResult: `${bestSlot.slotName} (${bestSlot.statusKey})`,
+                    ubakongMeaning: bestSlot.desc,
+                    advice: `ประกอบพิธีในช่วง <strong>${bestSlot.time}</strong> [${bestSlot.desc}] หันหน้าไปทางทิศมงคล`
+                });
+            }
+
+            if (results.length >= 10) break; // Limit to top 10 best days
+        }
+
+        return {
+            missionKey,
+            missionInfo: currentMission,
+            auspiciousDays: results
+        };
+    }
+
+    // =========================================================================
+    // 🌟 MASTER FEATURE 3: พิกัด 9 วัด & สิ่งศักดิ์สิทธิ์ประจำดวงชะตา (Sacred Temple Geo-Navigator)
+    // =========================================================================
+    function getSacredTempleRecommendations(horoData) {
+        if (!horoData || !horoData.thaksa) return [];
+
+        const birthNum = horoData.birthPlanetNum;
+        const sriNum = horoData.thaksa.sri ? horoData.thaksa.sri.num : 5;
+        const dechaNum = horoData.thaksa.decha ? horoData.thaksa.decha.num : 1;
+
+        const templeDirectory = {
+            1: [
+                { name: "ศาลหลักเมือง กรุงเทพมหานคร", highlight: "เสริมความมั่นคงในชีวิต การงาน หนุนดวงชะตาให้แข็งแกร่ง", items: "พวงมาลัยดาวเรือง, ผ้าสามสี, น้ำมันตะเกียง" },
+                { name: "วัดพระศรีรัตนศาสดาราม (วัดพระแก้ว)", highlight: "เสริมบารมี เกียรติยศชื่อเสียง เป็นที่ยำเกรง", items: "ดอกบัวสีขาว, ธูปหอม 9 ดอก" }
+            ],
+            2: [
+                { name: "วัดชนะสงครามราชวรมหาวิหาร", highlight: "ชนะอุปสรรค ศัตรูพ่ายแพ้ มีเสน่ห์เมตตามหานิยม", items: "ดอกมะลิ, เทียนสีขาว 2 เล่ม" },
+                { name: "ศาลเจ้าแม่งูจงอาง พระราม 2", highlight: "ขอโชคลาภ เงินทอง เมตตามหาเสน่ห์", items: "ไข่ไก่สด, พวงมาลัยมะลิ" }
+            ],
+            3: [
+                { name: "ศาลเจ้าพ่อเสือ พระนคร (เสาชิงช้า)", highlight: "ปัดเป่าสิ่งชั่วร้าย สะเดาะเคราะห์ เสริมความกล้าหาญและธุรกิจ", items: "หมูสามชั้นสด, ไข่สด, ข้าวเหนียวหวาน" },
+                { name: "วัดไตรมิตรวิทยารามวรวิหาร (หลวงพ่อทองคำ)", highlight: "เสริมโชคลาภการเงิน ร่ำรวยดั่งทองคำ", items: "ทองคำเปลว, ดอกดาวเรือง" }
+            ],
+            4: [
+                { name: "วัดอรุณราชวรารามราชวรมหาวิหาร", highlight: "ชีวิตรุ่งโรจน์ เจริญก้าวหน้า มีปัญญาเฉียบแหลม ค้าขายคล่อง", items: "ดอกบัวสีชมพู, ธูป 17 ดอก" },
+                { name: "ศาลพระพิฆเนศ สี่แยกห้วยขวาง", highlight: "ความสำเร็จในศิลปะ ธุรกิจ การค้า และการเจรจา", items: "นมสด, กล้วยน้ำว้า, ขนมโมทกะลาดู" }
+            ],
+            5: [
+                { name: "วัดระฆังโฆสิตาราม (สมเด็จโต พรหมรังสี)", highlight: "มีชื่อเสียงโด่งดัง เป็นที่นับถือ สติปัญญาและโชคลาภ", items: "ดอกบัวหลวง 9 ดอก, พวงมาลัยมะลิ" },
+                { name: "ศาลท้าวมหาพรหม โรงแรมเอราวัณ ราชประสงค์", highlight: "ประทานพรความสำเร็จทุกประการ ทั้งการงาน การเงิน และครอบครัว", items: "ช้างไม้แกะสลัก, พวงมาลัยดาวเรือง 4 พวง" }
+            ],
+            6: [
+                { name: "วัดพระเชตุพนวิมลมังคลาราม (วัดโพธิ์ - พระนอน)", highlight: "ความรักราบรื่น เมตตามหาเสน่ห์ ความสงบสุขในชีวิต", items: "ดอกกุหลาบสีชมพู, น้ำอบไทย" },
+                { name: "ศาลพระตรีมูรติ ลานเซ็นทรัลเวิลด์", highlight: "ขอพรความรัก สมหวังในคู่ครอง และความสุขสมปรารถนา", items: "ดอกกุหลาบแดง 9 ดอก, เทียนแดง 1 คู่" }
+            ],
+            7: [
+                { name: "วัดกัลยาณมิตรวรมหาวิหาร (หลวงพ่อโต ซำปอกง)", highlight: "พบมิตรแท้ ค้าขายเจริญรุ่งเรือง ปลอดภัยทุกการเดินทาง", items: "ส้มมงคล 5 ผล, ธูปมังกร" },
+                { name: "วัดจุฬามณี อัมพวา (ท้าวเวสสุวรรณ)", highlight: "ปลดหนี้สิน คุ้มครองจากคุณไสย ป้องกันภัยพิบัติ โชคลาภก้อนโต", items: "ดอกกุหลาบแดง, น้ำแดง, ผ้าแพรสีแดง" }
+            ],
+            8: [
+                { name: "วัดศีรษะทอง นครปฐม (พระราหูองค์ใหญ่)", highlight: "สะเดาะเคราะห์ แปลงร้ายกลายเป็นดี เสริมธุรกิจต่างประเทศ โชคลาภเสี่ยงทาย", items: "ของดำ 8 อย่าง (ไก่ดำ, ซุปไก่, กาแฟดำ, เฉาก๊วย ฯลฯ)" },
+                { name: "วัดจุฬามณี สมุทรสงคราม", highlight: "เสริมทรัพย์ บารมี มหาอำนาจ ปลดหนี้", items: "ธูปดำ 8 ดอก, กุหลาบแดง" }
+            ]
+        };
+
+        const shrines = [];
+
+        // 1. Temple for Sri planet (Great Wealth & Fortune)
+        const sriTemples = templeDirectory[sriNum] || templeDirectory[5];
+        shrines.push({
+            role: "✨ เสริมทรัพย์เปิดคลังสมบัติ (ดาวศรี)",
+            name: sriTemples[0].name,
+            highlight: sriTemples[0].highlight,
+            items: sriTemples[0].items
+        });
+
+        // 2. Temple for Birth planet (Life Power & Longevity)
+        const birthTemples = templeDirectory[birthNum] || templeDirectory[1];
+        shrines.push({
+            role: "👑 เสริมบารมีและดวงกำเนิด (ดาวบริวารกำเนิด)",
+            name: birthTemples[0].name,
+            highlight: birthTemples[0].highlight,
+            items: birthTemples[0].items
+        });
+
+        // 3. Temple for Decha planet (Power, Overcoming Obstacles)
+        const dechaTemples = templeDirectory[dechaNum] || templeDirectory[3];
+        shrines.push({
+            role: "⚔️ เสริมอำนาจ ชนะอุปสรรค (ดาวเดช)",
+            name: dechaTemples[1] ? dechaTemples[1].name : dechaTemples[0].name,
+            highlight: dechaTemples[1] ? dechaTemples[1].highlight : dechaTemples[0].highlight,
+            items: dechaTemples[1] ? dechaTemples[1].items : dechaTemples[0].items
+        });
+
+        // 4. Secondary recommendations
+        if (sriTemples[1]) {
+            shrines.push({
+                role: "💎 เมตตามหานิยมและชื่อเสียง (ดาวส่งเสริม)",
+                name: sriTemples[1].name,
+                highlight: sriTemples[1].highlight,
+                items: sriTemples[1].items
+            });
+        }
+
+        return shrines;
+    }
+
     return {
         ZODIAC_SIGNS,
         HOUSES_12,
@@ -1472,10 +2367,25 @@ const ThaiHoroProEngine = (function() {
         calculateSingleYearPrediction,
         calculateMonthlyPredictionsForYear,
         calculateDailyPrediction,
-        calculatePublicDailyOverview
+        calculatePublicDailyOverview,
+        calculateSynastryCompatibility,
+        calculateMahadashaCycles,
+        calculatePersonalAuspiciousCalendar,
+        calculateUbakongForDay,
+        calculateMajorTransitsAlert,
+        analyzePersonalLuckyElements,
+        generateRitualPrescription,
+        calculateSpecialYogasAndAfflictions,
+        findMissionSpecificAuspiciousDates,
+        getSacredTempleRecommendations
     };
 })();
 
 if (typeof window !== "undefined") {
     window.ThaiHoroProEngine = ThaiHoroProEngine;
 }
+if (typeof module !== "undefined" && module.exports) {
+    module.exports = ThaiHoroProEngine;
+}
+
+

@@ -23,6 +23,21 @@ function initAdminQuickTools() {
 
             <div class="row g-3">
                 
+                <!-- 0. โต๊ะพยากรณ์ประจำสำนัก (Pro Studio) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}../pages/thai-horoscope-pro.html'"
+                         style="background: linear-gradient(135deg, rgba(217,119,6,0.3) 0%, rgba(20,32,58,0.8) 100%); border: 2px solid rgba(251,191,36,0.6); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#FDE047'; this.style.boxShadow='0 12px 25px rgba(251,191,36,0.3)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(251,191,36,0.6)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #FBBF24;"><i class="fas fa-dharmachakra"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FEF08A; font-size: 1rem;">🏛️ โต๊ะพยากรณ์สำนัก</div>
+                            <small class="text-white-50">ผูกดวง 6 มิติ + Dossier</small>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 1. แผ่นดวงชะตา / ดวงส่วนบุคคล -->
                 <div class="col-6 col-md-4 col-lg-3 mb-3">
                     <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
