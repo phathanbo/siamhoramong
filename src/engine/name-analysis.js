@@ -258,16 +258,22 @@ function showname() {
                     <h2 class="text-gold mb-2"><i class="fas fa-fingerprint"></i> วิเคราะห์เลขศาสตร์ ชื่อ-นามสกุล</h2>
                     <p class="small text-white-50 mb-4">ถอดรหัสตัวเลขและตรวจสอบอักษรกาลกิณีอย่างละเอียด</p>                
                     
-                    <div class="form-group text-left mx-auto" style="max-width: 600px;">
-                        <label class="text-gold small"><i class="fas fa-users"></i> เลือกจากประวัติสมาชิก (ไม่บังคับ):</label>
-                        <select id="memberSelect" class="form-control bg-dark text-white border-gold member-selector-shared mb-3"
-                            onchange="autoFillMemberData(this.value); analyzeName()">
-                            <option value="">-- กรอกใหม่ด้วยตนเอง --</option>
-                        </select>
-                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12 mb-3 text-left">
+                            <label class="text-gold small mb-1"><i class="fas fa-users"></i> เลือกจากประวัติสมาชิก (ไม่บังคับ):</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-user-check"></i></span>
+                                </div>
+                                <select id="nameMemberSelect" class="form-control bg-dark text-white border-gold member-selector-shared"
+                                    onchange="autoFillMemberData(this.value); analyzeName(this.value);">
+                                    <option value="">-- กรอกใหม่ด้วยตนเอง --</option>
+                                </select>
+                            </div>
+                        </div>
 
-                    <div class="row mt-3 justify-content-center">
-                        <div class="col-md-5 mb-3">
+                        <div class="col-md-6 col-12 mb-3 text-left">
+                            <label class="text-gold small mb-1"><i class="fas fa-user"></i> ชื่อจริง:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-user"></i></span>
@@ -275,7 +281,8 @@ function showname() {
                                 <input type="text" id="firstName" class="form-control bg-dark text-white border-gold" placeholder="ชื่อจริง">
                             </div>
                         </div>
-                        <div class="col-md-5 mb-3">
+                        <div class="col-md-6 col-12 mb-3 text-left">
+                            <label class="text-gold small mb-1"><i class="fas fa-user-friends"></i> นามสกุล:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-user-friends"></i></span>
@@ -283,7 +290,8 @@ function showname() {
                                 <input type="text" id="lastName" class="form-control bg-dark text-white border-gold" placeholder="นามสกุล">
                             </div>
                         </div>
-                        <div class="col-md-10 mb-4">
+                        <div class="col-12 mb-4 text-left">
+                            <label class="text-gold small mb-1"><i class="fas fa-calendar-day"></i> วันเกิด (ใช้เช็คกาลกิณี):</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-calendar-day"></i></span>
@@ -301,7 +309,7 @@ function showname() {
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-10 mb-2">
+                        <div class="col-12 mb-2">
                             <button class="btn btn-gold btn-block btn-lg shadow" onclick="analyzeName()"><i class="fas fa-magic"></i> วิเคราะห์รหัสชีวิต</button>
                         </div>
                     </div>
@@ -325,6 +333,9 @@ function showname() {
         </div>
     `;
     container.innerHTML = html;
+    if (typeof updateAllMemberSelectors === 'function') {
+        updateAllMemberSelectors();
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () =>{
@@ -513,7 +524,9 @@ function showLuckyChars(target, dayIdx) {
     if (area) {
         // แยกตัวอักษรออกมาทำเป็น Badge สวยๆ
         const charArray = result.chars.split('');
-        const charBadges = charArray.map(c => `<span class="char-badge">${c}</span>`).join('');
+        const charBadges = charArray.map(function(c) {
+            return '<span class="char-badge">' + c + '</span>';
+        }).join('');
 
         area.innerHTML = `
             <div class="animate__animated animate__zoomIn">
@@ -583,24 +596,23 @@ function suggestLuckyNames(dayIdx, preferredTag = '') {
         existingContainer.innerHTML = generateNamesHTML();
     } else {
         let fullHtml = `
-            <div class="text-left">
-                <p class="small text-white-50 mb-2 text-center">อักษรถูกคัดกรองตามหลักทักษาประจำวันเกิดของคุณแล้ว</p>
-                <div class="form-group px-2">
-                    <select id="nameFilterSelect" class="form-control form-control-sm bg-dark text-white border-warning" onchange="suggestLuckyNames(${dayIdx})">
-                        <option value="">🌟 สุ่มแบบรวม (ทุกหมวดหมู่)</option>
-                        <option value="เดช">⚔️ เสริมอำนาจบารมี (เดช)</option>
-                        <option value="ศรี">💖 เสริมเสน่ห์/โชคลาภ (ศรี)</option>
-                        <option value="มูละ">💰 เสริมทรัพย์สินการเงิน (มูละ)</option>
-                        <option value="อายุ">🌿 เสริมสุขภาพ/อายุยืน (อายุ)</option>
-                        <option value="มนตรี">🤝 เสริมผู้ใหญ่เมตตา (มนตรี)</option>
-                        <option value="ปัญญา">🧠 เสริมสติปัญญา (ปัญญา)</option>
+            <div class="text-left p-1">
+                <p class="small text-white-50 mb-3 text-center">อักษรถูกคัดกรองตามหลักทักษาประจำวันเกิดของคุณแล้ว</p>
+                <div class="form-group mb-3">
+                    <select id="nameFilterSelect" class="form-control bg-dark text-white border-warning w-100" style="height: 42px !important; font-size: 0.95rem !important; color: #ffd700 !important; background-color: #1a1a1a !important; border: 1px solid #d4af37 !important; border-radius: 8px !important; padding: 6px 12px !important; display: block !important;" onchange="suggestLuckyNames(${dayIdx})">
+                        <option value="" style="background: #1a1a1a; color: #fff;">🌟 สุ่มแบบรวม (ทุกหมวดหมู่)</option>
+                        <option value="เดช" style="background: #1a1a1a; color: #fff;">⚔️ เสริมอำนาจบารมี (เดช)</option>
+                        <option value="ศรี" style="background: #1a1a1a; color: #fff;">💖 เสริมเสน่ห์/โชคลาภ (ศรี)</option>
+                        <option value="มูละ" style="background: #1a1a1a; color: #fff;">💰 เสริมทรัพย์สินการเงิน (มูละ)</option>
+                        <option value="อายุ" style="background: #1a1a1a; color: #fff;">🌿 เสริมสุขภาพ/อายุยืน (อายุ)</option>
+                        <option value="มนตรี" style="background: #1a1a1a; color: #fff;">🤝 เสริมผู้ใหญ่เมตตา (มนตรี)</option>
                     </select>
                 </div>
                 <div id="luckyNamesContainer">
                     ${generateNamesHTML()}
                 </div>
                 <div class="mt-3 text-center">
-                    <button onclick="suggestLuckyNames(${dayIdx})" class="btn btn-sm btn-outline-gold">
+                    <button onclick="suggestLuckyNames(${dayIdx})" class="btn btn-sm btn-outline-gold px-4 py-2" style="font-size: 0.9rem;">
                         <i class="fas fa-sync-alt mr-1"></i> สุ่มใหม่
                     </button>
                 </div>
@@ -613,7 +625,7 @@ function suggestLuckyNames(dayIdx, preferredTag = '') {
             showCloseButton: true,
             background: '#121212',
             color: '#d4af37',
-            customClass: { popup: 'border-gold' }
+            customClass: { popup: 'border-gold shadow-lg' }
         });
     }
 }

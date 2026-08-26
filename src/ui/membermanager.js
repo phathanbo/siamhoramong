@@ -97,11 +97,11 @@ async function saveToFirestore(userData) {
 async function syncDataFromFirestore() {
     try {
         const currentUsername = getCurrentUsername();
-        const isAdminUser = typeof isAdmin === 'function' && isAdmin();
+        const canViewAll = typeof canViewAllMembers === 'function' ? canViewAllMembers() : (typeof isAdmin === 'function' && isAdmin());
 
         let q;
-        if (isAdminUser) {
-            // Admin ดึงข้อมูลทั้งหมด
+        if (canViewAll) {
+            // Admin, Data Manager, Member Checker ดึงข้อมูลทั้งหมด
             q = query(membersCol, orderBy("createdAt", "desc"));
         } else if (currentUsername) {
             // User ปกติ: ดึงเฉพาะข้อมูลของตนเอง (ไม่เก็บข้อมูลคนอื่นใน LocalStorage)
@@ -118,7 +118,7 @@ async function syncDataFromFirestore() {
         });
 
         // เรียงลำดับ client-side (สำหรับ user query ที่ไม่มี orderBy)
-        if (!isAdminUser) {
+        if (!canViewAll) {
             history.sort((a, b) => {
                 const ta = a.createdAt?.seconds ?? 0;
                 const tb = b.createdAt?.seconds ?? 0;
@@ -137,15 +137,25 @@ async function syncDataFromFirestore() {
 
 // สร้างฟังก์ชันใหม่ไว้ข้างนอก (ในไฟล์เดิม)
 function updateAllMemberSelectors(allHistory) {
+    if (!allHistory || !Array.isArray(allHistory)) {
+        try {
+            allHistory = JSON.parse(localStorage.getItem('horo_history')) || [];
+        } catch (e) {
+            allHistory = [];
+        }
+    }
+    if (!Array.isArray(allHistory)) allHistory = [];
+
     if (typeof window.initStandaloneProfile === 'function' && document.getElementById('profileMemberSelect')) {
         window.initStandaloneProfile();
     }
 
     // ✅ กรองข้อมูลให้ User ทั่วไปเห็นเฉพาะของตนเอง
-    const history = filterHistoryByCurrentUser(allHistory);
+    let history = filterHistoryByCurrentUser(allHistory);
+    if (!Array.isArray(history)) history = [];
 
     // ดึง Select ทุกตัวที่มี id หรือ class ที่เรากำหนดไว้
-    const selectors = document.querySelectorAll('#memberSelect, .member-selector-shared');
+    const selectors = document.querySelectorAll('#nameMemberSelect, #memberSelect, .member-selector-shared');
 
     selectors.forEach(select => {
         if (select.id === 'profileMemberSelect') return; // หน้า profile มีระบบ initStandaloneProfile ของตนเอง
@@ -153,10 +163,11 @@ function updateAllMemberSelectors(allHistory) {
         select.innerHTML = '<option value="">-- เลือกสมาชิก --</option>';
 
         history.forEach(member => {
+            if (!member) return;
             const option = document.createElement('option');
             option.value = member.memberId || member.birthdate || "";
-            option.textContent = `${member.memberId ? `${member.memberId} - ` : ''}${member.name}${member.lastName ? ` ${member.lastName}` : ''}`;
-            option.setAttribute('data-name', member.name);
+            option.textContent = `${member.memberId ? `${member.memberId} - ` : ''}${member.name || ''}${member.lastName ? ` ${member.lastName}` : ''}`;
+            option.setAttribute('data-name', member.name || '');
             option.setAttribute('data-member', JSON.stringify(member));
             select.appendChild(option);
         });
@@ -168,6 +179,9 @@ function updateAllMemberSelectors(allHistory) {
 // ส่งฟังก์ชันออกไปให้โลกภายนอกรู้จัก (เพราะไฟล์นี้เป็น Module)
 window.syncDataFromFirestore = syncDataFromFirestore;
 window.updateAllMemberSelectors = updateAllMemberSelectors;
+window.openChangeRoleModal = openChangeRoleModal;
+window.getMemberRole = getMemberRole;
+window.filterHistoryByCurrentUser = filterHistoryByCurrentUser;
 
 
 /**
@@ -735,6 +749,17 @@ async function generateMemberId() {
     }
 }
 
+// Helper ดึงระดับสิทธิ์ของสมาชิก
+function getMemberRole(item) {
+    if (item && item.role) return item.role;
+    try {
+        const users = JSON.parse(localStorage.getItem('siamhora_users') || '[]');
+        const u = users.find(x => x && (x.username === item.username || x.username === item.name || x.displayName === item.name));
+        if (u && u.role) return u.role;
+    } catch (e) {}
+    return 'user';
+}
+
 // --- ฟังก์ชัน Render ตารางแยกออกมาเพื่อให้ใช้ซ้ำได้ทั้ง Load ปกติ และ ค้นหา
 function renderTable(dataArray) {
     const historyBody = document.getElementById('historyBody');
@@ -756,6 +781,9 @@ function renderTable(dataArray) {
     }
 
     const esc = (v) => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    const isCurrentUserAdmin = typeof canManageRoles === 'function' ? canManageRoles() : (typeof isAdmin === 'function' && isAdmin());
+    const isCurrentUserChecker = typeof isMemberChecker === 'function' ? isMemberChecker() : false;
+    const canUserEdit = typeof canEditAllMembers === 'function' ? canEditAllMembers() : isCurrentUserAdmin;
 
     dataArray.forEach((item, index) => {
         const safeId = esc(item.id);
@@ -764,6 +792,10 @@ function renderTable(dataArray) {
         const birthdateText = esc(item.birthdate) || '-';
         const zodiacText = esc(item.zodiac) || '-';
         const yamText = esc(item.yam) || '-';
+        const roleKey = getMemberRole(item);
+        const roleBadge = typeof getRoleBadgeHTML === 'function' ? getRoleBadgeHTML(roleKey) : '';
+        const targetUsername = esc(item.username || item.name || item.memberId);
+        const safeName = esc(item.name || targetUsername);
 
         const row = `
             <tr style="
@@ -783,6 +815,9 @@ function renderTable(dataArray) {
                     <div style="font-weight: 600; color: #FFFFFF; font-size: 1rem;">
                         ${fullName}
                     </div>
+                    <div class="mt-1">
+                        ${roleBadge}
+                    </div>
                 </td>
                 <td style="padding: 16px 12px; vertical-align: middle; color: #E2E8F0; font-size: 0.95rem;">
                     <i class="far fa-calendar-alt text-warning mr-1"></i> ${birthdateText}
@@ -796,13 +831,18 @@ function renderTable(dataArray) {
                     ${yamText}
                 </td>
                 <td style="padding: 16px 12px; vertical-align: middle;">
-                    <div class="d-inline-flex gap-2" style="gap: 6px;">
-                        <button class="btn btn-sm btn-gold px-3 py-1" onclick="viewHistory('${safeId}')" style="border-radius: 20px; font-weight: 600; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                    <div class="d-inline-flex gap-2 align-items-center" style="gap: 6px;">
+                        <button class="btn btn-sm btn-gold px-3 py-1" onclick="viewHistory('${safeId}')" style="border-radius: 20px; font-weight: 600; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" title="ดูผลการพยากรณ์">
                             <i class="fas fa-chart-pie mr-1"></i> พยากรณ์
                         </button>
+                        ${isCurrentUserAdmin ? `
+                        <button class="btn btn-sm btn-outline-warning px-2 py-1" onclick="openChangeRoleModal('${targetUsername}', '${roleKey}', '${safeName}')" style="border-radius: 20px; font-size: 0.85rem; border-color: #d4af37; color: #ffd700;" title="ปรับเปลี่ยนระดับสิทธิ์">
+                            <i class="fas fa-user-shield mr-1"></i> สิทธิ์
+                        </button>` : ''}
+                        ${(!isCurrentUserChecker && canUserEdit) ? `
                         <button class="btn btn-sm btn-outline-danger px-2 py-1" onclick="deleteItem('${safeId}')" style="border-radius: 20px; font-size: 0.85rem;" title="ลบข้อมูล">
                             <i class="fas fa-trash-alt"></i>
-                        </button>
+                        </button>` : ''}
                     </div>
                 </td>
             </tr>`;
@@ -810,20 +850,89 @@ function renderTable(dataArray) {
     });
 }
 
-// 🔐 ฟังก์ชันกรองข้อมูลให้เหลือแค่ของ User ที่ล็อกอิน (Admin เห็นทั้งหมด)
-function filterHistoryByCurrentUser(allHistory) {
-    const currentUser = getCurrentUsername();
-
-    if (!currentUser) {
-        return [];
+// 👑 Modal สำหรับเลือกปรับระดับสิทธิ์สมาชิก
+function openChangeRoleModal(username, currentRole, displayName) {
+    if (typeof canManageRoles === 'function' && !canManageRoles()) {
+        return Swal.fire('ไม่มีสิทธิ์', 'เฉพาะแอดมินเท่านั้นที่มีสิทธิ์ปรับระดับสมาชิก', 'warning');
     }
 
-    const isAdminUser = typeof isAdmin === 'function' && isAdmin();
+    const currentRoleKey = currentRole || 'user';
+    
+    const html = `
+        <div class="text-left p-2">
+            <div class="mb-3 text-center p-3 rounded" style="background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25);">
+                <div class="text-gold font-weight-bold" style="font-size: 1.15rem;">${displayName || username}</div>
+                <small class="text-white-50">บัญชีผู้ใช้: @${username}</small>
+                <div class="mt-2">สิทธิ์ปัจจุบัน: ${typeof getRoleBadgeHTML === 'function' ? getRoleBadgeHTML(currentRoleKey) : currentRoleKey}</div>
+            </div>
+            <div class="form-group mb-3">
+                <label class="text-gold small mb-1"><i class="fas fa-id-badge mr-1"></i> เลือกระดับสิทธิ์ใหม่:</label>
+                <select id="swalRoleSelect" class="form-control bg-dark text-gold border-warning w-100" style="height: 46px; font-size: 0.95rem; background-color: #1a1a1a; border: 1px solid #d4af37; border-radius: 8px;">
+                    <option value="admin" ${currentRoleKey === 'admin' ? 'selected' : ''}>👑 แอดมิน (Admin) - สิทธิ์สูงสุด จัดการทุกส่วนและปรับสิทธิ์ได้</option>
+                    <option value="data_manager" ${currentRoleKey === 'data_manager' ? 'selected' : ''}>📁 ผู้ดูแลข้อมูล (Data Manager) - จัดการ/แก้ไข/ลบสมาชิก และดูสถิติ</option>
+                    <option value="member_checker" ${currentRoleKey === 'member_checker' ? 'selected' : ''}>🔍 คนเช็คสมาชิก (Member Checker) - ค้นหา/ดูข้อมูลสมาชิกทุกคน (ดูได้อย่างเดียว)</option>
+                    <option value="user" ${currentRoleKey === 'user' ? 'selected' : ''}>👤 สมาชิกทั่วไป (General Member) - ดูเฉพาะข้อมูลตนเอง และดูดวง</option>
+                </select>
+            </div>
+            <div class="card p-3 bg-black border-gold" style="border-radius: 10px; font-size: 0.82rem; color: #CBD5E1; line-height: 1.6;">
+                <div class="text-warning font-weight-bold mb-1"><i class="fas fa-info-circle mr-1"></i> รายละเอียดขอบเขตสิทธิ์:</div>
+                <ul class="mb-0 pl-3">
+                    <li><b>👑 แอดมิน:</b> สิทธิ์ควบคุมระบบ 100% จัดการและปรับเปลี่ยนสิทธิ์ผู้อื่นได้</li>
+                    <li><b>📁 ผู้ดูแลข้อมูล:</b> ดู/เพิ่ม/แก้ไข/ลบ ข้อมูลสมาชิกทุกคนในระบบ และดูสรุปสถิติ</li>
+                    <li><b>🔍 คนเช็คสมาชิก:</b> ตรวจสอบและค้นหาข้อมูลสมาชิกทุกคนเพื่อดูดวง แต่ไม่สามารถแก้ไขหรือลบได้</li>
+                    <li><b>👤 สมาชิกทั่วไป:</b> ดูและจัดการได้เฉพาะข้อมูลตนเอง</li>
+                </ul>
+            </div>
+        </div>
+    `;
 
-    if (isAdminUser) {
+    Swal.fire({
+        title: '👑 ปรับระดับสิทธิ์สมาชิก',
+        html: html,
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-check mr-1"></i> บันทึกสิทธิ์',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#d4af37',
+        cancelButtonColor: '#4a5568',
+        background: '#121212',
+        color: '#d4af37',
+        customClass: { popup: 'border-gold shadow-lg' },
+        preConfirm: () => {
+            const selectEl = document.getElementById('swalRoleSelect');
+            return selectEl ? selectEl.value : currentRoleKey;
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            if (typeof updateUserRole === 'function') {
+                updateUserRole(username, result.value);
+            }
+        }
+    });
+}
+
+// 🔐 ฟังก์ชันกรองข้อมูลให้เหลือแค่ของ User ที่ล็อกอิน (Admin / Data Manager / Member Checker เห็นทั้งหมด)
+function filterHistoryByCurrentUser(allHistory) {
+    if (!allHistory || !Array.isArray(allHistory)) {
+        try {
+            allHistory = JSON.parse(localStorage.getItem('horo_history')) || [];
+        } catch (e) {
+            allHistory = [];
+        }
+    }
+    if (!Array.isArray(allHistory)) return [];
+
+    const currentUser = typeof getCurrentUsername === 'function' ? getCurrentUsername() : null;
+
+    if (!currentUser) {
+        return allHistory; // ถ้ายังไม่ได้ล็อกอิน คืนประวัติในเครื่องทั้งหมด
+    }
+
+    const canViewAll = typeof canViewAllMembers === 'function' ? canViewAllMembers() : (typeof isAdmin === 'function' && isAdmin());
+
+    if (canViewAll) {
         return allHistory;
     } else {
-        return allHistory.filter(item => (item.username || item.name) === currentUser);
+        return allHistory.filter(item => item && ((item.username || item.name) === currentUser));
     }
 }
 
@@ -996,11 +1105,17 @@ function showElementManual() {
 }
 
 async function deleteItem(docId) {
-    // ✅ ตรวจสอบสิทธิ์ตามบทบาท
+    // ✅ ตรวจสอบสิทธิ์ตามบทบาท (RBAC)
+    const isChecker = typeof isMemberChecker === 'function' && isMemberChecker();
+    if (isChecker) {
+        Swal.fire("ไม่มีสิทธิ์", "บทบาทคนเช็คสมาชิก (Member Checker) ดูข้อมูลได้อย่างเดียว ไม่มีสิทธิ์ลบข้อมูล", "warning");
+        return;
+    }
+
     const allHistory = JSON.parse(localStorage.getItem('horo_history')) || [];
     const targetItem = allHistory.find(item => item.id === docId);
-    const currentUser = getCurrentUsername();
-    const isAdminUser = typeof isAdmin === 'function' && isAdmin();
+    const currentUser = typeof getCurrentUsername === 'function' ? getCurrentUsername() : null;
+    const canEditAll = typeof canEditAllMembers === 'function' ? canEditAllMembers() : (typeof isAdmin === 'function' && isAdmin());
 
     if (!targetItem) {
         Swal.fire("ข้อผิดพลาด", "ไม่พบข้อมูลที่ต้องการลบ", "error");
@@ -1008,18 +1123,19 @@ async function deleteItem(docId) {
     }
 
     // User ปกติ: ลบเฉพาะของตนเอง (เปรียบเทียบ username)
-    if (!isAdminUser && (targetItem.username || targetItem.name) !== currentUser) {
+    if (!canEditAll && (targetItem.username || targetItem.name) !== currentUser) {
         Swal.fire("ปฏิเสธ", "❌ คุณสามารถลบเฉพาะข้อมูลของตนเองเท่านั้น", "warning");
         return;
     }
 
-    // Admin: ลบได้ทั้งหมด (มีข้อความแตกต่าง)
-    const confirmMsg = isAdminUser ? `ลบข้อมูล ${targetItem.name}?` : "ยืนยันการลบข้อมูลนี้ถาวร?";
+    // Admin / Data Manager: ลบได้ทั้งหมด
+    const confirmMsg = canEditAll ? `ลบข้อมูล ${targetItem.name || 'สมาชิก'}?` : "ยืนยันการลบข้อมูลนี้ถาวร?";
 
     if (!confirm(confirmMsg)) return;
     try {
         await deleteDoc(doc(db, "horo_history", docId));
         await syncDataFromFirestore();
+        Swal.fire("สำเร็จ", "ลบข้อมูลเรียบร้อยแล้ว", "success");
     } catch (err) {
         console.error("❌ ลบไม่สำเร็จ:", err);
         Swal.fire("ข้อผิดพลาด", "ไม่สามารถลบข้อมูลได้", "error");
@@ -1766,14 +1882,16 @@ window.autoFillMemberData = function (memberKey) {
     const member = history.find(m => m.memberId === memberKey)
                 || history.find(m => m.birthdate === memberKey);
 
+    const canViewAll = typeof canViewAllMembers === 'function' ? canViewAllMembers() : (typeof isAdmin === 'function' && isAdmin());
+
     // ⚠️ ตรวจสอบ: ถ้า User ทั่วไปพยายามเข้าถึงข้อมูลของคนอื่น
-    if (!member && !isAdmin()) {
+    if (!member && !canViewAll) {
         console.warn('❌ ไม่สามารถเข้าถึงข้อมูลนี้ได้');
         Swal.fire('ปฏิเสธ', 'คุณสามารถเข้าถึงเฉพาะข้อมูลของตนเองเท่านั้น', 'warning');
         return;
     }
 
-    // ถ้า Admin เปิดข้อมูล user อื่น ต้องดึงจากทั้งหมด
+    // ถ้าผู้มีสิทธิ์เปิดข้อมูล user อื่น ต้องดึงจากทั้งหมด
     const finalMember = member
         || allHistory.find(m => m.memberId === memberKey)
         || allHistory.find(m => m.birthdate === memberKey);
@@ -1818,28 +1936,42 @@ window.autoFillMemberData = function (memberKey) {
 
 
     // --- กรณีหน้าวิเคราะห์ชื่อ (Name Analysis) ---
-    if (isNamePage && member) {
+    if (isNamePage && (member || finalMember)) {
+        const activeMember = finalMember || member;
         const firstNameInput = document.getElementById('firstName');
         const lastNameInput = document.getElementById('lastName');
         const birthDaySelect = document.getElementById('birthDaynumSelect');
+        const nameMemberSelect = document.getElementById('nameMemberSelect') || document.getElementById('memberSelect');
 
-        if (firstNameInput && member.name) {
-            // หั่นชื่อกับนามสกุล (ถ้าเก็บรวมกันด้วยช่องว่าง)
-            const nameParts = member.name.trim().split(/\s+/);
-            const lastNameParts = member.lastName ? member.lastName.trim().split(/\s+/) : [];
-            if (lastNameParts.length > 0) {
-                firstNameInput.value = nameParts[0] || "";
-                if (lastNameInput) lastNameInput.value = lastNameParts[0] || "";
+        if (nameMemberSelect && memberKey) {
+            nameMemberSelect.value = memberKey;
+        }
+
+        if (firstNameInput && activeMember.name) {
+            if (activeMember.lastName) {
+                firstNameInput.value = (activeMember.name || '').trim();
+                if (lastNameInput) lastNameInput.value = (activeMember.lastName || '').trim();
+            } else {
+                const nameParts = activeMember.name.trim().split(/\s+/);
+                firstNameInput.value = nameParts[0] || '';
+                if (lastNameInput) lastNameInput.value = nameParts.slice(1).join(' ') || '';
             }
         }
 
         if (birthDaySelect && formattedDate) {
-            // หาเลขวันในสัปดาห์ (0-6) เพื่อเลือกวันเกิดอัตโนมัติ (รองรับระบบตัดเวลา 06:00 น.)
-            const dayOfWeek = window.getAstrologicalDayOfWeek(formattedDate, finalMember ? finalMember.birthtime : null);
-            // หมายเหตุ: ต้องระวังเรื่องวันพุธกลางคืน ถ้าในประวัติไม่ได้เก็บไว้ ระบบจะเลือกพุธกลางวัน (3) ให้ก่อนครับ
-            birthDaySelect.value = dayOfWeek;
-        }
+            let dayOfWeek = typeof window.getAstrologicalDayOfWeek === 'function'
+                ? window.getAstrologicalDayOfWeek(formattedDate, activeMember.birthtime || null)
+                : new Date(formattedDate).getDay();
 
+            // ตรวจสอบวันพุธกลางคืน (ถ้าเกิดวันพุธ และเวลา 18:00 - 05:59 น.)
+            if (Number(dayOfWeek) === 3 && activeMember.birthtime) {
+                const hour = parseInt(activeMember.birthtime.split(':')[0], 10);
+                if (hour >= 18 || hour < 6) {
+                    dayOfWeek = 7;
+                }
+            }
+            birthDaySelect.value = String(dayOfWeek);
+        }
     }
 
     // --- ส่วนของหน้า มหาทักษา (เหมือนเดิม) ---

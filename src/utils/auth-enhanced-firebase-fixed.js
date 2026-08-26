@@ -763,29 +763,190 @@ function startLockCountdown() {
 }
 
 // ===================================================
-// ROLE-BASED FUNCTIONS
+// ROLE-BASED ACCESS CONTROL (RBAC)
 // ===================================================
 
-function isAdmin() {
-    const session = getSession();
-    return session && session.role === 'admin';
-}
+const USER_ROLES = {
+    ADMIN: 'admin',                 // 👑 แอดมิน / ผู้ดูแลระบบสูงสุด
+    DATA_MANAGER: 'data_manager',   // 📁 ผู้ดูแลข้อมูล
+    MEMBER_CHECKER: 'member_checker', // 🔍 คนเช็คสมาชิก
+    USER: 'user'                    // 👤 สมาชิกทั่วไป
+};
 
 function getCurrentUserRole() {
     const session = getSession();
-    return session ? session.role : null;
+    return session ? (session.role || USER_ROLES.USER) : null;
 }
 
 function getCurrentUser() {
     return getSession();
 }
 
+function isAdmin() {
+    const session = getSession();
+    return session && session.role === USER_ROLES.ADMIN;
+}
+
+function isDataManager() {
+    const session = getSession();
+    return session && session.role === USER_ROLES.DATA_MANAGER;
+}
+
+function isMemberChecker() {
+    const session = getSession();
+    return session && session.role === USER_ROLES.MEMBER_CHECKER;
+}
+
+// 🔐 ตรวจสอบสิทธิ์การจัดการระดับสิทธิ์สมาชิก (แอดมินเท่านั้น)
+function canManageRoles() {
+    return isAdmin();
+}
+
+// 🔐 ตรวจสอบสิทธิ์การเข้าถึง Admin Dashboard & ระบบหลังบ้าน
+function canAccessAdmin() {
+    const role = getCurrentUserRole();
+    return role === USER_ROLES.ADMIN || role === USER_ROLES.DATA_MANAGER;
+}
+
+// 🔐 ตรวจสอบสิทธิ์การแก้ไข/ลบข้อมูลสมาชิกทุกคน
+function canEditAllMembers() {
+    const role = getCurrentUserRole();
+    return role === USER_ROLES.ADMIN || role === USER_ROLES.DATA_MANAGER;
+}
+
+// 🔐 ตรวจสอบสิทธิ์การดูข้อมูลสมาชิกทุกคน
+function canViewAllMembers() {
+    const role = getCurrentUserRole();
+    return role === USER_ROLES.ADMIN || role === USER_ROLES.DATA_MANAGER || role === USER_ROLES.MEMBER_CHECKER;
+}
+
 function checkAdminAccess() {
     if (!isAdmin()) {
-        Swal.fire('ไม่มีสิทธิ์', 'เฉพาะผู้ดูแลระบบเท่านั้น', 'error');
+        Swal.fire('ไม่มีสิทธิ์', 'เฉพาะผู้ดูแลระบบ (Admin) เท่านั้น', 'error');
         return false;
     }
     return true;
+}
+
+function getRoleDisplayName(role) {
+    switch (role) {
+        case USER_ROLES.ADMIN:
+            return '👑 แอดมิน (Admin)';
+        case USER_ROLES.DATA_MANAGER:
+            return '📁 ผู้ดูแลข้อมูล (Data Manager)';
+        case USER_ROLES.MEMBER_CHECKER:
+            return '🔍 คนเช็คสมาชิก (Member Checker)';
+        case USER_ROLES.USER:
+        default:
+            return '👤 สมาชิกทั่วไป (Member)';
+    }
+}
+
+function getRoleBadgeHTML(role) {
+    switch (role) {
+        case USER_ROLES.ADMIN:
+            return '<span class="badge" style="background: rgba(255,215,0,0.2); color: #FFD700; border: 1px solid #FFD700; padding: 4px 8px; border-radius: 12px; font-size: 0.78rem;"><i class="fas fa-crown mr-1"></i> แอดมิน</span>';
+        case USER_ROLES.DATA_MANAGER:
+            return '<span class="badge" style="background: rgba(56,178,172,0.2); color: #4FD1C5; border: 1px solid #4FD1C5; padding: 4px 8px; border-radius: 12px; font-size: 0.78rem;"><i class="fas fa-database mr-1"></i> ผู้ดูแลข้อมูล</span>';
+        case USER_ROLES.MEMBER_CHECKER:
+            return '<span class="badge" style="background: rgba(72,187,120,0.2); color: #68D391; border: 1px solid #68D391; padding: 4px 8px; border-radius: 12px; font-size: 0.78rem;"><i class="fas fa-user-check mr-1"></i> คนเช็คสมาชิก</span>';
+        case USER_ROLES.USER:
+        default:
+            return '<span class="badge" style="background: rgba(160,174,192,0.2); color: #CBD5E0; border: 1px solid #718096; padding: 4px 8px; border-radius: 12px; font-size: 0.78rem;"><i class="fas fa-user mr-1"></i> สมาชิก</span>';
+    }
+}
+
+// 👑 ปรับระดับสิทธิ์สมาชิก (Firestore + LocalStorage)
+async function updateUserRole(username, newRole) {
+    if (!canManageRoles()) {
+        Swal.fire('ไม่มีสิทธิ์', 'เฉพาะแอดมินเท่านั้นที่มีสิทธิ์ปรับเปลี่ยนระดับสมาชิก', 'error');
+        return false;
+    }
+
+    if (!Object.values(USER_ROLES).includes(newRole)) {
+        Swal.fire('ข้อผิดพลาด', 'ระดับสิทธิ์ที่ระบุไม่ถูกต้อง', 'error');
+        return false;
+    }
+
+    try {
+        // 1. อัปเดตใน LocalStorage: siamhora_users
+        let users = getRegisteredUsers();
+        let userFound = false;
+        users = users.map(u => {
+            if (u.username === username) {
+                userFound = true;
+                return { ...u, role: newRole, roleUpdatedAt: new Date().toISOString() };
+            }
+            return u;
+        });
+        localStorage.setItem(AUTH_CONFIG.usersStorageKey, JSON.stringify(users));
+
+        // 2. อัปเดตใน LocalStorage: horo_history (ถ้ามีข้อมูลสมาชิกที่ผูกกับ username นี้)
+        let history = JSON.parse(localStorage.getItem('horo_history') || '[]');
+        history = history.map(m => {
+            if (m.username === username || m.name === username || m.memberId === username) {
+                return { ...m, role: newRole };
+            }
+            return m;
+        });
+        localStorage.setItem('horo_history', JSON.stringify(history));
+
+        // 3. หากเป็น Session ของผู้ใช้ปัจจุบัน ให้ซิงก์ Session ทันที
+        const currentSession = getSession();
+        if (currentSession && currentSession.username === username) {
+            currentSession.role = newRole;
+            localStorage.setItem(AUTH_CONFIG.storageKey, JSON.stringify(currentSession));
+        }
+
+        // 4. อัปเดต Firestore (ถ้ามีเชื่อมต่อ Firebase)
+        try {
+            const { getFirestore, collection, query, where, getDocs, updateDoc, doc } = await import(
+                "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+            );
+            const db = getFirestore();
+            
+            // อัปเดตใน registered_users
+            const usersCol = collection(db, "registered_users");
+            const qUsers = query(usersCol, where("username", "==", username));
+            const userSnap = await getDocs(qUsers);
+            userSnap.forEach(async (docSnap) => {
+                await updateDoc(doc(db, "registered_users", docSnap.id), {
+                    role: newRole,
+                    roleUpdatedAt: new Date()
+                });
+            });
+
+            // อัปเดตใน members
+            const membersCol = collection(db, "members");
+            const qMembers = query(membersCol, where("username", "==", username));
+            const memberSnap = await getDocs(qMembers);
+            memberSnap.forEach(async (docSnap) => {
+                await updateDoc(doc(db, "members", docSnap.id), {
+                    role: newRole
+                });
+            });
+        } catch (cloudErr) {
+            console.warn("⚠️ บันทึกสิทธิ์ลง Firestore ล้มเหลว (บันทึกในเครื่องเรียบร้อย):", cloudErr.message);
+        }
+
+        // แจ้งเตือนสำเร็จ
+        Swal.fire({
+            icon: 'success',
+            title: 'ปรับระดับสิทธิ์สำเร็จ',
+            html: `ปรับผู้ใช้งาน <b>${username}</b> เป็น <b>${getRoleDisplayName(newRole)}</b> เรียบร้อยแล้ว`,
+            confirmButtonColor: '#d4af37'
+        });
+
+        // รีเฟรชตารางสมาชิกและตัวเลือก Dropdown
+        if (typeof updateAllMemberSelectors === 'function') updateAllMemberSelectors();
+        if (typeof loadHistory === 'function') loadHistory();
+
+        return true;
+    } catch (e) {
+        console.error('Error updating user role:', e);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถปรับระดับสิทธิ์ได้: ' + e.message, 'error');
+        return false;
+    }
 }
 
 // ===================================================
@@ -839,6 +1000,7 @@ async function resetUserPassword(username, newPassword) {
 // EXPORT GLOBAL
 // ===================================================
 
+window.USER_ROLES = USER_ROLES;
 window.doLogin = doLogin;
 window.doRegister = doRegister;
 window.doGoogleLogin = doGoogleLogin; // Export Google Login
@@ -847,6 +1009,15 @@ window.checkAuth = checkAuth;
 window.switchToRegister = switchToRegister;
 window.switchToLogin = switchToLogin;
 window.isAdmin = isAdmin;
+window.isDataManager = isDataManager;
+window.isMemberChecker = isMemberChecker;
+window.canManageRoles = canManageRoles;
+window.canAccessAdmin = canAccessAdmin;
+window.canEditAllMembers = canEditAllMembers;
+window.canViewAllMembers = canViewAllMembers;
+window.getRoleDisplayName = getRoleDisplayName;
+window.getRoleBadgeHTML = getRoleBadgeHTML;
+window.updateUserRole = updateUserRole;
 window.getCurrentUserRole = getCurrentUserRole;
 window.getCurrentUser = getCurrentUser;
 window.checkAdminAccess = checkAdminAccess;

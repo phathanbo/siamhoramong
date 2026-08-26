@@ -2197,28 +2197,106 @@ const ThaiHoroProEngine = (function() {
     // =========================================================================
     // 🌟 MASTER FEATURE 2: ระบบค้นหาฤกษ์มงคลเฉพาะ 8 ภารกิจ (Mission-Specific Auspicious Picker)
     // =========================================================================
-    function findMissionSpecificAuspiciousDates(horoData, missionKey = 'all', daysCount = 60) {
-        if (!horoData || !horoData.thaksa) return [];
+    function findMissionSpecificAuspiciousDates(horoData, missionKey = 'car', daysCount = 60) {
+        if (!horoData || !horoData.thaksa) return { missionKey, missionInfo: {}, auspiciousDays: [] };
 
+        // 8 ภารกิจชีวิต พร้อมกฎทางโหราศาสตร์ไทยโบราณที่แตกต่างกันอย่างสิ้นเชิง
+        // goodDays (0:อา, 1:จ, 2:อ, 3:พุธกลางวัน, 4:พฤ, 5:ศุกร์, 6:เสาร์)
         const missions = {
-            car: { name: "🚗 ฤกษ์ออกรถใหม่ & ซื้อยานพาหนะ", goodDays: [1, 4, 5], badDays: [3, 7], favPlanets: [5, 6, 4], targetDesc: "ขับขี่ปลอดภัย แคล้วคลาด ร่ำรวยโชคลาภ" },
-            house: { name: "🏠 ฤกษ์ขึ้นบ้านใหม่ / ลงเสาเอก / ซื้ออสังหาฯ", goodDays: [1, 4, 5], badDays: [2, 7], favPlanets: [5, 2, 4], targetDesc: "อยู่อบอุ่น ร่มเย็น เงินทองไหลมาเทมา ครอบครัวรุ่งเรือง" },
-            wedding: { name: "💍 ฤกษ์หมั้นหมาย / แต่งงาน / สู่ขอ", goodDays: [1, 4, 5], badDays: [3, 7], favPlanets: [6, 4, 2], targetDesc: "คู่ชีวิตครองรักยั่งยืน สมพงษ์เกื้อหนุน ทรัพย์สินเพิ่มพูน" },
-            business: { name: "🏢 ฤกษ์เปิดกิจการ / เปิดร้าน / จดทะเบียนบริษัท", goodDays: [1, 4, 5], badDays: [0, 7], favPlanets: [1, 5, 4], targetDesc: "ลูกค้าแน่นร้าน ค้าขายคล่อง กำไรมหาศาล ชื่อเสียงโด่งดัง" },
-            contract: { name: "💼 ฤกษ์เจรจาธุรกิจ / ปิดดีลใหญ่ / เซ็นสัญญา", goodDays: [1, 4, 5], badDays: [0, 7], favPlanets: [4, 5, 6], targetDesc: "เจรจาราบรื่น ได้เปรียบในสัญญา ปิดยอดขายสำเร็จตามเป้า" },
-            travel: { name: "✈️ ฤกษ์เดินทางไกล / ข้ามน้ำข้ามทะเล / ไปต่างประเทศ", goodDays: [1, 4, 5], badDays: [3, 7], favPlanets: [1, 3, 5], targetDesc: "การเดินทางราบรื่น ปลอดภัยไร้อุปสรรค บรรลุวัตถุประสงค์" },
-            surgery: { name: "🩺 ฤกษ์ผ่าตัด / เสริมความงาม / รักษาโรค", goodDays: [1, 4, 5], badDays: [3, 0], favPlanets: [2, 6, 5], targetDesc: "แผลหายไว สวยงามสมใจ ไร้โรคแทรกซ้อน สุขภาพแข็งแรง" },
-            wealth: { name: "💰 ฤกษ์เปิดบัญชีธนาคาร / ลงทุน / เสริมคลังสมบัติ", goodDays: [1, 4, 5], badDays: [0, 7], favPlanets: [4, 5, 6], targetDesc: "เงินทองงอกเงย มีเงินเก็บก้อนโต เสี่ยงโชคเฮง รวยเร็ว" }
+            car: { 
+                name: "🚗 ฤกษ์ออกรถใหม่ & ซื้อยานพาหนะ", 
+                goodDays: [1, 4, 5], 
+                badDays: [2, 6], 
+                favSlotKeys: ["ปลอด", "สี่ศูนย์"], 
+                targetDesc: "ขับขี่ปลอดภัย แคล้วคลาด ยานพาหนะนำพาโชคลาภเงินทอง",
+                colorGuide: "สีมงคลหน้ารถ: ส้ม/ทอง/เงิน (เลี่ยงสีดำในวันออกรถ)",
+                ritualDir: "หันหน้ารถออกทางทิศตะวันออก หรือทิศใต้",
+                actionTips: "ไหว้แม่ย่านางรถด้วยพวงมาลัย 2 ชาย, บีบแตร 3 ครั้งก่อนเคลื่อนรถ"
+            },
+            house: { 
+                name: "🏠 ฤกษ์ขึ้นบ้านใหม่ / ลงเสาเอก / ซื้ออสังหาฯ", 
+                goodDays: [4, 1, 5], 
+                badDays: [6, 0], 
+                favSlotKeys: ["ศุภะ", "ปลอด"], 
+                targetDesc: "อยู่อบอุ่น ร่มเย็น ครอบครัวผาสุก เงินทองไหลมาเทมา ทรัพย์สินมั่นคง",
+                colorGuide: "แต่งกายโทนสีครีม ขาว หรือเขียวเหนี่ยวทรัพย์",
+                ritualDir: "ก้าวเท้าขวาเข้าประตูบ้าน มุ่งหน้าสู่ห้องพระ/ทิศตะวันออกเฉียงเหนือ",
+                actionTips: "อัญเชิญพระพุทธรูปเข้าบ้านเป็นสิ่งแรก พร้อมข้าวสารเต็มถังและเงินก้นถุง"
+            },
+            wedding: { 
+                name: "💍 ฤกษ์หมั้นหมาย / แต่งงาน / สู่ขอ", 
+                goodDays: [5, 1, 4], 
+                badDays: [2, 6], 
+                favSlotKeys: ["ศุภะ", "สี่ศูนย์"], 
+                targetDesc: "คู่ชีวิตครองรักยั่งยืน สมพงษ์เกื้อหนุน ทรัพย์สินเพิ่มพูน มีบุตรสืบสกุล",
+                colorGuide: "ชุดมงคล: ชมพู ทอง หรือฟ้าพาสเทล",
+                ritualDir: "จัดพิธีสู่ขอและสวมแหวนโดยหันหน้าไปทางทิศตะวันออก",
+                actionTips: "ให้ผู้ใหญ่คู่สามีภรรยาที่ครองคู่ยืนยาวเป็นผู้ปูที่นอนส่งตัวบ่าวสาว"
+            },
+            business: { 
+                name: "🏢 ฤกษ์เปิดกิจการ / เปิดร้าน / จดทะเบียนบริษัท", 
+                goodDays: [4, 0, 5], 
+                badDays: [6, 2], 
+                favSlotKeys: ["สี่ศูนย์", "ศุภะ"], 
+                targetDesc: "ลูกค้าแน่นร้าน ค้าขายคล่อง กำไรมหาศาล ชื่อเสียงเกริกไกร",
+                colorGuide: "เสื้อผ้าเปิดร้าน: สีแดงสด สีทอง หรือสีเขียวมรกต",
+                ritualDir: "เปิดประตูด้านหน้ารับพลังปราณมงคลจากทิศใต้ หรือทิศตะวันออก",
+                actionTips: "จุดประทัดเบิกฤกษ์ หรือเปิดเพลงมงคล และให้ลูกค้ารายแรกเป็นคนใกล้ชิดจ่ายเงินลงบิล"
+            },
+            contract: { 
+                name: "💼 ฤกษ์เจรจาธุรกิจ / ปิดดีลใหญ่ / เซ็นสัญญา", 
+                goodDays: [3, 4, 5], 
+                badDays: [0, 6], 
+                favSlotKeys: ["สี่ศูนย์", "ปลอด"], 
+                targetDesc: "เจรจาราบรื่น ได้เปรียบในสัญญา ไร้ข้อขัดแย้ง ปิดยอดขายสำเร็จตามเป้า",
+                colorGuide: "สวมเสื้อผ้าโทนสีกรมท่า เขียวเข้ม หรือทองเพิ่มภูมิฐาน",
+                ritualDir: "นั่งเจรจาโดยหันหน้าไปทางทิศเหนือ หรือทิศตะวันออก",
+                actionTips: "พกปากกาสีทองหรือปากกาแท่งมงคล และท่องคาถาเมตตามหานิยมก่อนลงนาม"
+            },
+            travel: { 
+                name: "✈️ ฤกษ์เดินทางไกล / ข้ามน้ำข้ามทะเล / ไปต่างประเทศ", 
+                goodDays: [4, 1, 3], 
+                badDays: [2, 6], 
+                favSlotKeys: ["ปลอด", "ศุภะ"], 
+                targetDesc: "การเดินทางราบรื่น แคล้วคลาดปลอดภัย บรรลุวัตถุประสงค์ ไร้อุปสรรค",
+                colorGuide: "เสื้อผ้าใส่เดินทาง: สีฟ้าคราม ขาว หรือเทาอ่อน",
+                ritualDir: "เริ่มก้าวเท้าออกจากบ้านมุ่งสู่ทิศมงคลประจำวัน",
+                actionTips: "ไหว้พระประธานในบ้านหรือขอพรสิ่งศักดิ์สิทธิ์ประจำตัวก่อนก้าวเท้าพ้นธรณีประตู"
+            },
+            surgery: { 
+                name: "🩺 ฤกษ์ผ่าตัด / เสริมความงาม / รักษาโรค", 
+                goodDays: [1, 5, 4], 
+                badDays: [2, 0, 6], 
+                favSlotKeys: ["ปลอด", "ศุภะ"], 
+                targetDesc: "แผลหายไว สวยงามสมใจ ไร้โรคแทรกซ้อน ร่างกายฟื้นตัวรวดเร็ว",
+                colorGuide: "สวมใส่เสื้อผ้าโทนสีเขียวหรือสีขาวสะอาดตา",
+                ritualDir: "เตียงผ่าตัด/หัตถการควรหันหัวไปทางทิศเหนือหรือทิศตะวันออก",
+                actionTips: "ทำบุญปล่อยปลาหรือบริจาคโลหิต/ค่ายาแก่ผู้ป่วยยากไร้ก่อนวันผ่าตัด 1 วัน"
+            },
+            wealth: { 
+                name: "💰 ฤกษ์เปิดบัญชีธนาคาร / ลงทุน / เสริมคลังสมบัติ", 
+                goodDays: [4, 3, 5], 
+                badDays: [6, 2], 
+                favSlotKeys: ["สี่ศูนย์", "ปลอด"], 
+                targetDesc: "เงินทองงอกเงย มีเงินเก็บก้อนโต กำไรจากพอร์ตลงทุน เสี่ยงโชคเฮง",
+                colorGuide: "กระเป๋าสตางค์/เครื่องแต่งกาย: สีเขียวมรกต สีทอง หรือสีน้ำเงินเข้ม",
+                ritualDir: "ก้าวเข้าสถาบันการเงินทางทิศตะวันออก หรือทิศใต้",
+                actionTips: "ฝากเงินก้อนแรกด้วยตัวเลขมงคล เช่น 888, 999, 1,688 หรือ 9,999 บาท"
+            }
         };
 
-        const currentMission = missions[missionKey] || missions['business'];
+        const currentMission = missions[missionKey] || missions['car'];
         const results = [];
         const today = new Date();
 
-        const birthKalaNum = horoData.thaksa.kalakini ? horoData.thaksa.kalakini.num : -1;
-        const birthSriNum = horoData.thaksa.sri ? horoData.thaksa.sri.num : -1;
+        // ข้อมูลทักษาของเจ้าชะตา
+        const baseThaksa = horoData.thaksa;
+        const birthKalaNum = (baseThaksa && baseThaksa.kalakiniKamnerd) ? baseThaksa.kalakiniKamnerd : -1;
+        const birthSriNum = (baseThaksa && baseThaksa.sriKamnerd) ? baseThaksa.sriKamnerd : -1;
+        const birthMontriNum = (baseThaksa && baseThaksa.montriKamnerd) ? baseThaksa.montriKamnerd : -1;
+        const birthDechaNum = (baseThaksa && baseThaksa.dechaKamnerd) ? baseThaksa.dechaKamnerd : -1;
 
-        const DAY_PLANET_MAP = [1, 2, 3, 4, 5, 6, 7]; // อา-ส
+        const DAY_PLANET_MAP = [1, 2, 3, 4, 5, 6, 7]; // 0:อา (1), 1:จ (2), 2:อ (3), 3:พ (4), 4:พฤ (5), 5:ศ (6), 6:ส (7)
 
         for (let i = 1; i <= daysCount; i++) {
             const checkDate = new Date(today);
@@ -2227,40 +2305,77 @@ const ThaiHoroProEngine = (function() {
             const dayOfWeek = checkDate.getDay();
             const dayPlanet = DAY_PLANET_MAP[dayOfWeek];
 
-            // Filter out birth Kalakini day
+            // กฎเหล็กที่ 1: ตัดวันกาลกิณีประจำตัวทิ้งเด็ดขาด
             if (dayPlanet === birthKalaNum) continue;
 
-            // Calculate Ubakong matrix for this day
-            const ubakong = calculateUbakongForDay(dayOfWeek);
-            const bestSlot = ubakong.find(u => u.statusKey === "ปลอด" || u.statusKey === "สี่ศูนย์" || u.statusKey === "ศุภะ") || ubakong[0];
+            // กฎเหล็กที่ 2: ตัดวันอวมงคลเฉพาะภารกิจ
+            if (currentMission.badDays.includes(dayOfWeek)) continue;
 
-            // Scoring system (0-100)
-            let score = 70;
+            // คำนวณยามอุบากองของวันนั้น
+            const ubakong = calculateUbakongForDay(dayOfWeek);
+
+            // ค้นหายามที่ตรงกับเป้าหมายภารกิจ
+            let bestSlot = null;
+            for (let favKey of currentMission.favSlotKeys) {
+                bestSlot = ubakong.find(u => u.statusKey === favKey);
+                if (bestSlot) break;
+            }
+            if (!bestSlot) {
+                bestSlot = ubakong.find(u => u.statusKey === "ปลอด" || u.statusKey === "สี่ศูนย์" || u.statusKey === "ศุภะ") || ubakong[0];
+            }
+
+            // ระบบคิดคะแนนเฉพาะภารกิจ (Mission Weighted Scoring 0 - 100)
+            let score = 65;
+
+            // คะแนนจากดาวทักษาประจำวันเทียบดวงเกิด
             if (dayPlanet === birthSriNum) score += 20;
-            if (currentMission.goodDays.includes(dayOfWeek)) score += 10;
-            if (currentMission.badDays.includes(dayOfWeek)) score -= 20;
+            else if (dayPlanet === birthMontriNum) score += 15;
+            else if (dayPlanet === birthDechaNum) score += 12;
+
+            // คะแนนจากวันที่ถูกโฉลกกับภารกิจ
+            if (currentMission.goodDays.includes(dayOfWeek)) score += 15;
+
+            // โบนัสยามอุบากอง
+            if (bestSlot.statusKey === "สี่ศูนย์" || bestSlot.statusKey === "ศุภะ") score += 5;
+            if (bestSlot.statusKey === "ปลอด") score += 4;
 
             if (score >= 80) {
                 const thaiDayName = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"][dayOfWeek];
                 const thaiMonthShort = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."][checkDate.getMonth()];
                 const thaiYearShort = String(checkDate.getFullYear() + 543).slice(-2);
-                const shortDateStr = `${thaiDayName} ${checkDate.getDate()} ${thaiMonthShort} ${thaiYearShort}`;
+                const shortDateStr = `${thaiDayName}ที่ ${checkDate.getDate()} ${thaiMonthShort} ${thaiYearShort}`;
+
+                let gradeTier = "⭐⭐⭐⭐ (ฤกษ์มงคลดีมาก)";
+                let badgeColor = "#16a34a";
+                if (score >= 95) {
+                    gradeTier = "👑 ⭐⭐⭐⭐⭐ (มหาจักรพรรดิฤกษ์)";
+                    badgeColor = "#d97706";
+                } else if (score >= 88) {
+                    gradeTier = "🌟 ⭐⭐⭐⭐⭐ (มหาสิทธิโชค)";
+                    badgeColor = "#059669";
+                }
 
                 results.push({
                     date: checkDate,
                     shortDateStr: shortDateStr,
+                    dayOfWeekName: thaiDayName,
                     missionName: currentMission.name,
                     targetDesc: currentMission.targetDesc,
                     score: score,
-                    rating: score >= 90 ? "⭐⭐⭐⭐⭐ (ฤกษ์มหาจักรพรรดิ)" : "⭐⭐⭐⭐ (ฤกษ์ดีมาก)",
+                    rating: gradeTier,
+                    badgeColor: badgeColor,
                     bestTimeSlot: bestSlot.time,
-                    ubakongResult: `${bestSlot.slotName} (${bestSlot.statusKey})`,
+                    slotName: bestSlot.slotName,
+                    ubakongResult: `${bestSlot.slotName} [${bestSlot.statusKey}]`,
                     ubakongMeaning: bestSlot.desc,
-                    advice: `ประกอบพิธีในช่วง <strong>${bestSlot.time}</strong> [${bestSlot.desc}] หันหน้าไปทางทิศมงคล`
+                    colorGuide: currentMission.colorGuide,
+                    ritualDir: currentMission.ritualDir,
+                    actionTips: currentMission.actionTips,
+                    advice: `ประกอบพิธีในช่วง <strong>${bestSlot.time}</strong> (${bestSlot.slotName}: ${bestSlot.desc})`
                 });
             }
 
-            if (results.length >= 10) break; // Limit to top 10 best days
+            if (results.length >= 8) break; // คัดเลือก 8 วันยอดเยี่ยมที่สุด
         }
 
         return {

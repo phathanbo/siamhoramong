@@ -539,8 +539,23 @@ function navigateTo(pageId, addHistory = true) {
         loadHistory();
     }
 
-    if (pageId === 'adminDashboard' && typeof renderAdminDashboard === 'function') {
-        renderAdminDashboard();
+    if (pageId === 'adminDashboard') {
+        const canAccess = typeof canAccessAdmin === 'function' ? canAccessAdmin() : (typeof isAdmin === 'function' && isAdmin());
+        if (!canAccess) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ไม่มีสิทธิ์เข้าถึง',
+                    text: 'เฉพาะแอดมิน (Admin) หรือผู้ดูแลข้อมูล (Data Manager) เท่านั้นที่สามารถเข้าถึงระบบหลังบ้านได้',
+                    confirmButtonColor: '#d4af37'
+                });
+            }
+            navigateTo('mainpage', false);
+            return;
+        }
+        if (typeof renderAdminDashboard === 'function') {
+            renderAdminDashboard();
+        }
     }
 
     if (pageId === 'yearClashPage' && typeof showYearClashPage === 'function') {
@@ -687,6 +702,21 @@ function navigateTo(pageId, addHistory = true) {
     // If navigating to showdaylife, ensure its initializer runs
     if (pageId === 'showdaylife' && typeof showdaylife === 'function') {
         try { showdaylife(); } catch (e) { console.error('showdaylife init error', e); }
+    }
+
+    if (pageId === 'nameAnalysisPage') {
+        setTimeout(() => {
+            const container = document.getElementById('shownamepage');
+            if (container && (!container.innerHTML.trim() || !document.getElementById('nameMemberSelect'))) {
+                if (typeof showname === 'function') showname();
+            }
+            if (typeof updateAllMemberSelectors === 'function') {
+                updateAllMemberSelectors();
+            }
+            if (window.currentMemberId && typeof autoFillMemberData === 'function') {
+                autoFillMemberData(window.currentMemberId);
+            }
+        }, 50);
     }
 
     // 8. โหลดข้อมูลผู้ใช้มาเติม (ถ้ามีระบบ Profile)

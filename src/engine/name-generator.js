@@ -2,17 +2,17 @@
 
 const kalakiniRules = {
     0: /[ศษสหฬฮ]/,
-    1: /[ะาิีึืุูเแโใไ]/,
+    1: /[ะาิีึืุูเแโใไำ]/,
     2: /[กขคฆง]/,
     3: /[จฉชซฌญ]/,
     4: /[ดตถทธน]/,
     5: /[ยรลว]/,
-    6: /[ดตถทธน]/,
-    7: /[ฎฏฐฑฒณ]/
+    6: /[ฎฏฐฑฒณ]/,
+    7: /[บปผฝพฟภม]/
 };
 
 // เช็คว่าผลรวมเลขศาสตร์เป็นมงคลหรือไม่
-const luckySums = [14, 15, 19, 24, 36, 41, 42, 45, 51, 54, 55, 59, 63, 65];
+const luckySums = [9, 14, 15, 19, 23, 24, 36, 40, 41, 42, 45, 46, 50, 51, 54, 55, 56, 59, 60, 63, 64, 65, 69];
 
 function isLuckySum(sum) {
     return luckySums.includes(sum);
@@ -20,6 +20,13 @@ function isLuckySum(sum) {
 
 function hasKalakini(nameStr, dayIdx) {
     if (dayIdx === null || dayIdx === undefined) return false;
+    if (typeof TaksaData !== 'undefined' && TaksaData[dayIdx]?.mapping?.["กาลกิณี"]) {
+        const forbidden = TaksaData[dayIdx].mapping["กาลกิณี"];
+        for (let char of nameStr) {
+            if (forbidden.includes(char)) return true;
+        }
+        return false;
+    }
     const regex = kalakiniRules[dayIdx];
     if (!regex) return false;
     return regex.test(nameStr);
