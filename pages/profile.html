@@ -1,137 +1,1129 @@
+
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔮 แผ่นดวงชะตาส่วนบุคคล - สยามโหรามงคล</title>
     
-    <!-- CSS Dependencies -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/modern-theme.css">
-    <link rel="stylesheet" href="../assets/css/cartomancy.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        :root {
+            --bg-canvas: #fcf8f5;
+            --bg-sidebar: #ece7f8;
+            --bg-card: #ffffff;
+            --bg-card-soft: #fcf9ff;
+            --purple-clay: #8b5cf6;
+            --purple-soft: #e5dcfa;
+            --purple-light: #f5f0ff;
+            --purple-dark: #4c1d95;
+            --pink-clay: #f472b6;
+            --pink-soft: #fde8ef;
+            --yellow-clay: #f59e0b;
+            --yellow-soft: #fef7e7;
+            --green-clay: #10b981;
+            --green-soft: #e6f7f0;
+            --blue-clay: #38bdf8;
+            --blue-soft: #e0f2fe;
+            --text-main: #332b4b;
+            --text-sub: #7c7297;
+            --text-muted: #a39bb9;
+            
+            /* 3D Claymorphic Shadows */
+            --shadow-clay-card: 0 10px 25px -4px rgba(139, 92, 246, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03), inset 0 2px 0 rgba(255, 255, 255, 0.9);
+            --shadow-clay-card-lg: 0 16px 36px -6px rgba(139, 92, 246, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.9);
+            --shadow-clay-badge: 0 6px 14px rgba(139, 92, 246, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.8);
+            --shadow-clay-btn: 0 6px 16px rgba(139, 92, 246, 0.25), inset 0 2px 0 rgba(255, 255, 255, 0.4);
+            --shadow-inset-soft: inset 0 2px 5px rgba(0, 0, 0, 0.04);
+            --radius-xl: 24px;
+            --radius-lg: 18px;
+            --radius-md: 14px;
+            --radius-pill: 50px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+            transition: all 0.2s ease;
+        }
+
         body {
-            background-color: #0f0f1a;
-            color: #e0e0e0;
-            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg-canvas);
+            color: var(--text-main);
             min-height: 100vh;
+            display: flex;
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(244, 114, 182, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 90% 85%, rgba(139, 92, 246, 0.07) 0%, transparent 45%);
+            background-attachment: fixed;
         }
-        .navbar-brand {
-            font-weight: bold;
-            color: #d4af37 !important;
-            font-size: 1.4rem;
+
+        /* 🎀 Left Sidebar */
+        .cute-sidebar {
+            width: 320px;
+            background: var(--bg-sidebar);
+            border-radius: var(--radius-xl);
+            padding: 24px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-clay-card);
+            border: 2px solid #ffffff;
+            max-height: calc(100vh - 40px);
+            position: sticky;
+            top: 20px;
+            overflow-y: auto;
         }
-        .profile-container {
-            margin-top: 30px;
-            margin-bottom: 50px;
+
+        .cute-sidebar::-webkit-scrollbar {
+            width: 6px;
         }
-        .border-gold {
-            border: 1px solid #d4af37 !important;
+        .cute-sidebar::-webkit-scrollbar-thumb {
+            background: #d8b4fe;
+            border-radius: 10px;
         }
-        .text-gold {
-            color: #d4af37 !important;
+
+        /* Profile Avatar Box */
+        .avatar-3d-box {
+            text-align: center;
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 18px 14px;
+            box-shadow: var(--shadow-clay-card);
+            border: 2px solid #ffffff;
+            position: relative;
         }
-        .btn-gold {
-            background: linear-gradient(135deg, #d4af37, #b8960c);
-            color: #000;
-            font-weight: bold;
+
+        .avatar-3d-img {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fbcfe8 0%, #e9d5ff 50%, #c7d2fe 100%);
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            box-shadow: 0 8px 18px rgba(244, 114, 182, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+            border: 3px solid #ffffff;
+        }
+
+        .avatar-name {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .avatar-badge-role {
+            display: inline-block;
+            background: var(--purple-light);
+            color: var(--purple-clay);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: var(--radius-pill);
+        }
+
+        /* Sidebar Info Card */
+        .sidebar-info-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 14px;
+            box-shadow: var(--shadow-clay-card);
+            border: 2px solid #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.82rem;
+        }
+
+        .sidebar-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #f1ecf9;
+            padding-bottom: 6px;
+        }
+        .sidebar-info-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .sidebar-info-label {
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+        .sidebar-info-val {
+            color: var(--text-main);
+            font-weight: 800;
+        }
+
+        /* Sidebar Prediction Interactive Tab Buttons */
+        .sidebar-pred-tab-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-pred-tab-btn {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 12px 14px;
+            box-shadow: var(--shadow-clay-card);
+            border: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            width: 100%;
+        }
+
+        .sidebar-pred-tab-btn:hover {
+            transform: translateX(4px);
+            border-color: var(--purple-soft);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15);
+        }
+
+        .sidebar-pred-tab-btn.active {
+            background: linear-gradient(135deg, #f5f0ff 0%, #ffffff 100%);
+            border-color: var(--purple-clay);
+            box-shadow: 0 8px 22px rgba(139, 92, 246, 0.22);
+        }
+
+        .pred-tab-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-clay-badge);
+        }
+
+        .pred-tab-content {
+            flex: 1;
+            margin-left: 10px;
+        }
+
+        .pred-tab-title {
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            display: block;
+        }
+
+        .pred-tab-hint {
+            font-size: 0.72rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .cute-menu a:hover {
+            background: rgba(255, 255, 255, 0.7);
+            color: var(--purple-dark);
+            transform: translateX(3px);
+        }
+
+        .cute-menu a.active {
+            background: #ffffff;
+            color: var(--purple-clay);
+            box-shadow: var(--shadow-clay-badge);
+        }
+
+        .cute-menu .menu-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            background: #ffffff;
+            box-shadow: var(--shadow-clay-badge);
+        }
+
+        /* Cute Motivational Card */
+        .cute-motto-card {
+            margin-top: auto;
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            text-align: center;
+            box-shadow: var(--shadow-clay-card);
+            border: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cute-motto-icon {
+            font-size: 1.6rem;
+        }
+
+        .cute-motto-text {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            font-weight: 600;
+            text-align: left;
+            line-height: 1.35;
+        }
+
+        /* 🌸 Main Dashboard Area */
+        .cute-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 0 0 24px;
+            min-width: 0;
+            gap: 20px;
+        }
+
+        /* Top Bar */
+        .cute-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        /* Horoscope Prediction Area Inside Card styling */
+        #profPredictionArea {
+            margin-top: 10px;
+        }
+
+        #horoscopeCaptureArea {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: var(--shadow-clay-card);
+            border: 2px solid #ffffff;
+            overflow: hidden;
+        }
+
+        .horo-sheet-inner {
+            background: #ffffff;
             border: none;
+            border-radius: 20px;
         }
-        .btn-gold:hover {
-            background: linear-gradient(135deg, #f3cf65, #d4af37);
-            color: #000;
+
+        .cute-top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cute-search-box {
+            background: #ffffff;
+            border: 2px solid #ffffff;
+            box-shadow: var(--shadow-clay-card);
+            border-radius: var(--radius-pill);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+        }
+
+        .cute-search-box select, .cute-search-box input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .cute-icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #ffffff;
+            box-shadow: var(--shadow-clay-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cute-icon-btn:hover {
+            transform: scale(1.06);
+        }
+
+        .cute-badge-num {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            background: var(--pink-clay);
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ffffff;
+        }
+
+        /* 4 Top KPI 3D Stat Cards */
+        .kpi-row-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 1100px) {
+            .kpi-row-4 { grid-template-columns: repeat(2, 1fr); }
+            body { flex-direction: column; }
+            .cute-sidebar { width: 100%; }
+            .cute-main { padding-left: 0; }
+        }
+
+        .cute-kpi-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: var(--shadow-clay-card);
+            border: 2px solid #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cute-kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+        }
+
+        .kpi-purple { background: var(--purple-soft); color: var(--purple-clay); }
+        .kpi-pink { background: var(--pink-soft); color: var(--pink-clay); }
+        .kpi-green { background: var(--green-soft); color: var(--green-clay); }
+        .kpi-yellow { background: var(--yellow-soft); color: var(--yellow-clay); }
+
+        .cute-kpi-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cute-kpi-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-sub);
+        }
+
+        .cute-kpi-val {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 2px 0;
+        }
+
+        .cute-kpi-sub {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--purple-clay);
+        }
+
+        /* 2-Column Content Grid: Main Overview Chart (Left 2fr) + Calendar & Reminders (Right 1fr) */
+        .content-2col-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.05fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 992px) {
+            .content-2col-grid { grid-template-columns: 1fr; }
+        }
+
+        .cute-card {
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 20px;
+            box-shadow: var(--shadow-clay-card);
+            border: 2px solid #ffffff;
+        }
+
+        .card-title-cute {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .card-title-cute h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cute-tag-pill {
+            background: var(--purple-light);
+            color: var(--purple-clay);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+        }
+
+        /* 3D Action Pill Buttons */
+        .btn-cute-action {
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 0.82rem;
+            padding: 7px 16px;
+            border-radius: var(--radius-pill);
+            border: none;
+            box-shadow: var(--shadow-clay-btn);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-cute-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
+        }
+
+        /* Bottom Row Split: 2 Boxes (Life Elements Progress + Auspicious Lucky Directions) */
+        .sub-2col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .sub-2col-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Element Progress Bars */
+        .element-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .element-icon-small {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-clay-badge);
+        }
+
+        .element-bar-info {
+            flex: 1;
+        }
+
+        .element-bar-title {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .cute-progress-track {
+            height: 8px;
+            background: #f1ecf9;
+            border-radius: var(--radius-pill);
+            overflow: hidden;
+        }
+
+        .cute-progress-fill {
+            height: 100%;
+            border-radius: var(--radius-pill);
+            transition: width 0.4s ease;
+        }
+
+        /* Calendar Card Widget */
+        .cute-calendar-widget {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: var(--shadow-clay-card);
+            border: 2px solid #ffffff;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+        }
+
+        .cal-day-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding-bottom: 6px;
+        }
+
+        .cal-date-cell {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-main);
+            padding: 6px 0;
+            border-radius: 50%;
+            cursor: pointer;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cal-date-cell:hover {
+            background: var(--purple-light);
+            color: var(--purple-clay);
+        }
+
+        .cal-date-cell.today-active {
+            background: var(--purple-clay);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Reminder / Fortune List */
+        .reminder-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .reminder-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-card-soft);
+            padding: 10px 14px;
+            border-radius: var(--radius-lg);
+            border: 1px solid #f1ecf9;
+        }
+
+        .reminder-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .reminder-text h5 {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .reminder-text span {
+            font-size: 0.72rem;
+            color: var(--text-sub);
+        }
+
+        /* Encouragement Banner Card with Cute Mascot */
+        .mascot-banner-card {
+            background: linear-gradient(135deg, #f5f0ff 0%, #fdf2f8 100%);
+            border-radius: 20px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-clay-card);
+            border: 2px solid #ffffff;
+            margin-top: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mascot-banner-text h4 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--purple-dark);
+            margin-bottom: 4px;
+        }
+
+        .mascot-banner-text p {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+            max-width: 170px;
+        }
+
+        .mascot-3d-bunny {
+            font-size: 2.8rem;
+            animation: floatMascot 3s ease-in-out infinite;
+        }
+
+        @keyframes floatMascot {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(3deg); }
+        }
+
+        /* Custom scroll & print */
+        @media print {
+            .cute-sidebar, .cute-topbar, .snap-btn, .btn-cute-action { display: none !important; }
+            body { padding: 0; background: #ffffff !important; }
+            .cute-main { width: 100%; padding: 0; }
         }
     </style>
 </head>
 
 <body>
-    <!-- 🧭 Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-gold sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="../index.html">
-                🔮 สยามโหรามงคล
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#profileNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="profileNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item mr-2">
-                        <a class="nav-link" href="../index.html"><i class="fas fa-home"></i> หน้าหลัก</a>
-                    </li>
-                    <li class="nav-item mr-2">
-                        <a class="nav-link active text-gold" href="profile.html"><i class="fas fa-id-card"></i> แผ่นดวงส่วนบุคคล</a>
-                    </li>
-                    <li class="nav-item mr-2">
-                        <a class="nav-link text-warning" href="../admin/index.html"><i class="fas fa-cogs"></i> ระบบแอดมิน</a>
-                    </li>
-                    <li class="nav-item mr-2">
-                        <a class="nav-link" href="thai-astrology.html"><i class="fas fa-star"></i> โหราศาสตร์ไทย</a>
-                    </li>
-                    <li class="nav-item mr-2">
-                        <a class="nav-link text-warning" href="thai-horoscope-pro.html"><i class="fas fa-dharmachakra"></i> ราศีจักร-ทักษา-ตรีวัย (Pro)</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="chant-library.html"><i class="fas fa-book-open"></i> คลังบทสวดมนต์</a>
-                    </li>
-                </ul>
+
+    <!-- 🎀 LEFT CUTE SIDEBAR (Member Details & Predictions) -->
+    <aside class="cute-sidebar">
+        <!-- 3D Profile Avatar -->
+        <div class="avatar-3d-box">
+            <div class="avatar-3d-img" id="sidebarAvatarIcon">
+                🐰
+            </div>
+            <div class="avatar-name">
+                <span id="sidebarUserName">คุณสมาชิก</span> 💜
+            </div>
+            <div class="avatar-badge-role" id="sidebarUserRole">
+                ✨ นักพยากรณ์ชะตา
             </div>
         </div>
-    </nav>
 
-    <!-- 🔮 Main Profile Content Area -->
-    <div class="container profile-container">
-        <!-- Selector Header for switching profiles dynamically -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card bg-dark text-white border-gold shadow-sm">
-                    <div class="card-body p-3 d-flex flex-wrap justify-content-between align-items-center" style="gap: 15px;">
-                        <div class="d-flex align-items-center" style="gap: 10px;">
-                            <i class="fas fa-user-circle text-gold fa-2x"></i>
-                            <div>
-                                <h5 class="mb-0 text-gold">ค้นหาและเลือกดวงชะตาสมาชิก</h5>
-                                <small class="text-muted">เลือกดวงชะตาสมาชิกเพื่อแสดงแผ่นดวงเรียลไทม์ได้ตลอดเวลา</small>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center" style="gap: 10px; flex-grow: 1; max-width: 480px;">
-                            <select id="profileMemberSelect" class="form-control bg-dark text-gold border-gold member-selector-shared" onchange="onSelectMemberProfile(this.value)">
-                                <option value="">-- เลือกสมาชิกเพื่อดูแผ่นดวง --</option>
-                            </select>
-                            <button class="btn btn-gold text-nowrap" onclick="initStandaloneProfile()">
-                                <i class="fas fa-sync-alt"></i> รีเฟรช
-                            </button>
-                        </div>
-                    </div>
+        <!-- 📋 Member Quick Info Card -->
+        <div class="sidebar-info-card">
+            <div class="sidebar-info-row">
+                <span class="sidebar-info-label"><i class="fas fa-id-card text-purple mr-1"></i> รหัสสมาชิก</span>
+                <span class="sidebar-info-val" id="sidebarMemberIdVal">-</span>
+            </div>
+            <div class="sidebar-info-row">
+                <span class="sidebar-info-label"><i class="fas fa-birthday-cake text-danger mr-1"></i> วันเกิด</span>
+                <span class="sidebar-info-val" id="sidebarBirthdateVal">-</span>
+            </div>
+            <div class="sidebar-info-row">
+                <span class="sidebar-info-label"><i class="far fa-clock text-primary mr-1"></i> เวลาเกิด</span>
+                <span class="sidebar-info-val" id="sidebarBirthtimeVal">-</span>
+            </div>
+            <div class="sidebar-info-row">
+                <span class="sidebar-info-label"><i class="fas fa-map-marker-alt text-warning mr-1"></i> จังหวัด</span>
+                <span class="sidebar-info-val" id="sidebarProvinceVal">-</span>
+            </div>
+        </div>
+
+        <!-- 📜 Predictions Selector Tabs (แถบกดเลือกคำทำนายเพื่อดูตรงกลาง) -->
+        <div style="font-weight: 800; font-size: 0.95rem; color: var(--purple-dark); margin-top: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fas fa-scroll" style="color:var(--yellow-clay);"></i> คำทำนายพื้นดวง</span>
+            <span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">คลิกเพื่อเปิดอ่าน</span>
+        </div>
+
+        <div class="sidebar-pred-tab-list">
+            <!-- 1. Day Pred Tab -->
+            <div class="sidebar-pred-tab-btn active" id="tabBtn_day" onclick="selectPredictionTab('day')">
+                <div class="pred-tab-icon" style="background:var(--purple-soft); color:var(--purple-clay);">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="pred-tab-content">
+                    <span class="pred-tab-title">คำทำนายวันเกิด</span>
+                    <span class="pred-tab-hint" id="tabHintDay">อุปนิสัยและวาสนา</span>
+                </div>
+                <i class="fas fa-chevron-right text-muted" style="font-size:0.75rem;"></i>
+            </div>
+
+            <!-- 2. Month Pred Tab -->
+            <div class="sidebar-pred-tab-btn" id="tabBtn_month" onclick="selectPredictionTab('month')">
+                <div class="pred-tab-icon" style="background:var(--pink-soft); color:var(--pink-clay);">
+                    <i class="far fa-calendar-alt"></i>
+                </div>
+                <div class="pred-tab-content">
+                    <span class="pred-tab-title">คำทำนายเดือนเกิด</span>
+                    <span class="pred-tab-hint" id="tabHintMonth">การงาน การเงิน ความรัก</span>
+                </div>
+                <i class="fas fa-chevron-right text-muted" style="font-size:0.75rem;"></i>
+            </div>
+
+            <!-- 3. Zodiac Pred Tab -->
+            <div class="sidebar-pred-tab-btn" id="tabBtn_year" onclick="selectPredictionTab('year')">
+                <div class="pred-tab-icon" style="background:var(--yellow-soft); color:var(--yellow-clay);">
+                    <i class="fas fa-dragon"></i>
+                </div>
+                <div class="pred-tab-content">
+                    <span class="pred-tab-title">คำทำนายปีนักษัตร</span>
+                    <span class="pred-tab-hint" id="tabHintYear">ธาตุและคู่มิตรชีวิต</span>
+                </div>
+                <i class="fas fa-chevron-right text-muted" style="font-size:0.75rem;"></i>
+            </div>
+
+            <!-- 4. Element Harmony Tab -->
+            <div class="sidebar-pred-tab-btn" id="tabBtn_elements" onclick="selectPredictionTab('elements')">
+                <div class="pred-tab-icon" style="background:var(--green-soft); color:var(--green-clay);">
+                    <i class="fas fa-atom"></i>
+                </div>
+                <div class="pred-tab-content">
+                    <span class="pred-tab-title">วิเคราะห์สมพงษ์ธาตุ</span>
+                    <span class="pred-tab-hint" id="tabHintElement">พลัง 4 ธาตุประจำตัว</span>
+                </div>
+                <i class="fas fa-chevron-right text-muted" style="font-size:0.75rem;"></i>
+            </div>
+        </div>
+
+        <!-- 🏠 Back to Home Button in Sidebar -->
+        <a href="../index.html" class="sidebar-pred-tab-btn" style="text-decoration:none; background: linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%); border-color: #d8b4fe;">
+            <div class="pred-tab-icon" style="background:var(--purple-clay); color:#ffffff;">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="pred-tab-content">
+                <span class="pred-tab-title" style="color:var(--purple-dark);">กลับหน้าหลัก</span>
+                <span class="pred-tab-hint">ไปยังระบบสยามโหรามงคล</span>
+            </div>
+            <i class="fas fa-arrow-left text-purple" style="font-size:0.85rem; color:var(--purple-clay);"></i>
+        </a>
+
+        <!-- Cute Motivational Card -->
+        <div class="cute-motto-card">
+            <div class="cute-motto-icon">🌱</div>
+            <div class="cute-motto-text">
+                ก้าวเล็ก ๆ ในทุกวัน ก่อเกิดความสำเร็จอันยิ่งใหญ่ 🪴
+            </div>
+        </div>
+    </aside>
+
+    <!-- 🌸 MAIN DASHBOARD CONTENT -->
+    <main class="cute-main">
+        
+        <!-- Topbar: Greetings & Member Search -->
+        <div class="cute-topbar">
+            <div class="cute-greeting">
+                <h2>สวัสดีครับ, <span id="topbarGreetingName" style="color: var(--purple-clay);">คุณสมาชิก</span>! ☁️</h2>
+                <p>ขอให้วันนี้เป็นวันที่ราบรื่น เปี่ยมด้วยโชคลาภและพลังบวก!</p>
+            </div>
+            <div class="cute-top-actions">
+                <!-- Back to Main Home Top Action Button -->
+                <a href="../index.html" class="btn-cute-action" style="text-decoration:none; background: #ffffff; color: var(--purple-clay) !important; border: 2px solid #f1e9fb; box-shadow: var(--shadow-clay-card); padding: 7px 14px; font-size:0.8rem;" title="กลับหน้าหลัก">
+                    <i class="fas fa-arrow-left"></i> หน้าหลัก
+                </a>
+
+                <!-- Search & Profile Switcher -->
+                <div class="cute-search-box" style="padding: 6px 14px;">
+                    <i class="fas fa-search" style="color: var(--text-muted); font-size:0.85rem;"></i>
+                    <select id="profileMemberSelect" onchange="onSelectMemberProfile(this.value)">
+                        <option value="">-- เลือกดวงสมาชิก --</option>
+                    </select>
+                </div>
+                
+                <button class="cute-icon-btn" onclick="initStandaloneProfile()" title="รีเฟรชข้อมูล">
+                    <i class="fas fa-sync-alt" style="color: var(--text-sub); font-size: 0.85rem;"></i>
+                </button>
+
+                <button class="cute-icon-btn" onclick="saveHoroscopeImage()" title="บันทึกภาพแผ่นดวง">
+                    <i class="fas fa-camera" style="color: var(--purple-clay); font-size: 0.9rem;"></i>
+                </button>
+
+                <button class="cute-icon-btn" onclick="window.print()" title="พิมพ์แผ่นดวง">
+                    <i class="fas fa-print" style="color: var(--text-sub); font-size: 0.9rem;"></i>
+                    <span class="cute-badge-num">1</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 4 Top KPI 3D Stat Cards -->
+        <div class="kpi-row-4">
+            
+            <!-- 1. Running Age -->
+            <div class="cute-kpi-card">
+                <div class="cute-kpi-icon kpi-purple">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="cute-kpi-content">
+                    <span class="cute-kpi-label">อายุย่างปัจจุบัน</span>
+                    <span class="cute-kpi-val" id="kpiAgeVal">-</span>
+                    <span class="cute-kpi-sub">วัยแห่งการสร้างสรรค์ 🌟</span>
                 </div>
             </div>
+
+            <!-- 2. Ascendant Lagna (Clickable to Ascendant Page) -->
+            <div class="cute-kpi-card" onclick="goToAscendantPage()" style="cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;" title="คลิกเพื่อคำนวณและดูพยากรณ์ลัคนาฉบับเต็ม">
+                <div class="cute-kpi-icon kpi-pink">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <div class="cute-kpi-content">
+                    <span class="cute-kpi-label">ลัคนาสถิตราศี</span>
+                    <span class="cute-kpi-val" id="kpiLagnaVal" style="font-size:1.15rem; color:var(--pink-clay);">-</span>
+                    <span class="cute-kpi-sub" id="kpiLagnaRuler">ดาวเกษตรประจำตัว 🪐 <i class="fas fa-arrow-right" style="font-size:0.65rem; margin-left:2px;"></i></span>
+                </div>
+            </div>
+
+            <!-- 3. Day of Birth Element -->
+            <div class="cute-kpi-card">
+                <div class="cute-kpi-icon kpi-green">
+                    <i class="fas fa-dna"></i>
+                </div>
+                <div class="cute-kpi-content">
+                    <span class="cute-kpi-label">ธาตุประจำวันเกิด</span>
+                    <span class="cute-kpi-val" id="kpiElementVal" style="color:var(--green-clay);">-</span>
+                    <span class="cute-kpi-sub" id="kpiElementLevel">สมดุลพลังธาตุ 🌿</span>
+                </div>
+            </div>
+
+            <!-- 4. Zodiac Year -->
+            <div class="cute-kpi-card">
+                <div class="cute-kpi-icon kpi-yellow">
+                    <i class="fas fa-dragon"></i>
+                </div>
+                <div class="cute-kpi-content">
+                    <span class="cute-kpi-label">ปีนักษัตร / จันทรคติ</span>
+                    <span class="cute-kpi-val" id="kpiZodiacVal" style="color:var(--yellow-clay);">-</span>
+                    <span class="cute-kpi-sub" id="kpiLunarShort">ข้างขึ้น-แรม 🌙</span>
+                </div>
+            </div>
+
         </div>
 
-        <!-- 3. หน้าโปรไฟล์ (profilePage) -->
-        <section id="profilePage" class="main-section active" style="display: block;">
-            <div class="row">
-                <!-- Main Horoscope Card Panel (Full Width) -->
-                <div class="col-12">
-                    <div class="card shadow-lg border-gold">
-                        <div class="card-body book-page" id="profPredictionArea" style="min-height: 500px; color: #333;">
-                            <div class="text-center py-5">
-                                <div class="spinner-border text-warning mb-3" role="status"></div>
-                                <h5>กำลังโหลดข้อมูลแผ่นดวงชะตา...</h5>
+        <!-- 2-Column Main Content Grid -->
+        <div class="content-2col-grid">
+            
+            <!-- Left Side (2fr): Life Graph Curve & Astrological Analysis -->
+            <div style="display: flex; flex-direction: column; gap: 18px;">
+                
+                <!-- Card 1: Life Graph Overview -->
+                <div class="cute-card" id="horoscopeCaptureArea">
+                    <div class="card-title-cute">
+                        <h3><i class="fas fa-chart-line" style="color:var(--purple-clay);"></i> กราฟดวงชะตา & จังหวะชีวิต (Life Overview)</h3>
+                        <span class="cute-tag-pill">✨ วาสนา & พลังชีวิต</span>
+                    </div>
+
+                    <!-- Chart Container -->
+                    <div style="height: 220px; position: relative; margin-top: 6px;">
+                        <canvas id="cuteLifeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card 2: 🌟 Interactive Central Prediction Viewer Card -->
+                <div class="cute-card" id="centralPredictionViewer">
+                    <div class="card-title-cute mb-3 pb-2" style="border-bottom: 1.5px dashed #f1ecf9;">
+                        <div class="d-flex align-items-center" style="gap: 12px;">
+                            <div id="centralPredIcon" style="width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, #a78bfa, #8b5cf6); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; box-shadow: var(--shadow-clay-badge);">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div>
+                                <h3 id="centralPredTitle" style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #4c1d95;">
+                                    คำทำนายวันเกิด
+                                </h3>
+                                <span id="centralPredSubtitle" style="font-size: 0.78rem; color: #7c7297; font-weight: 600;">
+                                    อุปนิสัยและทิศทางวาสนาชะตาชีวิต
+                                </span>
                             </div>
                         </div>
-                    </div>
-                    <div class="text-center mt-3 mb-4">
-                        <button class="btn btn-success" onclick="if(typeof downloadImageFromProfile === 'function') downloadImageFromProfile(); else if(typeof saveHoroscopeImage === 'function') saveHoroscopeImage();">
-                            📸 บันทึกคำทำนายเป็นรูปภาพ
+                        <button class="btn-cute-action" style="padding: 5px 14px; font-size: 0.75rem;" onclick="saveSection('centralPredictionViewer','คำทำนายดวงชะตา')">
+                            <i class="fas fa-camera"></i> แคปคำทำนายนี้
                         </button>
                     </div>
+                    
+                    <div id="centralPredContent" style="font-size: 0.95rem; line-height: 1.85; color: #334155; min-height: 100px; padding: 4px;">
+                        กำลังโหลดข้อมูลคำทำนาย...
+                    </div>
+
+                    <!-- Hidden Area for compatibility -->
+                    <div id="profPredictionArea" style="display:none;"></div>
+                </div>
+
+                <!-- Bottom 2-Box Grid: Elements Balance & Life Auspicious Details -->
+                <div class="sub-2col-grid">
+                    
+                    <!-- 1. Element Balance Progress -->
+                    <div class="cute-card">
+                        <div class="card-title-cute">
+                            <h3><i class="fas fa-atom" style="color:var(--purple-clay);"></i> พลังงาน 4 ธาตุ</h3>
+                            <button class="btn-cute-action" style="padding: 4px 10px; font-size: 0.72rem;" onclick="saveHoroscopeImage()">
+                                View All
+                            </button>
+                        </div>
+                        <div id="elementProgressBarContainer">
+                            <!-- Dynamic Element Bars -->
+                            <div class="element-bar-item">
+                                <div class="element-icon-small" style="background:#e0f2fe; color:#0284c7;">🌊</div>
+                                <div class="element-bar-info">
+                                    <div class="element-bar-title"><span>ธาตุน้ำ (จิตใจ/ความหยั่งรู้)</span> <span>85%</span></div>
+                                    <div class="cute-progress-track"><div class="cute-progress-fill" style="width:85%; background:#38bdf8;"></div></div>
+                                </div>
+                            </div>
+                            <div class="element-bar-item">
+                                <div class="element-icon-small" style="background:#fde8ef; color:#e11d48;">🔥</div>
+                                <div class="element-bar-info">
+                                    <div class="element-bar-title"><span>ธาตุไฟ (ความมุ่งมั่น/พลังขับ)</span> <span>65%</span></div>
+                                    <div class="cute-progress-track"><div class="cute-progress-fill" style="width:65%; background:#f43f5e;"></div></div>
+                                </div>
+                            </div>
+                            <div class="element-bar-item">
+                                <div class="element-icon-small" style="background:#e6f7f0; color:#059669;">🌳</div>
+                                <div class="element-bar-info">
+                                    <div class="element-bar-title"><span>ธาตุไม้ / ดิน (ความมั่นคง)</span> <span>90%</span></div>
+                                    <div class="cute-progress-track"><div class="cute-progress-fill" style="width:90%; background:#10b981;"></div></div>
+                                </div>
+                            </div>
+                            <div class="element-bar-item">
+                                <div class="element-icon-small" style="background:#fef7e7; color:#d97706;">⚡</div>
+                                <div class="element-bar-info">
+                                    <div class="element-bar-title"><span>ธาตุทอง / ลม (ความคิดสร้างสรรค์)</span> <span>75%</span></div>
+                                    <div class="cute-progress-track"><div class="cute-progress-fill" style="width:75%; background:#f59e0b;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Auspicious Highlights & Top Recommendations -->
+                    <div class="cute-card">
+                        <div class="card-title-cute">
+                            <h3><i class="fas fa-gem" style="color:var(--pink-clay);"></i> เคล็ดมงคลเสริมดวง</h3>
+                            <span class="cute-tag-pill" style="background:var(--pink-soft); color:var(--pink-clay);">Daily Lucky</span>
+                        </div>
+                        <div class="reminder-list">
+                            <div class="reminder-item">
+                                <div class="reminder-icon" style="background:var(--purple-soft); color:var(--purple-clay);">🎨</div>
+                                <div class="reminder-text">
+                                    <h5 id="luckyColorTitle">สีมงคลประจำวันเกิด</h5>
+                                    <span id="luckyColorDesc">ม่วงพาสเทล, ชมพู, ทอง</span>
+                                </div>
+                            </div>
+                            <div class="reminder-item">
+                                <div class="reminder-icon" style="background:var(--yellow-soft); color:var(--yellow-clay);">🔢</div>
+                                <div class="reminder-text">
+                                    <h5 id="luckyNumberTitle">เลขมงคลนำโชค</h5>
+                                    <span id="luckyNumberDesc">5 - 8 - 9</span>
+                                </div>
+                            </div>
+                            <div class="reminder-item">
+                                <div class="reminder-icon" style="background:var(--green-soft); color:var(--green-clay);">🧭</div>
+                                <div class="reminder-text">
+                                    <h5 id="luckyDirectionTitle">ทิศมงคลเปิดรับทรัพย์</h5>
+                                    <span id="luckyDirectionDesc">ทิศตะวันออกเฉียงเหนือ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-        </section>
+
+            <!-- Right Side (1fr): Calendar & Daily Reminders & Encouragement Banner -->
+            <div style="display: flex; flex-direction: column; gap: 18px;">
+                
+                <!-- Calendar Widget (Dynamic Real-Time Calendar) -->
+                <div class="cute-calendar-widget">
+                    <div class="calendar-header">
+                        <span id="cuteCalendarMonthYear">กำลังโหลดปฏิทิน...</span>
+                        <div style="display:flex; gap:6px;">
+                            <button class="cute-icon-btn" style="width:28px; height:28px;" onclick="changeCalendarMonth(-1)"><i class="fas fa-chevron-left" style="font-size:0.7rem;"></i></button>
+                            <button class="cute-icon-btn" style="width:28px; height:28px;" onclick="changeCalendarMonth(1)"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i></button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="dynamicCalendarGrid">
+                        <!-- Rendered via renderDynamicCalendar() -->
+                    </div>
+                </div>
+
+                <!-- Astrological Upcoming Reminders -->
+                <div class="cute-card">
+                    <div class="card-title-cute">
+                        <h3><i class="far fa-bell" style="color:var(--pink-clay);"></i> ปฏิทินจันทรคติ & ฤกษ์</h3>
+                        <span class="cute-badge-num" style="position:static; width:22px; height:22px;">+</span>
+                    </div>
+                    <div class="reminder-list">
+                        <div class="reminder-item">
+                            <div class="reminder-icon" style="background:var(--pink-soft); color:var(--pink-clay);"><i class="fas fa-moon"></i></div>
+                            <div class="reminder-text">
+                                <h5 id="remindLunarTitle">วันพระ / ดิถีจันทร์</h5>
+                                <span id="remindLunarDesc">ขึ้น ๑๕ ค่ำ เดือน ๖</span>
+                            </div>
+                        </div>
+                        <div class="reminder-item">
+                            <div class="reminder-icon" style="background:var(--blue-soft); color:var(--blue-clay);"><i class="fas fa-wand-magic-sparkles"></i></div>
+                            <div class="reminder-text">
+                                <h5>ฤกษ์มงคลเจรจา / ลงทุน</h5>
+                                <span>ช่วงเวลา 09:30 - 11:00 น.</span>
+                            </div>
+                        </div>
+                        <div class="reminder-item">
+                            <div class="reminder-icon" style="background:var(--yellow-soft); color:var(--yellow-clay);"><i class="fas fa-hand-holding-heart"></i></div>
+                            <div class="reminder-text">
+                                <h5>เคล็ดทำบุญเสริมราศี</h5>
+                                <span>ถวายน้ำดื่ม / ปล่อยปลา</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mascot Encouragement Card -->
+                <div class="mascot-banner-card">
+                    <div class="mascot-banner-text">
+                        <h4 id="mascotTitle">ดวงชะตากำลังสดใส! 💜</h4>
+                        <p id="mascotSub">รักษาพลังบวกและดูแลสุขภาพ กายใจพร้อมรับสิ่งดี ๆ เสมอนะครับ</p>
+                    </div>
+                    <div class="mascot-3d-bunny">
+                        🐰💖
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Hidden Section container required for showProfilePage compatibility -->
+    <div style="display:none;">
+        <section id="profilePage"></section>
     </div>
 
     <!-- ===== JS Dependencies ===== -->
@@ -254,6 +1246,341 @@
 
         window.loadAllAvailableProfiles = loadAllAvailableProfiles;
 
+        // 🎨 Chart instance for Life Graph Curve
+        let cuteLifeChartInstance = null;
+
+        function updateCuteProfileUI(data) {
+            if (!data) return;
+            window.currentActiveMemberProfile = data;
+
+            // 1. Sidebar & Topbar Avatar / Greetings
+            const fullName = `${data.name || 'คุณสมาชิก'} ${data.lastName || ''}`.trim();
+            const displayName = data.name || 'คุณสมาชิก';
+            
+            const sidebarNameEl = document.getElementById('sidebarUserName');
+            if (sidebarNameEl) sidebarNameEl.textContent = displayName;
+            
+            const topbarGreetingEl = document.getElementById('topbarGreetingName');
+            if (topbarGreetingEl) topbarGreetingEl.textContent = displayName;
+
+            const roleEl = document.getElementById('sidebarUserRole');
+            if (roleEl) {
+                const isVip = data.tier === 'vip' || data.isVip || data.role === 'admin';
+                roleEl.innerHTML = isVip ? '👑 สมาชิก VIP พรีเมียม' : '✨ นักพยากรณ์ชะตา';
+            }
+
+            // Avatar Icon by Zodiac
+            const zodiacAvatars = {
+                'ชวด': '🐭', 'ฉลู': '🐮', 'ขาล': '🐯', 'เถาะ': '🐰',
+                'มะโรง': '🐲', 'มะเส็ง': '🐍', 'มะเมีย': '🐴', 'มะแม': '🐐',
+                'วอก': '🐵', 'ระกา': '🐔', 'จอ': '🐶', 'กุน': '🐷'
+            };
+            const avIconEl = document.getElementById('sidebarAvatarIcon');
+            if (avIconEl) {
+                avIconEl.textContent = zodiacAvatars[data.zodiac] || '🐰';
+            }
+
+            // 2. KPI Cards - Calculate accurately
+            let bDate = null;
+            if (typeof parseBirthdate === 'function') {
+                bDate = parseBirthdate(data.birthdate);
+            }
+            if (!bDate && data.birthdate) {
+                if (data.birthdate.includes('/')) {
+                    const p = data.birthdate.split('/');
+                    if (p.length === 3) {
+                        let y = parseInt(p[2], 10);
+                        if (y > 2400) y -= 543;
+                        bDate = new Date(y, parseInt(p[1], 10) - 1, parseInt(p[0], 10));
+                    }
+                } else if (data.birthdate.includes('-')) {
+                    const p = data.birthdate.split('-');
+                    let y = parseInt(p[0], 10);
+                    if (y > 2400) y -= 543;
+                    bDate = new Date(y, parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+                }
+            }
+
+            // Age calculation
+            let ageVal = "29";
+            if (typeof window.calculateRunningAge === 'function' && data.birthdate) {
+                ageVal = window.calculateRunningAge(data.birthdate) || "29";
+            } else if (bDate) {
+                const now = new Date();
+                let full = now.getFullYear() - bDate.getFullYear();
+                if (now.getMonth() < bDate.getMonth() || (now.getMonth() === bDate.getMonth() && now.getDate() < bDate.getDate())) {
+                    full--;
+                }
+                ageVal = String(full + 1); // Running Age (อายุย่าง)
+            }
+            const kpiAgeEl = document.getElementById('kpiAgeVal');
+            if (kpiAgeEl) kpiAgeEl.textContent = `${ageVal} ปี`;
+
+            // Lagna
+            let cleanTime = (data.birthtime || "12:00").substring(0, 5);
+            let lagnaText = "ราศีเมษ ♈";
+            let lagnaRuler = "ดาวอังคาร (๓)";
+            if (bDate) {
+                try {
+                    const ceDateStr = `${bDate.getFullYear()}-${String(bDate.getMonth()+1).padStart(2,'0')}-${String(bDate.getDate()).padStart(2,'0')}`;
+                    if (typeof ascCalcLagna === 'function') {
+                        const ascObj = ascCalcLagna(ceDateStr, cleanTime, 13.75, 100.5167);
+                        if (ascObj && typeof ZODIAC_DATA !== 'undefined' && ZODIAC_DATA[ascObj.rasi]) {
+                            const rasi = ZODIAC_DATA[ascObj.rasi];
+                            lagnaText = `${rasi.name} ${rasi.icon}`;
+                            lagnaRuler = `ดาวเกษตร: ${rasi.ruler}`;
+                        }
+                    }
+                } catch(e) {}
+            }
+            const kpiLagnaEl = document.getElementById('kpiLagnaVal');
+            if (kpiLagnaEl) kpiLagnaEl.textContent = lagnaText;
+            const kpiRulerEl = document.getElementById('kpiLagnaRuler');
+            if (kpiRulerEl) kpiRulerEl.textContent = lagnaRuler;
+
+            // Element
+            let dayIdx = bDate ? bDate.getDay() : 0;
+            let elData = typeof getBirthElement === 'function' ? getBirthElement(dayIdx) : { name: "ธาตุทอง", color: "#f59e0b", level: "กำลังกล้า" };
+            const kpiElVal = document.getElementById('kpiElementVal');
+            if (kpiElVal) {
+                kpiElVal.textContent = elData.name;
+                kpiElVal.style.color = elData.color || '#10b981';
+            }
+
+            // Zodiac & Lunar
+            const kpiZodiacEl = document.getElementById('kpiZodiacVal');
+            if (kpiZodiacEl) kpiZodiacEl.textContent = `ปี${data.zodiac || 'มะโรง'}`;
+
+            let lunarStr = "ขึ้น ๑๕ ค่ำ";
+            if (typeof getThaiLunar === 'function' && bDate) {
+                try {
+                    const lObj = getThaiLunar(bDate);
+                    if (lObj) lunarStr = lObj.fullString || lObj.moonPhaseStr;
+                } catch(e) {}
+            }
+            const kpiLunarEl = document.getElementById('kpiLunarShort');
+            if (kpiLunarEl) kpiLunarEl.textContent = lunarStr.substring(0, 16);
+
+            // 3. Update Left Sidebar Info Card (Format birthdate nicely in Thai e.g. 2 มีนาคม 2538)
+            const sbMemId = document.getElementById('sidebarMemberIdVal');
+            if (sbMemId) sbMemId.textContent = data.memberId || data.id || 'MEM-001';
+            
+            const sbBirth = document.getElementById('sidebarBirthdateVal');
+            if (sbBirth) {
+                if (bDate) {
+                    const thaiMonthsFull = [
+                        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน',
+                        'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม',
+                        'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+                    ];
+                    sbBirth.textContent = `${bDate.getDate()} ${thaiMonthsFull[bDate.getMonth()]} ${bDate.getFullYear() + 543}`;
+                } else {
+                    sbBirth.textContent = data.birthdate || '-';
+                }
+            }
+            
+            const sbTime = document.getElementById('sidebarBirthtimeVal');
+            if (sbTime) sbTime.textContent = (data.birthtime ? data.birthtime.substring(0,5) : '12:00') + ' น.';
+            
+            const sbProv = document.getElementById('sidebarProvinceVal');
+            if (sbProv) sbProv.textContent = data.province || 'กรุงเทพมหานคร';
+
+            // 4. Cache Predictions and Populate Central Viewer
+            const dayPredFn = typeof getDayPrediction === 'function' ? getDayPrediction : (typeof window !== 'undefined' ? window.getDayPrediction : null);
+            const monthPredFn = typeof getMonthPrediction === 'function' ? getMonthPrediction : (typeof window !== 'undefined' ? window.getMonthPrediction : null);
+            const zodiacPredFn = typeof getZodiacPrediction === 'function' ? getZodiacPrediction : (typeof window !== 'undefined' ? window.getZodiacPrediction : null);
+
+            const monthIdx = bDate ? bDate.getMonth() : 0;
+            const zList = ["ชวด", "ฉลู", "ขาล", "เถาะ", "มะโรง", "มะเส็ง", "มะเมีย", "มะแม", "วอก", "ระกา", "จอ", "กุน"];
+            let zIdx = zList.indexOf(data.zodiac);
+            if (zIdx === -1) zIdx = 0;
+
+            // Element relation
+            const mElement = typeof window.getMonthElement === 'function' ? window.getMonthElement(monthIdx) : { name: "ไม่ระบุ" };
+            const zElement = typeof window.getZodiacElement === 'function' ? window.getZodiacElement(bDate || new Date()) : { element: "ไม่ระบุ" };
+            let relDayMonth = "ทั่วไป";
+            let relDayYear = "ทั่วไป";
+            if (typeof window.getElementRelation === 'function') {
+                const resMonth = window.getElementRelation(elData?.name, mElement?.name);
+                relDayMonth = typeof resMonth === 'object' ? resMonth.text : (resMonth || "ทั่วไป");
+                const resYear = window.getElementRelation(elData?.name, zElement?.element);
+                relDayYear = typeof resYear === 'object' ? resYear.text : (resYear || "ทั่วไป");
+            }
+
+            window.currentMemberPredictions = {
+                day: {
+                    title: `คำทำนายวันเกิด (วัน${["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"][dayIdx]})`,
+                    subtitle: `พื้นดวงชะตา อุปนิสัยใจคอ และเส้นทางชีวิต`,
+                    icon: `<i class="fas fa-calendar-day"></i>`,
+                    iconBg: `linear-gradient(135deg, #a78bfa, #8b5cf6)`,
+                    content: dayPredFn ? dayPredFn(dayIdx) : "เป็นคนมีความตั้งใจ มุ่งมั่น อดทน และมีเสน่ห์เป็นที่รักใคร่ของผู้คนรอบข้าง"
+                },
+                month: {
+                    title: `คำทำนายเดือนเกิด (${["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"][monthIdx]})`,
+                    subtitle: `การงาน การเงิน ความรัก และโชคลาภเกื้อหนุน`,
+                    icon: `<i class="far fa-calendar-alt"></i>`,
+                    iconBg: `linear-gradient(135deg, #f472b6, #db2777)`,
+                    content: monthPredFn ? monthPredFn(monthIdx) : "มีไหวพริบปฏิภาณดี มีความสามารถในการเจรจาติดต่อ และสร้างรายได้มั่นคง"
+                },
+                year: {
+                    title: `คำทำนายปีนักษัตร (ปี${data.zodiac || 'มะโรง'})`,
+                    subtitle: `วาสนาบารมี ก้าวหน้าในหน้าที่การงาน และคู่มิตร`,
+                    icon: `<i class="fas fa-dragon"></i>`,
+                    iconBg: `linear-gradient(135deg, #fbbf24, #d97706)`,
+                    content: zodiacPredFn ? zodiacPredFn(zIdx) : "มีภาวะผู้นำ มีความรับผิดชอบสูง มุ่งมั่นสู่ความสำเร็จและมีความเจริญรุ่งเรือง"
+                },
+                elements: {
+                    title: `วิเคราะห์สมดุลและปฏิสัมพันธ์ 4 ธาตุ`,
+                    subtitle: `พลังงานธาตุวันเกิด (${elData.name}) ร่วมกับเดือนเกิดและปีนักษัตร`,
+                    icon: `<i class="fas fa-atom"></i>`,
+                    iconBg: `linear-gradient(135deg, #34d399, #059669)`,
+                    content: `
+                        <div style="background:#ffffff; border-radius:16px; padding:16px; border:1px solid #e2e8f0; margin-bottom:12px;">
+                            <strong style="color:#0f172a; font-size:0.95rem;">🧬 ธาตุวันเกิด (${elData.name} ${elData.level || ''}):</strong>
+                            <p style="margin:4px 0 0 0; color:#475569;">${elData.desc || 'พลังงานขับเคลื่อนหลักของดวงชะตา'}</p>
+                        </div>
+                        <div style="background:#ffffff; border-radius:16px; padding:16px; border:1px solid #e2e8f0; margin-bottom:12px;">
+                            <strong style="color:#0f172a; font-size:0.95rem;">📅 ธาตุวันเกิด + เดือนเกิด (${mElement.name || ''}):</strong>
+                            <p style="margin:4px 0 0 0; color:#0f172a; font-weight:700;">${relDayMonth}</p>
+                        </div>
+                        <div style="background:#ffffff; border-radius:16px; padding:16px; border:1px solid #e2e8f0;">
+                            <strong style="color:#0f172a; font-size:0.95rem;">🐉 ธาตุวันเกิด + ปีนักษัตร (${zElement.element || ''}):</strong>
+                            <p style="margin:4px 0 0 0; color:#0f172a; font-weight:700;">${relDayYear}</p>
+                        </div>
+                    `
+                }
+            };
+
+            // Set tab hints on sidebar
+            const hintDay = document.getElementById('tabHintDay');
+            if (hintDay) hintDay.textContent = `วัน${["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"][dayIdx]}`;
+            
+            const hintMonth = document.getElementById('tabHintMonth');
+            if (hintMonth) hintMonth.textContent = `เดือน${["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."][monthIdx]}`;
+            
+            const hintYear = document.getElementById('tabHintYear');
+            if (hintYear) hintYear.textContent = `ปี${data.zodiac || 'มะโรง'}`;
+
+            // Render current active tab (default 'day')
+            selectPredictionTab(window.currentSelectedTab || 'day');
+
+            // 5. Render Cute Life Graph Curve
+            renderCuteLifeChart(ageVal);
+        }
+
+        function selectPredictionTab(tabKey) {
+            window.currentSelectedTab = tabKey;
+
+            // 1. Update active styling on sidebar buttons
+            const tabs = ['day', 'month', 'year', 'elements'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tabBtn_${t}`);
+                if (btn) {
+                    if (t === tabKey) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
+            });
+
+            // 2. Render content into central viewer card
+            const preds = window.currentMemberPredictions;
+            if (!preds || !preds[tabKey]) return;
+
+            const cur = preds[tabKey];
+            const titleEl = document.getElementById('centralPredTitle');
+            if (titleEl) titleEl.textContent = cur.title;
+
+            const subEl = document.getElementById('centralPredSubtitle');
+            if (subEl) subEl.textContent = cur.subtitle;
+
+            const iconEl = document.getElementById('centralPredIcon');
+            if (iconEl) {
+                iconEl.innerHTML = cur.icon;
+                iconEl.style.background = cur.iconBg;
+            }
+
+            const contentEl = document.getElementById('centralPredContent');
+            if (contentEl) {
+                contentEl.innerHTML = cur.content;
+            }
+        }
+
+        window.selectPredictionTab = selectPredictionTab;
+
+        function renderCuteLifeChart(currentAge) {
+            const ctx = document.getElementById('cuteLifeChart')?.getContext('2d');
+            if (!ctx) return;
+
+            if (cuteLifeChartInstance) {
+                cuteLifeChartInstance.destroy();
+            }
+
+            // Generate aesthetic smooth curve
+            const labels = ['วัยเยาว์', '18-24', '25-32', '33-42', '43-52', '53-62', '63+'];
+            const dataPoints = [35, 50, 78, 62, 85, 92, 88];
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+            gradient.addColorStop(0, 'rgba(139, 92, 246, 0.28)');
+            gradient.addColorStop(1, 'rgba(139, 92, 246, 0.01)');
+
+            cuteLifeChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'ระดับวาสนา & ความก้าวหน้า',
+                        data: dataPoints,
+                        borderColor: '#8b5cf6',
+                        borderWidth: 4,
+                        backgroundColor: gradient,
+                        fill: true,
+                        tension: 0.45,
+                        pointBackgroundColor: '#8b5cf6',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 3,
+                        pointRadius: 6,
+                        pointHoverRadius: 9
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#332b4b',
+                            padding: 10,
+                            titleFont: { size: 12, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            cornerRadius: 10
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#a39bb9', font: { size: 11, weight: '600' } }
+                        },
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(139, 92, 246, 0.06)' },
+                            ticks: { color: '#a39bb9', stepSize: 25, font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.updateCuteProfileUI = updateCuteProfileUI;
+
+        // Intercept showProfilePage to also update cute dashboard elements
+        const originalShowProfilePage = window.showProfilePage;
+        window.showProfilePage = function(data, memberId) {
+            if (typeof originalShowProfilePage === 'function') {
+                originalShowProfilePage(data, memberId);
+            }
+            updateCuteProfileUI(data);
+        };
+
         function initStandaloneProfile() {
             try {
                 const profiles = loadAllAvailableProfiles();
@@ -264,7 +1591,23 @@
                         const opt = document.createElement('option');
                         const valKey = m.memberId || m.id || m.birthdate || String(idx);
                         opt.value = valKey;
-                        opt.textContent = `${m.memberId ? `[${m.memberId}] ` : ''}${m.name || 'สมาชิก'} ${m.lastName || ''} (${m.birthdate || ''})`;
+                        
+                        let displayBirth = m.birthdate || '';
+                        let pDate = typeof parseBirthdate === 'function' ? parseBirthdate(m.birthdate) : null;
+                        if (!pDate && m.birthdate && m.birthdate.includes('/')) {
+                            const p = m.birthdate.split('/');
+                            if (p.length === 3) {
+                                let y = parseInt(p[2], 10);
+                                if (y > 2400) y -= 543;
+                                pDate = new Date(y, parseInt(p[1], 10) - 1, parseInt(p[0], 10));
+                            }
+                        }
+                        if (pDate) {
+                            const thaiMonthsFull = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+                            displayBirth = `${pDate.getDate()} ${thaiMonthsFull[pDate.getMonth()]} ${pDate.getFullYear() + 543}`;
+                        }
+                        
+                        opt.textContent = `${m.memberId ? `[${m.memberId}] ` : ''}${m.name || 'สมาชิก'} ${m.lastName || ''} (${displayBirth})`;
                         select.appendChild(opt);
                     });
                 }
@@ -282,8 +1625,8 @@
                     targetMember = profiles[0];
                 }
 
-                if (targetMember && typeof showProfilePage === 'function') {
-                    showProfilePage(targetMember);
+                if (targetMember && typeof window.showProfilePage === 'function') {
+                    window.showProfilePage(targetMember);
                     if (select && (targetMember.memberId || targetMember.id)) {
                         select.value = targetMember.memberId || targetMember.id;
                     }
@@ -300,22 +1643,254 @@
             if (!found && !isNaN(val)) {
                 found = profiles[parseInt(val, 10)];
             }
-            if (found && typeof showProfilePage === 'function') {
-                showProfilePage(found);
-                // Update URL query string
+            if (found && typeof window.showProfilePage === 'function') {
+                window.showProfilePage(found);
                 const newUrl = window.location.pathname + '?id=' + encodeURIComponent(found.memberId || found.id || val);
                 window.history.pushState({ path: newUrl }, '', newUrl);
             }
         }
 
-        window.initStandaloneProfile = initStandaloneProfile;
-        window.onSelectMemberProfile = onSelectMemberProfile;
+        // 📅 Real-Time Dynamic Calendar Engine
+        let currentCalendarDate = new Date();
+
+        function renderDynamicCalendar() {
+            const grid = document.getElementById('dynamicCalendarGrid');
+            const titleEl = document.getElementById('cuteCalendarMonthYear');
+            if (!grid || !titleEl) return;
+
+            const thaiMonths = [
+                'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน',
+                'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม',
+                'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+            ];
+
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            const thaiYear = year + 543;
+
+            titleEl.textContent = `${thaiMonths[month]} ${thaiYear}`;
+
+            const dayLabels = ['จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.', 'อา.'];
+            let html = dayLabels.map(d => `<div class="cal-day-label">${d}</div>`).join('');
+
+            // First day of current month (0=Sun, 1=Mon, ..., 6=Sat)
+            const firstDay = new Date(year, month, 1);
+            let firstDayIdx = firstDay.getDay(); 
+            // Shift so Monday is index 0: Mon(0), Tue(1), ..., Sun(6)
+            firstDayIdx = (firstDayIdx + 6) % 7;
+
+            // Total days in month
+            const lastDay = new Date(year, month + 1, 0);
+            const totalDays = lastDay.getDate();
+
+            // Total days in prev month
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+            // Today reference
+            const today = new Date();
+            const isCurrentMonthAndYear = (today.getFullYear() === year && today.getMonth() === month);
+            const todayDate = today.getDate();
+
+            // Leading days from previous month
+            for (let i = firstDayIdx - 1; i >= 0; i--) {
+                html += `<div class="cal-date-cell text-muted">${prevMonthLastDay - i}</div>`;
+            }
+
+            // Current month days with click handler for full date horoscope details
+            for (let d = 1; d <= totalDays; d++) {
+                const isToday = isCurrentMonthAndYear && (d === todayDate);
+                const activeClass = isToday ? ' today-active' : '';
+                html += `<div class="cal-date-cell${activeClass}" onclick="showCalendarDayDetail(${year}, ${month}, ${d})">${d}</div>`;
+            }
+
+            // Trailing days from next month to fill 5 or 6 rows (multiples of 7)
+            const totalCells = firstDayIdx + totalDays;
+            const remaining = (7 - (totalCells % 7)) % 7;
+            for (let n = 1; n <= remaining; n++) {
+                html += `<div class="cal-date-cell text-muted">${n}</div>`;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function changeCalendarMonth(delta) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+            renderDynamicCalendar();
+        }
+
+        // 🌟 Popup Modal แสดงผลดวงประจำวันของวันที่คลิกเลือกในปฏิทิน
+        function showCalendarDayDetail(year, month, date) {
+            const targetDate = new Date(year, month, date);
+            const dayIdx = targetDate.getDay();
+            const thaiDays = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
+            const thaiMonthsFull = [
+                'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน',
+                'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม',
+                'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+            ];
+            const dayName = thaiDays[dayIdx];
+            const fullDateStr = `วัน${dayName}ที่ ${date} ${thaiMonthsFull[month]} พ.ศ. ${year + 543}`;
+
+            // 1. ธาตุ & สีมงคล
+            const dayColors = {
+                "อาทิตย์": { colors: ["แดง", "ส้ม", "ทอง"], hex: ["#ef4444", "#f97316", "#eab308"] },
+                "จันทร์": { colors: ["ขาว", "ครีม", "เหลืองนวล"], hex: ["#f8fafc", "#fef3c7", "#fef08a"] },
+                "อังคาร": { colors: ["ชมพู", "ม่วงแดง"], hex: ["#ec4899", "#be185d"] },
+                "พุธ": { colors: ["เขียวมรกต", "เขียวตอง"], hex: ["#10b981", "#84cc16"] },
+                "พฤหัสบดี": { colors: ["ส้ม", "ทองคำ", "น้ำตาล"], hex: ["#f59e0b", "#d97706", "#b45309"] },
+                "ศุกร์": { colors: ["ฟ้า", "น้ำเงิน", "คราม"], hex: ["#38bdf8", "#2563eb", "#1d4ed8"] },
+                "เสาร์": { colors: ["ม่วงเข้ม", "ดำ", "เทา"], hex: ["#7c3aed", "#1e1b4b", "#475569"] }
+            };
+            const colObj = dayColors[dayName] || { colors: ["มงคลทั่วไป"], hex: ["#8b5cf6"] };
+
+            // 2. ทิศมงคล & กาลกิณี
+            const directions = {
+                "อาทิตย์": { dech: "ตะวันออกเฉียงใต้", sri: "ใต้", kala: "เหนือ" },
+                "จันทร์": { dech: "ใต้", sri: "ตะวันตกเฉียงใต้", kala: "ตะวันออกเฉียงเหนือ" },
+                "อังคาร": { dech: "ตะวันตกเฉียงใต้", sri: "ตะวันตก", kala: "ตะวันออกเฉียงใต้" },
+                "พุธ": { dech: "ตะวันตก", sri: "ตะวันตกเฉียงเหนือ", kala: "ใต้" },
+                "พฤหัสบดี": { dech: "เหนือ", sri: "ตะวันออกเฉียงเหนือ", kala: "ตะวันตกเฉียงใต้" },
+                "ศุกร์": { dech: "ตะวันออก", sri: "ตะวันออกเฉียงใต้", kala: "ตะวันตกเฉียงเหนือ" },
+                "เสาร์": { dech: "ตะวันตกเฉียงเหนือ", sri: "เหนือ", kala: "ตะวันออก" }
+            };
+            const dirObj = directions[dayName] || { dech: "ทิศมงคล", sri: "ทิศโชคลาภ", kala: "เลี่ยง" };
+
+            // 3. จันทรคติไทย
+            let lunarStr = "ขึ้น ๑๕ ค่ำ (ดิถีมงคล)";
+            if (typeof getThaiLunar === 'function') {
+                try {
+                    const lObj = getThaiLunar(targetDate);
+                    if (lObj) lunarStr = lObj.fullString || lObj.moonPhaseStr;
+                } catch(e) {}
+            }
+
+            // 4. ข้อควรทำ / เลี่ยง
+            const tabooInfo = {
+                0: { good: "ทำบุญใหญ่, สระผม, ตัดผมเสริมอายุยืน", bad: "ห้ามตัดเล็บ, หลีกเลี่ยงขึ้นบ้านใหม่" },
+                1: { good: "ติดต่อเจรจา, เสริมเสน่ห์, ตัดเล็บรับโชค", bad: "ห้ามทำของสูญหาย, เลี่ยงเดินทางไกลทางน้ำ" },
+                2: { good: "ออกกำลังกาย, แข่งขัน, สระผมชนะอุปสรรค", bad: "ห้ามตัดผม, เลี่ยงการทะเลาะวิวาท" },
+                3: { good: "เซ็นสัญญา, เปิดร้าน, ค้าขาย, นุ่งผ้าใหม่", bad: "ห้ามตัดผม (พุธหัวกุด), เลี่ยงสระผม" },
+                4: { good: "ไหว้พระ, เริ่มต้นศึกษา, พบผู้ใหญ่, ทำบุญ", bad: "เลี่ยงตัดเล็บ, เลี่ยงเรื่องอบายมุข" },
+                5: { good: "งานมงคลสมรส, เสริมสวย, ซื้อเสื้อผ้าใหม่", bad: "หลีกเลี่ยงงานอวมงคลหรือความโศกเศร้า" },
+                6: { good: "วางแผนระยะยาว, บูชาพระราหู, สร้างหลักปักฐาน", bad: "เลี่ยงตัดเล็บ, เลี่ยงเริ่มต้นนุ่งผ้าใหม่" }
+            };
+            const taboo = tabooInfo[dayIdx] || { good: "ทำความดี, รักษาจิตใจให้ผ่องใส", bad: "หลีกเลี่ยงอารมณ์ฉุนเฉียว" };
+
+            const colorPills = colObj.colors.map((c, i) => `
+                <span style="display:inline-flex; align-items:center; gap:5px; background:#f8fafc; border:1px solid #e2e8f0; padding:3px 10px; border-radius:20px; font-size:0.82rem; font-weight:700; color:#334155;">
+                    <span style="width:12px; height:12px; border-radius:50%; background:${colObj.hex[i]}; border:1px solid rgba(0,0,0,0.1);"></span>
+                    ${c}
+                </span>
+            `).join('');
+
+            const modalHtml = `
+                <div style="text-align:left; font-family:'Prompt', sans-serif;">
+                    <div style="background: linear-gradient(135deg, #f5f0ff 0%, #fef4f8 100%); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; border: 1.5px solid #ece7f8;">
+                        <div style="color: #6d28d9; font-weight: 800; font-size: 1.05rem; margin-bottom: 4px;">
+                            <i class="far fa-calendar-check mr-1"></i> ${fullDateStr}
+                        </div>
+                        <div style="color: #475569; font-size: 0.86rem; font-weight: 600;">
+                            🌙 <b>จันทรคติ:</b> ${lunarStr}
+                        </div>
+                    </div>
+
+                    <!-- Grid สรุปมงคล -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                        <div style="background: #ffffff; border-radius: 14px; padding: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                            <div style="color: #059669; font-weight: 800; font-size: 0.84rem; margin-bottom: 4px;"><i class="fas fa-compass"></i> ทิศศรี (โชคลาภ)</div>
+                            <div style="font-weight: 700; color: #0f172a; font-size: 0.95rem;">${dirObj.sri}</div>
+                        </div>
+                        <div style="background: #ffffff; border-radius: 14px; padding: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                            <div style="color: #7c3aed; font-weight: 800; font-size: 0.84rem; margin-bottom: 4px;"><i class="fas fa-crown"></i> ทิศเดช (อำนาจ)</div>
+                            <div style="font-weight: 700; color: #0f172a; font-size: 0.95rem;">${dirObj.dech}</div>
+                        </div>
+                    </div>
+
+                    <!-- สีมงคล -->
+                    <div style="background: #ffffff; border-radius: 14px; padding: 12px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
+                        <div style="color: #d97706; font-weight: 800; font-size: 0.84rem; margin-bottom: 6px;"><i class="fas fa-palette"></i> สีมงคลเสริมพลัง</div>
+                        <div style="display:flex; flex-wrap:wrap; gap:6px;">${colorPills}</div>
+                    </div>
+
+                    <!-- ข้อควรทำ / เลี่ยง -->
+                    <div style="background: #f0fdf4; border-radius: 14px; padding: 10px 14px; border: 1px solid #bbf7d0; margin-bottom: 10px;">
+                        <div style="color: #166534; font-weight: 800; font-size: 0.82rem;"><i class="fas fa-check-circle"></i> สิ่งที่ควรทำในวันนี้:</div>
+                        <div style="color: #15803d; font-size: 0.85rem; margin-top: 2px;">${taboo.good}</div>
+                    </div>
+
+                    <div style="background: #fef2f2; border-radius: 14px; padding: 10px 14px; border: 1px solid #fecaca;">
+                        <div style="color: #991b1b; font-weight: 800; font-size: 0.82rem;"><i class="fas fa-times-circle"></i> ข้อพึงหลีกเลี่ยง:</div>
+                        <div style="color: #b91c1c; font-size: 0.85rem; margin-top: 2px;">${taboo.bad}</div>
+                    </div>
+                </div>
+            `;
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: `<span style="font-size:1.15rem; font-weight:800; color:#4c1d95;">✨ รายละเอียดดวงประจำวัน</span>`,
+                    html: modalHtml,
+                    showCloseButton: true,
+                    showConfirmButton: true,
+                    confirmButtonText: 'รับทราบ',
+                    confirmButtonColor: '#8b5cf6',
+                    background: '#ffffff',
+                    customClass: { popup: 'rounded-4 border-2 shadow-lg' }
+                });
+            } else {
+                alert(`รายละเอียด: ${fullDateStr}\nจันทรคติ: ${lunarStr}\nทิศมงคล: ${dirObj.sri}`);
+            }
+        }
+
+        // 🧭 นำทางไปยังระบบคำนวณลัคนาพยากรณ์ (ascendantPage) พร้อมเลือกสมาชิกและคำนวณอัตโนมัติ
+        function goToAscendantPage() {
+            // ตรวจสอบสิทธิ์การเข้าถึงเมนู ascendantPage
+            if (typeof window.hasPackagePermission === 'function' && !window.hasPackagePermission('ascendantPage')) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '🔒 สิทธิพิเศษเฉพาะสมาชิก',
+                        html: 'ระบบคำนวณลัคนาพยากรณ์ชั้นสูงสงวนสิทธิ์สำหรับสมาชิกระดับสูงขึ้นไปครับ<br><span style="color:#64748b; font-size:13px;">กรุณาอัปเกรดแพ็กเกจเพื่อปลดล็อคการใช้งานระบบนี้</span>',
+                        confirmButtonText: 'ดูแพ็กเกจสมาชิก',
+                        confirmButtonColor: '#8b5cf6',
+                        showCancelButton: true,
+                        cancelButtonText: 'ไว้คราวหน้า',
+                        cancelButtonColor: '#94a3b8',
+                        background: '#ffffff',
+                        customClass: { popup: 'rounded-4 shadow-lg' }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '../index.html#package';
+                        }
+                    });
+                } else {
+                    alert('ระบบคำนวณลัคนาพยากรณ์สงวนสิทธิ์เฉพาะสมาชิกที่อัปเกรดแพ็กเกจเท่านั้น');
+                }
+                return;
+            }
+
+            // บันทึกสมาชิกปัจจุบันเพื่อให้หน้า ascendantPage เลือกและคำนวณให้ทันที
+            try {
+                if (window.currentActiveMemberProfile) {
+                    localStorage.setItem('siamhora_auto_calc_ascendant', JSON.stringify(window.currentActiveMemberProfile));
+                }
+            } catch(e) {}
+
+            // ไปยังหน้าระบบคำนวณลัคนาพยากรณ์
+            window.location.href = '../index.html#ascendantPage';
+        }
+
+        window.renderDynamicCalendar = renderDynamicCalendar;
+        window.changeCalendarMonth = changeCalendarMonth;
+        window.showCalendarDayDetail = showCalendarDayDetail;
+        window.goToAscendantPage = goToAscendantPage;
 
         // Run auto-loader on DOM ready and after module script initializes
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(initStandaloneProfile, 200);
+            renderDynamicCalendar();
+            initStandaloneProfile();
+            setTimeout(initStandaloneProfile, 100);
+            setTimeout(initStandaloneProfile, 400);
         });
     </script>
 </body>
-
 </html>

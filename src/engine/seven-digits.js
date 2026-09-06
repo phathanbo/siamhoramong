@@ -360,16 +360,26 @@ function showseven(){
     container.classList.remove("hidden");
 
     const html = `
-    <div class="card bg-black border-gold mb-4">
+    <div class="card bg-black border-gold mb-4 shadow-lg">
             <div class="card-header bg-dark border-gold text-center py-4">
-                <h2 class="text-gold mb-1">🔢 เลข 7 ตัว 4 ฐาน</h2>
-                <span class="text-white-50 mb-0">พยากรณ์ดวงชะตาพื้นฐานและเหตุการณ์จรตามตำราพรหมชาติ</span>
+                <h2 class="text-gold mb-1">🔢 เลข ๗ ตัว ๔ ฐาน (มหาคัมภีร์สัตตเลขครบวงจร)</h2>
+                <span class="text-white-50 mb-0">รวมผังตารางเลข ๗ ตัว ฐาน ๑-๔ มหาบท ทักษาจร และคำทำนายตำราโบราณในหน้าเดียว</span>
+                
+                <!-- Tab Switching Bar -->
+                <div class="d-flex justify-content-center mt-3 gap-2">
+                    <button id="tabBtnSevenMatrix" class="btn btn-gold btn-sm px-3 py-2 fw-bold" onclick="switchSevenMainTab('matrix')">
+                        <i class="fas fa-table mr-1"></i> ผังตารางเลข ๗ ตัว ๔ ฐาน
+                    </button>
+                    <button id="tabBtnSevenAncient" class="btn btn-outline-gold btn-sm px-3 py-2 fw-bold" onclick="switchSevenMainTab('ancient')">
+                        <i class="fas fa-book-open mr-1"></i> คำทำนายตามตำราโบราณ
+                    </button>
+                </div>
             </div>
-            <div class="compatibility-container">
-                <div id="sevenDigitsInput" class="text-center py-4">
-                    <i class="fas fa-dice-d6 fa-4x text-gold mb-4"></i>
+            <div class="compatibility-container p-3 p-md-4">
+                <div id="sevenDigitsInput" class="text-center py-3">
+                    <i class="fas fa-dice-d6 fa-3x text-gold mb-3"></i>
                     <div class="row justify-content-center">
-                        <div class="col-md-6">
+                        <div class="col-md-7 col-lg-6">
                                     <div class="form-group mb-3">
                     <label class="text-gold">เลือกสมาชิกจากประวัติ:</label>
                     <select class="form-control bg-dark text-white border-gold member-selector-shared"
@@ -440,9 +450,10 @@ function showseven(){
                 <!-- ผลลัพธ์ (ซ่อนจนกว่าจะคำนวณ) -->
                 <div id="summarySection" class="mt-3"></div>
 
+                <!-- แท็บ 1: ผังตารางเลข 7 ตัว 4 ฐาน -->
                 <div id="sevenDigitsResult" class="mt-4" style="display: none;">
                     <div id="resultArea" class="container">
-                        <h4 class="text-gold text-center mb-3">ดวงชะตาของคุณ</h4>
+                        <h4 class="text-gold text-center mb-3">ดวงชะตาของคุณ (ผังเลข ๗ ตัว ๔ ฐาน)</h4>
                         <div class="table-responsive">
                             <table class="table table-bordered text-white text-center"
                                 id="sevenDigitsTable">
@@ -450,10 +461,16 @@ function showseven(){
                         </div>
                         <div id="sdInterpretation" class="mt-3 p-3 rounded" style="background: rgba(20,20,35,0.9); border: 1px solid rgba(212,175,55,0.3); color: #F3F4F6;"></div>
                     </div>
-                    <div class="row mt-2">
-                        <button onclick="exportToImage()" class="btn btn-secondary btn-block mt-2">💾
-                            บันทึกรูปภาพ</button>
+                    <div class="row mt-3 justify-content-center">
+                        <div class="col-md-6">
+                            <button onclick="exportToImage()" class="btn btn-gold btn-block py-2 fw-bold">💾 บันทึกรูปภาพผังเลข ๗ ตัว</button>
+                        </div>
                     </div>
+                </div>
+
+                <!-- แท็บ 2: คำทำนายตามตำราโบราณ -->
+                <div id="sevenAncientResult" class="mt-4" style="display: none;">
+                    <div id="sevenAncientContent" class="container p-0"></div>
                 </div>
 
                 <div class="row mt-4">
@@ -507,6 +524,86 @@ function getTransitPrediction(age, birthDayNum) {
     };
 }
 
+
+function switchSevenMainTab(tabName) {
+    const tabMatrix = document.getElementById('sevenDigitsResult');
+    const tabAncient = document.getElementById('sevenAncientResult');
+    const btnMatrix = document.getElementById('tabBtnSevenMatrix');
+    const btnAncient = document.getElementById('tabBtnSevenAncient');
+
+    if (tabName === 'ancient') {
+        if (btnMatrix) { btnMatrix.className = 'btn btn-outline-gold btn-sm px-3 py-2 fw-bold'; }
+        if (btnAncient) { btnAncient.className = 'btn btn-gold btn-sm px-3 py-2 fw-bold'; }
+        if (tabMatrix) tabMatrix.style.display = 'none';
+        if (tabAncient) {
+            tabAncient.style.display = 'block';
+            renderAncientInterpretationInSeven();
+        }
+    } else {
+        if (btnMatrix) { btnMatrix.className = 'btn btn-gold btn-sm px-3 py-2 fw-bold'; }
+        if (btnAncient) { btnAncient.className = 'btn btn-outline-gold btn-sm px-3 py-2 fw-bold'; }
+        if (tabAncient) tabAncient.style.display = 'none';
+        if (tabMatrix) tabMatrix.style.display = 'block';
+    }
+}
+
+function renderAncientInterpretationInSeven() {
+    const ancientContent = document.getElementById('sevenAncientContent');
+    if (!ancientContent) return;
+
+    const day = parseInt(document.getElementById('sdDay')?.value || 0);
+    const month = parseInt(document.getElementById('sdMonth')?.value || 1);
+    const year = parseInt(document.getElementById('sdYear')?.value || 0);
+
+    const thaiDays = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"];
+    const thaiMonths = ["เดือนอ้าย (๑)", "เดือนยี่ (๒)", "เดือน ๓", "เดือน ๔", "เดือน ๕", "เดือน ๖", "เดือน ๗", "เดือน ๘", "เดือน ๙", "เดือน ๑๐", "เดือน ๑๑", "เดือน ๑๒"];
+    const thaiZodiacs = ["ปีชวด", "ปีฉลู", "ปีขาล", "ปีเถาะ", "ปีมะโรง", "ปีมะเส็ง", "ปีมะเมีย", "ปีมะแม", "ปีวอก", "ปีระกา", "ปีจอ", "ปีกุน"];
+
+    // ดึงค่าผลรวมฐาน 4 มาเทียบคำทำนาย
+    let baseSumText = '';
+    if (window.globalRows && window.globalRows.length >= 4) {
+        baseSumText = `
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <div class="p-3 rounded-3" style="background: rgba(13, 21, 39, 0.85); border: 1px solid rgba(241, 208, 110, 0.3);">
+                    <h5 class="text-gold mb-2"><i class="fas fa-scroll mr-2"></i>สรุปผลรวมฐาน ๔ มหามงคล :</h5>
+                    <div class="row text-center g-2">
+                        ${window.globalRows[3].map((val, idx) => `
+                            <div class="col">
+                                <div class="p-2 rounded" style="background: rgba(241, 208, 110, 0.1); border: 1px solid rgba(241, 208, 110, 0.2);">
+                                    <small class="text-gold d-block">${["อัตตา","หินะ","ธนัง","ปิตา","มาตา","โภคา","มัชฌิมา"][idx]}</small>
+                                    <strong class="text-white" style="font-size: 1.15rem;">${val}</strong>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    }
+
+    ancientContent.innerHTML = `
+        ${baseSumText}
+        <div class="p-4 rounded-3" style="background: rgba(13, 21, 39, 0.9); border: 1.5px solid rgba(241, 208, 110, 0.4);">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="text-gold mb-0"><i class="fas fa-book-open mr-2"></i>คำทำนายดวงชะตาตามคัมภีร์สัตตเลขโบราณ</h5>
+                <span class="badge bg-gold text-dark p-2 fw-bold">เกิด${thaiDays[day]} · ${thaiMonths[(month-1)%12]} · ${thaiZodiacs[year]}</span>
+            </div>
+            <p class="text-white-50 small mb-3">
+                พยากรณ์ความสัมพันธ์แห่งภพทั้ง ๗: อัตตา, หินะ, ธนัง, ปิตา, มาตา, โภคา, มัชฌิมา และกำลังเทวดาเสวยอายุ
+            </p>
+            <div class="p-3 rounded-3" style="background: rgba(8, 13, 24, 0.85); border-left: 4px solid #f1d06e;">
+                <p class="text-white mb-2" style="line-height: 1.8;">
+                    ⭐ <strong>อัตลักษณ์แห่งดวงชะตา:</strong> ท่านเป็นผู้มีวาสนากำเนิดผูกพันกับฐานกำลังเทวดาประจำวัน มีความมุ่งมั่นในตนเองสูง ทำการใดควรตั้งมั่นในความซื่อสัตย์สุจริต จะได้รับการสนับสนุนจากมิตรสหายและผู้ใหญ่อุปถัมภ์
+                </p>
+                <p class="text-white-50 mb-0 small" style="line-height: 1.8;">
+                    💡 <strong>คำแนะนำเสริมดวงสัตตเลข:</strong> หมั่นทำบุญตักบาตรตามกำลังดาวประจำตัว และระมัดระวังการใช้จ่ายในภพหินะ เพื่อเสริมสภาพคล่องในภพธนังและโภคาให้มั่นคงถาวร
+                </p>
+            </div>
+        </div>
+    `;
+}
 
 function showSevenDigitsPage(){
     if(typeof navigateTo === "function"){
@@ -1376,9 +1473,9 @@ document.addEventListener('keypress', function (e) {
     }
 })};
 
-// Expose public API to global window object
 window.calculateSevenDigits = calculateSevenDigits;
 window.showseven = showseven;
+window.switchSevenMainTab = switchSevenMainTab;
 if (typeof getMahaBot === 'function') window.getMahaBot = getMahaBot;
 if (typeof getLifeSummary === 'function') window.getLifeSummary = getLifeSummary;
 if (typeof analyzeSevenDigits === 'function') window.analyzeSevenDigits = analyzeSevenDigits;

@@ -369,7 +369,7 @@ function ascCalcLagna(dateStr, timeStr, lat, lng) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// UI — สร้างหน้าลัคนา
+// UI — สร้างหน้าลัคนา (Modern Porsche Digital Cockpit Theme)
 // ═══════════════════════════════════════════════════════════════════════
 
 function showascen() {
@@ -381,139 +381,492 @@ function showascen() {
     .join('');
 
   container.innerHTML = `
-    <div class="container mt-4">
-      <div class="card bg-dark border-gold text-white p-4 shadow-lg">
+    <style>
+      /* ─── Porsche Cockpit Luxury Theme (High Contrast Edition) ─── */
+      .asc-cockpit-wrapper {
+        font-family: 'Sarabun', 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: radial-gradient(circle at 50% -10%, #2b2552 0%, #151327 50%, #0c0b16 100%);
+        border-radius: 28px;
+        padding: 20px;
+        color: #1e1e2d;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75), 0 0 0 2px rgba(168, 85, 247, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .asc-cockpit-frame {
+        background: linear-gradient(145deg, #f4f6fc 0%, #e9ecf8 40%, #dfe3f3 100%);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.9), 0 12px 35px rgba(0, 0, 0, 0.35);
+        border: 2px solid #ffffff;
+        position: relative;
+      }
 
-        <h2 class="text-gold mb-1 text-center">
-          <i class="fas fa-star-and-crescent mr-2"></i> คำนวณลัคนาพยากรณ์
-        </h2>
-        <p class="text-center mb-4" style="color:#aaa; font-size:0.82rem;">
-          ระบบนิรายัน (Sidereal) · อยันศ์ลาหิริ · โหราศาสตร์ไทย-ฮินดู
-        </p>
+      /* Top Status Bar */
+      .asc-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 16px;
+        border-bottom: 2px solid rgba(124, 58, 237, 0.2);
+        margin-bottom: 22px;
+      }
+      .asc-brand-title {
+        font-family: 'Cinzel', 'Chonburi', 'Sarabun', serif;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: 2.5px;
+        background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 40%, #9333ea 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+        margin: 0;
+        filter: drop-shadow(0 2px 4px rgba(124, 58, 237, 0.15));
+      }
+      .asc-badge-telemetry {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #4c1d95;
+        background: #ede9fe;
+        padding: 5px 14px;
+        border-radius: 20px;
+        border: 1.5px solid rgba(139, 92, 246, 0.4);
+        box-shadow: 0 2px 6px rgba(139, 92, 246, 0.12);
+      }
 
-        <!-- เลือกสมาชิก -->
-        <div class="form-group mb-3">
-          <label class="text-gold small">เลือกสมาชิกจากประวัติ:</label>
-          <select class="form-control bg-black text-gold border-gold member-selector-shared"
-            onchange="autoFillMemberData(this.value); setTimeout(calculateAscendant, 300);">
-            <option value="">-- เลือกสมาชิก --</option>
-          </select>
-        </div>
+      /* Controls Console */
+      .asc-control-panel {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 20px 22px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+        border: 1.5px solid rgba(139, 92, 246, 0.25);
+        margin-bottom: 24px;
+      }
+      .asc-input-label {
+        font-size: 0.84rem;
+        font-weight: 800;
+        color: #4c1d95;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .asc-control-input {
+        background: #f8fafc !important;
+        border: 1.5px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        border-radius: 12px !important;
+        padding: 9px 14px !important;
+        font-weight: 700 !important;
+        font-size: 0.92rem !important;
+        transition: all 0.25s ease !important;
+      }
+      .asc-control-input:focus {
+        border-color: #7c3aed !important;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25) !important;
+        background: #ffffff !important;
+      }
 
-        <!-- ฟอร์มกรอกข้อมูล -->
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <label class="text-gold small">วันเกิด (ค.ศ.)</label>
-            <input type="date" id="ascBirthDate"
-              class="form-control bg-black text-gold border-gold">
-          </div>
-          <div class="col-md-4 mb-3">
-            <label class="text-gold small">เวลาเกิด (น.)</label>
-            <input type="time" id="ascBirthTime"
-              class="form-control bg-black text-gold border-gold">
-          </div>
-          <div class="col-md-4 mb-3">
-            <label class="text-gold small">จังหวัดที่เกิด</label>
-            <select id="ascCity" class="form-control bg-black text-gold border-gold">
-              ${cityOpts}
-            </select>
-          </div>
-        </div>
+      /* Cockpit Button */
+      .btn-asc-porsche {
+        background: linear-gradient(135deg, #581c87 0%, #6d28d9 45%, #9333ea 100%);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 30px;
+        padding: 12px 28px;
+        font-weight: 800;
+        font-size: 1.02rem;
+        letter-spacing: 0.5px;
+        box-shadow: 0 8px 22px rgba(109, 40, 217, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+      }
+      .btn-asc-porsche:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(109, 40, 217, 0.55);
+        color: #ffffff;
+      }
+      .btn-asc-porsche:active {
+        transform: translateY(1px);
+      }
 
-        <button class="btn btn-gold btn-block mt-2" onclick="calculateAscendant()">
-          <i class="fas fa-magic mr-2"></i> คำนวณลัคนา
-        </button>
+      /* Gauge Cluster & Telemetry */
+      .asc-gauge-box {
+        background: radial-gradient(circle at center, #ffffff 0%, #f1f3fa 70%, #e2e7f6 100%);
+        border-radius: 50%;
+        width: 250px;
+        height: 250px;
+        margin: 0 auto;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 18px 40px rgba(109, 40, 217, 0.2),
+                    inset 0 0 0 8px #ffffff,
+                    inset 0 0 0 12px rgba(124, 58, 237, 0.25),
+                    0 0 0 4px rgba(124, 58, 237, 0.4);
+        border: 4px solid #ffffff;
+      }
+      .asc-gauge-ring {
+        position: absolute;
+        top: -6px; left: -6px; right: -6px; bottom: -6px;
+        border-radius: 50%;
+        border: 2px dashed rgba(124, 58, 237, 0.5);
+        animation: spinSlow 40s linear infinite;
+        pointer-events: none;
+      }
+      @keyframes spinSlow {
+        100% { transform: rotate(360deg); }
+      }
 
-        <!-- ผลลัพธ์ -->
-        <div id="ascendantResult" class="mt-4 p-4 rounded"
-          style="display:none; background:rgba(212,175,55,0.08); border:1px dashed #d4af37;">
+      .asc-card-panel {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+        border: 1.5px solid rgba(139, 92, 246, 0.22);
+        height: 100%;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+      .asc-card-panel:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 35px rgba(124, 58, 237, 0.16);
+        border-color: rgba(139, 92, 246, 0.45);
+      }
+      
+      .asc-telemetry-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1.5px solid #f1f5f9;
+        font-size: 0.92rem;
+      }
+      .asc-telemetry-row:last-child {
+        border-bottom: none;
+      }
+      .asc-telemetry-label {
+        color: #475569;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .asc-telemetry-val {
+        color: #0f172a;
+        font-weight: 800;
+      }
 
-          <!-- หัวข้อลัคนา -->
-          <div class="text-center mb-3">
-            <div id="ascIcon" style="font-size:3.5rem; line-height:1;"></div>
-            <h3 id="ascSign" class="text-gold mt-2 mb-0"></h3>
-            <div id="ascDegree" style="font-size:0.95rem; color:#d4af37; opacity:0.85;"></div>
+      /* 12 House Grid Cards */
+      .asc-house-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 14px 16px;
+        border: 1.5px solid #e2e8f0;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .asc-house-card:hover {
+        border-color: #7c3aed;
+        box-shadow: 0 8px 24px rgba(124, 58, 237, 0.16);
+        transform: translateY(-3px);
+      }
+
+      .asc-mode-tag {
+        background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%);
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 0.74rem;
+        letter-spacing: 1.2px;
+        padding: 4px 14px;
+        border-radius: 14px;
+        text-transform: uppercase;
+        display: inline-block;
+        box-shadow: 0 2px 8px rgba(124, 58, 237, 0.35);
+      }
+    </style>
+
+    <div class="container-fluid py-4" style="max-width: 1200px; margin: 0 auto;">
+      <div class="asc-cockpit-wrapper">
+        <div class="asc-cockpit-frame">
+
+          <!-- TOP BAR: PORSCHE / COCKPIT HEADER -->
+          <div class="asc-topbar">
+            <div class="d-flex align-items-center gap-2">
+              <span class="asc-badge-telemetry">
+                <i class="fas fa-satellite-dish"></i> SIDEREAL LAHIRI
+              </span>
+              <span class="asc-badge-telemetry d-none d-sm-inline-flex">
+                <i class="fas fa-clock"></i> UTC+07:00
+              </span>
+            </div>
+            
+            <h2 class="asc-brand-title text-center">
+              <i class="fas fa-compass me-1"></i> SIAMPORIS HOROSCOPE
+            </h2>
+
+            <div>
+              <span class="asc-mode-tag">SPORT PLUS</span>
+            </div>
           </div>
 
-          <!-- ข้อมูลลัคนา -->
-          <div class="mb-2">
-            <span class="text-gold">ดาวเจ้าเรือน:</span>
-            <b id="ascruler" class="text-white ml-2"></b>
-            <span id="ascElement" class="ml-2"></span>
-          </div>
-          <div class="mb-2">
-            <span class="text-gold">ราศีที่สมพงศ์:</span>
-            <b id="asccompatible" class="text-white ml-2"></b>
-          </div>
-          <div id="ascDesc" class="mb-2" style="font-size:0.95rem;"></div>
-          <div id="asccareer" class="mb-1" style="font-size:0.9rem;"></div>
-          <div class="mb-1">
-            <span class="text-success">จุดเด่น: </span>
-            <span id="ascstrengths" style="font-size:0.9rem;"></span>
-          </div>
-          <div class="mb-1">
-            <span class="text-danger">ควรระวัง: </span>
-            <span id="ascweaknesses" style="font-size:0.9rem;"></span>
-          </div>
-          <div class="mb-1">
-            <span class="text-info">เรื่องรัก: </span>
-            <span id="ascLove" style="font-size:0.9rem;"></span>
-          </div>
-          <div class="mb-3">
-            <span class="text-warning">สุขภาพ: </span>
-            <span id="ascHealth" style="font-size:0.9rem;"></span>
-          </div>
-
-          <hr style="border-top:1px solid rgba(212,175,55,0.3);">
-
-          <!-- ตาราง 12 ภพเรือน -->
-          <h5 class="text-gold mb-3">
-            <i class="fas fa-th-large mr-2"></i> พื้นฐานดวงชะตา 12 ภพเรือน
-          </h5>
-          <div class="table-responsive">
-            <table class="table table-sm table-bordered text-white border-gold mb-3"
-              style="background:rgba(0,0,0,0.3); font-size:0.82rem;">
-              <thead class="text-gold">
-                <tr>
-                  <th>ภพ</th><th>ราศีสถิต</th><th>จุดเด่น</th><th>ควรระวัง</th>
-                </tr>
-              </thead>
-              <tbody id="houseTableBody"></tbody>
-            </table>
+          <!-- SUBHEADER & MEMBER SELECT -->
+          <div class="asc-control-panel">
+            <div class="row align-items-end g-3">
+              <div class="col-lg-3 col-md-6">
+                <label class="asc-input-label">
+                  <i class="fas fa-user-circle text-purple"></i> ดึงจากประวัติสมาชิก:
+                </label>
+                <select class="form-select asc-control-input member-selector-shared"
+                  onchange="autoFillMemberData(this.value); setTimeout(calculateAscendant, 300);">
+                  <option value="">-- เลือกสมาชิกจากประวัติ --</option>
+                </select>
+              </div>
+              <div class="col-lg-3 col-md-6">
+                <label class="asc-input-label">
+                  <i class="fas fa-calendar-alt text-purple"></i> วันเกิด (ค.ศ.):
+                </label>
+                <input type="date" id="ascBirthDate" class="form-control asc-control-input">
+              </div>
+              <div class="col-lg-2 col-md-6">
+                <label class="asc-input-label">
+                  <i class="fas fa-clock text-purple"></i> เวลาเกิด (น.):
+                </label>
+                <input type="time" id="ascBirthTime" class="form-control asc-control-input">
+              </div>
+              <div class="col-lg-2 col-md-6">
+                <label class="asc-input-label">
+                  <i class="fas fa-map-marker-alt text-purple"></i> จังหวัดที่เกิด:
+                </label>
+                <select id="ascCity" class="form-select asc-control-input">
+                  ${cityOpts}
+                </select>
+              </div>
+              <div class="col-lg-2 col-12 text-center">
+                <button type="button" class="btn btn-asc-porsche w-100 d-flex align-items-center justify-content-center gap-2" onclick="calculateAscendant()">
+                  <i class="fas fa-bolt"></i> คำนวณลัคนา
+                </button>
+              </div>
+            </div>
           </div>
 
-          <!-- ข้อมูลดาราศาสตร์ (สำหรับผู้สนใจ) -->
-          <div id="ascAstroInfo"
-            style="font-size:0.78rem; color:#888; background:rgba(0,0,0,0.25); border-radius:6px; padding:8px 12px;">
+          <!-- RESULT COCKPIT DASHBOARD -->
+          <div id="ascendantResult" style="display: none;">
+            
+            <!-- 3-COLUMN COCKPIT GAUGES & TELEMETRY -->
+            <div class="row g-3 mb-4">
+              
+              <!-- LEFT PANEL: VEHICLE & ORBIT STATUS -->
+              <div class="col-lg-4 col-md-6">
+                <div class="asc-card-panel">
+                  <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                    <span class="fw-bold text-uppercase" style="color: #6b21a8; font-size: 0.88rem; letter-spacing: 1px;">
+                      <i class="fas fa-atom me-1"></i> ธาตุและเกษตรประจำลัคนา
+                    </span>
+                    <span class="badge bg-purple-subtle text-purple rounded-pill px-2 py-1" style="font-size: 0.72rem; background: rgba(147, 51, 234, 0.1); color: #7e22ce;">
+                      SYSTEM ACTIVE
+                    </span>
+                  </div>
+
+                  <div class="asc-telemetry-row">
+                    <span class="asc-telemetry-label"><i class="fas fa-globe-asia text-primary"></i> ดาวเจ้าเรือนเกษตร</span>
+                    <span id="ascruler" class="asc-telemetry-val text-primary fs-6">-</span>
+                  </div>
+                  <div class="asc-telemetry-row">
+                    <span class="asc-telemetry-label"><i class="fas fa-fire-alt text-danger"></i> ธาตุประจำราศี</span>
+                    <span id="ascElement" class="asc-telemetry-val">-</span>
+                  </div>
+                  <div class="asc-telemetry-row">
+                    <span class="asc-telemetry-label"><i class="fas fa-handshake text-success"></i> ราศีที่สมพงศ์</span>
+                    <span id="asccompatible" class="asc-telemetry-val text-success">-</span>
+                  </div>
+                  <div class="asc-telemetry-row">
+                    <span class="asc-telemetry-label"><i class="fas fa-palette text-warning"></i> สีมงคลเสริมโชค</span>
+                    <span id="ascLuckyColor" class="asc-telemetry-val text-dark">-</span>
+                  </div>
+                  <div class="asc-telemetry-row">
+                    <span class="asc-telemetry-label"><i class="fas fa-dice text-info"></i> เลขให้คุณเด่น</span>
+                    <span id="ascLuckyNumber" class="asc-telemetry-val text-purple">-</span>
+                  </div>
+
+                  <div class="mt-3 p-2 rounded-3" style="background: rgba(139, 92, 246, 0.06); border: 1px dashed rgba(139, 92, 246, 0.25);">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                      <i class="fas fa-briefcase text-purple" style="font-size: 0.85rem;"></i>
+                      <span class="fw-bold text-dark" style="font-size: 0.82rem;">เส้นทางอาชีพและวาสนา:</span>
+                    </div>
+                    <div id="asccareer" class="text-muted" style="font-size: 0.82rem; line-height: 1.4;">-</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CENTER PANEL: PORSCHE MAIN TACHOMETER GAUGE -->
+              <div class="col-lg-4 col-md-12 order-first order-lg-0">
+                <div class="asc-card-panel text-center position-relative d-flex flex-column justify-content-between">
+                  <div class="asc-gauge-box my-2">
+                    <div class="asc-gauge-ring"></div>
+                    <div id="ascIcon" style="font-size: 2.8rem; line-height: 1; filter: drop-shadow(0 4px 10px rgba(124,58,237,0.3));">✨</div>
+                    <div id="ascSign" class="fw-bold mt-1" style="font-size: 1.55rem; color: #4c1d95; letter-spacing: 0.5px;">-</div>
+                    <div id="ascDegree" style="font-size: 0.82rem; font-weight: 700; color: #7c3aed;">-</div>
+                    <div class="mt-1">
+                      <span class="asc-mode-tag">ASCENDANT</span>
+                    </div>
+                  </div>
+
+                  <!-- Central Character Overview HUD -->
+                  <div class="p-3 rounded-4 mt-2" style="background: linear-gradient(135deg, rgba(245, 243, 255, 0.8) 0%, rgba(237, 233, 254, 0.6) 100%); border: 1px solid rgba(139, 92, 246, 0.2);">
+                    <div class="fw-bold text-purple mb-1" style="font-size: 0.85rem;">
+                      <i class="fas fa-quote-left me-1"></i> บุคลิกลักษณะและชะตากำเนิด
+                    </div>
+                    <div id="ascDesc" style="font-size: 0.86rem; color: #334155; line-height: 1.5;">-</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RIGHT PANEL: LIFE METRICS & DIAGNOSTICS -->
+              <div class="col-lg-4 col-md-6">
+                <div class="asc-card-panel">
+                  <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                    <span class="fw-bold text-uppercase" style="color: #6b21a8; font-size: 0.88rem; letter-spacing: 1px;">
+                      <i class="fas fa-chart-line me-1"></i> เกณฑ์ชะตาและการเฝ้าระวัง
+                    </span>
+                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1" style="font-size: 0.72rem; background: rgba(16, 185, 129, 0.1); color: #047857;">
+                      OPTIMIZED
+                    </span>
+                  </div>
+
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="text-success fw-bold" style="font-size: 0.85rem;"><i class="fas fa-check-circle me-1"></i> จุดเด่นและพลังวาสนา:</span>
+                    </div>
+                    <div id="ascstrengths" class="p-2 rounded-3 text-dark fw-semibold" style="background: rgba(16, 185, 129, 0.08); font-size: 0.84rem; border-left: 3px solid #10b981;">-</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="text-danger fw-bold" style="font-size: 0.85rem;"><i class="fas fa-exclamation-triangle me-1"></i> จุดควรระวัง/สิ่งบั่นทอน:</span>
+                    </div>
+                    <div id="ascweaknesses" class="p-2 rounded-3 text-dark fw-semibold" style="background: rgba(239, 68, 68, 0.08); font-size: 0.84rem; border-left: 3px solid #ef4444;">-</div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="text-info fw-bold" style="font-size: 0.85rem;"><i class="fas fa-heart me-1"></i> เกณฑ์ความรัก/คู่ครอง:</span>
+                    </div>
+                    <div id="ascLove" class="p-2 rounded-3 text-dark" style="background: rgba(6, 182, 212, 0.08); font-size: 0.83rem; border-left: 3px solid #06b6d4;">-</div>
+                  </div>
+
+                  <div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="text-warning fw-bold" style="font-size: 0.85rem;"><i class="fas fa-medkit me-1"></i> สุขภาพที่ต้องดูแล:</span>
+                    </div>
+                    <div id="ascHealth" class="p-2 rounded-3 text-dark" style="background: rgba(245, 158, 11, 0.08); font-size: 0.83rem; border-left: 3px solid #f59e0b;">-</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- 12 HOUSES COCKPIT GRID -->
+            <div class="asc-card-panel mb-4">
+              <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                <h5 class="fw-bold mb-0" style="color: #4c1d95; font-size: 1.05rem;">
+                  <i class="fas fa-th-large me-2 text-purple"></i> พื้นฐานดวงชะตา 12 ภพเรือน (Cockpit Grid System)
+                </h5>
+                <span class="badge rounded-pill px-3 py-1" style="background: rgba(139, 92, 246, 0.12); color: #6d28d9; font-weight: 700; font-size: 0.75rem;">
+                  12 BHAVAS ALIGNED
+                </span>
+              </div>
+
+              <div id="houseGridContainer" class="row g-2 g-md-3"></div>
+            </div>
+
+            <!-- ASTRONOMICAL HUD FOOTER -->
+            <div id="ascAstroInfo" class="p-3 rounded-4 mb-4" style="font-size: 0.8rem; background: #ffffff; border: 1px solid rgba(139,92,246,0.18); color: #64748b; line-height: 1.6; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+            </div>
+
+            <!-- EXPORT ACTION BUTTON -->
+            <div class="text-center mt-3">
+              <button type="button" class="btn btn-asc-porsche px-5 py-3 shadow-lg" onclick="saveAscendantImg()">
+                <i class="fas fa-camera me-2"></i> บันทึกภาพแผ่นดวงชะตาลัคนา (Digital Hi-Res)
+              </button>
+            </div>
+
+          </div><!-- /ascendantResult -->
+
+          <!-- NAVIGATION BAR -->
+          <div class="row g-2 mt-4 pt-3 border-top" style="border-color: rgba(139, 92, 246, 0.15) !important;">
+            <div class="col-6">
+              <button class="btn btn-outline-dark w-100 py-2 rounded-pill fw-semibold" style="border-color: #cbd5e1; background: #ffffff;" onclick="navigateTo('mainpage')">
+                <i class="fas fa-chevron-left me-1"></i> กลับห้องพยากรณ์
+              </button>
+            </div>
+            <div class="col-6">
+              <button class="btn btn-outline-dark w-100 py-2 rounded-pill fw-semibold" style="border-color: #cbd5e1; background: #ffffff;" onclick="goBack()">
+                <i class="fas fa-home me-1"></i> กลับหน้าหลัก
+              </button>
+            </div>
           </div>
 
-          <!-- ปุ่มบันทึกภาพ -->
-          <div class="text-center mt-4">
-            <button class="btn btn-outline-gold px-5 py-2" onclick="saveAscendantImg()">
-              <i class="fas fa-camera mr-2"></i> บันทึกภาพดวงชะตา
-            </button>
-          </div>
-        </div><!-- /ascendantResult -->
-
-        <!-- ปุ่มนำทาง -->
-        <div class="row mt-4">
-          <div class="col-6">
-            <button class="btn btn-outline-secondary btn-block border-0"
-              onclick="navigateTo('mainpage')">
-              <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
-            </button>
-          </div>
-          <div class="col-6">
-            <button class="btn btn-outline-secondary btn-block border-0"
-              onclick="goBack()">
-              <i class="fas fa-home"></i> กลับหน้าหลัก
-            </button>
-          </div>
-        </div>
-
-      </div>
+        </div><!-- /asc-cockpit-frame -->
+      </div><!-- /asc-cockpit-wrapper -->
     </div>
   `;
+
+  // ตรวจสอบข้อมูลสมาชิกที่ส่งมาจากหน้าโปรไฟล์เพื่อคำนวณอัตโนมัติ
+  setTimeout(() => {
+    try {
+      const autoDataRaw = localStorage.getItem('siamhora_auto_calc_ascendant');
+      if (autoDataRaw) {
+        localStorage.removeItem('siamhora_auto_calc_ascendant');
+        const mem = JSON.parse(autoDataRaw);
+        if (mem) {
+          let bDateStr = "";
+          if (mem.birthdate) {
+            if (mem.birthdate.includes('/')) {
+              const p = mem.birthdate.split('/');
+              if (p.length === 3) {
+                let y = parseInt(p[2], 10);
+                if (y > 2400) y -= 543;
+                bDateStr = `${y}-${String(p[1]).padStart(2,'0')}-${String(p[0]).padStart(2,'0')}`;
+              }
+            } else if (mem.birthdate.includes('-')) {
+              const p = mem.birthdate.split('-');
+              if (p.length === 3) {
+                let y = parseInt(p[0], 10);
+                if (y > 2400) y -= 543;
+                bDateStr = `${y}-${String(p[1]).padStart(2,'0')}-${String(p[2]).padStart(2,'0')}`;
+              }
+            }
+          }
+          const dateEl = document.getElementById('ascBirthDate');
+          if (dateEl && bDateStr) dateEl.value = bDateStr;
+
+          const timeEl = document.getElementById('ascBirthTime');
+          if (timeEl && mem.birthtime) timeEl.value = mem.birthtime.substring(0, 5);
+
+          const cityEl = document.getElementById('ascCity');
+          if (cityEl && mem.province && typeof ASC_CITY_LIST !== 'undefined') {
+            const cIdx = ASC_CITY_LIST.findIndex(c => c.name.includes(mem.province));
+            if (cIdx !== -1) cityEl.value = String(cIdx);
+          }
+
+          if (typeof calculateAscendant === 'function') {
+            setTimeout(calculateAscendant, 200);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Auto calc ascendant error:", e);
+    }
+  }, 100);
 }
 
 document.addEventListener('DOMContentLoaded', () => { showascen(); });
@@ -536,46 +889,183 @@ function calculateAscendant() {
   const city    = ASC_CITY_LIST[cityIdx] || ASC_CITY_LIST[0];
 
   const result = ascCalcLagna(dateEl.value, timeEl.value, city.lat, city.lng);
-  generateHouseTable(result.rasi);
+  generateHouseGrid(result.rasi);
   displayAscendantResult(ZODIAC_DATA[result.rasi], result, city);
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// สร้างตาราง 12 ภพเรือน
+// สร้างการ์ดแสดง 12 ภพเรือน (Cockpit Grid — Enhanced Edition)
 // ═══════════════════════════════════════════════════════════════════════
 
-function generateHouseTable(startZodiacIndex) {
-  const tableBody = document.getElementById('houseTableBody');
-  if (!tableBody) return;
+function generateHouseGrid(startZodiacIndex) {
+  const gridContainer = document.getElementById('houseGridContainer');
+  if (!gridContainer) return;
 
-  const houseNames = [
-    "ตนุ (ตัวตน)",
-    "กดุมพะ (การเงิน)",
-    "สหัชชะ (สังคม)",
-    "พันธุ (ครอบครัว)",
-    "ปุตตะ (บุตร/บริวาร)",
-    "อริ (อุปสรรค)",
-    "ปัตนิ (คู่ครอง)",
-    "มรณะ (ความสูญเสีย)",
-    "ศุภะ (ความสุข/ศาสนา)",
-    "กัมมะ (การงาน)",
-    "ลาภะ (โชคลาภ)",
-    "วินาศ (ความลับ/เบื้องหลัง)"
+  const houseDataList = [
+    {
+      num: 1,
+      title: "ตนุ",
+      sub: "ตัวตน / ชะตาชีวิต",
+      icon: "fa-user-astronaut",
+      desc: "บ่งบอกถึงรูปร่าง บุคลิกภาพ ความคิด สติปัญญา และภาพรวมวาสนากำเนิด",
+      aspect: "พลังขับเคลื่อนและอัตลักษณ์บุคคล"
+    },
+    {
+      num: 2,
+      title: "กดุมพะ",
+      sub: "ทรัพย์สิน / การเงิน",
+      icon: "fa-coins",
+      desc: "การหาเงิน รายได้ แหล่งทรัพย์สิน ความมั่งคั่ง และพฤติกรรมการใช้จ่าย",
+      aspect: "สภาพคล่องและการสะสมทรัพย์"
+    },
+    {
+      num: 3,
+      title: "สหัชชะ",
+      sub: "สังคม / มิตรสหาย",
+      icon: "fa-users",
+      desc: "พี่น้อง เพื่อนฝูง สังคมแวดล้อม การเดินทางระยะใกล้ และการติดต่อสื่อสาร",
+      aspect: "เครือข่ายและการเจรจาต่อรอง"
+    },
+    {
+      num: 4,
+      title: "พันธุ",
+      sub: "ครอบครัว / รากฐาน",
+      icon: "fa-home",
+      desc: "พ่อแม่ บ้าน ที่อยู่อาศัย ยานพาหนะ ที่ดิน และความมั่นคงในวัยต้น",
+      aspect: "ความอบอุ่นและหลักปักฐาน"
+    },
+    {
+      num: 5,
+      title: "ปุตตะ",
+      sub: "บริวาร / การริเริ่ม",
+      icon: "fa-seedling",
+      desc: "บุตร บริวาร ความคิดสร้างสรรค์ การลงทุนใหม่ๆ และเรื่องเสี่ยงโชค",
+      aspect: "โปรเจกต์ใหม่และผู้ใต้บังคับบัญชา"
+    },
+    {
+      num: 6,
+      title: "อริ",
+      sub: "อุปสรรค / การแก้ปัญหา",
+      icon: "fa-shield-virus",
+      desc: "ศัตรู ปัญหา หนี้สิน โรคภัย และความสามารถในการฝ่าฟันวิกฤต",
+      aspect: "ภูมิคุ้มกันและการเอาชนะขวากหนาม"
+    },
+    {
+      num: 7,
+      title: "ปัตนิ",
+      sub: "คู่ครอง / หุ้นส่วน",
+      icon: "fa-heart",
+      desc: "คู่ชีวิต หุ้นส่วนธุรกิจ สัญญาร่วมทุน และบุคคลที่มีผลประโยชน์ร่วม",
+      aspect: "ชีวิตคู่และการร่วมงานระยะยาว"
+    },
+    {
+      num: 8,
+      title: "มรณะ",
+      sub: "การสูญเสีย / มรดก",
+      icon: "fa-hourglass-end",
+      desc: "ความเปลี่ยนแปลงครั้งใหญ่ มรดก การเดินทางไกลต่างแดน และสิ่งที่ซ่อนเร้น",
+      aspect: "การสิ้นสุดเพื่อเริ่มต้นสิ่งใหม่"
+    },
+    {
+      num: 9,
+      title: "ศุภะ",
+      sub: "คุณธรรม / ความก้าวหน้า",
+      icon: "fa-feather",
+      desc: "ความสำเร็จชั้นสูง ปัญญา ศาสนา ผู้ใหญ่สนับสนุน และการเรียนรู้ระดับสูง",
+      aspect: "วาสนาบารมีและความเจริญรุ่งเรือง"
+    },
+    {
+      num: 10,
+      title: "กัมมะ",
+      sub: "การงาน / ยศตำแหน่ง",
+      icon: "fa-briefcase",
+      desc: "หน้าที่การงาน อาชีพหลัก ภาระรับผิดชอบ และเกียรติยศชื่อเสียงในสังคม",
+      aspect: "ความสำเร็จในสายอาชีพและหน้าที่"
+    },
+    {
+      num: 11,
+      title: "ลาภะ",
+      sub: "โชคลาภ / ผลสำเร็จ",
+      icon: "fa-trophy",
+      desc: "ลาภลอย โอกาสทอง ความสมหวัง และผลกำไรที่ได้รับจากผลงาน",
+      aspect: "เงินก้อนใหญ่และความสำเร็จเป้าหมาย"
+    },
+    {
+      num: 12,
+      title: "วินาศ",
+      sub: "เบื้องหลัง / ความลับ",
+      icon: "fa-mask",
+      desc: "การอยู่เบื้องหลัง เรื่องที่ไม่เปิดเผย สิ่งลี้ลับ และการเดินทางไกลต่างถิ่น",
+      aspect: "งานเบื้องหลังและการปลีกวิเวก"
+    }
   ];
 
   let html = '';
   for (let i = 0; i < 12; i++) {
     const idx    = (startZodiacIndex + i) % 12;
     const zodiac = ZODIAC_DATA[idx];
+    const house  = houseDataList[i];
+    const elemColor = ASC_ELEMENT_COLORS[zodiac.element] || '#7c3aed';
+    
     html += `
-      <tr>
-        <td class="text-gold" style="white-space:nowrap;">${i + 1}. ${houseNames[i]}</td>
-        <td style="white-space:nowrap;">${zodiac.icon} ราศี${zodiac.name}</td>
-        <td><span class="text-success">${zodiac.strengths.join(', ')}</span></td>
-        <td><span class="text-danger">${zodiac.weaknesses.join(', ')}</span></td>
-      </tr>`;
+      <div class="col-xl-4 col-lg-6 col-12">
+        <div class="asc-house-card h-100 d-flex flex-column justify-content-between" style="border-top: 5px solid ${elemColor}; background: #ffffff; box-shadow: 0 6px 20px rgba(15,23,42,0.06);">
+          <div>
+            <!-- Header ภพเรือน -->
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+              <div class="d-flex align-items-center gap-2">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:#ede9fe; color:#6d28d9; font-weight:800; font-size:0.85rem;">
+                  ${house.num}
+                </span>
+                <span class="fw-bold" style="font-size: 0.95rem; color: #3b0764;">
+                  <i class="fas ${house.icon} me-1" style="color: #7c3aed;"></i> ภพ${house.title}
+                </span>
+              </div>
+              <span class="badge rounded-pill px-2 py-1" style="background: #ede9fe; color: #5b21b6; font-size: 0.72rem; font-weight: 700; border: 1px solid rgba(124, 58, 237, 0.25);">
+                ${house.sub}
+              </span>
+            </div>
+
+            <!-- ความหมายหลักของภพ -->
+            <div class="p-2 rounded-2 mb-2" style="background: #faf5ff; border: 1px dashed rgba(168, 85, 247, 0.3); font-size: 0.8rem; color: #581c87; line-height: 1.4;">
+              <b><i class="fas fa-info-circle me-1"></i>อิทธิพลภพ:</b> ${house.desc}
+            </div>
+            
+            <!-- ราศีสถิต & ดาวเกษตร -->
+            <div class="d-flex align-items-center justify-content-between mb-2 p-2 rounded-3" style="background: #f1f5f9; border: 1.5px solid #e2e8f0;">
+              <div class="d-flex align-items-center gap-2">
+                <span style="font-size: 1.35rem; line-height:1;">${zodiac.icon}</span>
+                <div>
+                  <span class="fw-bold text-dark" style="font-size: 0.88rem;">สถิตราศี${zodiac.name}</span>
+                  <div class="text-muted" style="font-size: 0.74rem;">ดาวเกษตร: <b style="color:#6d28d9;">${zodiac.ruler}</b></div>
+                </div>
+              </div>
+              <span class="badge" style="background: ${elemColor}15; color: ${elemColor}; border: 1px solid ${elemColor}40; font-weight: 800; font-size: 0.76rem;">
+                ${zodiac.element}
+              </span>
+            </div>
+
+            <!-- จุดเด่น & จุดระวัง -->
+            <div class="mb-2">
+              <div class="small mb-1 text-dark" style="font-size: 0.82rem; line-height: 1.4;">
+                <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>ส่งผลดี:</span> ${zodiac.strengths.join(', ')}
+              </div>
+              <div class="small text-dark" style="font-size: 0.82rem; line-height: 1.4;">
+                <span class="text-danger fw-bold"><i class="fas fa-exclamation-circle me-1"></i>ข้อควรระวัง:</span> ${zodiac.weaknesses.join(', ')}
+              </div>
+            </div>
+          </div>
+
+          <!-- ท้ายการ์ด: คำแนะนำ/ด้านที่ส่งเสริม -->
+          <div class="pt-2 mt-2 border-top d-flex justify-content-between align-items-center" style="font-size: 0.76rem; color: #64748b;">
+            <span><i class="fas fa-compass text-purple me-1"></i><b>จุดเน้น:</b> ${house.aspect}</span>
+            <span class="text-purple fw-bold">สมพงศ์: ${zodiac.compatible.slice(0, 2).join('/')}</span>
+          </div>
+
+        </div>
+      </div>`;
   }
-  tableBody.innerHTML = html;
+  gridContainer.innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -586,49 +1076,85 @@ function displayAscendantResult(data, result, city) {
   const resDiv = document.getElementById('ascendantResult');
   if (!resDiv) return;
 
-  const color = ASC_ELEMENT_COLORS[data.element] || '#ffffff';
+  const color = ASC_ELEMENT_COLORS[data.element] || '#7c3aed';
 
   // องศา นาที วินาทีในราศี
-  const degStr = `${result.deg}° ${result.min}' ${result.sec}" ในราศี${data.name}`;
+  const degStr = `${result.deg}° ${result.min}' ${result.sec}" (${data.name})`;
 
   // อยันศ์
   const ayanDeg = Math.floor(result.ayan);
   const ayanMin = Math.floor((result.ayan - ayanDeg) * 60);
 
-  document.getElementById('ascSign').innerText     = `ลัคนาราศี${data.name} ${data.icon}`;
-  document.getElementById('ascIcon').innerText     = data.icon;
-  document.getElementById('ascDegree').innerHTML   =
-    `<b>${degStr}</b> &nbsp;|&nbsp; สายันที่ ${result.tropical.toFixed(2)}°`;
-  document.getElementById('ascDesc').innerText     = data.desc;
-  document.getElementById('asccareer').innerText   = `อาชีพที่เหมาะสม: ${data.career}`;
-  document.getElementById('ascstrengths').innerText = data.strengths.join(', ');
-  document.getElementById('ascweaknesses').innerText = data.weaknesses.join(', ');
-  document.getElementById('ascLove').innerText     = data.love;
-  document.getElementById('ascHealth').innerText   = data.health;
-  document.getElementById('ascruler').innerText    = data.ruler;
-  document.getElementById('asccompatible').innerText = data.compatible.join(', ');
-  document.getElementById('ascElement').innerHTML  =
-    `<span style="color:${color};">(${data.element})</span>`;
+  const signEl = document.getElementById('ascSign');
+  if (signEl) signEl.innerText = `ลัคนาราศี${data.name}`;
 
-  // ข้อมูลดาราศาสตร์
-  document.getElementById('ascAstroInfo').innerHTML = `
-    📍 สถานที่เกิด: <b>${city.name}</b>
-    (ละติจูด ${city.lat.toFixed(4)}°N, ลองจิจูด ${city.lng.toFixed(4)}°E)
-    &nbsp;|&nbsp; JD: ${result.jd.toFixed(5)}
-    &nbsp;|&nbsp; LST: ${result.lst.toFixed(3)}°
-    &nbsp;|&nbsp; ε: ${result.eps.toFixed(4)}°
-    &nbsp;|&nbsp; อยันศ์ลาหิริ: ${ayanDeg}°${ayanMin}'
-    &nbsp;|&nbsp; ลัคนาสายัน: ${result.tropical.toFixed(3)}°
-    &nbsp;|&nbsp; ลัคนานิรายัน: ${result.sidereal.toFixed(3)}°
-  `;
+  const iconEl = document.getElementById('ascIcon');
+  if (iconEl) iconEl.innerText = data.icon;
+
+  const degEl = document.getElementById('ascDegree');
+  if (degEl) degEl.innerHTML = `${degStr} &nbsp;·&nbsp; สายัน ${result.tropical.toFixed(2)}°`;
+
+  const descEl = document.getElementById('ascDesc');
+  if (descEl) descEl.innerText = data.desc;
+
+  const careerEl = document.getElementById('asccareer');
+  if (careerEl) careerEl.innerText = data.career;
+
+  const strengthsEl = document.getElementById('ascstrengths');
+  if (strengthsEl) strengthsEl.innerText = data.strengths.join(', ');
+
+  const weakEl = document.getElementById('ascweaknesses');
+  if (weakEl) weakEl.innerText = data.weaknesses.join(', ');
+
+  const loveEl = document.getElementById('ascLove');
+  if (loveEl) loveEl.innerText = data.love;
+
+  const healthEl = document.getElementById('ascHealth');
+  if (healthEl) healthEl.innerText = data.health;
+
+  const rulerEl = document.getElementById('ascruler');
+  if (rulerEl) rulerEl.innerText = data.ruler;
+
+  const compEl = document.getElementById('asccompatible');
+  if (compEl) compEl.innerText = data.compatible.join(', ');
+
+  const elemEl = document.getElementById('ascElement');
+  if (elemEl) elemEl.innerHTML = `<span style="color:${color}; font-weight:700;">${data.element}</span>`;
+
+  const luckyColorEl = document.getElementById('ascLuckyColor');
+  if (luckyColorEl) luckyColorEl.innerText = data.luckyColor || '-';
+
+  const luckyNumEl = document.getElementById('ascLuckyNumber');
+  if (luckyNumEl) luckyNumEl.innerText = data.luckyNumber ? data.luckyNumber.join(', ') : '-';
+
+  // ข้อมูลดาราศาสตร์ HUD
+  const astroEl = document.getElementById('ascAstroInfo');
+  if (astroEl) {
+    astroEl.innerHTML = `
+      <div class="row g-2">
+        <div class="col-md-6 col-12">
+          <i class="fas fa-map-pin text-danger me-1"></i> พิกัดคำนวณ: <b>${city.name}</b> (Lat: ${city.lat.toFixed(4)}°N, Lng: ${city.lng.toFixed(4)}°E)
+        </div>
+        <div class="col-md-6 col-12">
+          <i class="fas fa-satellite text-primary me-1"></i> Julian Day (JD): <b>${result.jd.toFixed(5)}</b> &nbsp;|&nbsp; LST: <b>${result.lst.toFixed(3)}°</b>
+        </div>
+        <div class="col-md-6 col-12">
+          <i class="fas fa-angle-double-right text-purple me-1"></i> อยันศ์ลาหิริ (Lahiri Ayanamsha): <b>${ayanDeg}° ${ayanMin}'</b> &nbsp;|&nbsp; ความเอียงสุริยวิถี (ε): <b>${result.eps.toFixed(4)}°</b>
+        </div>
+        <div class="col-md-6 col-12">
+          <i class="fas fa-circle-notch text-success me-1"></i> ลัคนาสายัน (Tropical): <b>${result.tropical.toFixed(3)}°</b> &nbsp;|&nbsp; ลัคนานิรายัน (Sidereal): <b>${result.sidereal.toFixed(3)}°</b>
+        </div>
+      </div>
+    `;
+  }
 
   resDiv.style.display = 'block';
   resDiv.classList.add('animate__animated', 'animate__fadeIn');
-  resDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  resDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// บันทึกภาพ
+// บันทึกภาพแผ่นดวงชะตาลัคนา (Luxury Porsche HUD Theme)
 // ═══════════════════════════════════════════════════════════════════════
 
 async function saveAscendantImg() {
@@ -639,7 +1165,7 @@ async function saveAscendantImg() {
   }
   
   Swal.fire({
-      title: 'กำลังสร้างรูปภาพ...',
+      title: 'กำลังสร้างแผ่นดวงชะตาสุดหรู...',
       text: 'กรุณารอสักครู่',
       allowOutsideClick: false,
       didOpen: () => { Swal.showLoading(); }
@@ -650,20 +1176,25 @@ async function saveAscendantImg() {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = 1080;
-    canvas.height = 1350;
+    canvas.height = 1440;
     
-    // Background
-    ctx.fillStyle = '#0a0a0a';
+    // Background: Modern Luxury Dark & Violet Gradient
+    const bgGrad = ctx.createRadialGradient(canvas.width/2, 200, 50, canvas.width/2, canvas.height/2, 900);
+    bgGrad.addColorStop(0, '#1c1836');
+    bgGrad.addColorStop(0.6, '#0f0e1d');
+    bgGrad.addColorStop(1, '#07060d');
+    ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Border
-    ctx.strokeStyle = '#d4af37';
-    ctx.lineWidth = 15;
+    // Outer Frame Glow
+    ctx.strokeStyle = '#8b5cf6';
+    ctx.lineWidth = 6;
     ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
-    ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
-    ctx.lineWidth = 4;
-    ctx.setLineDash([10, 10]);
-    ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+    
+    ctx.strokeStyle = 'rgba(168, 85, 247, 0.35)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8, 8]);
+    ctx.strokeRect(45, 45, canvas.width - 90, canvas.height - 90);
     ctx.setLineDash([]);
     
     // Header
@@ -673,58 +1204,82 @@ async function saveAscendantImg() {
     
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
-    ctx.fillStyle = '#d4af37';
-    ctx.font = 'bold 120px "Sarabun", sans-serif';
-    ctx.fillText(icon, canvas.width / 2, 120);
+    ctx.fillStyle = '#c084fc';
+    ctx.font = 'bold 32px "Sarabun", sans-serif';
+    ctx.fillText('SIAM HORAMANGKOL — DIGITAL HOROSCOPE', canvas.width / 2, 75);
+
+    // Center Cockpit Dial Circle
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2, 260, 140, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(168, 85, 247, 0.5)';
+    ctx.shadowBlur = 30;
+    ctx.fill();
+    ctx.strokeStyle = '#9333ea';
+    ctx.lineWidth = 6;
+    ctx.stroke();
+    ctx.restore();
     
-    ctx.font = 'bold 65px "Sarabun", sans-serif';
+    ctx.fillStyle = '#4c1d95';
+    ctx.font = 'bold 70px "Sarabun", sans-serif';
+    ctx.fillText(icon, canvas.width / 2, 175);
+    
+    ctx.font = 'bold 42px "Sarabun", sans-serif';
     ctx.fillText(sign, canvas.width / 2, 260);
     
-    ctx.font = '35px "Sarabun", sans-serif';
-    ctx.fillStyle = 'rgba(212, 175, 55, 0.85)';
-    ctx.fillText(degree, canvas.width / 2, 340);
+    ctx.font = '22px "Sarabun", sans-serif';
+    ctx.fillStyle = '#7c3aed';
+    ctx.fillText(degree, canvas.width / 2, 320);
     
     // Content box
-    ctx.fillStyle = 'rgba(212, 175, 55, 0.05)';
-    ctx.fillRect(80, 420, canvas.width - 160, 720);
-    ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.roundRect(70, 440, canvas.width - 140, 850, 24);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(139, 92, 246, 0.25)';
     ctx.lineWidth = 2;
-    ctx.strokeRect(80, 420, canvas.width - 160, 720);
+    ctx.stroke();
     
     // Detail texts
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    let y = 480;
+    let y = 500;
     const drawLine = (label, text, color) => {
-        ctx.font = 'bold 36px "Sarabun", sans-serif';
-        ctx.fillStyle = '#d4af37';
-        ctx.fillText(label, 120, y);
+        ctx.font = 'bold 30px "Sarabun", sans-serif';
+        ctx.fillStyle = '#6b21a8';
+        ctx.fillText(label, 110, y);
         const w = ctx.measureText(label).width;
-        ctx.font = '36px "Sarabun", sans-serif';
-        ctx.fillStyle = color || '#ffffff';
-        ctx.fillText(text, 120 + w + 15, y);
-        y += 65;
+        ctx.font = '28px "Sarabun", sans-serif';
+        ctx.fillStyle = color || '#1e293b';
+        ctx.fillText(text, 110 + w + 15, y);
+        y += 55;
     };
     
     const ruler = document.getElementById('ascruler')?.innerText || '';
-    drawLine('ดาวเจ้าเรือน:', ruler, '#ffffff');
+    const element = document.getElementById('ascElement')?.innerText || '';
+    drawLine('ดาวเกษตรประจำลัคนา:', `${ruler} (${element})`, '#0284c7');
     
     const compatible = document.getElementById('asccompatible')?.innerText || '';
-    drawLine('ราศีที่สมพงศ์:', compatible, '#ffffff');
+    drawLine('ราศีที่สมพงศ์:', compatible, '#059669');
     
-    y += 15;
+    const colors = document.getElementById('ascLuckyColor')?.innerText || '';
+    const luckyNum = document.getElementById('ascLuckyNumber')?.innerText || '';
+    drawLine('สีมงคล / เลขเด่น:', `${colors} | เลข ${luckyNum}`, '#d97706');
+
+    y += 10;
     const desc = document.getElementById('ascDesc')?.innerText || '';
-    ctx.font = '32px "Sarabun", sans-serif';
-    ctx.fillStyle = '#cccccc';
+    ctx.font = '26px "Sarabun", sans-serif';
+    ctx.fillStyle = '#475569';
     
-    // wrap logic
+    // Wrap text logic
     let lines = [];
     if (window.Intl && window.Intl.Segmenter) {
         const seg = new Intl.Segmenter('th', { granularity: 'word' });
         const segments = seg.segment(desc);
         let curr = "";
         for (const {segment} of segments) {
-            if (ctx.measureText(curr + segment).width > 800 && curr.trim() !== "") {
+            if (ctx.measureText(curr + segment).width > 820 && curr.trim() !== "") {
                 lines.push(curr); curr = segment;
             } else curr += segment;
         }
@@ -733,37 +1288,36 @@ async function saveAscendantImg() {
         lines.push(desc.substring(0, 50) + "...");
     }
     for(let l of lines) {
-        ctx.fillText(l, 120, y);
-        y += 50;
+        ctx.fillText(l, 110, y);
+        y += 42;
     }
     
-    y += 20;
+    y += 15;
     const career = document.getElementById('asccareer')?.innerText || '';
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(career, 120, y); y += 65;
+    drawLine('เส้นทางอาชีพ:', career, '#334155');
     
     const strengths = document.getElementById('ascstrengths')?.innerText || '';
-    drawLine('จุดเด่น:', strengths, '#4caf50');
+    drawLine('จุดเด่นและพลัง:', strengths, '#16a34a');
     
     const weaknesses = document.getElementById('ascweaknesses')?.innerText || '';
-    drawLine('ควรระวัง:', weaknesses, '#f44336');
+    drawLine('จุดควรระวัง:', weaknesses, '#dc2626');
     
     const love = document.getElementById('ascLove')?.innerText || '';
-    drawLine('เรื่องรัก:', love, '#00bcd4');
+    drawLine('เรื่องความรัก:', love, '#0284c7');
     
     const health = document.getElementById('ascHealth')?.innerText || '';
-    drawLine('สุขภาพ:', health, '#ff9800');
+    drawLine('การดูแลสุขภาพ:', health, '#ea580c');
     
     // Footer watermark
     ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-    ctx.font = '28px "Sarabun", sans-serif';
-    ctx.fillText('สยามโหรามงคล - โปรแกรมคำนวณลัคนาพยากรณ์', canvas.width / 2, canvas.height - 100);
+    ctx.fillStyle = '#a78bfa';
+    ctx.font = '24px "Sarabun", sans-serif';
+    ctx.fillText('สยามโหรามงคล · ระบบลัคนาพยากรณ์นิรายัน ดาราศาสตร์สากล', canvas.width / 2, canvas.height - 75);
 
     const link = document.createElement('a');
     link.href = canvas.toDataURL('image/png');
-    const zodiacName = sign.replace('ลัคนาราศี', '') || '';
-    link.download = `ลัคนา_ราศี${zodiacName}.png`;
+    const zodiacName = sign.replace('ลัคนาราศี', '').trim() || 'ดวงชะตา';
+    link.download = `ลัคนา_ราศี${zodiacName}_PorscheEdition.png`;
     link.click();
     
     Swal.close();

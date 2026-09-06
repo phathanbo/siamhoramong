@@ -294,51 +294,51 @@
         const s = DASH_ZODIAC_SIGNS[signNum];
         const f = DASH_MONTHLY_FORTUNES[signNum];
         const y = DASH_YEARLY_2026[signNum] || '';
-        const eColors = { 'ไฟ':'#e74c3c', 'ดิน':'#e67e22', 'น้ำ':'#3498db', 'อากาศ':'#1abc9c' };
-        const ec = eColors[s.element] || '#d4af37';
-        return `<div style="animation:fadeZodiac 0.22s ease;padding:10px 0 2px;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-            <span style="font-size:2rem;">${s.emoji}</span>
+        const eColors = { 'ไฟ':'#ef4444', 'ดิน':'#f59e0b', 'น้ำ':'#38bdf8', 'อากาศ':'#2dd4bf' };
+        const ec = eColors[s.element] || '#fbbf24';
+        return `<div style="animation:fadeZodiac 0.22s ease;padding:12px 0 4px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+            <span style="font-size:2.2rem;">${s.emoji}</span>
             <div>
-              <div style="color:#fff;font-size:1rem;font-weight:700;">${s.name}
-                <span style="opacity:0.55;font-size:0.82rem;">${s.symbol} ${s.english}</span>
+              <div style="color:#ffffff;font-size:1.15rem;font-weight:800;">${s.name}
+                <span style="color:#94a3b8;font-size:0.88rem;font-weight:normal;margin-left:4px;">${s.symbol} ${s.english}</span>
               </div>
-              <div style="color:rgba(255,255,255,0.42);font-size:0.7rem;">${s.dateRange}</div>
+              <div style="color:#cbd5e1;font-size:0.78rem;">ช่วงวันเกิด: ${s.dateRange}</div>
             </div>
           </div>
-          <div style="display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap;">
-            <span style="background:${ec}22;border:1px solid ${ec}66;color:${ec};border-radius:20px;padding:3px 10px;font-size:0.73rem;">
+          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+            <span style="background:${ec}25;border:1px solid ${ec}77;color:${ec};border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:700;">
               ธาตุ${s.element}
             </span>
-            <span style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);color:#d4af37;border-radius:20px;padding:3px 10px;font-size:0.73rem;">
-              ${s.ruling}
+            <span style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.4);color:#fbbf24;border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:700;">
+              ดาวเกษตร: ${s.ruling}
             </span>
           </div>
-          <div style="color:rgba(212,175,55,0.6);font-size:0.67rem;letter-spacing:1px;margin-bottom:6px;">ดวงประจำเดือน</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;">
-            <div style="background:rgba(0,0,0,0.28);border-radius:8px;padding:8px 10px;">
-              <div style="color:rgba(255,160,160,0.7);font-size:0.63rem;margin-bottom:2px;">❤ ความรัก ${f.love}</div>
-              <div style="color:rgba(255,255,255,0.5);font-size:0.68rem;">${f.loveText}</div>
+          <div style="color:#fbbf24;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;"><i class="fas fa-calendar-alt mr-1"></i> ดวงประจำเดือน</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+            <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(244,114,182,0.3);border-radius:10px;padding:10px 12px;">
+              <div style="color:#f472b6;font-size:0.75rem;font-weight:700;margin-bottom:3px;">❤ ความรัก <span style="letter-spacing:1px;">${f.love}</span></div>
+              <div style="color:#f1f5f9;font-size:0.82rem;line-height:1.5;">${f.loveText}</div>
             </div>
-            <div style="background:rgba(0,0,0,0.28);border-radius:8px;padding:8px 10px;">
-              <div style="color:rgba(168,230,207,0.7);font-size:0.63rem;margin-bottom:2px;">💼 การงาน ${f.work}</div>
-              <div style="color:rgba(255,255,255,0.5);font-size:0.68rem;">${f.workText}</div>
+            <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(52,211,153,0.3);border-radius:10px;padding:10px 12px;">
+              <div style="color:#34d399;font-size:0.75rem;font-weight:700;margin-bottom:3px;">💼 การงาน <span style="letter-spacing:1px;">${f.work}</span></div>
+              <div style="color:#f1f5f9;font-size:0.82rem;line-height:1.5;">${f.workText}</div>
             </div>
-            <div style="background:rgba(0,0,0,0.28);border-radius:8px;padding:8px 10px;">
-              <div style="color:rgba(135,206,235,0.7);font-size:0.63rem;margin-bottom:2px;">💊 สุขภาพ ${f.health}</div>
-              <div style="color:rgba(255,255,255,0.5);font-size:0.68rem;">${f.healthText}</div>
+            <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(56,189,248,0.3);border-radius:10px;padding:10px 12px;">
+              <div style="color:#38bdf8;font-size:0.75rem;font-weight:700;margin-bottom:3px;">💊 สุขภาพ <span style="letter-spacing:1px;">${f.health}</span></div>
+              <div style="color:#f1f5f9;font-size:0.82rem;line-height:1.5;">${f.healthText}</div>
             </div>
-            <div style="background:rgba(0,0,0,0.28);border-radius:8px;padding:8px 10px;">
-              <div style="color:rgba(255,215,0,0.7);font-size:0.63rem;margin-bottom:2px;">💰 การเงิน ${f.finance}</div>
-              <div style="color:rgba(255,255,255,0.5);font-size:0.68rem;">${f.financeText}</div>
+            <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(251,191,36,0.3);border-radius:10px;padding:10px 12px;">
+              <div style="color:#fbbf24;font-size:0.75rem;font-weight:700;margin-bottom:3px;">💰 การเงิน <span style="letter-spacing:1px;">${f.finance}</span></div>
+              <div style="color:#f1f5f9;font-size:0.82rem;line-height:1.5;">${f.financeText}</div>
             </div>
           </div>
-          ${y ? `<div style="background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.2);border-radius:8px;padding:8px 10px;margin-bottom:8px;">
-            <div style="color:rgba(212,175,55,0.6);font-size:0.63rem;letter-spacing:1px;margin-bottom:3px;">ดวงปี 2569 (2026)</div>
-            <div style="color:#fff;font-size:0.78rem;line-height:1.55;">${y}</div>
+          ${y ? `<div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:10px 14px;margin-bottom:10px;">
+            <div style="color:#fbbf24;font-size:0.75rem;letter-spacing:1px;font-weight:700;margin-bottom:4px;"><i class="fas fa-crown mr-1"></i> ภาพรวมดวงปี 2569 (2026)</div>
+            <div style="color:#f8fafc;font-size:0.86rem;line-height:1.65;">${y}</div>
           </div>` : ''}
-          <button onclick="navigateTo('zodiacFortunePage')" style="width:100%;background:transparent;border:1px solid rgba(212,175,55,0.35);border-radius:8px;color:#d4af37;padding:7px;font-size:0.77rem;cursor:pointer;font-family:'Prompt',sans-serif;">
-            <i class="fas fa-star mr-1"></i> ดูพยากรณ์ราศีละเอียด
+          <button onclick="navigateTo('zodiacFortunePage')" style="width:100%;background:linear-gradient(135deg, rgba(245,158,11,0.15) 0%, rgba(99,102,241,0.2) 100%);border:1px solid rgba(245,158,11,0.35);border-radius:8px;color:#fde047;padding:8px 12px;font-size:0.84rem;font-weight:600;cursor:pointer;font-family:'Prompt',sans-serif;transition:all 0.2s;">
+            <i class="fas fa-star mr-1"></i> ดูพยากรณ์ 12 ราศีฉบับเต็ม
           </button>
         </div>`;
     }
@@ -359,71 +359,121 @@
         const s = document.createElement('style');
         s.id = 'dashCSS';
         s.textContent = `
+            .dash-wrapper {
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 10px 14px 40px;
+                font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
+            }
             .db-card {
-                background: rgba(20,14,4,0.88);
-                border: 1px solid rgba(212,175,55,0.28);
-                border-radius: 14px;
-                padding: 14px 16px;
-                margin-bottom: 12px;
+                background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 27, 75, 0.88) 100%);
+                border: 1px solid rgba(245, 158, 11, 0.28);
+                border-radius: 16px;
+                padding: 18px 20px;
+                margin-bottom: 14px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+                backdrop-filter: blur(12px);
+                transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            }
+            .db-card:hover {
+                border-color: rgba(245, 158, 11, 0.5);
+                box-shadow: 0 10px 30px rgba(245, 158, 11, 0.12);
             }
             .db-label {
-                color: #d4af37;
-                font-size: 0.72rem;
-                letter-spacing: 1.2px;
+                color: #fbbf24;
+                font-size: 0.85rem;
+                font-weight: 700;
+                letter-spacing: 1px;
                 text-transform: uppercase;
-                margin-bottom: 8px;
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
             }
-            .db-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+            .db-grid2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                margin-bottom: 14px;
+            }
+            @media (max-width: 640px) {
+                .db-grid2 { grid-template-columns: 1fr; }
+            }
             .db-qbtn {
-                flex: 1 1 120px;
-                background: rgba(212,175,55,0.08);
-                border: 1px solid rgba(212,175,55,0.32);
-                border-radius: 10px;
-                color: #d4af37;
-                padding: 8px 10px;
-                font-size: 0.8rem;
+                flex: 1 1 calc(33.333% - 8px);
+                min-width: 140px;
+                background: linear-gradient(135deg, rgba(30, 27, 75, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
+                border: 1px solid rgba(245, 158, 11, 0.28);
+                border-radius: 8px;
+                color: #fde047;
+                padding: 8px 12px;
+                font-size: 0.82rem;
+                font-weight: 500;
                 cursor: pointer;
-                transition: background 0.18s, transform 0.1s;
+                transition: all 0.18s ease;
                 font-family: 'Prompt', sans-serif;
                 text-align: center;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
             }
-            .db-qbtn:hover  { background: rgba(212,175,55,0.22); transform: translateY(-1px); }
+            .db-qbtn:hover  {
+                background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(99, 102, 241, 0.25) 100%);
+                border-color: #fbbf24;
+                transform: translateY(-1px);
+                color: #ffffff;
+                box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+            }
             .db-qbtn:active { transform: translateY(0); }
             .db-taboo-row {
-                font-size: 0.78rem;
-                padding: 3px 0;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
-                line-height: 1.5;
+                font-size: 0.85rem;
+                padding: 5px 0;
+                border-bottom: 1px solid rgba(255,255,255,0.06);
+                line-height: 1.6;
+                display: flex;
+                align-items: center;
+                gap: 6px;
             }
+            .db-taboo-row:last-child { border-bottom: none; }
             .db-zodiac-grid {
                 display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: 5px;
-                margin-bottom: 8px;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 6px;
+                margin-bottom: 12px;
+            }
+            @media (max-width: 600px) {
+                .db-zodiac-grid { grid-template-columns: repeat(4, 1fr); }
             }
             .db-zsign {
-                background: rgba(212,175,55,0.06);
-                border: 1px solid rgba(212,175,55,0.16);
-                border-radius: 10px;
-                padding: 7px 3px;
+                background: rgba(15, 23, 42, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 12px;
+                padding: 10px 4px;
                 cursor: pointer;
                 text-align: center;
-                transition: background 0.15s, border-color 0.15s, transform 0.1s;
+                transition: all 0.2s ease;
                 font-family: 'Prompt', sans-serif;
-                font-size: 0.7rem;
-                color: rgba(255,255,255,0.7);
+                font-size: 0.78rem;
+                color: #cbd5e1;
                 line-height: 1.4;
             }
-            .db-zsign:hover  { background: rgba(212,175,55,0.18); transform: translateY(-1px); }
+            .db-zsign:hover  {
+                background: rgba(245, 158, 11, 0.18);
+                border-color: rgba(245, 158, 11, 0.6);
+                color: #ffffff;
+                transform: translateY(-2px);
+            }
             .db-zsign:active { transform: translateY(0); }
             .db-zsign.active {
-                background: rgba(212,175,55,0.26);
-                border-color: #d4af37;
-                color: #d4af37;
-                font-weight: 600;
+                background: linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(99, 102, 241, 0.4) 100%);
+                border-color: #fbbf24;
+                color: #fbbf24;
+                font-weight: 700;
+                box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
             }
             @keyframes fadeZodiac {
-                from { opacity: 0; transform: translateY(5px); }
+                from { opacity: 0; transform: translateY(6px); }
                 to   { opacity: 1; transform: translateY(0); }
             }
         `;
@@ -478,63 +528,65 @@
         // Color swatches HTML
         const swatchHTML = colors
             ? colors.hex.map((hex, i) => `
-                <span style="display:inline-flex;align-items:center;margin:2px 8px 2px 0;">
-                    <span style="width:20px;height:20px;border-radius:50%;background:${hex};
-                          border:2px solid rgba(255,255,255,0.3);display:inline-block;margin-right:5px;flex-shrink:0;"></span>
-                    <span style="color:#ddd;font-size:0.8rem;">${colors.colors[i]}</span>
+                <span style="display:inline-flex;align-items:center;margin:3px 10px 3px 0;background:rgba(255,255,255,0.06);padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.12);">
+                    <span style="width:16px;height:16px;border-radius:50%;background:${hex};
+                          border:2px solid rgba(255,255,255,0.6);display:inline-block;margin-right:6px;flex-shrink:0;box-shadow:0 0 6px ${hex};"></span>
+                    <span style="color:#f1f5f9;font-size:0.86rem;font-weight:500;">${colors.colors[i]}</span>
                 </span>`).join('')
-            : '<span style="color:#888">-</span>';
+            : '<span style="color:#94a3b8">-</span>';
 
         container.innerHTML = `
-<div style="padding-bottom:28px;">
+<div class="dash-wrapper">
 
-  <!-- HEADER -->
-  <div style="text-align:center;padding:20px 0 12px;">
-    <div style="color:#d4af37;font-size:0.78rem;letter-spacing:2px;opacity:0.7;">✨ สรุปดวงวันนี้ ✨</div>
-    <div style="color:#fff;font-size:1.2rem;font-weight:600;margin:5px 0 2px;">${dateStr}</div>
-    <div id="dashLiveClock" style="color:#d4af37;font-size:2rem;font-weight:700;letter-spacing:4px;">${timeStr}</div>
+  <!-- HEADER HERO -->
+  <div style="text-align:center;padding:26px 16px 20px;background:radial-gradient(ellipse at top, rgba(99,102,241,0.25) 0%, rgba(15,23,42,0) 70%);margin-bottom:14px;border-radius:20px;">
+    <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.4);padding:4px 16px;border-radius:30px;color:#fbbf24;font-size:0.82rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">
+      <i class="fas fa-sparkles"></i> สยามโหรามงคล · สรุปดวงวันนี้
+    </div>
+    <div style="color:#ffffff;font-size:1.45rem;font-weight:700;margin:6px 0 2px;">${dateStr}</div>
+    <div id="dashLiveClock" style="color:#fbbf24;font-size:2.4rem;font-weight:800;letter-spacing:3px;font-family:'Courier New', monospace;text-shadow:0 0 20px rgba(245,158,11,0.5);">${timeStr}</div>
   </div>
 
-  <!-- YARM CARD -->
-  <div style="background:${yStyle.bg};border:1px solid ${yStyle.border};border-radius:20px;
-              padding:20px 18px 16px;margin-bottom:12px;overflow:hidden;">
+  <!-- YARM CARD (Hero Card) -->
+  <div style="background:${yStyle.bg};border:2px solid ${yStyle.border};border-radius:20px;
+              padding:22px 20px;margin-bottom:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,0.4);position:relative;">
 
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
       <div>
-        <div style="color:rgba(255,255,255,0.6);font-size:0.72rem;letter-spacing:1px;">
-          ยามปัจจุบัน · ${isDay ? '☀ กลางวัน' : '🌙 กลางคืน'}
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,0.3);padding:3px 12px;border-radius:20px;color:rgba(255,255,255,0.9);font-size:0.75rem;font-weight:600;letter-spacing:1px;margin-bottom:6px;">
+          ${isDay ? '☀️ ยามกลางวัน' : '🌙 ยามกลางคืน'}
         </div>
-        <div style="color:#fff;font-size:1.85rem;font-weight:700;line-height:1.2;">${yarmInf.name}</div>
-        <div style="color:rgba(255,255,255,0.82);font-size:0.86rem;margin-top:2px;">${yarmInf.trait}</div>
+        <div style="color:#ffffff;font-size:2rem;font-weight:800;line-height:1.2;text-shadow:0 2px 4px rgba(0,0,0,0.4);">${yarmInf.name}</div>
+        <div style="color:rgba(255,255,255,0.95);font-size:0.95rem;margin-top:4px;font-weight:500;">✦ ${yarmInf.trait}</div>
       </div>
-      <div style="text-align:right;flex-shrink:0;">
-        <div style="color:rgba(255,255,255,0.5);font-size:0.7rem;">ช่วงเวลา</div>
-        <div style="color:#fff;font-size:0.9rem;font-weight:600;">${fmtTime(startMins)} – ${fmtTime(endMins)}</div>
-        <div style="color:rgba(255,220,150,0.9);font-size:0.76rem;margin-top:2px;">เหลืออีก ${remStr}</div>
+      <div style="text-align:right;flex-shrink:0;background:rgba(0,0,0,0.25);padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);">
+        <div style="color:rgba(255,255,255,0.7);font-size:0.75rem;">ช่วงเวลายามนี้</div>
+        <div style="color:#ffffff;font-size:1.05rem;font-weight:700;">${fmtTime(startMins)} – ${fmtTime(endMins)}</div>
+        <div style="color:#fde047;font-size:0.82rem;margin-top:2px;font-weight:600;"><i class="fas fa-hourglass-half"></i> เหลืออีก ${remStr}</div>
       </div>
     </div>
 
     <!-- Progress bar -->
-    <div style="height:6px;background:rgba(255,255,255,0.18);border-radius:3px;margin:12px 0 4px;">
-      <div style="height:100%;width:${progress}%;border-radius:3px;background:rgba(255,255,255,0.7);"></div>
+    <div style="height:8px;background:rgba(0,0,0,0.3);border-radius:4px;margin:16px 0 6px;overflow:hidden;border:1px solid rgba(255,255,255,0.15);">
+      <div style="height:100%;width:${progress}%;border-radius:4px;background:linear-gradient(90deg, #fde047, #ffffff);box-shadow:0 0 10px rgba(255,255,255,0.8);"></div>
     </div>
-    <div style="display:flex;justify-content:space-between;font-size:0.67rem;color:rgba(255,255,255,0.4);margin-bottom:12px;">
-      <span>${fmtTime(startMins)}</span><span>${progress}%</span><span>${fmtTime(endMins)}</span>
+    <div style="display:flex;justify-content:space-between;font-size:0.74rem;color:rgba(255,255,255,0.75);margin-bottom:14px;font-weight:500;">
+      <span>เริ่ม ${fmtTime(startMins)}</span><span style="color:#fde047;font-weight:700;">${progress}%</span><span>สิ้นสุด ${fmtTime(endMins)}</span>
     </div>
 
     <!-- ดี/เลี่ยงในยามนี้ -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <div style="background:rgba(0,0,0,0.22);border-radius:10px;padding:10px 12px;">
-        <div style="color:rgba(255,255,255,0.55);font-size:0.7rem;margin-bottom:3px;">
-          <i class="fas fa-check-circle" style="color:#a8e6cf;"></i> ดีในยามนี้
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div style="background:rgba(0,0,0,0.35);border:1px solid rgba(74,222,128,0.3);border-radius:12px;padding:12px 14px;">
+        <div style="color:#4ade80;font-size:0.8rem;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+          <i class="fas fa-check-circle"></i> ดีในยามนี้
         </div>
-        <div style="color:#c8f7c5;font-size:0.8rem;line-height:1.5;">${yarmInf.good}</div>
+        <div style="color:#f0fdf4;font-size:0.88rem;line-height:1.55;">${yarmInf.good}</div>
       </div>
-      <div style="background:rgba(0,0,0,0.22);border-radius:10px;padding:10px 12px;">
-        <div style="color:rgba(255,255,255,0.55);font-size:0.7rem;margin-bottom:3px;">
-          <i class="fas fa-times-circle" style="color:#ffaaa5;"></i> ควรหลีกเลี่ยง
+      <div style="background:rgba(0,0,0,0.35);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:12px 14px;">
+        <div style="color:#f87171;font-size:0.8rem;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+          <i class="fas fa-times-circle"></i> ควรหลีกเลี่ยง
         </div>
-        <div style="color:#ffd0cc;font-size:0.8rem;line-height:1.5;">${yarmInf.bad}</div>
+        <div style="color:#fef2f2;font-size:0.88rem;line-height:1.55;">${yarmInf.bad}</div>
       </div>
     </div>
   </div>
@@ -542,15 +594,17 @@
   <!-- ROW 1: สีมงคล + ธาตุ -->
   <div class="db-grid2">
     <div class="db-card" style="margin-bottom:0;">
-      <div class="db-label"><i class="fas fa-palette mr-1"></i>สีมงคลวันนี้</div>
-      <div style="display:flex;flex-wrap:wrap;">${swatchHTML}</div>
+      <div class="db-label"><i class="fas fa-palette"></i> สีมงคลเสริมโชคประจำวัน</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">${swatchHTML}</div>
     </div>
     <div class="db-card" style="margin-bottom:0;">
-      <div class="db-label"><i class="fas fa-fire-alt mr-1"></i>ธาตุประจำวัน</div>
-      <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;
-                  border-radius:20px;border:1px solid ${eColor}50;background:${eColor}18;">
-        <span style="font-size:1.3rem;">${eIcon}</span>
-        <span style="color:${eColor};font-size:1rem;font-weight:700;">ธาตุ${element}</span>
+      <div class="db-label"><i class="fas fa-fire-alt"></i> ธาตุประจำวันเกิดเมือง</div>
+      <div style="margin-top:6px;">
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 18px;
+                    border-radius:30px;border:1.5px solid ${eColor};background:linear-gradient(135deg, ${eColor}22, ${eColor}44);box-shadow:0 4px 12px ${eColor}33;">
+          <span style="font-size:1.5rem;">${eIcon}</span>
+          <span style="color:#ffffff;font-size:1.1rem;font-weight:700;">ธาตุ${element}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -558,102 +612,115 @@
   <!-- ROW 2: ทิศมงคล + ราหูจร -->
   <div class="db-grid2">
     <div class="db-card" style="margin-bottom:0;">
-      <div class="db-label"><i class="fas fa-compass mr-1"></i>ทิศมงคลวันนี้</div>
+      <div class="db-label"><i class="fas fa-compass"></i> ทิศมงคลเสริมพลัง</div>
       ${dir ? `
-      <div style="margin-bottom:5px;">
-        <span style="font-size:1.2rem;color:#a8e6cf;">${DIR_ARROW[dir.dech]||'•'}</span>
-        <span style="color:#a8e6cf;font-size:0.86rem;"> เดช: ${dir.dech}</span>
-      </div>
-      <div>
-        <span style="font-size:1.2rem;color:#c3b1e1;">${DIR_ARROW[dir.sri]||'•'}</span>
-        <span style="color:#c3b1e1;font-size:0.86rem;"> ศรี: ${dir.sri}</span>
-      </div>` : '<span style="color:#888">-</span>'}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+        <div style="background:rgba(16,185,129,0.15);border:1px solid rgba(52,211,153,0.3);padding:10px 12px;border-radius:10px;">
+          <div style="color:#34d399;font-size:0.75rem;font-weight:600;">ทิศเดช (อำนาจ)</div>
+          <div style="color:#ffffff;font-size:1rem;font-weight:700;margin-top:2px;">
+            ${DIR_ARROW[dir.dech]||'•'} ${dir.dech}
+          </div>
+        </div>
+        <div style="background:rgba(99,102,241,0.15);border:1px solid rgba(165,180,252,0.3);padding:10px 12px;border-radius:10px;">
+          <div style="color:#a5b4fc;font-size:0.75rem;font-weight:600;">ทิศศรี (โชคลาภ)</div>
+          <div style="color:#ffffff;font-size:1rem;font-weight:700;margin-top:2px;">
+            ${DIR_ARROW[dir.sri]||'•'} ${dir.sri}
+          </div>
+        </div>
+      </div>` : '<span style="color:#94a3b8">-</span>'}
     </div>
     <div class="db-card" style="margin-bottom:0;">
-      <div class="db-label"><i class="fas fa-ban mr-1"></i>ราหูจรตอนนี้</div>
-      <div style="color:#ffaaa5;font-size:1.05rem;font-weight:700;">
-        ${DIR_ARROW[rahu.dir]||'•'} ${rahu.dir}
+      <div class="db-label"><i class="fas fa-ban"></i> ราหูจรช่วงเวลานี้</div>
+      <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(248,113,113,0.3);padding:10px 14px;border-radius:10px;margin-top:6px;">
+        <div style="color:#f87171;font-size:1.1rem;font-weight:800;">
+          ${DIR_ARROW[rahu.dir]||'•'} ทิศ${rahu.dir}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+          <span style="color:#cbd5e1;font-size:0.78rem;">ช่วงเวลา: ${rahu.label}</span>
+          <span style="color:#fca5a5;font-size:0.75rem;font-weight:600;"><i class="fas fa-exclamation-triangle"></i> เลี่ยงเผชิญหน้า</span>
+        </div>
       </div>
-      <div style="color:rgba(255,255,255,0.38);font-size:0.7rem;margin-top:2px;">${rahu.label}</div>
-      <div style="color:rgba(255,200,100,0.7);font-size:0.72rem;margin-top:2px;">⚠ หลีกเลี่ยงทิศนี้</div>
     </div>
   </div>
 
   <!-- ROW 3: ทิศเดินทาง + ข้อปฏิบัติ -->
   <div class="db-grid2">
     <div class="db-card" style="margin-bottom:0;">
-      <div class="db-label"><i class="fas fa-route mr-1"></i>ทิศเดินทาง</div>
+      <div class="db-label"><i class="fas fa-route"></i> ทิศเดินทาง & เทพเจ้าคุ้มครอง</div>
       ${spirit ? `
-      <div style="margin-bottom:7px;">
-        <div style="color:rgba(255,255,255,0.4);font-size:0.67rem;">เทวดาจร (ดีสำหรับเดินทาง)</div>
-        <div style="color:#a8e6cf;font-size:0.9rem;font-weight:600;">${DIR_ARROW[spirit.deva]||'•'} ${spirit.deva}</div>
-      </div>
-      <div style="margin-bottom:7px;">
-        <div style="color:rgba(255,255,255,0.4);font-size:0.67rem;">มฤตยูจร (หลีกเลี่ยง)</div>
-        <div style="color:#ffaaa5;font-size:0.9rem;font-weight:600;">${DIR_ARROW[spirit.mritu]||'•'} ${spirit.mritu}</div>
-      </div>
-      <div>
-        <div style="color:rgba(255,255,255,0.4);font-size:0.67rem;">ผีหลวง (อย่าหันหน้าเข้า)</div>
-        <div style="color:#e74c3c;font-size:0.9rem;font-weight:600;">${DIR_ARROW[ghost]||'•'} ${ghost}</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:8px;">
+          <span style="color:#a7f3d0;font-size:0.8rem;font-weight:600;"><i class="fas fa-dove mr-1"></i> เทวดาจร (ดีมาก):</span>
+          <span style="color:#ffffff;font-size:0.88rem;font-weight:700;">${DIR_ARROW[spirit.deva]||'•'} ${spirit.deva}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:8px;">
+          <span style="color:#fca5a5;font-size:0.8rem;font-weight:600;"><i class="fas fa-skull-crossbones mr-1"></i> มฤตยูจร (เลี่ยง):</span>
+          <span style="color:#ffffff;font-size:0.88rem;font-weight:700;">${DIR_ARROW[spirit.mritu]||'•'} ${spirit.mritu}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:8px;">
+          <span style="color:#ef4444;font-size:0.8rem;font-weight:600;"><i class="fas fa-ghost mr-1"></i> ผีหลวง (ห้ามหันหน้าเข้า):</span>
+          <span style="color:#ffffff;font-size:0.88rem;font-weight:700;">${DIR_ARROW[ghost]||'•'} ${ghost}</span>
+        </div>
       </div>` : `
       <div>
-        <div style="color:rgba(255,255,255,0.4);font-size:0.67rem;">ผีหลวง (อย่าหันหน้าเข้า)</div>
-        <div style="color:#e74c3c;font-size:0.9rem;font-weight:600;">${DIR_ARROW[ghost]||'•'} ${ghost}</div>
+        <div style="color:#cbd5e1;font-size:0.8rem;">ผีหลวง: ${DIR_ARROW[ghost]||'•'} ${ghost}</div>
       </div>`}
     </div>
     <div class="db-card" style="margin-bottom:0;">
-      <div class="db-label"><i class="fas fa-list-ul mr-1"></i>ข้อปฏิบัติวันนี้</div>
+      <div class="db-label"><i class="fas fa-list-check"></i> ข้อควรทำ & ข้อพึงหลีกเลี่ยงวันนี้</div>
       ${taboo ? `
-      <div style="margin-bottom:8px;">
-        <div style="color:rgba(168,230,207,0.7);font-size:0.68rem;margin-bottom:2px;">✓ ควรทำ:</div>
-        ${taboo.good.map(g =>
-          `<div class="db-taboo-row" style="color:#c8f7c5;">
-             <i class="fas fa-check-circle" style="color:#5cb85c;font-size:0.7rem;margin-right:4px;"></i>${g}
-           </div>`).join('')}
-      </div>
-      <div>
-        <div style="color:rgba(255,170,165,0.7);font-size:0.68rem;margin-bottom:2px;">✗ ควรหลีกเลี่ยง:</div>
-        ${taboo.bad.map(b =>
-          `<div class="db-taboo-row" style="color:#ffd0cc;">
-             <i class="fas fa-times-circle" style="color:#e74c3c;font-size:0.7rem;margin-right:4px;"></i>${b}
-           </div>`).join('')}
-      </div>` : '<span style="color:#888">-</span>'}
+      <div style="margin-top:6px;">
+        <div style="color:#4ade80;font-size:0.75rem;font-weight:700;margin-bottom:4px;"><i class="fas fa-check-circle"></i> สิ่งที่ควรทำ:</div>
+        <div style="margin-bottom:8px;">
+          ${taboo.good.map(g =>
+            `<div class="db-taboo-row" style="color:#f0fdf4;">
+               <i class="fas fa-check" style="color:#4ade80;font-size:0.75rem;"></i> ${g}
+             </div>`).join('')}
+        </div>
+        <div style="color:#f87171;font-size:0.75rem;font-weight:700;margin-bottom:4px;"><i class="fas fa-times-circle"></i> สิ่งที่ควรเลี่ยง:</div>
+        <div>
+          ${taboo.bad.map(b =>
+            `<div class="db-taboo-row" style="color:#fef2f2;">
+               <i class="fas fa-times" style="color:#f87171;font-size:0.75rem;"></i> ${b}
+             </div>`).join('')}
+        </div>
+      </div>` : '<span style="color:#94a3b8">-</span>'}
     </div>
   </div>
 
   <!-- ยามถัดไป -->
-  <div class="db-card" style="background:rgba(212,175,55,0.05);border-color:rgba(212,175,55,0.4);
-       display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+  <div class="db-card" style="background:linear-gradient(135deg, rgba(30,27,75,0.95) 0%, rgba(15,23,42,0.9) 100%);border:1.5px solid rgba(245,158,11,0.4);
+       display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
     <div>
-      <div class="db-label"><i class="fas fa-forward mr-1"></i>ยามถัดไป</div>
-      <div style="color:#fff;font-size:1.05rem;font-weight:600;">${next.info.name}</div>
-      <div style="color:rgba(255,255,255,0.55);font-size:0.8rem;">${next.info.trait}</div>
-      <div style="color:#a8e6cf;font-size:0.74rem;margin-top:2px;">ดีสำหรับ: ${next.info.good}</div>
+      <div class="db-label" style="margin-bottom:4px;"><i class="fas fa-forward"></i> จังหวะยามถัดไป (Next Transition)</div>
+      <div style="color:#ffffff;font-size:1.25rem;font-weight:800;">${next.info.name}</div>
+      <div style="color:#cbd5e1;font-size:0.88rem;">✦ ${next.info.trait}</div>
+      <div style="color:#6ee7b7;font-size:0.82rem;margin-top:3px;font-weight:600;"><i class="fas fa-thumbs-up"></i> ดีสำหรับ: ${next.info.good}</div>
     </div>
-    <div style="text-align:right;">
-      <div style="color:rgba(212,175,55,0.6);font-size:0.7rem;">เริ่มเวลา</div>
-      <div style="color:#d4af37;font-size:1.3rem;font-weight:700;">${next.startTime}</div>
+    <div style="text-align:right;background:rgba(0,0,0,0.3);padding:10px 16px;border-radius:12px;border:1px solid rgba(245,158,11,0.25);">
+      <div style="color:#fbbf24;font-size:0.75rem;font-weight:600;">เริ่มเวลา</div>
+      <div style="color:#fde047;font-size:1.5rem;font-weight:800;font-family:'Courier New', monospace;">${next.startTime}</div>
     </div>
   </div>
 
   <!-- 12 ราศี -->
   <div class="db-card">
-    <div class="db-label"><i class="fas fa-star mr-1"></i>12 ราศี · ดวงประจำเดือน</div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:9px 12px;
-                background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.22);border-radius:10px;">
-      <span style="font-size:1.6rem;">${DASH_ZODIAC_SIGNS[todayZodiacNum].emoji}</span>
+    <div class="db-label"><i class="fas fa-star"></i> 12 ราศี · ถอดรหัสดวงชะตา</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:12px 16px;
+                background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:12px;">
+      <span style="font-size:2rem;">${DASH_ZODIAC_SIGNS[todayZodiacNum].emoji}</span>
       <div>
-        <div style="color:rgba(255,255,255,0.45);font-size:0.63rem;letter-spacing:1px;">ราศีดวงอาทิตย์วันนี้</div>
-        <div style="color:#d4af37;font-size:0.95rem;font-weight:700;">
+        <div style="color:#94a3b8;font-size:0.7rem;letter-spacing:1px;font-weight:600;">ราศีดวงอาทิตย์วันนี้ (Sun Sign)</div>
+        <div style="color:#fbbf24;font-size:1.05rem;font-weight:800;">
           ${DASH_ZODIAC_SIGNS[todayZodiacNum].name}
-          <span style="opacity:0.55;font-size:0.82rem;">${DASH_ZODIAC_SIGNS[todayZodiacNum].symbol}</span>
+          <span style="color:#ffffff;opacity:0.7;font-size:0.88rem;margin-left:4px;">${DASH_ZODIAC_SIGNS[todayZodiacNum].symbol}</span>
         </div>
-        <div style="color:rgba(255,255,255,0.4);font-size:0.67rem;">${DASH_ZODIAC_SIGNS[todayZodiacNum].dateRange}</div>
+        <div style="color:#cbd5e1;font-size:0.75rem;">${DASH_ZODIAC_SIGNS[todayZodiacNum].dateRange}</div>
       </div>
       <div style="margin-left:auto;text-align:right;">
-        <div style="color:rgba(255,255,255,0.35);font-size:0.62rem;">ธาตุ</div>
-        <div style="color:${ELEM_COLOR[DASH_ZODIAC_SIGNS[todayZodiacNum].element]||'#d4af37'};font-size:0.82rem;font-weight:600;">
-          ${ELEM_ICON[DASH_ZODIAC_SIGNS[todayZodiacNum].element]||'✨'} ${DASH_ZODIAC_SIGNS[todayZodiacNum].element}
+        <div style="color:#94a3b8;font-size:0.7rem;font-weight:600;">ธาตุประจำราศี</div>
+        <div style="color:${ELEM_COLOR[DASH_ZODIAC_SIGNS[todayZodiacNum].element]||'#fbbf24'};font-size:0.92rem;font-weight:700;">
+          ${ELEM_ICON[DASH_ZODIAC_SIGNS[todayZodiacNum].element]||'✨'} ธาตุ${DASH_ZODIAC_SIGNS[todayZodiacNum].element}
         </div>
       </div>
     </div>
@@ -661,7 +728,7 @@
       ${Object.entries(DASH_ZODIAC_SIGNS).map(([num, s]) => `
         <button id="db-zsign-${num}" class="db-zsign${parseInt(num) === activeZodiac ? ' active' : ''}"
                 onclick="showZodiacDetail(${num})">
-          <div style="font-size:1.15rem;">${s.emoji}</div>
+          <div style="font-size:1.25rem;margin-bottom:2px;">${s.emoji}</div>
           <div>${s.name.replace('ราศี','')}</div>
         </button>`).join('')}
     </div>
@@ -670,36 +737,33 @@
 
   <!-- QUICK LINKS -->
   <div class="db-card">
-    <div class="db-label"><i class="fas fa-bolt mr-1"></i>เปิดหน้าพยากรณ์อื่น</div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;">
-      <button onclick="navigateTo('yarmPage')"        class="db-qbtn"><i class="fas fa-clock"></i> ตารางยาม</button>
-      <button onclick="navigateTo('reuxpage')"        class="db-qbtn"><i class="fas fa-scroll"></i> คำนวณฤกษ์</button>
-      <button onclick="navigateTo('dailyTabooPage')"  class="db-qbtn"><i class="fas fa-ban"></i> ข้อห้าม</button>
-      <button onclick="navigateTo('ubakong-yarm')"    class="db-qbtn"><i class="fas fa-road"></i> ฤกษ์เดินทาง</button>
-      <button onclick="navigateTo('auspiciousPage')"  class="db-qbtn"><i class="fas fa-calendar-check"></i> ปฏิทินฤกษ์</button>
-      <button onclick="navigateTo('weeklyColorSection')" class="db-qbtn"><i class="fas fa-palette"></i> สีมงคล</button>
+    <div class="db-label"><i class="fas fa-bolt"></i> บริการพยากรณ์และคำนวณฤกษ์มงคล</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <button onclick="navigateTo('yarmPage')"        class="db-qbtn"><i class="fas fa-clock text-warning"></i> ตารางยามสามตา</button>
+      <button onclick="navigateTo('reuxpage')"        class="db-qbtn"><i class="fas fa-scroll text-warning"></i> คำนวณฤกษ์มงคล</button>
+      <button onclick="navigateTo('dailyTabooPage')"  class="db-qbtn"><i class="fas fa-ban text-danger"></i> ข้อห้ามประจำวัน</button>
+      <button onclick="navigateTo('ubakong-yarm')"    class="db-qbtn"><i class="fas fa-road text-info"></i> ยามอุบากอง</button>
+      <button onclick="navigateTo('auspiciousPage')"  class="db-qbtn"><i class="fas fa-calendar-alt text-success"></i> ปฏิทิน 100 ปี</button>
+      <button onclick="navigateTo('weeklyColorSection')" class="db-qbtn"><i class="fas fa-palette text-purple"></i> สีมงคลประจำวัน</button>
     </div>
   </div>
 
-  <!-- SHARE BUTTON -->
-  <div class="row mb-3 mt-4">
-    <div class="col-12 text-center">
-      <button class="btn btn-gold btn-lg px-4 py-3" style="border-radius: 30px; font-weight: bold; box-shadow: 0 10px 20px rgba(212,175,55,0.4);" onclick="generateShareDashboard()">
-        <i class="fas fa-camera mr-2"></i> แชร์ดวงวันนี้
-      </button>
-    </div>
+  <!-- SHARE & NAVIGATION BUTTONS -->
+  <div class="text-center my-3">
+    <button class="btn btn-gold px-4 py-2 font-weight-bold" style="border-radius: 8px; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(245,158,11,0.35); display: inline-flex; align-items: center; gap: 8px;" onclick="generateShareDashboard()">
+      <i class="fas fa-camera"></i> บันทึก & แชร์สรุปดวงวันนี้
+    </button>
   </div>
 
-  // BACK
-  <div class="row">
+  <div class="row pt-1" style="max-width: 480px; margin: 0 auto;">
     <div class="col-6">
-      <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
-        <i class="fas fa-chevron-left"></i> ห้องพยากรณ์
+      <button class="btn btn-outline-light btn-block py-2" style="border-radius:8px; font-size: 0.85rem; border-color:rgba(255,255,255,0.25); background: rgba(255,255,255,0.04);" onclick="navigateTo('mainpage')">
+        <i class="fas fa-chevron-left mr-1"></i> ห้องพยากรณ์
       </button>
     </div>
     <div class="col-6">
-      <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
-        <i class="fas fa-home"></i> กลับหน้าหลัก
+      <button class="btn btn-outline-light btn-block py-2" style="border-radius:8px; font-size: 0.85rem; border-color:rgba(255,255,255,0.25); background: rgba(255,255,255,0.04);" onclick="goBack()">
+        <i class="fas fa-home mr-1"></i> หน้าหลัก
       </button>
     </div>
   </div>

@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พยากรณ์ดวงชะตา ๑๒ ราศีเจาะลึก - สยามโหรามงคล</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <style>
+        :root {
+            --bg-base: #0a0f1d;
+            --bg-card: rgba(18, 25, 44, 0.85);
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --gold-primary: #ffd700;
+            --gold-light: #fef08a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-glow: rgba(212, 175, 55, 0.15);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif !important;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 90%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
+                linear-gradient(180deg, #090d18 0%, #0f172a 50%, #0a0f1e 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .fortune-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px 20px 80px 20px;
+        }
+
+        /* Nav Bar */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--gold-primary);
+            border-color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.15);
+            transform: translateX(-3px);
+        }
+
+        .header-title-box {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid var(--border-gold);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: var(--gold-primary);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .main-page-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 30%, #ffd700 80%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 10px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .main-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Quick Date & Member Finder */
+        .date-finder-card {
+            background: linear-gradient(135deg, rgba(28, 38, 65, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1px solid var(--border-gold);
+            border-radius: 22px;
+            padding: 24px 28px;
+            margin-bottom: 32px;
+            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .date-finder-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .date-finder-header h4 {
+            margin: 0;
+            color: var(--gold-light);
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .finder-controls-grid {
+            display: grid;
+            grid-template-columns: minmax(220px, 1.2fr) minmax(200px, 1fr) auto;
+            gap: 16px;
+            align-items: flex-end;
+        }
+
+        .input-control-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-control-label {
+            font-size: 0.84rem;
+            color: #cbd5e1;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-select-custom,
+        .input-date-custom {
+            background: rgba(10, 15, 30, 0.85);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            color: #ffffff;
+            padding: 11px 16px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+            transition: all 0.25s ease;
+        }
+
+        .input-select-custom:focus,
+        .input-date-custom:focus {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 14px rgba(212, 175, 55, 0.35);
+            background: rgba(15, 22, 44, 0.95);
+        }
+
+        .input-select-custom option {
+            background: #0f172a;
+            color: #fff;
+            padding: 10px;
+        }
+
+        .btn-find-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-find {
+            background: linear-gradient(135deg, #ffd700 0%, #d4af37 50%, #b8960c 100%);
+            color: #0b0f19;
+            font-weight: 700;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+            transition: all 0.25s ease;
+            white-space: nowrap;
+            height: 46px;
+        }
+
+        .btn-find:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.55);
+            filter: brightness(1.05);
+        }
+
+        .btn-clear {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #cbd5e1;
+            padding: 12px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            height: 46px;
+        }
+
+        .btn-clear:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        @media (max-width: 860px) {
+            .finder-controls-grid {
+                grid-template-columns: 1fr;
+            }
+            .btn-find-group {
+                width: 100%;
+            }
+            .btn-find {
+                flex: 1;
+            }
+        }
+
+        /* 12 Zodiac Badges Selector */
+        .zodiac-grid-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .zodiac-badge {
+            background: rgba(18, 25, 44, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 14px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .zodiac-badge:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            background: rgba(30, 41, 69, 0.85);
+            transform: translateY(-3px);
+        }
+
+        .zodiac-badge.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(30, 41, 69, 0.9) 100%);
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
+            transform: translateY(-4px) scale(1.03);
+        }
+
+        .zodiac-badge.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gold-primary);
+        }
+
+        .badge-icon {
+            font-size: 1.8rem;
+            margin-bottom: 2px;
+            transition: transform 0.3s;
+        }
+
+        .zodiac-badge:hover .badge-icon,
+        .zodiac-badge.active .badge-icon {
+            transform: scale(1.15);
+        }
+
+        .badge-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .badge-date {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* Detail Display Area */
+        .detail-header-card {
+            background: linear-gradient(135deg, rgba(30, 41, 69, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1px solid var(--border-gold);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .detail-header-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .detail-hero-flex {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .hero-symbol-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(255, 215, 0, 0.05));
+            border: 2px solid var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.2rem;
+            color: var(--gold-primary);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+            flex-shrink: 0;
+        }
+
+        .hero-info-content {
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .hero-title-h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .hero-meta-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .meta-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
+
+        .meta-pill.gold {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: rgba(212, 175, 55, 0.4);
+            color: var(--gold-light);
+            font-weight: 500;
+        }
+
+        /* Section Cards Grid */
+        .section-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .fortune-card {
+            background: linear-gradient(135deg, rgba(20, 29, 52, 0.75) 0%, rgba(13, 19, 36, 0.85) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .fortune-card:hover {
+            border-color: rgba(212, 175, 55, 0.35);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+        }
+
+        .card-header-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .card-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .card-title-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+        }
+
+        .fortune-card-body {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.75;
+            white-space: pre-line;
+        }
+
+        .fortune-card-body p {
+            margin: 0 0 12px 0;
+        }
+
+        /* Specific Color Accents */
+        .theme-overview .card-icon-box { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .theme-health .card-icon-box { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .theme-advice .card-icon-box { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .theme-finance .card-icon-box { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+        .theme-career .card-icon-box { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .theme-love .card-icon-box { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+
+        .full-width-card {
+            grid-column: 1 / -1;
+        }
+
+        /* Print/Export Bar */
+        .bottom-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 35px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action-round {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #cbd5e1;
+            padding: 10px 22px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+        }
+
+        .btn-action-round:hover {
+            color: #fff;
+            border-color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.18);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .fortune-container { padding: 16px 14px 60px 14px; }
+            .main-page-title { font-size: 1.65rem; }
+            .hero-title-h2 { font-size: 1.5rem; }
+            .hero-symbol-circle { width: 70px; height: 70px; font-size: 2.5rem; }
+            .zodiac-grid-selector { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .zodiac-badge { padding: 10px 4px; }
+            .badge-icon { font-size: 1.4rem; }
+            .badge-name { font-size: 0.85rem; }
+            .section-cards-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="fortune-container">
+        <!-- Top Nav -->
+        <div class="top-nav">
+            <a href="../index.html#mainpage" class="back-btn">
+                <i class="fas fa-arrow-left"></i> กลับห้องพยากรณ์
+            </a>
+            <div>
+                <span style="color: var(--gold-light); font-size: 0.88rem;">
+                    <i class="fas fa-shield-alt mr-1"></i> โหราศาสตร์ไทยประยุกต์ &bull; สยามโหรามงคล
+                </span>
+            </div>
+        </div>
+
+        <!-- Page Header -->
+        <div class="header-title-box">
+            <div class="header-badge">
+                <i class="fas fa-star-and-crescent"></i> คัมภีร์โหราศาสตร์ไทย
+            </div>
+            <h1 class="main-page-title">พยากรณ์ดวงชะตา ๑๒ ราศีเจาะลึก</h1>
+            <p class="main-subtitle">
+                วิเคราะห์ราศีเกิดและลัคนาราศีตามหลักแม่ธาตุ ดวงดาวเจ้าเรือนเกษตร เจาะลึกอุปนิสัย สุขภาพ การเงิน การงาน ความรัก และเคล็ดลับการเสริมดวงชะตาให้รุ่งโรจน์
+            </p>
+        </div>
+
+        <!-- Date Finder / Quick Match -->
+        <div class="date-finder-card">
+            <div class="date-finder-header">
+                <h4>
+                    <i class="fas fa-id-card-clip" style="color: var(--gold-primary);"></i> เลือกสมาชิก หรือระบุวันเกิดเพื่อพยากรณ์
+                </h4>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">
+                    คำนวณและสลับไปยังราศีประจำตัวของคุณทันที
+                </span>
+            </div>
+
+            <div class="finder-controls-grid">
+                <!-- 1. เลือกสมาชิกจากฐานข้อมูล -->
+                <div class="input-control-wrap">
+                    <label class="input-control-label" for="memberSelect">
+                        <i class="fas fa-users" style="color: #60a5fa;"></i> เลือกลูกดวง / สมาชิก
+                    </label>
+                    <select id="memberSelect" class="input-select-custom" onchange="onMemberSelected(this.value)">
+                        <option value="">-- เลือกลูกดวง / สมาชิกที่บันทึกไว้ --</option>
+                    </select>
+                </div>
+
+                <!-- 2. ใส่วันเกิดตรงๆ -->
+                <div class="input-control-wrap">
+                    <label class="input-control-label" for="birthDatePicker">
+                        <i class="fas fa-calendar-day" style="color: var(--gold-light);"></i> ระบุวันเดือนปีเกิด
+                    </label>
+                    <input type="date" id="birthDatePicker" class="input-date-custom" title="เลือกวันเกิด" onchange="onDateChanged()">
+                </div>
+
+                <!-- 3. กลุ่มปุ่มค้นหาและรีเซ็ต -->
+                <div class="btn-find-group">
+                    <button type="button" class="btn-find" onclick="findZodiacByDate()">
+                        <i class="fas fa-search"></i> ค้นหาราศี
+                    </button>
+                    <button type="button" class="btn-clear" onclick="resetFinderForm()" title="ล้างการเลือก">
+                        <i class="fas fa-rotate-left"></i> รีเซ็ต
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12 Zodiac Badges Selector -->
+        <div class="zodiac-grid-selector" id="zodiacSelectorGrid">
+            <!-- Dynamic Buttons from JS -->
+        </div>
+
+        <!-- Detailed Fortune Display Area -->
+        <div id="zodiacDetailArea">
+            <!-- Dynamic Content -->
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="bottom-actions">
+            <button type="button" class="btn-action-round" onclick="window.print()">
+                <i class="fas fa-print"></i> พิมพ์ / บันทึกเป็น PDF
+            </button>
+            <a href="../index.html#mainpage" class="btn-action-round">
+                <i class="fas fa-compass"></i> สำรวจระบบพยากรณ์อื่น
+            </a>
+        </div>
+    </div>
+
+    <!-- Helper Scripts -->
+    <script src="../src/utils/utils-helpers.js"></script>
+    <!-- Data Script -->
+    <script src="../src/data/twelve-zodiac-fortune-data.js"></script>
+
+    <script>
+        let currentZodiacId = "aries";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSelectorGrid();
+            populateMemberDropdown();
+            
+            // Check if URL has hash/param
+            const urlParams = new URLSearchParams(window.location.search);
+            const requestedZodiac = urlParams.get('sign') || window.location.hash.replace('#', '');
+            
+            if (requestedZodiac && window.TWELVE_ZODIAC_DATA.some(z => z.id === requestedZodiac)) {
+                selectZodiac(requestedZodiac);
+            } else {
+                // Try to load user's saved birthdate from localStorage
+                const savedDate = localStorage.getItem('userBirthdate');
+                if (savedDate) {
+                    document.getElementById('birthDatePicker').value = savedDate;
+                    matchZodiacFromDateString(savedDate, false);
+                } else {
+                    selectZodiac("aries");
+                }
+            }
+        });
+
+        // 👥 โหลดรายชื่อลูกดวง / สมาชิกจาก horo_history
+        function populateMemberDropdown() {
+            const select = document.getElementById('memberSelect');
+            if (!select) return;
+
+            let members = [];
+            try {
+                members = JSON.parse(localStorage.getItem('horo_history') || '[]');
+            } catch (e) {
+                members = [];
+            }
+
+            select.innerHTML = '<option value="">-- เลือกลูกดวง / สมาชิกที่บันทึกไว้ --</option>';
+
+            if (!Array.isArray(members) || members.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.disabled = true;
+                opt.textContent = "ยังไม่มีข้อมูลลูกดวงที่บันทึกไว้";
+                select.appendChild(opt);
+                return;
+            }
+
+            members.forEach((m, idx) => {
+                const opt = document.createElement('option');
+                // เก็บค่าวันเกิดลง attribute
+                const birthdateVal = m.birthdate || m.birthDate || '';
+                const fullName = `${m.name || 'ลูกดวง'} ${m.lastName || ''}`.trim();
+                const memberId = m.memberId || m.id || `#${idx + 1}`;
+                const tier = m.tier ? `[${m.tier}]` : '';
+
+                opt.value = JSON.stringify({
+                    id: memberId,
+                    name: fullName,
+                    birthdate: birthdateVal
+                });
+                opt.textContent = `👤 ${fullName} (${memberId}) ${tier} ${birthdateVal ? '- เกิด: ' + birthdateVal : ''}`;
+                select.appendChild(opt);
+            });
+        }
+
+        // 🔄 เมื่อเลือกลูกดวงจาก Dropdown
+        function onMemberSelected(val) {
+            if (!val) return;
+            try {
+                const member = JSON.parse(val);
+                if (!member.birthdate) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'ไม่พบวันเกิด',
+                        text: `สมาชิก "${member.name}" ไม่ได้ระบุวันเดือนปีเกิดไว้`,
+                        background: '#13182b',
+                        color: '#fff',
+                        confirmButtonColor: '#d4af37'
+                    });
+                    return;
+                }
+
+                // แปลงวันเกิดสมาชิกให้อยู่ในรูป YYYY-MM-DD สำหรับ input type="date"
+                const isoDate = normalizeDateToISO(member.birthdate);
+                if (isoDate) {
+                    document.getElementById('birthDatePicker').value = isoDate;
+                    matchZodiacFromDateString(isoDate, true, member.name);
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'รูปแบบวันเกิดไม่ถูกต้อง',
+                        text: `ไม่สามารถระบุวันเกิด "${member.birthdate}" ของสมาชิกได้`,
+                        background: '#13182b',
+                        color: '#fff',
+                        confirmButtonColor: '#d4af37'
+                    });
+                }
+            } catch (e) {
+                console.error("Error parsing member data", e);
+            }
+        }
+
+        // 🔄 เมื่อผู้ใช้เปลี่ยนวันที่ใน Input ตรงๆ
+        function onDateChanged() {
+            const select = document.getElementById('memberSelect');
+            if (select) select.value = "";
+        }
+
+        // 🔄 ฟังก์ชันล้างค่าฟอร์ม
+        function resetFinderForm() {
+            const select = document.getElementById('memberSelect');
+            const picker = document.getElementById('birthDatePicker');
+            if (select) select.value = "";
+            if (picker) picker.value = "";
+            selectZodiac("aries");
+        }
+
+        // 📅 ตัวแปลงวันที่ทั่วไป (ทั้ง พ.ศ., dd/mm/yyyy, ภาษาไทย) เป็น ISO (YYYY-MM-DD)
+        function normalizeDateToISO(dateString) {
+            if (!dateString) return null;
+            if (typeof parseBirthdate === 'function') {
+                const d = parseBirthdate(dateString);
+                if (d && !isNaN(d.getTime())) {
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${day}`;
+                }
+            }
+
+            // Fallback manual parsing
+            if (dateString.includes('-')) {
+                const parts = dateString.split('-');
+                if (parts.length === 3) {
+                    let y = parseInt(parts[0], 10);
+                    if (y > 2400) y -= 543;
+                    return `${y}-${String(parts[1]).padStart(2, '0')}-${String(parts[2]).padStart(2, '0')}`;
+                }
+            } else if (dateString.includes('/')) {
+                const parts = dateString.split('/');
+                if (parts.length === 3) {
+                    let y = parseInt(parts[2], 10);
+                    if (y > 2400) y -= 543;
+                    return `${y}-${String(parts[1]).padStart(2, '0')}-${String(parts[0]).padStart(2, '0')}`;
+                }
+            }
+            return null;
+        }
+
+        function renderSelectorGrid() {
+            const grid = document.getElementById('zodiacSelectorGrid');
+            if (!grid || !window.TWELVE_ZODIAC_DATA) return;
+
+            grid.innerHTML = window.TWELVE_ZODIAC_DATA.map(z => `
+                <div class="zodiac-badge ${z.id === currentZodiacId ? 'active' : ''}" 
+                     id="badge-${z.id}" 
+                     onclick="selectZodiac('${z.id}')">
+                    <div class="badge-icon" style="color: ${z.colorScheme};">${z.symbolIcon}</div>
+                    <div class="badge-name">${z.nameTh}</div>
+                    <div class="badge-date">${z.dateRange.split('-')[0].trim()} - ${z.dateRange.split('-')[1].trim()}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectZodiac(zodiacId) {
+            const zodiac = window.TWELVE_ZODIAC_DATA.find(z => z.id === zodiacId);
+            if (!zodiac) return;
+
+            currentZodiacId = zodiacId;
+
+            // Update active states on badges
+            document.querySelectorAll('.zodiac-badge').forEach(b => b.classList.remove('active'));
+            const activeBadge = document.getElementById(`badge-${zodiacId}`);
+            if (activeBadge) activeBadge.classList.add('active');
+
+            // Render Detail Area
+            const container = document.getElementById('zodiacDetailArea');
+            if (!container) return;
+
+            container.innerHTML = `
+                <!-- Header Card -->
+                <div class="detail-header-card" style="border-top: 3px solid ${zodiac.colorScheme};">
+                    <div class="detail-hero-flex">
+                        <div class="hero-symbol-circle" style="border-color: ${zodiac.colorScheme}; color: ${zodiac.colorScheme};">
+                            ${zodiac.symbolIcon}
+                        </div>
+                        <div class="hero-info-content">
+                            <h2 class="hero-title-h2">
+                                ${zodiac.nameTh} <span style="font-size: 1.3rem; color: #cbd5e1; font-weight: 400;">(${zodiac.nameEn})</span>
+                            </h2>
+                            <p style="color: var(--gold-light); margin: 0 0 8px 0; font-size: 1.05rem; font-weight: 500;">
+                                <i class="far fa-calendar-alt mr-1"></i> ผู้ที่เกิดระหว่างวันที่ ${zodiac.dateRange} หรือผู้ที่มีลัคนาสถิต ${zodiac.nameTh}
+                            </p>
+                            <div class="hero-meta-tags">
+                                <span class="meta-pill gold"><i class="fas fa-burn"></i> ${zodiac.element}</span>
+                                <span class="meta-pill"><i class="fas fa-globe"></i> ดาวครองเรือน: ${zodiac.planetRuler}</span>
+                                <span class="meta-pill"><i class="fas fa-landmark"></i> ${zodiac.houseOfWorld}</span>
+                                <span class="meta-pill"><i class="fas fa-shapes"></i> สัญลักษณ์: ${zodiac.symbol}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Grid -->
+                <div class="section-cards-container">
+                    <!-- ทั่วไป / พื้นดวง -->
+                    <div class="fortune-card theme-overview full-width-card">
+                        <div class="card-header-bar">
+                            <div class="card-icon-box"><i class="fas fa-user-astronaut"></i></div>
+                            <div>
+                                <h3 class="card-title-text">พื้นดวงชะตาทั่วไป และอัตลักษณ์ราศี</h3>
+                                <small style="color: var(--text-muted);">ลักษณะนิสัย จุดเด่น ธาตุ และจิตวิญญาณแห่งตัวตน</small>
+                            </div>
+                        </div>
+                        <div class="fortune-card-body">${zodiac.overview}</div>
+                    </div>
+
+                    <!-- การเงิน & โชคลาภ -->
+                    <div class="fortune-card theme-finance">
+                        <div class="card-header-bar">
+                            <div class="card-icon-box"><i class="fas fa-coins"></i></div>
+                            <div>
+                                <h3 class="card-title-text">การเงิน & โชคลาภ & เคล็ดเรียกทรัพย์</h3>
+                                <small style="color: var(--text-muted);">วิถีแห่งความมั่งคั่งและฮวงจุ้ยการเงิน</small>
+                            </div>
+                        </div>
+                        <div class="fortune-card-body">${zodiac.finance}</div>
+                    </div>
+
+                    <!-- การงาน & อาชีพ -->
+                    <div class="fortune-card theme-career">
+                        <div class="card-header-bar">
+                            <div class="card-icon-box"><i class="fas fa-briefcase"></i></div>
+                            <div>
+                                <h3 class="card-title-text">การงาน & อาชีพที่ถูกโฉลก</h3>
+                                <small style="color: var(--text-muted);">เส้นทางความเจริญก้าวหน้าในอาชีพ</small>
+                            </div>
+                        </div>
+                        <div class="fortune-card-body">${zodiac.career}</div>
+                    </div>
+
+                    <!-- ความรัก -->
+                    <div class="fortune-card theme-love">
+                        <div class="card-header-bar">
+                            <div class="card-icon-box"><i class="fas fa-heart"></i></div>
+                            <div>
+                                <h3 class="card-title-text">ความรัก & คู่ครอง</h3>
+                                <small style="color: var(--text-muted);">คนมีคู่และคนโสด คู่แท้ตามดวงดาว</small>
+                            </div>
+                        </div>
+                        <div class="fortune-card-body">${zodiac.love}</div>
+                    </div>
+
+                    <!-- สุขภาพ -->
+                    <div class="fortune-card theme-health">
+                        <div class="card-header-bar">
+                            <div class="card-icon-box"><i class="fas fa-heartbeat"></i></div>
+                            <div>
+                                <h3 class="card-title-text">สุขภาพ & จุดที่ต้องระวัง</h3>
+                                <small style="color: var(--text-muted);">อวัยวะประจำราศีและแนวทางป้องกัน</small>
+                            </div>
+                        </div>
+                        <div class="fortune-card-body">${zodiac.health}</div>
+                    </div>
+
+                    <!-- คำแนะนำ & เสริมดวง -->
+                    <div class="fortune-card theme-advice full-width-card">
+                        <div class="card-header-bar">
+                            <div class="card-icon-box"><i class="fas fa-pray"></i></div>
+                            <div>
+                                <h3 class="card-title-text">คำแนะนำ & เคล็ดลับการทำบุญเสริมดวงชะตา</h3>
+                                <small style="color: var(--text-muted);">วิธีแก้เคล็ด เสริมบารมี วัตถุมงคล และการปฏิบัติตน</small>
+                            </div>
+                        </div>
+                        <div class="fortune-card-body">${zodiac.advice}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function findZodiacByDate() {
+            const dateVal = document.getElementById('birthDatePicker').value;
+            if (!dateVal) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'กรุณาเลือกวันเกิด',
+                    text: 'กรุณาระบุวันเดือนปีเกิด หรือเลือกลูกดวงจากรายการด้านซ้าย',
+                    background: '#13182b',
+                    color: '#fff',
+                    confirmButtonColor: '#d4af37'
+                });
+                return;
+            }
+            matchZodiacFromDateString(dateVal, true);
+        }
+
+        function matchZodiacFromDateString(dateStr, showNotice = true, memberName = '') {
+            const parts = dateStr.split('-');
+            if (parts.length < 3) return;
+
+            const month = parseInt(parts[1], 10);
+            const day = parseInt(parts[2], 10);
+
+            // Match based on Thai traditional zodiac calendar
+            let matched = window.TWELVE_ZODIAC_DATA.find(z => {
+                if (z.startMonth === month && day >= z.startDay) return true;
+                if (z.endMonth === month && day <= z.endDay) return true;
+                return false;
+            });
+
+            // Special case for Sagittarius / Capricorn over year-end
+            if (!matched) {
+                if ((month === 12 && day >= 16) || (month === 1 && day <= 14)) {
+                    matched = window.TWELVE_ZODIAC_DATA.find(z => z.id === "sagittarius");
+                } else if ((month === 1 && day >= 15) || (month === 2 && day <= 12)) {
+                    matched = window.TWELVE_ZODIAC_DATA.find(z => z.id === "capricorn");
+                }
+            }
+
+            if (matched) {
+                selectZodiac(matched.id);
+
+                if (showNotice) {
+                    const titleText = memberName 
+                        ? `${memberName} คือชาว${matched.nameTh} (${matched.symbolIcon})`
+                        : `คุณคือชาว${matched.nameTh} (${matched.symbolIcon})`;
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: titleText,
+                        html: `<div style="font-size: 0.95rem; color: #cbd5e1; margin-top: 6px;">ช่วงวันเกิด: <strong style="color: #ffd700;">${matched.dateRange}</strong><br>ธาตุ: <strong>${matched.element}</strong></div>`,
+                        timer: 2300,
+                        showConfirmButton: false,
+                        background: '#13182b',
+                        color: '#fff'
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>

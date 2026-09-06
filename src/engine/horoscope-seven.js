@@ -1191,21 +1191,25 @@ function renderTable(day, month, zodiac, age, birthTimeStr = '12:00') {
     }
 }
 
-// ฟังก์ชันสลับ Tab แบบ Vanilla JS
+// ฟังก์ชันสลับ Tab แบบ Vanilla JS (พร้อม Null-Safety)
 window.switchSevenTab = function(tabId) {
-    // ซ่อนทุกแท็บ
-    document.getElementById('tab-transit').style.display = 'none';
-    document.getElementById('tab-relations').style.display = 'none';
-    document.getElementById('tab-natal').style.display = 'none';
+    const transit = document.getElementById('tab-transit');
+    const relations = document.getElementById('tab-relations');
+    const natal = document.getElementById('tab-natal');
+    const target = document.getElementById('tab-' + tabId);
 
-    // แสดงแท็บที่เลือก
-    document.getElementById('tab-' + tabId).style.display = 'block';
+    if (transit) transit.style.display = 'none';
+    if (relations) relations.style.display = 'none';
+    if (natal) natal.style.display = 'none';
+    if (target) target.style.display = 'block';
 
-    // ลบสถานะ Active ออกจากปุ่มกดทั้งหมด
-    document.getElementById('tab-transit-btn').classList.remove('active');
-    document.getElementById('tab-relations-btn').classList.remove('active');
-    document.getElementById('tab-natal-btn').classList.remove('active');
+    const btnTransit = document.getElementById('tab-transit-btn');
+    const btnRelations = document.getElementById('tab-relations-btn');
+    const btnNatal = document.getElementById('tab-natal-btn');
+    const btnTarget = document.getElementById('tab-' + tabId + '-btn');
 
-    // เติมสถานะ Active ให้ปุ่มที่คลิก
-    document.getElementById('tab-' + tabId + '-btn').classList.add('active');
+    if (btnTransit) btnTransit.classList.remove('active');
+    if (btnRelations) btnRelations.classList.remove('active');
+    if (btnNatal) btnNatal.classList.remove('active');
+    if (btnTarget) btnTarget.classList.add('active');
 };

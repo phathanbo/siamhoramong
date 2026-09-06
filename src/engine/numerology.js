@@ -14,61 +14,87 @@ function Numbertable() {
     if (!container) return;
 
     const html = `
-    <div class="card shadow-lg border-gold overflow-hidden">
-        <div class="card-header bg-dark text-white text-center py-4 border-bottom-gold">
-            <h2 class="text-gold mb-1">🔮 เลขศาสตร์ไทยแท้ - ดาว 9 ดวง</h2>
-            <p class="text-white-50 mb-0 small">✨ อิงจากลัคนาและดาว 9 ดวง - โหราศาสตร์ไทยแท้</p>
-        </div>
-        <div class="card-body" style="background: rgba(26,26,26,0.95);">
-            <div class="btn-group btn-group-toggle w-100 mb-4 shadow-sm" data-toggle="buttons">
-                <label class="btn btn-outline-gold active flex-fill text-white">
-                    <input type="radio" name="numType" value="phone" checked onchange="updateNumUI('phone')"> 📱 เบอร์มือถือ
-                </label>
-                <label class="btn btn-outline-gold flex-fill text-white">
-                    <input type="radio" name="numType" value="car" onchange="updateNumUI('car')"> 🚗 ทะเบียนรถ
-                </label>
-                <label class="btn btn-outline-gold flex-fill text-white">
-                    <input type="radio" name="numType" value="home" onchange="updateNumUI('home')"> 🏠 เลขที่บ้าน
-                </label>
-            </div>
-            <div class="form-group text-center">
-                <label for="phoneNumber" class="font-weight-bold text-gold" id="inputLabel">กรอกหมายเลข:</label>
-                <input type="text" class="form-control form-control-lg bg-dark text-white border-gold text-center shadow-inner mb-3"
-                    id="phoneNumber" placeholder="08XXXXXXXX" oninput="validateInput(this)"
-                    style="font-size: 1.5rem; letter-spacing: 2px; border-radius: 15px;">
+        <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
+            
+            <!-- Main Hero Card -->
+            <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
                 
-                <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text bg-gold text-dark border-gold"><i class="fas fa-user"></i></span>
+                <!-- Header -->
+                <div class="card-header text-center py-4 py-md-5 position-relative" style="background: linear-gradient(180deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(21, 25, 53, 0.8) 100%); border: 2px solid rgba(232, 200, 118, 0.6); box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);" class="mb-2 animate__animated animate__pulse">
+                        <i class="fas fa-mobile-alt fa-2x" style="color: #ffd700; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6));"></i>
                     </div>
-                    <select id="memberTaksaSelect" class="form-control bg-dark text-white border-gold">
-                        <option value="">-- เลือกสมาชิกเพื่อผสานดวงวันเกิด (ทักษา) --</option>
-                    </select>
+                    <h1 class="fw-bold mb-2" style="font-family: 'Chonburi', 'Sarabun', serif; color: #ffd700; text-shadow: 0 2px 10px rgba(255,215,0,0.3); font-size: clamp(1.8rem, 4vw, 2.4rem);">เลขศาสตร์ไทยแท้ · ดาว ๙ ดวง</h1>
+                    <p class="text-light mb-0" style="font-size: 1rem; opacity: 0.85; letter-spacing: 0.5px;">วิเคราะห์คู่เลขมงคล ผลรวมชะตา และตรวจสอบคู่ดาวกาลกิณีตามวันเกิด (เบอร์โทร · ทะเบียนรถ · บ้านเลขที่)</p>
                 </div>
-                
-                <small class="text-white-50 mt-2 d-block">*วิเคราะห์ตามลัคนา: ผลรวมตัวเลข → ดาว 9 ดวง</small>
-            </div>
-            <button class="btn btn-gold btn-block btn-lg shadow mt-4 py-3 font-weight-bold" id="btnAnalyze"
-                onclick="analyzeNumber()">
-                ✨ วิเคราะห์เบอร์มือถือ
-            </button>
-            <div id="numerologyResult" class="mt-4"></div>
-            <div id="numResult" class="mt-4 p-4 rounded-lg" style="display:none; background: #222; border: 1px solid #444;"></div>
 
-            <div class="row mt-4">
+                <div class="card-body p-3 p-md-4">
+                    <div style="max-width: 860px; margin: 0 auto;">
+                        
+                        <!-- Segment Tabs -->
+                        <div class="d-flex justify-content-center gap-2 p-1 mb-4 rounded-pill" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(212,175,55,0.3); max-width: 500px; margin: 0 auto;">
+                            <button type="button" class="btn btn-sm px-3 py-2 rounded-pill flex-fill fw-bold active num-tab-btn" id="tabPhone" onclick="switchNumType('phone')" style="background: #ffd700; color: #000;">
+                                <i class="fas fa-mobile-alt me-1"></i> เบอร์มือถือ
+                            </button>
+                            <button type="button" class="btn btn-sm px-3 py-2 rounded-pill flex-fill fw-bold text-white num-tab-btn" id="tabCar" onclick="switchNumType('car')" style="background: transparent;">
+                                <i class="fas fa-car me-1"></i> ทะเบียนรถ
+                            </button>
+                            <button type="button" class="btn btn-sm px-3 py-2 rounded-pill flex-fill fw-bold text-white num-tab-btn" id="tabHome" onclick="switchNumType('home')" style="background: transparent;">
+                                <i class="fas fa-home me-1"></i> เลขที่บ้าน
+                            </button>
+                            <input type="hidden" id="numTypeHidden" value="phone">
+                        </div>
+
+                        <!-- Form Input Box -->
+                        <div class="p-3 p-md-4 rounded-4 mb-4" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25); box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+                            
+                            <div class="text-center mb-3">
+                                <label for="phoneNumber" class="form-label fw-bold mb-2" id="inputLabel" style="color: #ffd700; font-size: 1.1rem;">
+                                    <i class="fas fa-keyboard me-1"></i> กรอกหมายเลขเบอร์มือถือ:
+                                </label>
+                                <input type="text" class="form-control bg-dark text-white border-gold text-center fw-bold shadow-inner mx-auto"
+                                    id="phoneNumber" placeholder="08XXXXXXXX" oninput="validateInput(this)"
+                                    style="max-width: 420px; font-size: 1.6rem; letter-spacing: 3px; border-radius: 12px; height: 55px; border-color: rgba(212,175,55,0.4);">
+                            </div>
+
+                            <div class="mb-4" style="max-width: 550px; margin: 0 auto;">
+                                <label class="form-label small fw-semibold" style="color: #e8c876;">
+                                    <i class="fas fa-user-check me-1"></i> เลือกสมาชิกเพื่อผสานดวงวันเกิด (ทักษาปกรณ์):
+                                </label>
+                                <select id="memberTaksaSelect" class="form-select bg-dark text-white border-gold member-selector" style="border-radius: 10px; border-color: rgba(212,175,55,0.4);">
+                                    <option value="">-- เลือกสมาชิกเพื่อผสานดวงวันเกิด (ทักษา) --</option>
+                                </select>
+                            </div>
+
+                            <div class="text-center">
+                                <button class="btn btn-gold px-5 py-2 py-md-3 shadow fw-bold d-inline-flex align-items-center gap-2" id="btnAnalyze" onclick="analyzeNumber()" style="border-radius: 50px; font-size: 1.05rem; min-width: 220px; justify-content: center;">
+                                    <i class="fas fa-magic text-danger"></i> วิเคราะห์เลขศาสตร์
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <div id="numResult" class="mt-4" style="display:none;"></div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="row mt-4 g-2">
                 <div class="col-6">
-                    <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
-                        <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                    <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
                     </button>
                 </div>
                 <div class="col-6">
-                    <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                    <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="goBack()">
                         <i class="fas fa-home"></i> กลับหน้าหลัก
                     </button>
                 </div>
             </div>
+
         </div>
-    </div>
     `;
     container.innerHTML = html;
     
@@ -77,6 +103,45 @@ function Numbertable() {
         loadTaksaMembers();
     }
 }
+
+function switchNumType(type) {
+    const hidden = document.getElementById('numTypeHidden');
+    if (hidden) hidden.value = type;
+
+    const btnPhone = document.getElementById('tabPhone');
+    const btnCar = document.getElementById('tabCar');
+    const btnHome = document.getElementById('tabHome');
+    const label = document.getElementById('inputLabel');
+    const input = document.getElementById('phoneNumber');
+    const btnAnalyze = document.getElementById('btnAnalyze');
+
+    [btnPhone, btnCar, btnHome].forEach(b => {
+        if (b) {
+            b.style.background = 'transparent';
+            b.classList.remove('text-dark');
+            b.classList.add('text-white');
+        }
+    });
+
+    if (type === 'phone') {
+        if (btnPhone) { btnPhone.style.background = '#ffd700'; btnPhone.classList.add('text-dark'); btnPhone.classList.remove('text-white'); }
+        if (label) label.innerHTML = '<i class="fas fa-mobile-alt me-1"></i> กรอกหมายเลขเบอร์มือถือ:';
+        if (input) input.placeholder = '08XXXXXXXX';
+        if (btnAnalyze) btnAnalyze.innerHTML = '<i class="fas fa-magic text-danger"></i> วิเคราะห์เบอร์มือถือ';
+    } else if (type === 'car') {
+        if (btnCar) { btnCar.style.background = '#ffd700'; btnCar.classList.add('text-dark'); btnCar.classList.remove('text-white'); }
+        if (label) label.innerHTML = '<i class="fas fa-car me-1"></i> กรอกหมายเลขทะเบียนรถ:';
+        if (input) input.placeholder = 'เช่น 1กข1234 หรือ 9999';
+        if (btnAnalyze) btnAnalyze.innerHTML = '<i class="fas fa-magic text-danger"></i> วิเคราะห์ทะเบียนรถ';
+    } else if (type === 'home') {
+        if (btnHome) { btnHome.style.background = '#ffd700'; btnHome.classList.add('text-dark'); btnHome.classList.remove('text-white'); }
+        if (label) label.innerHTML = '<i class="fas fa-home me-1"></i> กรอกเลขที่บ้าน:';
+        if (input) input.placeholder = 'เช่น 123/45 หรือ 88';
+        if (btnAnalyze) btnAnalyze.innerHTML = '<i class="fas fa-magic text-danger"></i> วิเคราะห์เลขที่บ้าน';
+    }
+}
+
+window.switchNumType = switchNumType;
 
 // ฐานข้อมูลทักษาสำหรับตัวเลข (ศรี, กาลกิณี)
 // 1=อาทิตย์, 2=จันทร์, 3=อังคาร, 4=พุธกลางวัน, 5=พฤหัส, 6=ศุกร์, 7=เสาร์, 8=พุธกลางคืน
@@ -262,16 +327,19 @@ function analyzeNumber() {
             }
             
             taksaHtml = `
-                <div class="card bg-dark border-gold mb-3">
-                    <div class="card-header bg-gold text-white">
-                        <strong>👤 ความเหมาะสมกับดวงชะตา (วันเกิด x เบอร์โทร)</strong>
+                <div class="card border-0 rounded-4 p-3 p-md-4 mb-4 shadow-sm" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25) !important;">
+                    <div class="d-flex align-items-center gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                        <div class="p-2 rounded-circle" style="background: rgba(212, 175, 55, 0.2); color: #ffd700;">
+                            <i class="fas fa-shield-alt fa-lg"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0" style="color: #ffd700; font-family: 'Chonburi', serif; font-size: 1.15rem;">ความเหมาะสมกับดวงชะตา (วันเกิด x ตัวเลข)</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="alert ${alertClass} border-0 mb-3" style="background: rgba(0,0,0,0.3);">
-                            <h5 class="mb-0">${icon} ${statusText}</h5>
+                    <div>
+                        <div class="alert ${alertClass} border-0 mb-3" style="background: rgba(0,0,0,0.3); border-radius: 12px;">
+                            <h6 class="mb-0 fw-bold">${icon} ${statusText}</h6>
                         </div>
                         <div class="mt-3">
-                            <h6 class="text-gold mb-3"><i class="fas fa-search"></i> เจาะลึกอิทธิพลของแต่ละเลขในเบอร์:</h6>
+                            <h6 class="text-gold mb-3 small fw-bold"><i class="fas fa-search me-1"></i> เจาะลึกอิทธิพลของแต่ละเลขในเบอร์:</h6>
                             ${taksaDetails}
                         </div>
                         <p class="mt-3 mb-0 text-white-50 small text-center">* หมายเหตุ: เลข 0 และ 9 ถือเป็นเลขนอกกฎทักษา ไม่มีค่ากาลกิณี</p>
@@ -286,20 +354,25 @@ function analyzeNumber() {
     let individualNumbersHtml = '';
     if (uniqueDigits.length > 0) {
         individualNumbersHtml = `
-            <div class="card bg-dark border-gold mb-3">
-                <div class="card-header bg-gold text-white">
-                    <strong>🔢 พลังตัวเลขในเบอร์</strong>
+            <div class="card border-0 rounded-4 p-3 p-md-4 mb-4 shadow-sm" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25) !important;">
+                <div class="d-flex align-items-center gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                    <div class="p-2 rounded-circle" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">
+                        <i class="fas fa-hashtag fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="color: #93c5fd; font-family: 'Chonburi', serif; font-size: 1.15rem;">พลังตัวเลขเดี่ยวในเบอร์</h5>
                 </div>
-                <div class="card-body small text-light">
-                    <div class="row">
+                <div class="small text-light">
+                    <div class="row g-2">
         `;
         uniqueDigits.forEach(d => {
             const numPlanet = ThaiAstrologyData?.PLANETS_DATA?.[parseInt(d)];
             if (numPlanet) {
                 individualNumbersHtml += `
-                    <div class="col-md-6 mb-2">
-                        <strong class="text-gold" style="font-size: 1.1em;">เลข ${d} (${numPlanet.name}):</strong> 
-                        <br>${numPlanet.character}
+                    <div class="col-md-6 col-12 mb-2">
+                        <div class="p-2 rounded-3 h-100" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                            <strong class="text-gold" style="font-size: 1.05em;"><i class="fas fa-star me-1 text-warning"></i> เลข ${d} (${numPlanet.name}):</strong> 
+                            <div class="text-white-50 small mt-1">${numPlanet.character}</div>
+                        </div>
                     </div>
                 `;
             }
@@ -323,30 +396,33 @@ function analyzeNumber() {
         
         if (pairs.length > 0) {
             pairsHtml = `
-                <div class="card bg-dark border-gold mb-3">
-                    <div class="card-header bg-gold text-white">
-                        <strong>🔗 วิเคราะห์คู่เลข (Pairing)</strong>
+                <div class="card border-0 rounded-4 p-3 p-md-4 mb-4 shadow-sm" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25) !important;">
+                    <div class="d-flex align-items-center gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                        <div class="p-2 rounded-circle" style="background: rgba(244, 114, 182, 0.2); color: #f472b6;">
+                            <i class="fas fa-link fa-lg"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0" style="color: #f472b6; font-family: 'Chonburi', serif; font-size: 1.15rem;">วิเคราะห์คู่เลขมงคล (Pairing)</h5>
                     </div>
-                    <div class="card-body small text-light">
-                        <p class="text-white-50 mb-3 pb-2 border-bottom border-secondary"><small>* เบอร์มือถือมักเน้นวิเคราะห์ความหมายคู่เลข 7 ตัวหลังเป็นหลัก</small></p>
-                        <div class="list-group list-group-flush">
+                    <div class="small text-light">
+                        <p class="text-white-50 mb-3 pb-2 border-bottom border-secondary"><small>* เบอร์มือถือเน้นวิเคราะห์ความหมายคู่เลข ๗ ตัวหลังเป็นสำคัญ</small></p>
+                        <div class="d-flex flex-column gap-2">
             `;
             
             pairs.forEach(pair => {
                 const pairData = (typeof NUMEROLOGY_PAIRS !== 'undefined') ? NUMEROLOGY_PAIRS[pair] : null;
                 let meaningText = pairData ? pairData.meaning : "ไม่มีข้อมูลคู่เลขนี้";
-                let badgeClass = "badge-secondary";
+                let badgeStyle = "background: rgba(255,255,255,0.2); color: #fff;";
                 
                 if (pairData) {
-                    if (pairData.type === 'good') badgeClass = 'badge-success';
-                    else if (pairData.type === 'bad') badgeClass = 'badge-danger';
-                    else badgeClass = 'badge-warning text-dark';
+                    if (pairData.type === 'good') badgeStyle = 'background: rgba(34, 197, 94, 0.25); color: #4ade80; border: 1px solid #22c55e;';
+                    else if (pairData.type === 'bad') badgeStyle = 'background: rgba(239, 68, 68, 0.25); color: #f87171; border: 1px solid #ef4444;';
+                    else badgeStyle = 'background: rgba(234, 179, 8, 0.25); color: #fde047; border: 1px solid #eab308;';
                 }
                 
                 pairsHtml += `
-                    <div class="list-group-item bg-dark border-secondary p-2 mb-2 rounded" style="border: 1px solid rgba(212, 175, 55, 0.3) !important;">
-                        <span class="badge ${badgeClass} mr-2 px-2 py-1" style="font-size: 1.1em;">${pair}</span> 
-                        <span class="text-light">${meaningText}</span>
+                    <div class="p-2 p-md-3 rounded-3 d-flex align-items-center gap-3" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(212, 175, 55, 0.2);">
+                        <span class="badge fw-bold px-3 py-2 rounded-3" style="font-size: 1.15em; ${badgeStyle}">${pair}</span> 
+                        <span class="text-light small flex-fill">${meaningText}</span>
                     </div>
                 `;
             });
@@ -369,16 +445,16 @@ function analyzeNumber() {
             }
 
             totalMeaningHtml = `
-                <div class="card bg-dark border-gold mb-3">
-                    <div class="card-header bg-gold text-white">
-                        <strong>🔮 ความหมายผลรวมเลขศาสตร์</strong>
-                    </div>
-                    <div class="card-body text-light text-center">
-                        <div class="mb-3">
-                            <span class="display-4 font-weight-bold" style="color: #ffc107; text-shadow: 0 0 10px rgba(255,193,7,0.4);">${numSum}</span>
+                <div class="card border-0 rounded-4 p-3 p-md-4 mb-4 shadow-sm" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1.5px solid rgba(212, 175, 55, 0.35) !important;">
+                    <div class="text-center">
+                        <small class="text-white-50 d-block mb-1">ผลรวมเลขศาสตร์โดยรวม</small>
+                        <div class="display-4 fw-bold mb-2" style="color: #ffd700; text-shadow: 0 0 15px rgba(255,215,0,0.5); font-size: clamp(2.4rem, 5vw, 3.5rem);">
+                            ${numSum}
                         </div>
-                        <h5 class="mb-3 text-gold">${title}</h5>
-                        <div class="mb-0 text-white text-center">${desc}</div>
+                        <div class="badge px-3 py-2 rounded-pill fw-bold mb-3" style="background: #ffd700; color: #000; font-size: 0.95rem;">
+                            ${title}
+                        </div>
+                        <div class="text-light small" style="line-height: 1.7; max-width: 680px; margin: 0 auto;">${desc}</div>
                     </div>
                 </div>
             `;
@@ -387,10 +463,12 @@ function analyzeNumber() {
 
     // สร้าง Result HTML
     resultDiv.innerHTML = `
-        <div class="card border-gold bg-dark text-white p-4 shadow-sm animate__animated animate__fadeInUp">
-            <div class="text-center mb-4 pb-3 border-bottom border-secondary">
-                <h3 class="text-gold">ผลวิเคราะห์เลขศาสตร์</h3>
-                <div style="font-size: 1.5rem; color: #d4af37; letter-spacing: 2px;" class="mt-2 font-weight-bold">${inputField.value}</div>
+        <div class="card border-0 rounded-4 p-3 p-md-4 mt-4 shadow-lg animate__animated animate__fadeInUp" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1.5px solid rgba(212, 175, 55, 0.4) !important;">
+            <div class="text-center mb-4 pb-3" style="border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                <span class="badge px-3 py-2 rounded-pill fw-bold mb-2" style="background: rgba(212,175,55,0.2); color: #ffd700; border: 1px solid rgba(212,175,55,0.4); font-size: 0.9rem;">
+                    <i class="fas fa-scroll me-1"></i> รายงานวิเคราะห์เลขศาสตร์ฉบับสมบูรณ์
+                </span>
+                <div style="font-size: clamp(1.6rem, 4vw, 2.2rem); color: #ffd700; letter-spacing: 3px; font-family: 'Chonburi', serif;" class="mt-1 font-weight-bold">${inputField.value}</div>
             </div>
 
             ${taksaHtml}
@@ -399,36 +477,35 @@ function analyzeNumber() {
             ${individualNumbersHtml}
 
             <!-- ดาวที่ได้ (จากผลรวม 1-9) -->
-            <div class="card bg-dark border-gold mb-3">
-                <div class="card-header bg-gold text-white">
-                    <strong>⭐ อิทธิพลดาวหลัก (จากผลรวม → ดาว ${planetNum})</strong>
-                </div>
-                <div class="card-body text-center">
-                    <div style="font-size: 3rem; text-shadow: 0 0 10px rgba(255,215,0,0.5);">${planet.symbol}</div>
-                    <h4 class="text-gold mt-2">${planet.name}</h4>
-                    <p class="mb-1 text-light"><strong>ลักษณะ:</strong> ${planet.character}</p>
-                    <p class="mb-1 text-light"><strong>ธาตุ:</strong> ${planet.element} | <strong>ทิศมงคล:</strong> ${planet.direction}</p>
-                    <p class="mb-0 text-light"><strong>จุดแข็ง:</strong> ${planet.strength}</p>
+            <div class="card border-0 rounded-4 p-3 p-md-4 mb-4 shadow-sm" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25) !important;">
+                <div class="text-center">
+                    <div class="badge px-3 py-1 rounded-pill mb-2" style="background: rgba(212,175,55,0.15); color: #ffd700; border: 1px solid rgba(212,175,55,0.3);">
+                        ⭐ อิทธิพลดาวหลัก (จากผลรวม → ดาว ${planetNum})
+                    </div>
+                    <div style="font-size: 3rem; text-shadow: 0 0 15px rgba(255,215,0,0.5);">${planet.symbol}</div>
+                    <h4 class="text-gold mt-2 fw-bold">${planet.name}</h4>
+                    <p class="mb-1 text-light small"><strong>ลักษณะ:</strong> ${planet.character}</p>
+                    <p class="mb-1 text-light small"><strong>ธาตุ:</strong> ${planet.element} | <strong>ทิศมงคล:</strong> ${planet.direction}</p>
+                    <p class="mb-0 text-light small"><strong>จุดแข็ง:</strong> ${planet.strength}</p>
                 </div>
             </div>
 
             <!-- ธาตุสนับสนุน -->
             ${elementData ? `
-            <div class="card bg-dark border-gold">
-                <div class="card-header bg-gold text-white">
-                    <strong>🌀 ธาตุสนับสนุน (จากผลรวม → ธาตุ ${elementNum})</strong>
-                </div>
-                <div class="card-body text-center text-white small">
-                    <p class="mb-1"><span style="font-size:1.5rem;">${elementData.symbol}</span> <strong>${elementData.name}</strong></p>
-                    <p class="mb-1 text-light"><strong>สี:</strong> ${elementData.color}</p>
+            <div class="card border-0 rounded-4 p-3 p-md-4 mb-4 shadow-sm" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25) !important;">
+                <div class="text-center text-white small">
+                    <div class="badge px-3 py-1 rounded-pill mb-2" style="background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3);">
+                        🌀 ธาตุสนับสนุน (จากผลรวม → ธาตุ ${elementNum})
+                    </div>
+                    <p class="mb-1"><span style="font-size:1.5rem;">${elementData.symbol}</span> <strong class="fs-6">${elementData.name}</strong></p>
+                    <p class="mb-1 text-light"><strong>สีมงคล:</strong> ${elementData.color}</p>
                     <p class="mb-0 text-light"><strong>อิทธิพล:</strong> ${elementData.influence}</p>
                 </div>
             </div>
             ` : ''}
             
-            <div class="alert alert-dark small mt-4 mb-0 border-secondary text-white-50">
-                <strong>📚 แหล่งอ้างอิง:</strong><br>
-                ✓ ตำราเลขศาสตร์ไทย (จับคู่เลข, ผลรวม) และ โหราศาสตร์ไทยแท้ (อิทธิพลดาว 9 ดวง)
+            <div class="p-3 rounded-3 text-center small text-white-50" style="background: rgba(0,0,0,0.3); border: 1px dashed rgba(255,255,255,0.1);">
+                <strong>📚 แหล่งอ้างอิง:</strong> ตำราเลขศาสตร์ไทย (จับคู่เลข, ผลรวม) และโหราศาสตร์ไทยแท้ (อิทธิพลดาว ๙ ดวง)
             </div>
         </div>
     `;

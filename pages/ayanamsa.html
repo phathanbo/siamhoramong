@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>ดวงชะตากำเนิด - วงจักรราศีไทย</title>
-    <!-- FontAwesome -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔮</text></svg>">
+    <!-- FontAwesome & Unified Stylesheet -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         @media print {
             @page {
@@ -13,13 +15,13 @@
                 margin: 1.5cm;
             }
             body {
-                background: #0d0a1a !important;
-                color: #e9dcc8 !important;
+                background: #080b16 !important;
+                color: #e2e8f0 !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 padding: 0 !important;
             }
-            .form-card, .back-btn, #calcBtn, #printBtn, #saveImgBtn, .no-print {
+            .form-card, .back-btn, #calcBtn, #printBtn, #saveImgBtn, .no-print, .dash-sidebar {
                 display: none !important;
             }
             .container {
@@ -54,14 +56,14 @@
                 display: block !important;
                 width: 100% !important;
                 margin-bottom: 12px !important;
-                border: 1px solid rgba(212, 175, 55, 0.4) !important;
-                background: rgba(255, 255, 255, 0.04) !important;
+                border: 1px solid rgba(59, 130, 246, 0.4) !important;
+                background: rgba(15, 23, 42, 0.8) !important;
             }
             .prediction-section {
                 page-break-inside: auto !important;
                 margin-bottom: 25px !important;
                 padding: 15px !important;
-                border: 1px solid rgba(255, 216, 138, 0.3) !important;
+                border: 1px solid rgba(59, 130, 246, 0.3) !important;
             }
             h1, h2, h3, h4, h5 {
                 page-break-after: avoid !important;
@@ -69,7 +71,7 @@
             }
         }
 
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
         * {
             box-sizing: border-box;
@@ -77,248 +79,199 @@
 
         body {
             margin: 0;
-            font-family: 'Sarabun', 'TH Sarabun New', sans-serif;
-            background: radial-gradient(ellipse at top, #1a1533 0%, #0b0818 60%, #050308 100%);
-            color: #f3e9d6;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Prompt', 'Sarabun', sans-serif;
+            background: radial-gradient(ellipse at top, #0d1527 0%, #080d1a 50%, #03060f 100%);
+            color: #f1f5f9;
             min-height: 100vh;
-            padding: 24px 16px 48px;
+            background-attachment: fixed;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1240px;
             margin: 0 auto;
             position: relative;
+            padding: 24px 20px 60px;
         }
 
-        .back-btn {
-            display: inline-block;
-            color: #d4af37;
-            text-decoration: none;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            transition: 0.3s;
-        }
-        
-        .back-btn:hover {
-            color: #ffca28;
-            text-decoration: none;
-            transform: translateX(-5px);
+        /* ─── Futuristic Deep Navy Dashboard Frame ─── */
+        .dash-main-frame {
+            background: linear-gradient(160deg, rgba(15, 23, 42, 0.85) 0%, rgba(10, 15, 30, 0.95) 100%);
+            border-radius: 28px;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 0 30px rgba(37, 99, 235, 0.15);
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
         }
 
-        h1 {
-            text-align: center;
-            font-weight: 600;
-            font-size: 1.8rem;
-            margin: 4px 0 2px;
-            background: linear-gradient(135deg, #d4af37, #f3e5ab, #d4af37);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: .5px;
+        .dash-main-frame::before {
+            content: '';
+            position: absolute;
+            top: -120px;
+            left: 20%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+            filter: blur(40px);
         }
 
-        .subtitle {
-            text-align: center;
-            color: #c9b8e0;
-            font-size: 1rem;
+        /* Dashboard Top Bar */
+        .dash-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
             margin-bottom: 25px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
+        .dash-breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .dash-breadcrumbs a {
+            color: #60a5fa;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .dash-breadcrumbs a:hover {
+            color: #93c5fd;
+        }
+
+        .dash-user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 30px;
+            padding: 6px 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .dash-hero-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin: 0 0 6px 0;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dash-hero-sub {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        /* ─── Control Panels & Inputs ─── */
         .form-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            border-radius: 14px;
-            padding: 20px;
-            max-width: 640px;
-            margin: 0 auto 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(145deg, rgba(20, 29, 51, 0.75) 0%, rgba(13, 20, 36, 0.85) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 22px 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            position: relative;
         }
 
         .form-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 16px;
+            margin-bottom: 16px;
         }
 
         .form-row label {
             display: flex;
             flex-direction: column;
-            font-size: 0.9rem;
-            color: #e9dcc8;
-            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #94a3b8;
+            gap: 7px;
             flex: 1;
-            min-width: 120px;
+            min-width: 140px;
         }
 
         .form-row input,
         .form-row select {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            border-radius: 8px;
-            color: #f3e9d6;
-            padding: 10px;
-            font-family: inherit;
-            font-size: 1rem;
-            transition: all 0.3s;
+            background: rgba(10, 15, 30, 0.75) !important;
+            border: 1.5px solid rgba(59, 130, 246, 0.25) !important;
+            border-radius: 12px !important;
+            color: #f8fafc !important;
+            padding: 10px 14px !important;
+            font-family: inherit !important;
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+            transition: all 0.25s ease !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
         }
         
         .form-row input:focus, .form-row select:focus {
-            outline: none;
-            border-color: #d4af37;
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+            outline: none !important;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+            background: rgba(15, 23, 42, 0.95) !important;
         }
 
         #customLatLon {
             display: none;
         }
 
-        button#calcBtn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #d4af37, #b8960c);
-            color: #000;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-            margin-top: 10px;
-        }
-
-        button#calcBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.45);
-        }
-
-        button#calcBtn:active {
-            transform: scale(0.98);
-        }
-
-        .birth-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            border-radius: 14px;
-            padding: 18px 24px;
-            max-width: 560px;
-            margin: 0 auto 24px;
-            font-size: 1rem;
-            line-height: 1.7;
-            color: #e9dcc8;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .birth-card b {
-            color: #ffd88a;
-        }
-
-        .layout {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 28px;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
-        .wheel-wrap {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 216, 138, 0.18);
-            border-radius: 20px;
-            padding: 18px;
-        }
-
-        table.chart-table {
-            border-collapse: collapse;
-            font-size: .92rem;
-            min-width: 300px;
-        }
-
-        table.chart-table th,
-        table.chart-table td {
-            padding: 7px 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        table.chart-table th {
-            color: #ffd88a;
-            font-weight: 600;
-            font-size: .85rem;
-        }
-
-        table.chart-table td.planet-name {
-            white-space: nowrap;
-        }
-
-        .swatch {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 6px;
-            vertical-align: middle;
-        }
-
-        .lagna-row td {
-            color: #ffd88a;
-            font-weight: 600;
-        }
-
-        .rx {
-            color: #ff8c8c;
-            font-size: .75rem;
-            margin-left: 4px;
-        }
-
-        footer {
-            text-align: center;
-            color: #8a7aa8;
-            font-size: .78rem;
-            margin-top: 28px;
-        }
-
-        .note {
-            max-width: 700px;
-            margin: 18px auto 0;
-            font-size: .8rem;
-            color: #a798c4;
-            text-align: center;
-            line-height: 1.6;
-        }
-
+        /* ─── Glowing Action Buttons ─── */
         .main-action-btn {
-            background: linear-gradient(135deg, #ffd88a, #d4af37);
-            color: #1a1a2e;
-            border: none;
-            padding: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 13px 24px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-radius: 14px;
             cursor: pointer;
             width: 100%;
-            margin-top: 15px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            margin-top: 10px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+
         .main-action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.6);
+            color: #ffffff;
+        }
+        .main-action-btn:active {
+            transform: translateY(1px);
         }
 
         .action-btn {
             flex: 1;
-            border: none;
-            padding: 10px;
-            font-size: 0.95rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 11px 18px;
+            font-size: 0.92rem;
             font-weight: 600;
-            border-radius: 8px;
-            color: white;
+            border-radius: 12px;
+            color: #ffffff;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
+            transition: all 0.25s ease;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
@@ -326,122 +279,354 @@
         .action-btn:hover {
             transform: translateY(-2px);
         }
+
         .btn-green {
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
         }
         .btn-green:hover {
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
         }
+
         .btn-blue {
-            background: linear-gradient(135deg, #2196F3, #1565C0);
-            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
         }
         .btn-blue:hover {
-            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.5);
+        }
+
+        /* ─── Birth Card HUD Widget ─── */
+        .birth-card {
+            background: linear-gradient(145deg, rgba(20, 30, 55, 0.8) 0%, rgba(13, 19, 36, 0.9) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 18px;
+            padding: 18px 24px;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #e2e8f0;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .birth-card b {
+            color: #60a5fa;
+        }
+
+        /* ─── Wheel & Chart Table Layout ─── */
+        .layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+            align-items: stretch;
+            background: linear-gradient(145deg, rgba(16, 24, 44, 0.85) 0%, rgba(9, 14, 28, 0.95) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            margin-bottom: 30px;
+        }
+
+        .wheel-wrap {
+            background: radial-gradient(circle at center, #0f172a 0%, #080c18 100%);
+            border: 2px solid rgba(59, 130, 246, 0.35);
+            border-radius: 24px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 10px 30px rgba(37, 99, 235, 0.15);
+        }
+
+        .table-wrap-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            padding: 16px;
+            flex: 1;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        table.chart-table {
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        table.chart-table th,
+        table.chart-table td {
+            padding: 8px 14px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        table.chart-table th {
+            color: #93c5fd;
+            font-weight: 700;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 1.5px solid rgba(59, 130, 246, 0.3);
+        }
+
+        table.chart-table td.planet-name {
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .swatch {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .lagna-row td {
+            color: #60a5fa;
+            font-weight: 700;
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .rx {
+            color: #f87171;
+            font-size: 0.75rem;
+            margin-left: 4px;
+            font-weight: 700;
+        }
+
+        /* ─── Prediction Sections & Modern Direct Display ─── */
+        .prediction-section {
+            background: linear-gradient(145deg, rgba(16, 24, 44, 0.9) 0%, rgba(10, 16, 32, 0.95) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(10px);
+            transition: all 0.25s ease;
+        }
+        .prediction-section:hover {
+            border-color: rgba(59, 130, 246, 0.55);
+            box-shadow: 0 12px 35px rgba(37, 99, 235, 0.15);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 10px 14px 14px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .section-header h3 {
+            margin: 0;
+            font-size: 1.18rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #93c5fd !important;
+            letter-spacing: -0.2px;
+        }
+
+        .accordion-content {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .prediction-section .birth-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 14px;
+            padding: 14px 18px;
+            color: #e2e8f0;
+            font-size: 0.92rem;
+            line-height: 1.65;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .prediction-section .birth-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(96, 165, 250, 0.45);
+        }
+
+        .note {
+            max-width: 800px;
+            margin: 24px auto 0;
+            font-size: 0.82rem;
+            color: #64748b;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            color: #475569;
+            font-size: 0.8rem;
+            margin-top: 32px;
+            font-weight: 500;
         }
     </style>
 </head>
 
 <body>
-    <div class="container" id="exportArea">
-        <!-- Back Button -->
-        <div style="margin-top: 10px;" class="no-print">
-            <a href="../index.html" class="back-btn"><i class="fas fa-arrow-left"></i> กลับหน้าหลัก</a>
-        </div>
-        
-        <h1>ดวงชะตากำเนิด</h1>
-        <div class="subtitle">วงจักรราศีไทย · คำนวณจากตำแหน่งดาวจริง (สมผุส)</div>
-
-        <div class="form-card">
-            
-            <div class="form-row">
-                <label>ดึงข้อมูลจากสมาชิก (ตัวเลือกเสริม)
-                    <select id="memberSelect" style="background: rgba(35, 42, 86, 0.8); color: #e8c876;">
-                        <option value="">-- เลือกจากฐานข้อมูลสมาชิก --</option>
-                    </select>
-                </label>
-            </div>
-            <div class="form-row">
-                <label>วันที่ (ค.ศ.)
-                    <input type="date" id="inpDate" value="1995-03-02">
-                </label>
-                <label>เวลาเกิด (24 ชม.)
-                    <input type="time" id="inpTime" value="14:26">
-                </label>
-            </div>
-            <div class="form-row">
-                <label>จังหวัด
-                    <select id="inpProvince"></select>
-                </label>
-            </div>
-            <div class="form-row" id="customLatLon">
-                <label>ละติจูด (lat)
-                    <input type="number" step="0.0001" id="inpLat" value="15.7047">
-                </label>
-                <label>ลองจิจูด (lon)
-                    <input type="number" step="0.0001" id="inpLon" value="100.1372">
-                </label>
-            </div>
-            
-            <hr style="border-color: rgba(255,216,138,0.2); margin: 15px 0;">
-            <div style="color:#ffd88a; font-weight:bold; margin-bottom: 10px;">วันที่ต้องการดูดวงจร (Transit)</div>
-            <div class="form-row">
-                <label>วันที่จร (ค.ศ.)
-                    <input type="date" id="inpTransitDate">
-                </label>
-                <label>เวลาจร (24 ชม.)
-                    <input type="time" id="inpTransitTime">
-                </label>
-            </div>
-            <script>
-                // set default transit date to today
-                const now = new Date();
-                document.getElementById('inpTransitDate').value = now.toISOString().split('T')[0];
-                document.getElementById('inpTransitTime').value = now.toTimeString().substring(0, 5);
-            </script>
-
-            <button id="calcBtn" class="main-action-btn"><i class="fas fa-magic"></i> คำนวณดวงชะตา</button>
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button id="printBtn" class="action-btn btn-green"><i class="fas fa-print"></i> พิมพ์ (PDF)</button>
-                <button id="saveImgChartBtn" class="action-btn btn-blue"><i class="fas fa-image"></i> เซฟแผ่นดวง</button>
-            </div>
-        </div>
-
-        <div class="birth-card" id="birthCard">กำลังคำนวณ...</div>
-
-        <div class="layout" id="exportChartArea" style="padding:15px; border-radius:12px;">
-            <div class="wheel-wrap">
-                <svg id="wheel" width="480" height="480" viewBox="0 0 480 480"></svg>
-            </div>
+    <!-- Top Header -->
+    <header class="header-bar no-print">
+        <a href="../index.html" class="header-title">
+            <i class="fas fa-dharmachakra" style="color: #60a5fa;"></i>
             <div>
-                <table class="chart-table" id="chartTable">
-                    <thead>
-                        <tr>
-                            <th>ดาว</th>
-                            <th>ราศี</th>
-                            <th>องศา</th>
-                        </tr>
-                    </thead>
-                    <tbody id="chartTableBody"></tbody>
-                </table>
+                <h1>สยามโหรามงคล</h1>
+                <div class="header-sub">Siam Horamongkol • ระบบคำนวณสมผุสดาวจริงและอายนางศ์ลาหิรี</div>
             </div>
+        </a>
+        <div class="header-actions">
+            <button onclick="window.print()" class="btn-nav"><i class="fas fa-print"></i> พิมพ์รายงาน</button>
+            <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าหลัก</a>
         </div>
+    </header>
 
-        <!-- Prediction Result Container -->
-        <div id="predictionResult" style="margin-top: 30px; display: none;">
-            <h2 style="text-align: center; color: #d4af37; font-size: 1.5rem; margin-bottom: 20px;">📜 คำพยากรณ์ดวงชะตากำเนิด</h2>
-            <div id="predictionContent" style="display: flex; flex-direction: column; gap: 15px;"></div>
-        </div>
+    <div class="container" id="exportArea">
+        
+        <!-- MAIN DASHBOARD FRAME -->
+        <div class="dash-main-frame">
 
-        <div class="note">
-            * คำนวณด้วยตำแหน่งดาวสมผุส (sidereal) โดยใช้ค่าอายนางศ์แบบลาหิรีโดยประมาณ
-            หากต้องการให้ตรงกับระบบอายนางศ์ที่ใช้ในเว็บสยามโหรามงคลเป๊ะ ๆ สามารถปรับค่าคงที่ AYANAMSA_BASE ในโค้ดได้ ·
-            เวลาที่กรอกถือเป็นเวลาประเทศไทย (UTC+7)
-        </div>
+            <!-- TOPBAR / BREADCRUMB -->
+            <div class="dash-topbar no-print">
+                <div class="dash-breadcrumbs">
+                    <a href="../index.html"><i class="fas fa-home"></i> หน้าหลัก</a>
+                    <span>/</span>
+                    <span>ดวงชะตากำเนิด</span>
+                    <span>/</span>
+                    <span class="text-white"><i class="fas fa-satellite"></i> อายนางศ์ลาหิรี</span>
+                </div>
+                
+                <div class="dash-user-badge">
+                    <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981; box-shadow:0 0 8px #10b981;"></span>
+                    <span style="font-size: 0.85rem; font-weight:700; color:#93c5fd;">HORO LIVE DASHBOARD</span>
+                </div>
+            </div>
 
-        <footer>สร้างด้วย astronomy-engine · Phirun</footer>
-    </div>
+            <!-- HERO HEADER -->
+            <div class="mb-4">
+                <h1 class="dash-hero-title">ดวงชะตากำเนิด & จักรราศีไทย</h1>
+                <div class="dash-hero-sub">ระบบคำนวณตำแหน่งดาวจริง (สมผุสแท้) พร้อมวิเคราะห์โยคเกณฑ์ ตรียางค์ นวางค์ และมหาทักษาจร</div>
+            </div>
+
+            <!-- INPUT CONTROLS CONSOLE -->
+            <div class="form-card">
+                
+                <div class="form-row">
+                    <label><i class="fas fa-users" style="color: #60a5fa;"></i> ดึงข้อมูลจากสมาชิก (ตัวเลือกเสริม):
+                        <select id="memberSelect">
+                            <option value="">-- เลือกจากฐานข้อมูลสมาชิก --</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label><i class="fas fa-calendar-alt" style="color: #60a5fa;"></i> วันเกิด (ค.ศ.):
+                        <input type="date" id="inpDate" value="1995-03-02">
+                    </label>
+                    <label><i class="fas fa-clock" style="color: #60a5fa;"></i> เวลาเกิด (24 ชม.):
+                        <input type="time" id="inpTime" value="14:26">
+                    </label>
+                    <label><i class="fas fa-map-marker-alt" style="color: #60a5fa;"></i> จังหวัดที่เกิด:
+                        <select id="inpProvince"></select>
+                    </label>
+                </div>
+                
+                <div class="form-row" id="customLatLon">
+                    <label>ละติจูด (lat):
+                        <input type="number" step="0.0001" id="inpLat" value="15.7047">
+                    </label>
+                    <label>ลองจิจูด (lon):
+                        <input type="number" step="0.0001" id="inpLon" value="100.1372">
+                    </label>
+                </div>
+                
+                <hr style="border-color: rgba(255,255,255,0.08); margin: 18px 0;">
+                <div style="color:#93c5fd; font-weight:700; font-size:0.9rem; margin-bottom: 10px; display:flex; align-items:center; gap:8px;">
+                    <i class="fas fa-crosshairs"></i> วันที่ต้องการดูดวงจร (Transit Prediction)
+                </div>
+                <div class="form-row">
+                    <label><i class="fas fa-calendar-day" style="color: #60a5fa;"></i> วันที่จร (ค.ศ.):
+                        <input type="date" id="inpTransitDate">
+                    </label>
+                    <label><i class="fas fa-hourglass-half" style="color: #60a5fa;"></i> เวลาจร (24 ชม.):
+                        <input type="time" id="inpTransitTime">
+                    </label>
+                </div>
+
+                <button id="calcBtn" class="main-action-btn"><i class="fas fa-bolt"></i> คำนวณตำแหน่งดวงดาวและชะตาชีวิต</button>
+                <div style="display: flex; gap: 12px; margin-top: 15px;">
+                    <button id="printBtn" class="action-btn btn-green"><i class="fas fa-print"></i> พิมพ์รายงาน PDF</button>
+                    <button id="saveImgChartBtn" class="action-btn btn-blue"><i class="fas fa-image"></i> เซฟภาพแผ่นดวง</button>
+                </div>
+            </div>
+
+            <!-- BIRTH SUMMARY HUD -->
+            <div class="birth-card" id="birthCard">กำลังคำนวณตำแหน่งดวงดาว...</div>
+
+            <!-- WHEEL & CHART TABLE LAYOUT -->
+            <div class="layout" id="exportChartArea">
+                <div class="wheel-wrap">
+                    <svg id="wheel" width="480" height="480" viewBox="0 0 480 480"></svg>
+                </div>
+                <div class="table-wrap-card">
+                    <table class="chart-table" id="chartTable">
+                        <thead>
+                            <tr>
+                                <th>ดาวพระเคราะห์</th>
+                                <th>ราศีสถิต</th>
+                                <th>องศา ลิปดา</th>
+                            </tr>
+                        </thead>
+                        <tbody id="chartTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PREDICTION RESULT CONTAINER -->
+            <div id="predictionResult" style="margin-top: 35px; display: none;">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom" style="border-color: rgba(59, 130, 246, 0.25);">
+                    <h2 style="color: #93c5fd; font-size: 1.4rem; font-weight:800; margin:0;">
+                        <i class="fas fa-scroll me-2 text-primary"></i> คำพยากรณ์ดวงชะตากำเนิดและดวงจร
+                    </h2>
+                    <span class="badge rounded-pill px-3 py-1" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; font-weight: 700; font-size: 0.78rem;">
+                        ANALYTICS READY
+                    </span>
+                </div>
+                <div id="predictionContent" style="display: flex; flex-direction: column; gap: 18px;"></div>
+            </div>
+
+            <div class="note">
+                * คำนวณด้วยตำแหน่งดาวสมผุส (sidereal) โดยใช้ค่าอายนางศ์แบบลาหิรี (Lahiri Ayanamsha) ดาราศาสตร์สากล · เวลาที่กรอกถือเป็นเวลาประเทศไทย (UTC+7)
+            </div>
+
+            <footer>สยามโหรามงคล · ระบบดาราศาสตร์และดวงชะตากำเนิด · astronomy-engine</footer>
+
+        </div><!-- /dash-main-frame -->
+
+    </div><!-- /container -->
 
     <style>
         .prediction-grid {
@@ -1201,23 +1386,36 @@
             ["อุบลราชธานี", 15.2287, 104.8594]
         ];
 
-        const provinceSelect = document.getElementById("inpProvince");
-        PROVINCES.forEach(([name, lat, lon], idx) => {
-            const opt = document.createElement("option");
-            opt.value = idx;
-            opt.textContent = name;
-            if (name === "นครสวรรค์") opt.selected = true;
-            provinceSelect.appendChild(opt);
-        });
-        const customOpt = document.createElement("option");
-        customOpt.value = "custom";
-        customOpt.textContent = "กำหนดเอง (lat/lon)";
-        provinceSelect.appendChild(customOpt);
+        function initProvinceSelect() {
+            const provinceSelect = document.getElementById("inpProvince");
+            if (!provinceSelect) return;
+            provinceSelect.innerHTML = "";
+            PROVINCES.forEach(([name, lat, lon], idx) => {
+                const opt = document.createElement("option");
+                opt.value = idx;
+                opt.textContent = name;
+                if (name === "นครสวรรค์") opt.selected = true;
+                provinceSelect.appendChild(opt);
+            });
+            const customOpt = document.createElement("option");
+            customOpt.value = "custom";
+            customOpt.textContent = "กำหนดเอง (lat/lon)";
+            provinceSelect.appendChild(customOpt);
 
-        provinceSelect.addEventListener("change", () => {
-            document.getElementById("customLatLon").style.display =
-                provinceSelect.value === "custom" ? "flex" : "none";
-        });
+            provinceSelect.addEventListener("change", () => {
+                const customLatLon = document.getElementById("customLatLon");
+                if (customLatLon) {
+                    customLatLon.style.display =
+                        provinceSelect.value === "custom" ? "flex" : "none";
+                }
+            });
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initProvinceSelect);
+        } else {
+            initProvinceSelect();
+        }
 
         // ==================== ค่าคงที่ / ฟังก์ชันช่วย ====================
         function norm360(x) { return ((x % 360) + 360) % 360; }
@@ -1297,18 +1495,28 @@
 
         // ==================== ฟังก์ชันหลัก: คำนวณ + วาด ====================
         function computeAndRender() {
-            const dateStr = document.getElementById("inpDate").value;   // YYYY-MM-DD
-            const timeStr = document.getElementById("inpTime").value;   // HH:MM
+            const inpDate = document.getElementById("inpDate");
+            const inpTime = document.getElementById("inpTime");
+            const provinceSelect = document.getElementById("inpProvince");
+            if (!inpDate || !inpTime || !provinceSelect) return;
+
+            const dateStr = inpDate.value;   // YYYY-MM-DD
+            const timeStr = inpTime.value;   // HH:MM
             if (!dateStr || !timeStr) return;
 
-            let lat, lon, placeName;
+            let lat = 13.7563, lon = 100.5018, placeName = "กรุงเทพมหานคร";
             if (provinceSelect.value === "custom") {
-                lat = parseFloat(document.getElementById("inpLat").value);
-                lon = parseFloat(document.getElementById("inpLon").value);
+                const inpLat = document.getElementById("inpLat");
+                const inpLon = document.getElementById("inpLon");
+                lat = inpLat ? parseFloat(inpLat.value) : 13.7563;
+                lon = inpLon ? parseFloat(inpLon.value) : 100.5018;
                 placeName = `lat ${lat}, lon ${lon}`;
             } else {
-                const [name, plat, plon] = PROVINCES[parseInt(provinceSelect.value, 10)];
-                lat = plat; lon = plon; placeName = "จังหวัด" + name;
+                const selIdx = parseInt(provinceSelect.value, 10);
+                if (!isNaN(selIdx) && PROVINCES[selIdx]) {
+                    const [name, plat, plon] = PROVINCES[selIdx];
+                    lat = plat; lon = plon; placeName = "จังหวัด" + name;
+                }
             }
 
             const [y, mo, d] = dateStr.split("-").map(Number);
@@ -1347,8 +1555,10 @@
             const results = calculatePlanets(astroTime, ayanamsa, birthDateUTC);
 
             // คำนวณดาวจร (Transit)
-            const tDateStr = document.getElementById("inpTransitDate").value;
-            const tTimeStr = document.getElementById("inpTransitTime").value;
+            const inpTDate = document.getElementById("inpTransitDate");
+            const inpTTime = document.getElementById("inpTransitTime");
+            const tDateStr = (inpTDate && inpTDate.value) ? inpTDate.value : new Date().toISOString().split('T')[0];
+            const tTimeStr = (inpTTime && inpTTime.value) ? inpTTime.value : "12:00";
             const [ty, tmo, td] = tDateStr.split("-").map(Number);
             const [thh, tmm] = tTimeStr.split(":").map(Number);
             const tUtcHour = thh - 7;
@@ -1412,24 +1622,24 @@
             }
 
             // วงแหวนดาวจร
-            addEl("circle", { cx: CX, cy: CY, r: R_TRANSIT_OUTER, fill: "#0d0a1a", stroke: "#ff7b54", "stroke-width": 1.5, opacity: 0.8 });
-            addEl("circle", { cx: CX, cy: CY, r: R_TRANSIT_INNER, fill: "none", stroke: "rgba(255,123,84,0.4)", "stroke-width": 1 });
+            addEl("circle", { cx: CX, cy: CY, r: R_TRANSIT_OUTER, fill: "#080d1a", stroke: "#38bdf8", "stroke-width": 1.5, opacity: 0.9 });
+            addEl("circle", { cx: CX, cy: CY, r: R_TRANSIT_INNER, fill: "none", stroke: "rgba(56,189,248,0.35)", "stroke-width": 1 });
             
             // วงแหวนดาวกำเนิด
-            addEl("circle", { cx: CX, cy: CY, r: R_OUTER, fill: "#0d0a1a", stroke: "#ffd88a", "stroke-width": 1.5, opacity: 0.9 });
-            addEl("circle", { cx: CX, cy: CY, r: R_SIGN_RING, fill: "none", stroke: "rgba(255,216,138,0.4)", "stroke-width": 1 });
-            addEl("circle", { cx: CX, cy: CY, r: R_INNER, fill: "none", stroke: "rgba(255,216,138,0.25)", "stroke-width": 1 });
+            addEl("circle", { cx: CX, cy: CY, r: R_OUTER, fill: "#0a1124", stroke: "#60a5fa", "stroke-width": 1.5, opacity: 0.95 });
+            addEl("circle", { cx: CX, cy: CY, r: R_SIGN_RING, fill: "none", stroke: "rgba(96,165,250,0.35)", "stroke-width": 1 });
+            addEl("circle", { cx: CX, cy: CY, r: R_INNER, fill: "#060913", stroke: "rgba(96,165,250,0.25)", "stroke-width": 1 });
 
             for (let i = 0; i < 12; i++) {
                 const lonAngle = i * 30;
                 const p1 = polar(CX, CY, R_INNER, lonAngle);
                 const p2 = polar(CX, CY, R_TRANSIT_OUTER, lonAngle);
-                addEl("line", { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: "rgba(255,216,138,0.35)", "stroke-width": 1 });
+                addEl("line", { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: "rgba(96,165,250,0.25)", "stroke-width": 1 });
 
                 const mid = lonAngle + 15;
                 const lp = polar(CX, CY, R_SIGN_LABEL, mid);
                 const t = addEl("text", {
-                    x: lp.x, y: lp.y, fill: "#ffe9b8", "font-size": "11", "text-anchor": "middle",
+                    x: lp.x, y: lp.y, fill: "#93c5fd", "font-size": "11", "text-anchor": "middle",
                     "dominant-baseline": "middle", "font-weight": "600"
                 });
                 t.textContent = ZODIAC_TH[i];
@@ -1437,10 +1647,10 @@
 
             const lagP = polar(CX, CY, R_OUTER, lagnaSidereal);
             const lagP2 = polar(CX, CY, 20, lagnaSidereal);
-            addEl("line", { x1: lagP2.x, y1: lagP2.y, x2: lagP.x, y2: lagP.y, stroke: "#ffd88a", "stroke-width": 2.4 });
+            addEl("line", { x1: lagP2.x, y1: lagP2.y, x2: lagP.x, y2: lagP.y, stroke: "#38bdf8", "stroke-width": 2.4 });
             const lagLabelPos = polar(CX, CY, R_OUTER + 14, lagnaSidereal);
             const lagText = addEl("text", {
-                x: lagLabelPos.x, y: lagLabelPos.y, fill: "#ffd88a", "font-size": "13", "text-anchor": "middle",
+                x: lagLabelPos.x, y: lagLabelPos.y, fill: "#38bdf8", "font-size": "13", "text-anchor": "middle",
                 "dominant-baseline": "middle", "font-weight": "700"
             });
             lagText.textContent = "ลัคนา";
@@ -1516,11 +1726,6 @@
                 const lagnaSignIdx = getSignIndex(lagnaSidereal);
                 
                 // ================= คำนวณทักษาปกรณ์ =================
-                const dateStr = document.getElementById("inpDate").value;
-                const timeStr = document.getElementById("inpTime").value;
-                const [y, mo, d] = dateStr.split("-").map(Number);
-                const [hh, mm] = timeStr.split(":").map(Number);
-                
                 const localDate = new Date(y, mo - 1, d, hh, mm);
                 if (hh < 6) localDate.setDate(localDate.getDate() - 1); // ก่อน 06.00 น. นับเป็นวันก่อนหน้า
                 const dayOfWeek = localDate.getDay();
@@ -1597,13 +1802,13 @@
                 // ================= การแสดงผล =================
                 // 1. ลัคนาและตนุเศษ
                 predHtml += `<div class="prediction-section" id="section-lagna">`;
-                predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ffd88a;">✨ ตัวตนแท้จริง (ลัคนา/ตนุเศษ) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-lagna', 'ดวงชะตา-ตัวตนแท้จริง.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                predHtml += `<div class="section-header"><h3><i class="fas fa-fingerprint text-primary"></i> 1. ตัวตนแท้จริง (ลัคนา & ตนุเศษ)</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-lagna', 'ดวงชะตา-ตัวตนแท้จริง.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                 predHtml += `<div class="accordion-content"><div class="prediction-grid">`;
                 predHtml += `<div class="birth-card" style="margin-bottom: 0;"><b>🌟 ลัคนา:</b> ${ayanamsaPredictions.lagna[lagnaSignIdx].text}</div>`;
                 if (tanuSedKey && ayanamsaPredictions.tanuSedPredictions[tanuSedKey]) {
                     const tsPlanet = results.find(p => p.key === (tanuSedKey === "sun" ? "sun" : tanuSedKey)); // match key
                     const tsColor = tsPlanet ? tsPlanet.color : "#fff";
-                    predHtml += `<div class="birth-card" style="margin-bottom: 0; border-left: 4px solid #b39ddb;"><b><span style="color:${tsColor}; font-size:1.2em;">●</span> ตนุเศษ (จิตใต้สำนึก):</b> ${ayanamsaPredictions.tanuSedPredictions[tanuSedKey]}</div>`;
+                    predHtml += `<div class="birth-card" style="margin-bottom: 0; border-left: 4px solid #38bdf8;"><b><span style="color:${tsColor}; font-size:1.2em;">●</span> ตนุเศษ (จิตใต้สำนึก):</b> ${ayanamsaPredictions.tanuSedPredictions[tanuSedKey]}</div>`;
                 }
                 predHtml += `</div></div></div>`; // Close section
                 
@@ -1616,7 +1821,7 @@
                 
                 // 2. เรื่องราวชีวิต (12 ภพ)
                 predHtml += `<div class="prediction-section" id="section-houses">`;
-                predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ffd88a;">✨ เรื่องราวชีวิต (คำพยากรณ์ 12 ภพ) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-houses', 'ดวงชะตา-12ภพ.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                predHtml += `<div class="section-header"><h3><i class="fas fa-compass text-primary"></i> 2. เรื่องราวชีวิต (คำพยากรณ์ดาวใน 12 ภพ)</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-houses', 'ดวงชะตา-12ภพ.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                 predHtml += `<div class="accordion-content"><div class="prediction-grid">`;
                 results.forEach(p => {
                     const key = planetMap[p.key];
@@ -1637,37 +1842,32 @@
                         const houseIdx = getHouseIndex(signIdx, lagnaSignIdx);
                         
                         if (key === sriKey && ayanamsaPredictions.taksaPredictions.sri) {
-                            taksaHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left; border-left: 4px solid #4caf50;"><b><span style="color:#4caf50; font-size:1.2em;">●</span> ดาวศรี (${p.nameTh}):</b> ${ayanamsaPredictions.taksaPredictions.sri[houseIdx].text}</div>`;
+                            taksaHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left; border-left: 4px solid #10b981;"><b><span style="color:#10b981; font-size:1.2em;">●</span> ดาวศรี (${p.nameTh}):</b> ${ayanamsaPredictions.taksaPredictions.sri[houseIdx].text}</div>`;
                         }
                         if (key === kalineeKey && ayanamsaPredictions.taksaPredictions.kalinee) {
-                            taksaHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left; border-left: 4px solid #f44336;"><b><span style="color:#f44336; font-size:1.2em;">●</span> ดาวกาลกิณี (${p.nameTh}):</b> ${ayanamsaPredictions.taksaPredictions.kalinee[houseIdx].text}</div>`;
+                            taksaHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left; border-left: 4px solid #ef4444;"><b><span style="color:#ef4444; font-size:1.2em;">●</span> ดาวกาลกิณี (${p.nameTh}):</b> ${ayanamsaPredictions.taksaPredictions.kalinee[houseIdx].text}</div>`;
                         }
                     }
                 });
                 if (taksaHtml) {
                     predHtml += `<div class="prediction-section" id="section-taksa">`;
-                    predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ffd88a;">✨ โชคลาภและอุปสรรค (ทักษาปกรณ์) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-taksa', 'ดวงชะตา-ทักษาปกรณ์.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                    predHtml += `<div class="section-header"><h3><i class="fas fa-shield-alt text-primary"></i> 3. โชคลาภ & อุปสรรค (ทักษาปกรณ์)</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-taksa', 'ดวงชะตา-ทักษาปกรณ์.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                     predHtml += `<div class="accordion-content"><div class="prediction-grid">${taksaHtml}</div></div></div>`; // Close section
                 }
 
                 // 3.5 ความสัมพันธ์เรื่องราวชีวิต (เจ้าเรือนสถิตภพ)
                 if (ayanamsaPredictions.lordInHousePredictions) {
                     const houseNames = ["ตนุ", "กฎุมภะ", "สหัชชะ", "พันธุ", "ปุตตะ", "อริ", "ปัตนิ", "มรณะ", "ศุภะ", "กัมมะ", "ลาภะ", "วินาศ"];
-                    // moved signToRulerKey out of block
                     
                     let lordHtml = "";
                     
                     for (let h = 0; h < 12; h++) {
-                        // หาราศีของภพ h
                         const signOfHouse = (lagnaSignIdx + h) % 12;
-                        // หาดาวเจ้าเรือนของราศีนั้น
                         const rulerKey = signToRulerKey[signOfHouse];
                         
-                        // หาว่าดาวดวงนั้นตอนนี้สถิตราศีอะไรในดวงชะตา (results)
                         const rulerPlanet = results.find(p => p.key === rulerKey);
                         if (rulerPlanet) {
                             const rulerCurrentSignIdx = getSignIndex(rulerPlanet.sidereal);
-                            // หาว่าราศีที่สถิตนั้น เป็นภพอะไรของลัคนา
                             const rulerInHouseIdx = getHouseIndex(rulerCurrentSignIdx, lagnaSignIdx);
                             
                             const predictionText = ayanamsaPredictions.lordInHousePredictions[h][rulerInHouseIdx];
@@ -1678,7 +1878,7 @@
                     
                     if (lordHtml !== "") {
                         predHtml += `<div class="prediction-section" id="section-lord">`;
-                        predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ffd88a;">✨ ความสัมพันธ์เรื่องราวชีวิต (เจ้าเรือนสถิตภพ) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-lord', 'ดวงชะตา-เจ้าเรือน.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                        predHtml += `<div class="section-header"><h3><i class="fas fa-link text-primary"></i> 4. ความสัมพันธ์เจ้าเรือนสถิตภพ</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-lord', 'ดวงชะตา-เจ้าเรือน.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                         predHtml += `<div class="accordion-content"><div class="prediction-grid">${lordHtml}</div></div></div>`;
                     }
                 }
@@ -1715,7 +1915,7 @@
                 
                 if (conjunctionHtml !== "") {
                     predHtml += `<div class="prediction-section" id="section-conjunctions">`;
-                    predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ffd88a;">✨ อิทธิพลดาวกุมกัน (ทฤษฎีดาวคู่) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-conjunctions', 'ดวงชะตา-ดาวคู่.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                    predHtml += `<div class="section-header"><h3><i class="fas fa-cubes text-primary"></i> 5. อิทธิพลดาวกุมกัน (ทฤษฎีดาวคู่)</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-conjunctions', 'ดวงชะตา-ดาวคู่.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                     predHtml += `<div class="accordion-content"><div class="prediction-grid">${conjunctionHtml}</div></div></div>`; // Close section
                 }
 
@@ -1734,9 +1934,8 @@
                         const sign1 = getSignIndex(p1.sidereal);
                         const sign2 = getSignIndex(p2.sidereal);
                         
-                        // หาระยะห่างของราศี (นับทวนเข็ม และตามเข็ม)
                         let diff = Math.abs(sign1 - sign2);
-                        if (diff > 6) diff = 12 - diff; // หามุมสั้นสุด
+                        if (diff > 6) diff = 12 - diff;
                         
                         let aspectName = "";
                         let aspectKey = "";
@@ -1758,14 +1957,15 @@
                 
                 if (aspectList.length > 0) {
                     predHtml += `<div class="prediction-section" id="section-aspects">`;
-                    predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ffd88a;">✨ โยคและเกณฑ์ (Aspects) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-aspects', 'ดวงชะตา-โยคเกณฑ์.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                    predHtml += `<div class="section-header"><h3><i class="fas fa-draw-polygon text-primary"></i> 6. โยค & เกณฑ์สัมผัสมุม (Aspects)</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-aspects', 'ดวงชะตา-โยคเกณฑ์.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                     predHtml += `<div class="accordion-content"><div class="prediction-grid">${aspectList.join('')}</div></div></div>`;
                 }
 
                 
                 // 5. คุณภาพดวงดาว (สถิตราศี และ นวางค์จักร)
+                let vargottamaList = [];
                 predHtml += `<div class="prediction-section" id="section-qualities">`;
-                predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ffd88a;">✨ จิตใต้สำนึกและนิสัยเชิงลึก (ตรียางค์/นวางค์) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-qualities', 'ดวงชะตา-คุณภาพดาว.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                predHtml += `<div class="section-header"><h3><i class="fas fa-gem text-primary"></i> 7. จิตใต้สำนึก & นิสัยเชิงลึก (ตรียางค์ / นวางค์)</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-qualities', 'ดวงชะตา-คุณภาพดาว.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                 predHtml += `<div class="accordion-content"><div class="prediction-grid">`;
                 results.forEach(p => {
                     const key = planetMap[p.key];
@@ -1774,9 +1974,15 @@
                         const decanIdx = getDecanSign(p.sidereal);
                         const navamsaIdx = getNavamsaSign(signIdx, p.sidereal);
                         
-                        let vargottamaText = "";
-                        if (signIdx === navamsaIdx) {
-                            vargottamaText = `<div style="color:#ffd88a; font-size:0.9em; margin-top:5px;">⭐ วรโคตมนวางค์ (ดาวเข้มแข็งมาก)</div>`;
+                        let isVargottama = (signIdx === navamsaIdx);
+                        let vargottamaBadge = "";
+                        if (isVargottama) {
+                            vargottamaBadge = `<div style="color:#60a5fa; font-size:0.88em; margin-top:5px; font-weight:bold;">⭐ วรโคตมนวางค์ (ดาวเข้มแข็งสูงสุด)</div>`;
+                            vargottamaList.push({
+                                planet: p,
+                                key: key,
+                                signIdx: signIdx
+                            });
                         }
                         
                         const decanRuler = signToRulerKey[decanIdx];
@@ -1785,21 +1991,68 @@
                         const decanText = ayanamsaPredictions.decanNavamsaTraits ? ayanamsaPredictions.decanNavamsaTraits[decanRuler] : "";
                         const navamsaText = ayanamsaPredictions.decanNavamsaTraits ? ayanamsaPredictions.decanNavamsaTraits[navamsaRuler] : "";
                         
-                        predHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left;">
+                        predHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left; ${isVargottama ? 'border: 1px solid #60a5fa; box-shadow: 0 0 15px rgba(59,130,246,0.3);' : ''}">
                             <b><span style="color:${p.color}; font-size:1.2em;">●</span> ${p.nameTh}</b><br>
-                            <span style="font-size:0.9em; color:#bbb;">ตรียางค์: ${decanText}</span><br>
-                            <span style="font-size:0.9em; color:#bbb;">นวางค์: ${navamsaText}</span>
-                            ${vargottamaText}
+                            <span style="font-size:0.88em; color:#94a3b8;">ตรียางค์: ${decanText}</span><br>
+                            <span style="font-size:0.88em; color:#94a3b8;">นวางค์: ${navamsaText}</span>
+                            ${vargottamaBadge}
                         </div>`;
                     }
                 });
                 predHtml += `</div></div></div>`; // Close section
 
+                // 5.1 ส่วนพยากรณ์พิเศษ: ดาววรโคตมนวางค์ (อัญมณีล้ำค่าในดวงชะตา)
+                if (vargottamaList.length > 0 && ayanamsaPredictions.vargottamaData) {
+                    const vData = ayanamsaPredictions.vargottamaData;
+                    let vargottamaCards = "";
+                    vargottamaList.forEach(item => {
+                        const pInfo = vData.planets[item.key] || { name: item.planet.nameTh, text: "มีพลังอำนาจเข้มแข็ง มั่นคงสูงส่ง ให้คุณอย่างยั่งยืนแท้จริง" };
+                        const signName = ['เมษ','พฤษภ','เมถุน','กรกฎ','สิงห์','กันย์','ตุลย์','พิจิก','ธนู','มังกร','กุมภ์','มีน'][item.signIdx];
+                        vargottamaCards += `
+                            <div class="birth-card" style="margin-bottom: 12px; text-align: left; border-left: 4px solid #38bdf8; background: rgba(56, 189, 248, 0.08);">
+                                <div style="color:#93c5fd; font-weight:bold; font-size:1.02em; margin-bottom:5px;">
+                                    💎 <span style="color:${item.planet.color}; font-size:1.2em;">●</span> ${pInfo.name} — วรโคตมนวางค์ ณ ราศี${signName}
+                                </div>
+                                <div style="font-size:0.92em; color:#cbd5e1; line-height:1.6; text-align:justify;">
+                                    ${pInfo.text}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    let dimsHtml = vData.dimensions.map(d => `
+                        <div style="margin-bottom:8px; padding-left:10px; border-left:2px solid #3b82f6;">
+                            <b style="color:#93c5fd; font-size:0.92em;">${d.title}</b>
+                            <div style="color:#94a3b8; font-size:0.88em; line-height:1.5; margin-top:2px;">${d.desc}</div>
+                        </div>
+                    `).join('');
+
+                    predHtml += `
+                        <div class="prediction-section" id="section-vargottama" style="border: 1px solid rgba(59, 130, 246, 0.45); background: linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(10, 16, 30, 0.95) 100%);">
+                            <div class="section-header">
+                                <h3><i class="fas fa-crown text-primary"></i> 💎 ดาววรโคตมนวางค์ (อัญมณีล้ำค่าในดวงชะตา)</h3>
+                                <button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-vargottama', 'ดวงชะตา-ดาววรโคตมนวางค์.png')"><i class="fas fa-download"></i> เซฟรูป</button>
+                            </div>
+                            <div class="accordion-content">
+                                <div style="background: rgba(10, 15, 30, 0.6); border-radius: 12px; border:1px solid rgba(59,130,246,0.2); padding: 14px 18px; margin-bottom: 14px; color: #cbd5e1; font-size: 0.92em; line-height: 1.6;">
+                                    <div style="font-weight:bold; color:#93c5fd; margin-bottom:6px;">✨ ความหมายแห่งวรโคตมนวางค์ ("วร" = ประเสริฐ, "โคตม" = สูงสุด)</div>
+                                    ดาวที่สถิตในราศีเดียวกันทั้งในดวงราศีจักร (ดวงหลัก) และดวงนวางค์จักร (ไส้ในดวงชะตา) เปรียบเสมือนผลไม้ที่เปลือกนอกสวยและเนื้อในหวานฉ่ำ หรือเหล็กกล้าที่ชุบตัวมาอย่างดีทั้งนอกและใน ส่งผลต่อดวงชะตาใน 4 มิติหลัก:
+                                    <div style="margin-top:10px;">${dimsHtml}</div>
+                                </div>
+                                <h4 style="color:#93c5fd; margin-bottom:10px; font-size:0.95rem; font-weight:700;">อิทธิพลของดาววรโคตมที่ปรากฏในดวงชะตานี้:</h4>
+                                <div class="prediction-grid" style="grid-template-columns: 1fr;">
+                                    ${vargottamaCards}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
 
                 // 6. คำพยากรณ์ดวงจร (Transit Major)
-                predHtml += `<div class="prediction-section" id="section-transit-major" style="border-color: rgba(255, 123, 84, 0.3);">`;
-                predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ff7b54;">✨ คำพยากรณ์ดวงจร (ภาพรวมรายปี) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-transit-major', 'ดวงชะตา-จรรายปี.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
-                predHtml += `<div style="color:#ccc; margin-bottom:15px; font-size:0.9em;">ทำนายจากดาวพฤหัส(๕) ดาวเสาร์(๗) และราหู(๘) ซึ่งเดินช้าและส่งผลกระทบชัดเจน</div>`;
+                predHtml += `<div class="prediction-section" id="section-transit-major" style="border-color: rgba(56, 189, 248, 0.35);">`;
+                predHtml += `<div class="section-header"><h3><i class="fas fa-meteor text-info"></i> 8. คำพยากรณ์ดวงจร (ภาพรวมรายปี)</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-transit-major', 'ดวงชะตา-จรรายปี.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                predHtml += `<div style="color:#94a3b8; margin-bottom:14px; font-size:0.88em;">ทำนายจากดาวพฤหัส(๕) ดาวเสาร์(๗) และราหู(๘) ซึ่งเดินช้าและส่งผลกระทบชัดเจน</div>`;
                 predHtml += `<div class="accordion-content"><div class="prediction-grid">`;
                 const majorTransitKeys = ["jupiter", "saturn", "rahu"];
                 transitResults.forEach(p => {
@@ -1807,15 +2060,15 @@
                     if (key && majorTransitKeys.includes(key) && ayanamsaPredictions.transitMajorPredictions && ayanamsaPredictions.transitMajorPredictions[key]) {
                         const transitSignIdx = getSignIndex(p.sidereal);
                         const houseIdx = getHouseIndex(transitSignIdx, lagnaSignIdx);
-                        predHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left; border-left: 4px solid #ff7b54;"><b><span style="color:#ff7b54; font-size:1.2em;">●</span> ${p.nameTh}จร:</b> ${ayanamsaPredictions.transitMajorPredictions[key][houseIdx].text}</div>`;
+                        predHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left; border-left: 4px solid #38bdf8;"><b><span style="color:#38bdf8; font-size:1.2em;">●</span> ${p.nameTh}จร:</b> ${ayanamsaPredictions.transitMajorPredictions[key][houseIdx].text}</div>`;
                     }
                 });
                 predHtml += `</div></div></div>`; // Close section
 
                 // 7. คำพยากรณ์ดวงจร (Transit Monthly)
-                predHtml += `<div class="prediction-section" id="section-transit-minor" style="border-color: rgba(255, 123, 84, 0.3);">`;
-                predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ff7b54;">✨ สถานการณ์ระยะสั้น (จรรายเดือน) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-transit-minor', 'ดวงชะตา-จรรายเดือน.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
-                predHtml += `<div style="color:#ccc; margin-bottom:15px; font-size:0.9em;">ทำนายจากดาวอาทิตย์(๑) อังคาร(๓) พุธ(๔) ศุกร์(๖) ซึ่งเปลี่ยนราศีประมาณเดือนละครั้ง</div>`;
+                predHtml += `<div class="prediction-section" id="section-transit-minor" style="border-color: rgba(59, 130, 246, 0.35);">`;
+                predHtml += `<div class="section-header"><h3><i class="fas fa-calendar-alt text-primary"></i> 9. สถานการณ์ระยะสั้น (จรรายเดือน)</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-transit-minor', 'ดวงชะตา-จรรายเดือน.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                predHtml += `<div style="color:#94a3b8; margin-bottom:14px; font-size:0.88em;">ทำนายจากดาวอาทิตย์(๑) อังคาร(๓) พุธ(๔) ศุกร์(๖) ซึ่งเปลี่ยนราศีประมาณเดือนละครั้ง</div>`;
                 predHtml += `<div class="accordion-content"><div class="prediction-grid">`;
                 const minorTransitKeys = ["sun", "mars", "mercury", "venus"];
                 transitResults.forEach(p => {
@@ -1829,9 +2082,9 @@
                 predHtml += `</div></div></div>`; // Close section
 
                 // 7.5 คำพยากรณ์ดวงจร (Transit Daily)
-                predHtml += `<div class="prediction-section" id="section-transit-daily" style="border-color: rgba(255, 123, 84, 0.3);">`;
-                predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ff7b54;">✨ สถานการณ์ประจำวัน (จรรายวัน) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-transit-daily', 'ดวงชะตา-จรรายวัน.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
-                predHtml += `<div style="color:#ccc; margin-bottom:15px; font-size:0.9em;">ทำนายจากดาวจันทร์(๒) ซึ่งเปลี่ยนราศีทุกๆ 2 วันครึ่ง ส่งผลต่ออารมณ์และเหตุการณ์รายวัน</div>`;
+                predHtml += `<div class="prediction-section" id="section-transit-daily" style="border-color: rgba(96, 165, 250, 0.35);">`;
+                predHtml += `<div class="section-header"><h3><i class="fas fa-clock text-primary"></i> 10. สถานการณ์ประจำวัน (จรรายวัน)</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-transit-daily', 'ดวงชะตา-จรรายวัน.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                predHtml += `<div style="color:#94a3b8; margin-bottom:14px; font-size:0.88em;">ทำนายจากดาวจันทร์(๒) ซึ่งเปลี่ยนราศีทุกๆ 2 วันครึ่ง ส่งผลต่ออารมณ์และเหตุการณ์รายวัน</div>`;
                 predHtml += `<div class="accordion-content"><div class="prediction-grid">`;
                 transitResults.forEach(p => {
                     const key = planetMap[p.key];
@@ -1847,8 +2100,8 @@
                 
                 
                 // 8. มหาทักษาจร (ดาวเสวยอายุ / ดาวแทรก)
-                const transitDateObj = new Date(document.getElementById('inpTransitDate').value);
-                const birthDateObj = new Date(dateStr + "T" + document.getElementById('inpTime').value);
+                const transitDateObj = new Date(ty, tmo - 1, td, thh, tmm);
+                const birthDateObj = new Date(y, mo - 1, d, hh, mm);
                 
                 // คำนวณอายุเป็นวัน
                 const diffTime = Math.abs(transitDateObj - birthDateObj);
@@ -1902,7 +2155,7 @@
                 const antarText = (ayanamsaPredictions.mahaTaksaPredictions && ayanamsaPredictions.mahaTaksaPredictions[antardashaKey]) ? ayanamsaPredictions.mahaTaksaPredictions[antardashaKey].antar : "";
                 
                 predHtml += `<div class="prediction-section" id="section-mahataksa">`;
-                predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ffd88a;">✨ มหาทักษาจร (อายุย่าง ${ageYang} ปี) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-mahataksa', 'ดวงชะตา-มหาทักษา.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
+                predHtml += `<div class="section-header"><h3><i class="fas fa-hourglass-half text-primary"></i> 11. มหาทักษาจร (ช่วงอายุย่าง ${ageYang} ปี)</h3><button class="export-btn-sm hide-on-export" onclick="exportSection(this, 'section-mahataksa', 'ดวงชะตา-มหาทักษา.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                 predHtml += `<div class="accordion-content"><div class="prediction-grid">`;
                 predHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left; border-left: 4px solid ${pMaha.color};">
                     <b><span style="color:${pMaha.color}; font-size:1.2em;">●</span> ดาวเสวยอายุ: ${pMaha.nameTh}</b><br>
@@ -1918,14 +2171,56 @@
             }
         }
 
-        document.getElementById("calcBtn").addEventListener("click", computeAndRender);
-        window.addEventListener("load", computeAndRender);
-        // Event Listeners for Print & Export
-        document.getElementById("printBtn").addEventListener("click", () => {
-            window.print();
-        });
+        function initApp() {
+            // set default transit date & time if empty
+            const now = new Date();
+            const inpTransitDate = document.getElementById('inpTransitDate');
+            if (inpTransitDate && !inpTransitDate.value) {
+                const yyyy = now.getFullYear();
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                inpTransitDate.value = `${yyyy}-${mm}-${dd}`;
+            }
 
-        
+            const inpTransitTime = document.getElementById('inpTransitTime');
+            if (inpTransitTime && !inpTransitTime.value) {
+                const hh = String(now.getHours()).padStart(2, '0');
+                const min = String(now.getMinutes()).padStart(2, '0');
+                inpTransitTime.value = `${hh}:${min}`;
+            }
+
+            const calcBtn = document.getElementById("calcBtn");
+            if (calcBtn) {
+                calcBtn.addEventListener("click", computeAndRender);
+            }
+
+            const printBtn = document.getElementById("printBtn");
+            if (printBtn) {
+                printBtn.addEventListener("click", () => {
+                    window.print();
+                });
+            }
+
+            const saveImgBtn = document.getElementById("saveImgChartBtn");
+            if (saveImgBtn) {
+                saveImgBtn.addEventListener("click", () => {
+                    exportImage("saveImgChartBtn", "exportChartArea", "ดวงชะตา-แผ่นดวง.png");
+                });
+            }
+
+            try {
+                computeAndRender();
+            } catch (err) {
+                console.error("Error during initial computeAndRender:", err);
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initApp);
+        } else {
+            initApp();
+        }
+
         window.toggleAccordion = function(headerElement) {
             headerElement.classList.toggle('active');
             // find the next sibling that contains accordion-content
@@ -1936,7 +2231,7 @@
             if(sibling) {
                 sibling.classList.toggle('active');
             }
-        }
+        };
 
         window.exportSection = async function(btn, targetId, filename) {
             const originalText = btn.innerHTML;
@@ -1944,6 +2239,7 @@
             
             try {
                 const target = document.getElementById(targetId);
+                if (!target) return;
                 const header = target.querySelector('.section-header');
                 const content = target.querySelector('.accordion-content');
                 let wasClosed = false;
@@ -1984,6 +2280,7 @@
 
         function exportImage(btnId, targetId, filename) {
             const btn = document.getElementById(btnId);
+            if (!btn) return;
             const originalText = btn.innerHTML;
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> รอสักครู่...`;
             
@@ -2009,12 +2306,8 @@
                 }
             }, 100);
         }
-
-        document.getElementById("saveImgChartBtn").addEventListener("click", () => {
-            exportImage("saveImgChartBtn", "exportChartArea", "ดวงชะตา-แผ่นดวง.png");
-        });
     </script>
-<script>
+    <script>
 document.addEventListener("DOMContentLoaded", () => {
 
         // Populate memberSelect from localStorage
@@ -2066,10 +2359,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
-});
-</script>
+    });
+    </script>
+    <script charset="UTF-8" src="../src/utils/canvas-helpers.js"></script>
 </body>
 
 </html>
-<script charset="UTF-8" src="../src/utils/canvas-helpers.js"></script>
-<script>

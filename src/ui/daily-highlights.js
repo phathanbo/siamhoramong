@@ -103,31 +103,31 @@ function renderYarmRow(timeRange, starId) {
     const stars = "⭐".repeat(count);
 
     const div = document.createElement('div');
-    div.className = "yarm-row-mobile animate__animated animate__fadeIn";
+    div.className = "yarm-row-mobile animate__animated animate__fadeIn mb-2 p-3 rounded-3";
     div.style.cssText = `
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 12px;
-        margin-bottom: 8px;
         border-left: 5px solid ${color};
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 4px;
-        gap: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        gap: 12px;
     `;
     
     div.innerHTML = `
-        <div style="flex: 1; min-width: 120px;">
-            <div style="color: #aaa; font-size: 0.85rem; margin-bottom: 2px;">
-                <i class="far fa-clock"></i> ${timeRange}
+        <div style="flex: 1; min-width: 130px;">
+            <div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 2px;">
+                <i class="far fa-clock me-1"></i> ${timeRange}
             </div>
             <div style="color: ${color}; font-size: 1.1rem; font-weight: bold;">
                 ${info.name}
             </div>
-            <div style="font-size: 0.7rem; letter-spacing: 2px;">${stars}</div>
+            <div style="font-size: 0.75rem; letter-spacing: 2px;">${stars}</div>
         </div>
         <div style="flex: 2; text-align: right;">
-            <div style="color: #eee; font-size: 0.9rem; font-weight: 500; line-height: 1.3;">
+            <div style="color: #f8fafc; font-size: 0.92rem; font-weight: 500; line-height: 1.4;">
                 ${info.good}
             </div>
         </div>
@@ -137,60 +137,102 @@ function renderYarmRow(timeRange, starId) {
 
 
 function showDailytable() {
-    const contianer = document.getElementById('showdailytablepage')
+    const contianer = document.getElementById('showdailytablepage');
     if (!contianer) return;
 
+    // Set today's date formatted
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const todayISO = `${year}-${month}-${day}`;
+
     const html = `
-            <div class="card shadow-lg border-gold bg-dark text-white">
-            <div class="card-header bg-dark border-gold py-3 text-center">
-                <h2 class="text-gold mb-1">📅 แผนที่ฤกษ์มงคลรายวัน</h2>
-                <span class="text-white-50">วางแผนชีวิตตามจังหวะดวงดาว</span>
+        <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
+            
+            <!-- Main Hero Card -->
+            <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
+                
+                <!-- Header -->
+                <div class="card-header text-center py-4 py-md-5 position-relative" style="background: linear-gradient(180deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(21, 25, 53, 0.8) 100%); border: 2px solid rgba(232, 200, 118, 0.6); box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);" class="mb-2 animate__animated animate__rotateIn">
+                        <i class="fas fa-calendar-alt fa-2x" style="color: #ffd700; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6));"></i>
+                    </div>
+                    <h1 class="fw-bold mb-2" style="font-family: 'Chonburi', 'Sarabun', serif; color: #ffd700; text-shadow: 0 2px 10px rgba(255,215,0,0.3); font-size: clamp(1.8rem, 4vw, 2.4rem);">📅 แผนที่ฤกษ์มงคลรายวัน</h1>
+                    <p class="text-light mb-0" style="font-size: 1rem; opacity: 0.85; letter-spacing: 0.5px;">วางแผนชีวิตตามจังหวะดวงดาว สรุปเวลาฤกษ์ดีรายชั่วโมงตลอด ๒๔ ชั่วโมง</p>
+                </div>
+                
+                <div class="card-body p-3 p-md-4">
+                    
+                    <!-- Date Picker Centered -->
+                    <div style="max-width: 500px; margin: 0 auto 24px auto;">
+                        <label class="form-label fw-bold d-flex align-items-center justify-content-center gap-2 mb-2" style="color: #e8c876;">
+                            <i class="fas fa-calendar-day"></i> เลือกวันที่ต้องการวางแผนฤกษ์:
+                        </label>
+                        <input type="date" id="highlightDatePicker" class="form-control bg-dark text-white border-gold text-center py-2 fs-5 fw-bold"
+                            value="${todayISO}" onchange="generateDailyMap()" style="border-color: rgba(212, 175, 55, 0.5); border-radius: 14px;">
+                    </div>
+
+                    <!-- Capture Card Box -->
+                    <div id="dailyMapCapture" class="p-3 p-md-4 rounded-4" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1.5px solid rgba(212, 175, 55, 0.35); box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
+                        
+                        <div class="text-center mb-4 pb-2" style="border-bottom: 1px solid rgba(212,175,55,0.25);">
+                            <h3 id="mapDateTitle" class="fw-bold mb-1" style="font-family: 'Chonburi', serif; color: #ffd700; font-size: 1.4rem;"></h3>
+                            <small class="text-white-50">ผังยามเสวยอายุและเกณฑ์มงคลรายชั่วโมง</small>
+                        </div>
+                        
+                        <div class="row g-4">
+                            <!-- ภาคกลางวัน -->
+                            <div class="col-md-6 col-12">
+                                <div class="p-2 mb-3 rounded-3 text-center" style="background: rgba(234, 179, 8, 0.12); border: 1px solid rgba(234, 179, 8, 0.3);">
+                                    <h5 class="mb-0 fw-bold" style="color: #facc15; font-size: 1.1rem;">
+                                        <i class="fas fa-sun me-1"></i> ภาคกลางวัน (๐๖:๐๐ - ๑๘:๐๐ น.)
+                                    </h5>
+                                </div>
+                                <div id="dayYarmList"></div>
+                            </div>
+                            
+                            <!-- ภาคกลางคืน -->
+                            <div class="col-md-6 col-12">
+                                <div class="p-2 mb-3 rounded-3 text-center" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3);">
+                                    <h5 class="mb-0 fw-bold" style="color: #60a5fa; font-size: 1.1rem;">
+                                        <i class="fas fa-moon me-1"></i> ภาคกลางคืน (๑๘:๐๐ - ๐๖:๐๐ น.)
+                                    </h5>
+                                </div>
+                                <div id="nightYarmList"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="text-center mt-4">
+                        <button class="btn btn-gold btn-lg px-5 py-3 shadow-lg fw-bold d-inline-flex align-items-center gap-2 download-btn" onclick="downloadDailyMap(this)" style="border-radius: 50px; font-size: 1.1rem;">
+                            <i class="fas fa-image"></i> เซฟเป็นรูปภาพเก็บไว้
+                        </button>
+                    </div>
+
+                </div>
             </div>
-            <div class="card-body">
-                <div class="form-row justify-content-center mb-4">
-                    <div class="col-md-6">
-                        <label class="text-white-50">เลือกวันที่ต้องการวางแผน</label>
-                        <input type="date" id="highlightDatePicker" class="form-control bg-dark text-white border-gold"
-                            onchange="generateDailyMap()">
-                    </div>
-                </div>
-                <div id="dailyMapCapture" class="p-3 rounded bg-dark" style="border: 2px solid #d4af37;">
-                    <div class="text-center mb-3">
-                        <h4 id="mapDateTitle" class="text-gold"></h4>
-                        <hr class="border-gold opacity-25">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="text-warning text-center"><i class="fas fa-sun"></i> ภาคกลางวัน</h6>
-                            <div id="dayYarmList"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <h6 class="text-info text-center mt-3 mt-md-0"><i class="fas fa-moon"></i> ภาคกลางคืน</h6>
-                            <div id="nightYarmList"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center mt-4">
-                    <button class="btn btn-gold btn-lg px-5 download-btn" onclick="downloadDailyMap(this)">
-                        <i class="fas fa-image mr-2"></i> เซฟเป็นรูปภาพเก็บไว้
+
+            <!-- Bottom Navigation -->
+            <div class="row mt-4 g-2">
+                <div class="col-6">
+                    <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
                     </button>
-                    <div class="row mt-4">
-                        <div class="col-6">
-                            <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
-                                <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
-                            </button>
-                        </div>
-                        <div class="col-6">
-                            <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
-                                <i class="fas fa-home"></i> กลับหน้าหลัก
-                            </button>
-                        </div>
-                    </div>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="goBack()">
+                        <i class="fas fa-home"></i> กลับหน้าหลัก
+                    </button>
                 </div>
             </div>
+
         </div>
     `;
     contianer.innerHTML = html;
+    generateDailyMap();
 }
 
 

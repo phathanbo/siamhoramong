@@ -6,82 +6,186 @@ function showMatch(){
     contianer.style.display = 'block';
 
     const html = `
-        <div class="compatibility-container">
-                <h1>สมพงษ์ธาตุกำเนิดและสมพงษ์อายุ</h1>
-                <h4>ว่าด้วยการเลือกหาคู่รักหรือคู่สมรส</h4>
-                <span>คำทำนายตามตำราฉัตร ๙ ชั้น วิเคราะห์ตามตำราธาตุและเศษอายุ</span>
-                <div class="selection-grid">
-                    <div class="input-box">
-                        <label for="maleYear">ปีนักษัตรฝ่ายชาย</label>
-                        <select id="maleYear" class="form-control" onclick="calculateMarriageMatch();calculateElementMatch()">
-                            <option value="ชวด">ชวด (หนู ธาตุน้ำ)</option>
-                            <option value="ฉลู">ฉลู (วัว ธาตุดิน)</option>
-                            <option value="ขาล">ขาล (เสือ ธาตุไม้)</option>
-                            <option value="เถาะ">เถาะ (กระต่าย ธาตุไม้)</option>
-                            <option value="มะโรง">มะโรง (งูใหญ่ ธาตุทอง)</option>
-                            <option value="มะเส็ง">มะเส็ง (งูเล็ก ธาตุไฟ)</option>
-                            <option value="มะเมีย">มะเมีย (ม้า ธาตุไฟ)</option>
-                            <option value="มะแม">มะแม (แพะ ธาตุทอง)</option>
-                            <option value="วอก">วอก (ลิง ธาตุเหล็ก)</option>
-                            <option value="ระกา">ระกา (ไก่ ธาตุเหล็ก)</option>
-                            <option value="จอ">จอ (หมา ธาตุดิน)</option>
-                            <option value="กุน">กุน (หมู ธาตุน้ำ)</option>
-                        </select>
-                        <input type="number" id="maleAge" class="form-control" placeholder="อายุชาย"
-                        style="margin-top:10px;" onclick="calculateMarriageMatch();calculateElementMatch()">
+        <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
+            
+            <!-- Main Hero Card -->
+            <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
+                
+                <!-- Header -->
+                <div class="card-header text-center py-4 py-md-5 position-relative" style="background: linear-gradient(180deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(21, 25, 53, 0.8) 100%); border: 2px solid rgba(232, 200, 118, 0.6); box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);" class="mb-2 animate__animated animate__rotateIn">
+                        <i class="fas fa-ring fa-2x" style="color: #ffd700; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6));"></i>
                     </div>
-                    <div class="input-box">
-                        <label for="femaleYear">ปีนักษัตรฝ่ายหญิง</label>
-                        <select id="femaleYear" class="form-control" onclick="calculateMarriageMatch();calculateElementMatch()">
-                            <option value="ชวด">ชวด (หนู ธาตุน้ำ)</option>
-                            <option value="ฉลู">ฉลู (วัว ธาตุดิน)</option>
-                            <option value="ขาล">ขาล (เสือ ธาตุไม้)</option>
-                            <option value="เถาะ">เถาะ (กระต่าย ธาตุไม้)</option>
-                            <option value="มะโรง">มะโรง (งูใหญ่ ธาตุทอง)</option>
-                            <option value="มะเส็ง">มะเส็ง (งูเล็ก ธาตุไฟ)</option>
-                            <option value="มะเมีย">มะเมีย (ม้า ธาตุไฟ)</option>
-                            <option value="มะแม">มะแม (แพะ ธาตุทอง)</option>
-                            <option value="วอก">วอก (ลิง ธาตุเหล็ก)</option>
-                            <option value="ระกา">ระกา (ไก่ ธาตุเหล็ก)</option>
-                            <option value="จอ">จอ (หมา ธาตุดิน)</option>
-                            <option value="กุน">กุน (หมู ธาตุน้ำ)</option>
-                        </select>
-                        <input type="number" id="femaleAge" class="form-control" placeholder="อายุหญิง"
-                        style="margin-top:10px;" onclick="calculateMarriageMatch();calculateElementMatch()">
+                    <h1 class="fw-bold mb-2" style="font-family: 'Chonburi', 'Sarabun', serif; color: #ffd700; text-shadow: 0 2px 10px rgba(255,215,0,0.3); font-size: clamp(1.8rem, 4vw, 2.4rem);">💍 หาคู่รักหรือคู่สมรส</h1>
+                    <p class="text-light mb-0" style="font-size: 1rem; opacity: 0.85; letter-spacing: 0.5px;">สมพงษ์ธาตุกำเนิดและสมพงษ์อายุ (ตำราฉัตร ๙ ชั้น และตำรานาคราช)</p>
+                </div>
+
+                <div class="card-body p-3 p-md-4">
+                    <div style="max-width: 960px; margin: 0 auto;">
+                        
+                        <div class="row g-4 mb-4 align-items-stretch">
+                            <!-- ฝ่ายชาย -->
+                            <div class="col-md-6 col-12">
+                                <div class="p-3 p-md-4 rounded-4 h-100" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(59, 130, 246, 0.35); box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+                                    <div class="d-flex align-items-center gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(59, 130, 246, 0.25);">
+                                        <div class="p-2 rounded-circle" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">
+                                            <i class="fas fa-male fa-lg"></i>
+                                        </div>
+                                        <h4 class="fw-bold mb-0" style="color: #93c5fd; font-family: 'Chonburi', serif; font-size: 1.2rem;">ฝ่ายชาย</h4>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold" style="color: #e8c876;"><i class="fas fa-address-book me-1"></i> ดึงจากประวัติสมาชิก:</label>
+                                        <select id="matchMemberSelectMale" class="form-select bg-dark text-white border-gold member-selector" onchange="autoFillMatchMember('male', this.value)" style="border-radius: 10px; border-color: rgba(212,175,55,0.4);">
+                                            <option value="">-- เลือกสมาชิกจากประวัติ --</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold" style="color: #e8c876;"><i class="fas fa-dragon me-1"></i> ปีนักษัตรฝ่ายชาย:</label>
+                                        <select id="maleYear" class="form-select bg-dark text-white border-gold fw-bold" onchange="calculateMarriageMatch();calculateElementMatch()" style="border-radius: 10px; height: 46px; border-color: rgba(212,175,55,0.4);">
+                                            <option value="ชวด">ชวด (หนู ธาตุน้ำ)</option>
+                                            <option value="ฉลู">ฉลู (วัว ธาตุดิน)</option>
+                                            <option value="ขาล">ขาล (เสือ ธาตุไม้)</option>
+                                            <option value="เถาะ">เถาะ (กระต่าย ธาตุไม้)</option>
+                                            <option value="มะโรง">มะโรง (งูใหญ่ ธาตุทอง)</option>
+                                            <option value="มะเส็ง">มะเส็ง (งูเล็ก ธาตุไฟ)</option>
+                                            <option value="มะเมีย">มะเมีย (ม้า ธาตุไฟ)</option>
+                                            <option value="มะแม">มะแม (แพะ ธาตุทอง)</option>
+                                            <option value="วอก">วอก (ลิง ธาตุเหล็ก)</option>
+                                            <option value="ระกา">ระกา (ไก่ ธาตุเหล็ก)</option>
+                                            <option value="จอ">จอ (หมา ธาตุดิน)</option>
+                                            <option value="กุน">กุน (หมู ธาตุน้ำ)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" style="color: #e8c876;"><i class="fas fa-birthday-cake me-1"></i> อายุย่างฝ่ายชาย (ปี):</label>
+                                        <input type="number" id="maleAge" class="form-control bg-dark text-white border-gold text-center fw-bold" placeholder="ระบุอายุชาย เช่น 28" oninput="calculateMarriageMatch();calculateElementMatch()" style="border-radius: 10px; height: 46px; border-color: rgba(212,175,55,0.4);">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ฝ่ายหญิง -->
+                            <div class="col-md-6 col-12">
+                                <div class="p-3 p-md-4 rounded-4 h-100" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(244, 114, 182, 0.35); box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+                                    <div class="d-flex align-items-center gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(244, 114, 182, 0.25);">
+                                        <div class="p-2 rounded-circle" style="background: rgba(244, 114, 182, 0.2); color: #f472b6;">
+                                            <i class="fas fa-female fa-lg"></i>
+                                        </div>
+                                        <h4 class="fw-bold mb-0" style="color: #f472b6; font-family: 'Chonburi', serif; font-size: 1.2rem;">ฝ่ายหญิง</h4>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold" style="color: #e8c876;"><i class="fas fa-address-book me-1"></i> ดึงจากประวัติสมาชิก:</label>
+                                        <select id="matchMemberSelectFemale" class="form-select bg-dark text-white border-gold member-selector" onchange="autoFillMatchMember('female', this.value)" style="border-radius: 10px; border-color: rgba(212,175,55,0.4);">
+                                            <option value="">-- เลือกสมาชิกจากประวัติ --</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold" style="color: #e8c876;"><i class="fas fa-dragon me-1"></i> ปีนักษัตรฝ่ายหญิง:</label>
+                                        <select id="femaleYear" class="form-select bg-dark text-white border-gold fw-bold" onchange="calculateMarriageMatch();calculateElementMatch()" style="border-radius: 10px; height: 46px; border-color: rgba(212,175,55,0.4);">
+                                            <option value="ชวด">ชวด (หนู ธาตุน้ำ)</option>
+                                            <option value="ฉลู">ฉลู (วัว ธาตุดิน)</option>
+                                            <option value="ขาล">ขาล (เสือ ธาตุไม้)</option>
+                                            <option value="เถาะ">เถาะ (กระต่าย ธาตุไม้)</option>
+                                            <option value="มะโรง">มะโรง (งูใหญ่ ธาตุทอง)</option>
+                                            <option value="มะเส็ง">มะเส็ง (งูเล็ก ธาตุไฟ)</option>
+                                            <option value="มะเมีย">มะเมีย (ม้า ธาตุไฟ)</option>
+                                            <option value="มะแม">มะแม (แพะ ธาตุทอง)</option>
+                                            <option value="วอก">วอก (ลิง ธาตุเหล็ก)</option>
+                                            <option value="ระกา">ระกา (ไก่ ธาตุเหล็ก)</option>
+                                            <option value="จอ">จอ (หมา ธาตุดิน)</option>
+                                            <option value="กุน">กุน (หมู ธาตุน้ำ)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold" style="color: #e8c876;"><i class="fas fa-birthday-cake me-1"></i> อายุย่างฝ่ายหญิง (ปี):</label>
+                                        <input type="number" id="femaleAge" class="form-control bg-dark text-white border-gold text-center fw-bold" placeholder="ระบุอายุหญิง เช่น 26" oninput="calculateMarriageMatch();calculateElementMatch()" style="border-radius: 10px; height: 46px; border-color: rgba(212,175,55,0.4);">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mb-4">
+                            <button type="button" class="btn btn-gold btn-lg px-5 py-3 shadow-lg fw-bold d-inline-flex align-items-center gap-2" onclick="calculateMarriageMatch();calculateElementMatch()" style="border-radius: 50px; font-size: 1.15rem;">
+                                <i class="fas fa-search-heart text-danger"></i> ตรวจสอบสมพงษ์ธาตุและอายุ
+                            </button>
+                        </div>
+
+                        <div id="marriage-result-display" class="result-card mb-4" style="display: none;">
+                            <div id="match-status-icon"></div>
+                            <div id="match-text-content"></div>
+                        </div>
+
+                        <div id="element-result-display" class="result-card mb-4" style="display: none;">
+                            <div id="element-text-content"></div>
+                            <hr style="border: 0; border-top: 1px solid rgba(212,175,55,0.3); margin: 15px 0;">
+                            <div id="age-text-content"></div>
+                        </div>
+
                     </div>
                 </div>
+            </div>
 
-                <button type="button" class="btn-predict" onclick="calculateMarriageMatch();calculateElementMatch()">ตรวจสอบสมพงษ์ธาตุและอายุ</button>
-
-
-                <div id="marriage-result-display" class="result-card" style="display: none;">
-                    <div id="match-status-icon"></div>
-                    <div id="match-text-content"></div>
-                </div>
-
-                <div id="element-result-display" class="result-card" style="display: none;">
-                    <div id="element-text-content"></div>
-                    <hr style="border: 0; border-top: 1px solid #d4af37; margin: 15px 0;">
-                    <div id="age-text-content"></div>
-                </div>
-        
-            <div class="row mt-4">
+            <!-- Bottom Navigation -->
+            <div class="row mt-4 g-2">
                 <div class="col-6">
-                    <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
-                        <i class="fas fa-chevron-left"></i> กลับหน้าห้องพยากรณ์
+                    <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
                     </button>
                 </div>
                 <div class="col-6">
-                    <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
+                    <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="goBack()">
                         <i class="fas fa-home"></i> กลับหน้าหลัก
                     </button>
                 </div>
             </div>
-        </div>
+
         </div>
     `;
-    if (contianer) contianer.innerHTML = html;
+    contianer.innerHTML = html;
+
+    if (typeof updateAllMemberSelectors === 'function') {
+        updateAllMemberSelectors();
+    }
 }
+
+function autoFillMatchMember(gender, memberId) {
+    if (!memberId) return;
+    const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
+    const member = allHistory.find(m => m.memberId === memberId || m.id === memberId || m.birthdate === memberId);
+    if (member && member.birthdate) {
+        let year = 0;
+        if (member.birthdate.includes('/')) {
+            const parts = member.birthdate.split('/');
+            year = parseInt(parts[2]);
+        } else if (member.birthdate.includes('-')) {
+            const parts = member.birthdate.split('-');
+            year = parseInt(parts[0]);
+        }
+        if (year > 2400) year -= 543;
+        if (year > 1900) {
+            const zodiacNames = ["ชวด", "ฉลู", "ขาล", "เถาะ", "มะโรง", "มะเส็ง", "มะเมีย", "มะแม", "วอก", "ระกา", "จอ", "กุน"];
+            const idx = (year - 1900) % 12;
+            const zName = zodiacNames[idx < 0 ? idx + 12 : idx];
+            const selectEl = document.getElementById(gender === 'male' ? 'maleYear' : 'femaleYear');
+            if (selectEl) selectEl.value = zName;
+
+            const ageEl = document.getElementById(gender === 'male' ? 'maleAge' : 'femaleAge');
+            if (ageEl && typeof window.calculateRunningAge === 'function') {
+                let formatted = `${year}-${member.birthdate.split(/[\/-]/)[1].padStart(2,'0')}-${member.birthdate.split(/[\/-]/)[0].padStart(2,'0')}`;
+                ageEl.value = window.calculateRunningAge(formatted);
+            }
+            calculateMarriageMatch();
+            calculateElementMatch();
+        }
+    }
+}
+
+window.autoFillMatchMember = autoFillMatchMember;
 
 document.addEventListener('DOMContentLoaded', () => {
     showMatch()

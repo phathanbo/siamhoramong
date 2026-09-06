@@ -247,40 +247,47 @@ function renderDashaPage() {
 
   let html = `
     <!-- แสดงผลทศาเสวยอายุในปัจจุบัน -->
-    <div class="active-dasha-card p-4 mb-4 mt-3" style="background:rgba(212,175,55,0.08);border:2px solid #d4af37;border-radius:15px;box-shadow: 0 4px 15px rgba(212,175,55,0.15);">
-      <h3 style="color:#d4af37;font-weight:700;" class="mb-3 text-center text-md-left">
-        <i class="fas fa-history mr-2"></i> ปัจจุบันดวงชะตาตกอยู่ภายใต้ทศา: 
-        <span style="color:${activeDasha.color};font-size:1.8rem;">
-          ${activeDasha.icon} ดาว${activeDasha.planet} (ธาตุ${activeDasha.element})
-        </span>
-      </h3>
-      <p style="font-size:1.15rem;color:#fff;opacity:0.9;line-height:1.7;">
-        <strong>อายุช่วงเสวย:</strong> ย่างเข้าอายุ ${activeDasha.ageStart + 1} ปี ถึงอายุ ${activeDasha.ageEnd} ปี 
-        (ครอบคลุมปี พ.ศ. ${activeDasha.yearStartCal + 543} ถึง พ.ศ. ${activeDasha.yearEndCal + 543})
-      </p>
-      
-      <hr style="border-top:1px solid rgba(212,175,55,0.3);">
-      
-      <div class="row">
-        <!-- ด้านบวก -->
-        <div class="col-md-6 mb-3">
-          <h5 class="text-success font-weight-bold mb-2"><i class="fas fa-check-circle mr-1"></i> จุดเด่นและสิ่งดีๆ ที่จะเกิดขึ้น (เกณฑ์บวก)</h5>
-          <ul class="text-white-50 pl-3" style="line-height:1.6;font-size:1.05rem;">
-            ${pred.positive.map(item => `<li class="mb-1">${item}</li>`).join("")}
-          </ul>
+    <div class="active-dasha-card p-3 p-md-4 mb-4 mt-3" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 2px solid #ffd700 !important; border-radius: 20px; box-shadow: 0 8px 25px rgba(255,215,0,0.15);">
+      <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 pb-3" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <div>
+          <span class="badge py-2 px-3 mb-2" style="background:rgba(255,215,0,0.15); color:#ffd700; border:1px solid rgba(255,215,0,0.4); font-size:0.9rem;">
+            <i class="fas fa-history me-1"></i> ปัจจุบันดวงชะตาตกอยู่ภายใต้ทศา
+          </span>
+          <h2 class="text-white fw-bold mb-0 mt-1" style="font-family: 'Chonburi', serif; font-size: 1.6rem;">
+            <span style="color:${activeDasha.color};">${activeDasha.icon} ดาว${activeDasha.planet}</span> 
+            <small class="text-white-50" style="font-size: 1rem; font-family: 'Sarabun';">(${activeDasha.element})</small>
+          </h2>
         </div>
-        <!-- ด้านลบ -->
-        <div class="col-md-6 mb-3">
-          <h5 class="text-danger font-weight-bold mb-2"><i class="fas fa-exclamation-circle mr-1"></i> ข้อควรระวังและอุปสรรค (เกณฑ์ลบ)</h5>
-          <ul class="text-white-50 pl-3" style="line-height:1.6;font-size:1.05rem;">
-            ${pred.negative.map(item => `<li class="mb-1">${item}</li>`).join("")}
-          </ul>
+        <div class="text-md-end mt-2 mt-md-0">
+          <div class="text-light small">ช่วงอายุเสวย: <strong>ย่างเข้าอายุ ${activeDasha.ageStart + 1} ถึงอายุ ${activeDasha.ageEnd} ปี</strong></div>
+          <div class="small fw-bold" style="color:#ffd700;">(ครอบคลุมปี พ.ศ. ${activeDasha.yearStartCal + 543} ถึง พ.ศ. ${activeDasha.yearEndCal + 543})</div>
         </div>
       </div>
       
-      <div class="mt-2 p-3 rounded" style="background:rgba(0,0,0,0.3);border-left:4px solid ${activeDasha.color};">
-        <h6 class="font-weight-bold mb-1" style="color:${activeDasha.color};"><i class="fas fa-bookmark mr-1"></i> บทสรุปแนวทางการดำเนินชีวิตตามตำราหลวง:</h6>
-        <p class="text-white mb-0" style="line-height:1.6;font-size:1.05rem;">${pred.summary}</p>
+      <div class="row g-3">
+        <!-- ด้านบวก -->
+        <div class="col-md-6 col-12">
+          <div class="p-3 rounded-3 h-100" style="background:rgba(34, 197, 94, 0.12); border:1px solid rgba(34, 197, 94, 0.35);">
+            <h6 class="text-success fw-bold mb-2 small"><i class="fas fa-check-circle me-1"></i> จุดเด่นและสิ่งดีๆ ที่จะเกิดขึ้น (เกณฑ์บวก)</h6>
+            <ul class="text-light mb-0 ps-3 small" style="line-height:1.6;">
+              ${pred.positive.map(item => `<li class="mb-1">${item}</li>`).join("")}
+            </ul>
+          </div>
+        </div>
+        <!-- ด้านลบ -->
+        <div class="col-md-6 col-12">
+          <div class="p-3 rounded-3 h-100" style="background:rgba(239, 68, 68, 0.12); border:1px solid rgba(239, 68, 68, 0.35);">
+            <h6 class="text-danger fw-bold mb-2 small"><i class="fas fa-exclamation-triangle me-1"></i> ข้อควรระวังและอุปสรรค (เกณฑ์ลบ)</h6>
+            <ul class="text-light mb-0 ps-3 small" style="line-height:1.6;">
+              ${pred.negative.map(item => `<li class="mb-1">${item}</li>`).join("")}
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-3 p-3 rounded-3" style="background:rgba(0,0,0,0.3);border-left:4px solid ${activeDasha.color}; border-top:1px solid rgba(255,255,255,0.05); border-right:1px solid rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.05);">
+        <h6 class="fw-bold mb-1 small" style="color:${activeDasha.color};"><i class="fas fa-bookmark me-1"></i> บทสรุปแนวทางการดำเนินชีวิตตามตำราหลวง:</h6>
+        <p class="text-light mb-0 small" style="line-height:1.6; opacity: 0.95;">${pred.summary}</p>
       </div>
     </div>
 
@@ -421,61 +428,90 @@ function showDashaPage() {
   }
 
   c.innerHTML = `
-    <div class="headpage">
-      <h1>🪐 ทศาดาว</h1>
-      <p class="text">ช่วงอายุดาวเจ้าของตามหลักโหราศาสตร์ไทย-อินเดีย (120 ปี)</p>
-    </div>
-    <div class="container">
-      <div class="card shadow-lg" style="background:#1a1a1a;border:1px solid rgba(212,175,55,0.4);border-radius:16px;">
-        <div class="card-body p-4">
-          <div class="row justify-content-center mb-4">
-            <!-- ตัวเลือกสมาชิก -->
-            <div class="col-md-5 mb-3 mb-md-0">
-              <label class="text-gold mb-1">👥 เลือกสมาชิกจากประวัติ</label>
-              <select id="dashaMemberSelect" class="member-selector-shared form-control bg-dark text-white border-gold" onchange="autoFillMemberData(this.value); dashaMemberSelected(this)">
-                <option value="">-- เลือกสมาชิก --</option>
+    <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px;">
+      
+      <!-- Main Hero Card -->
+      <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
+        
+        <!-- Header -->
+        <div class="card-header text-center py-4 py-md-5 position-relative" style="background: linear-gradient(180deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+          <div style="display: inline-flex; align-items: center; justify-content: center; width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(21, 25, 53, 0.8) 100%); border: 2px solid rgba(232, 200, 118, 0.6); box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);" class="mb-2 animate__animated animate__rotateIn">
+            <i class="fas fa-satellite fa-2x" style="color: #ffd700; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6));"></i>
+          </div>
+          <h1 class="fw-bold mb-2" style="font-family: 'Chonburi', 'Sarabun', serif; color: #ffd700; text-shadow: 0 2px 10px rgba(255,215,0,0.3); font-size: clamp(1.8rem, 4vw, 2.4rem);">🪐 ทศาดาวพยากรณ์</h1>
+          <p class="text-light mb-0" style="font-size: 1rem; opacity: 0.85; letter-spacing: 0.5px;">ช่วงเวลาที่ดาวแต่ละดวงเสวยอายุ ตามหลักโหราศาสตร์ไทย-อินเดีย (๑๒๐ ปี)</p>
+        </div>
+
+        <div class="card-body p-3 p-md-4">
+          
+          <div style="max-width: 900px; margin: 0 auto;" class="mb-4">
+            
+            <!-- Member Selector Box -->
+            <div class="p-3 mb-4 rounded-3" style="background: rgba(35, 42, 86, 0.5); border: 1px dashed rgba(201, 164, 92, 0.45);">
+              <label class="form-label fw-bold d-flex align-items-center gap-2 mb-2" style="color: #e8c876;">
+                <i class="fas fa-user-circle"></i> ดึงข้อมูลจากสมาชิก (ตัวเลือกเสริม):
+              </label>
+              <select id="dashaMemberSelect" class="member-selector-shared form-select bg-dark text-white border-gold" 
+                      onchange="autoFillMemberData(this.value); dashaMemberSelected(this)"
+                      style="border-color: rgba(212, 175, 55, 0.5); border-radius: 10px; padding: 10px 14px;">
+                <option value="">-- เลือกจากฐานข้อมูลสมาชิก --</option>
               </select>
             </div>
-            <div class="col-md-5">
-              <label class="text-gold mb-1">วัน/เดือน/ปีเกิด</label>
-              <div class="input-group">
-                <input type="date" id="dashaBirthDate" class="form-control bg-dark text-white border-gold"
+
+            <!-- Inputs Row -->
+            <div class="row g-3 align-items-end justify-content-center">
+              <div class="col-md-8 col-12">
+                <label class="form-label fw-semibold" style="color: #e8c876;"><i class="fas fa-calendar-day me-1"></i> วัน/เดือน/ปีเกิด (ค.ศ.):</label>
+                <input type="date" id="dashaBirthDate" class="form-control bg-dark text-white border-gold text-center"
                   value="${isoDate}"
-                  style="border-radius:10px 0 0 10px;"
+                  style="border-radius: 12px; height: 48px; border-color: rgba(212, 175, 55, 0.4); font-weight: bold;"
                   onchange="checkDashaWednesday()"
                   onkeydown="if(event.key==='Enter') renderDashaPage()">
-                <div class="input-group-append">
-                  <button class="btn btn-gold" onclick="renderDashaPage()" style="border-radius:0 10px 10px 0;">
-                    <i class="fas fa-calculator mr-1"></i> คำนวณ
-                  </button>
+              </div>
+              <div class="col-md-4 col-12">
+                <button class="btn btn-gold w-100 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-lg" onclick="renderDashaPage()" style="border-radius: 12px; height: 48px;">
+                  <i class="fas fa-calculator"></i> คำนวณทศาดาว
+                </button>
+              </div>
+            </div>
+
+            <!-- Wednesday Time Row -->
+            <div class="row justify-content-center mt-3" id="dashaWednesdayTimeRow" style="display:none;">
+              <div class="col-12 text-center">
+                <div class="p-3 rounded-3" style="background: rgba(212,175,55,0.08); border: 1px dashed #ffd700; display: inline-block;">
+                  <span class="text-gold fw-bold me-3"><i class="fas fa-clock me-1"></i> เกิดวันพุธ เลือกเวลาตกฟาก:</span>
+                  <div class="form-check form-check-inline text-white">
+                    <input type="radio" id="dashaWedDay" name="dashaWedTime" class="form-check-input" checked onchange="renderDashaPage()">
+                    <label class="form-check-label" for="dashaWedDay">☀️ พุธกลางวัน (06.00 - 17.59 น.)</label>
+                  </div>
+                  <div class="form-check form-check-inline text-white">
+                    <input type="radio" id="dashaWedNight" name="dashaWedTime" class="form-check-input" onchange="renderDashaPage()">
+                    <label class="form-check-label" for="dashaWedNight">🌙 พุธกลางคืน (18.00 - 05.59 น.)</label>
+                  </div>
                 </div>
               </div>
             </div>
+
           </div>
-          
-          <!-- แผงสลับ พุธกลางวัน / พุธกลางคืน (ซ่อนไว้เริ่มต้น แสดงเมื่อคำนวณวันเกิดตกวันพุธ) -->
-          <div class="row justify-content-center mb-3" id="dashaWednesdayTimeRow" style="display:none;">
-            <div class="col-md-10 text-center">
-              <div class="p-3 rounded border border-warning" style="background:rgba(212,175,55,0.06);display:inline-block;padding: 10px 30px !important;">
-                <span class="text-gold font-weight-bold mr-3"><i class="fas fa-clock"></i> เกิดวันพุธ เลือกเวลาตกฟาก:</span>
-                <div class="custom-control custom-radio custom-control-inline text-white">
-                  <input type="radio" id="dashaWedDay" name="dashaWedTime" class="custom-control-input" checked onchange="renderDashaPage()">
-                  <label class="custom-control-label" for="dashaWedDay">☀️ พุธกลางวัน (06.00 - 17.59 น.)</label>
-                </div>
-                <div class="custom-control custom-radio custom-control-inline text-white">
-                  <input type="radio" id="dashaWedNight" name="dashaWedTime" class="custom-control-input" onchange="renderDashaPage()">
-                  <label class="custom-control-label" for="dashaWedNight">🌙 พุธกลางคืน (18.00 - 05.59 น.)</label>
-                </div>
-              </div>
-            </div>
-          </div>
-          
+
+          <!-- Result Div -->
           <div id="dashaContent"></div>
+
         </div>
       </div>
-      <div class="row mt-3">
-        <div class="col-6"><button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')"><i class="fas fa-chevron-left"></i> ห้องพยากรณ์</button></div>
-        <div class="col-6"><button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()"><i class="fas fa-home"></i> หน้าหลัก</button></div>
+
+      <!-- Bottom Navigation -->
+      <div class="row mt-4 g-2">
+        <div class="col-6">
+          <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="navigateTo('mainpage')">
+            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+          </button>
+        </div>
+        <div class="col-6">
+          <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="goBack()">
+            <i class="fas fa-home"></i> กลับหน้าหลัก
+          </button>
+        </div>
       </div>
     </div>`;
 

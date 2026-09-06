@@ -155,12 +155,12 @@ function updateAllMemberSelectors(allHistory) {
     if (!Array.isArray(history)) history = [];
 
     // ดึง Select ทุกตัวที่มี id หรือ class ที่เรากำหนดไว้
-    const selectors = document.querySelectorAll('#nameMemberSelect, #memberSelect, .member-selector-shared');
+    const selectors = document.querySelectorAll('#nameMemberSelect, #memberSelect, .member-selector-shared, .member-selector, #dsMemberSelect1, #dsMemberSelect2');
 
     selectors.forEach(select => {
         if (select.id === 'profileMemberSelect') return; // หน้า profile มีระบบ initStandaloneProfile ของตนเอง
         const currentVal = select.value; // เก็บค่าที่เลือกค้างไว้ก่อนหน้า (ถ้ามี)
-        select.innerHTML = '<option value="">-- เลือกสมาชิก --</option>';
+        select.innerHTML = '<option value="">-- เลือกสมาชิกจากประวัติ --</option>';
 
         history.forEach(member => {
             if (!member) return;
@@ -1332,151 +1332,184 @@ function showProfilePage(data, memberId) {
     const monthPredFn = typeof getMonthPrediction === 'function' ? getMonthPrediction : (typeof window !== 'undefined' ? window.getMonthPrediction : null);
     const zodiacPredFn = typeof getZodiacPrediction === 'function' ? getZodiacPrediction : (typeof window !== 'undefined' ? window.getZodiacPrediction : null);
 
-    // 8. แสดงผลแผ่นดวงชะตา (ธีม ทอง-ม่วงอ่อน)
-    const _saveBtnStyle = `style="background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 6px;border-radius:6px;opacity:0.7;" title="บันทึกภาพส่วนนี้" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"`;
+    // 8. แสดงผลแผ่นดวงชะตา (ธีม Modern Cute Pastel Claymorphism & Royal Gold)
     predictionArea.innerHTML = `
-        <div class="text-end mb-2 d-flex justify-content-end align-items-center" style="gap: 10px;">
-            ${role !== 'admin' ? `
-            <button class="btn btn-sm" style="background: linear-gradient(135deg, #d4af37, #b8960c); color: #000; font-weight: bold; border-color: #d4af37;" onclick="if(typeof navigateTo === 'function') navigateTo('package');">
-                <i class="fas fa-level-up-alt"></i> อัปเกรดระดับสมาชิก
-            </button>
-            ` : ''}
-            <button class="btn btn-sm text-white" style="background-color: #6a0dad; border-color: #d4af37;" onclick="saveHoroscopeImage()">
-                <i class="fas fa-camera"></i> บันทึกทั้งหมด
-            </button>
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3" style="border-bottom: 2px dashed #ece7f8; gap: 12px;">
+            <div class="d-flex align-items-center" style="gap: 10px;">
+                <span style="background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #ffffff; font-size: 0.9rem; padding: 6px 16px; border-radius: 50px; font-weight: 700; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25); display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-certificate text-warning"></i> แผ่นดวงชะตาฉบับเต็ม
+                </span>
+            </div>
+            <div class="d-flex align-items-center" style="gap: 10px;">
+                ${role !== 'admin' ? `
+                <button class="btn-cute-action" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);" onclick="if(typeof navigateTo === 'function') navigateTo('package');">
+                    <i class="fas fa-crown"></i> อัปเกรด VIP
+                </button>
+                ` : ''}
+                <button class="btn-cute-action" onclick="saveHoroscopeImage()">
+                    <i class="fas fa-camera"></i> บันทึกรูปภาพ
+                </button>
+            </div>
         </div>
-        <div id="horoscopeCaptureArea" class="p-4 rounded shadow-sm" style="background: linear-gradient(135deg, #fdfaf0 0%, #f4effa 100%); border: 3px solid #d4af37; outline: 1px solid #9370db; outline-offset: -6px;">
 
-            <div id="profileSection_header" style="position:relative;">
-                <div class="text-center mb-4" style="padding-top:4px;">
-                    <h2 style="color:#6a0dad; font-weight: bold; text-shadow: 1px 1px 2px #d4af37;">🔮 แผ่นดวงชะตา</h2>
-                    <h4 style="color:#333; font-weight: bold; font-size: 24px; border-bottom: 2px dashed #d4af37; display: inline-block; padding-bottom: 5px; margin-bottom: 8px;">
-                        คุณ ${safeName} ${safeLastName} ${roleBadge}
-                    </h4>
-                    <div class="mt-1" style="font-size: 14px;">
-                        <span class="badge" style="background-color: #6a0dad; color: #fff; padding: 6px 12px; font-size: 0.9em; border-radius: 12px;">
-                            <i class="fas fa-id-badge" style="color:#d4af37;"></i> รหัสสมาชิก: ${data.memberId || 'สมาชิกใหม่'}
+        <div id="horoscopeCaptureArea" style="background: #ffffff; border-radius: 24px; padding: 24px; border: 2px solid #ffffff; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.06);">
+            
+            <!-- Header Section (Clean cute card) -->
+            <div id="profileSection_header" style="position:relative; margin-bottom: 20px;">
+                <div class="d-flex flex-wrap align-items-center justify-content-between p-3 rounded-4" style="background: linear-gradient(135deg, #fbf7ff 0%, #fef4f8 100%); border-radius: 20px; border: 1.5px solid #f1e9fb;">
+                    <div class="d-flex align-items-center" style="gap: 16px;">
+                        <div style="width: 60px; height: 60px; border-radius: 18px; background: linear-gradient(135deg, #fbcfe8, #e9d5ff); display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 6px 16px rgba(244, 114, 182, 0.25); border: 2px solid #ffffff;">
+                            🔮
+                        </div>
+                        <div>
+                            <h2 style="color: #4c1d95; font-size: 1.35rem; font-weight: 800; margin: 0;">
+                                แผ่นดวงชะตาส่วนบุคคล
+                            </h2>
+                            <h3 style="color: #1e1b4b; font-weight: 800; font-size: 1.25rem; margin: 2px 0 0 0;">
+                                คุณ ${safeName} ${safeLastName} ${roleBadge}
+                            </h3>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex flex-wrap align-items-center" style="gap: 8px; margin-top: 8px;">
+                        <span style="background: #ede9fe; color: #6d28d9; padding: 6px 14px; font-size: 0.82rem; border-radius: 50px; font-weight: 700;">
+                            <i class="fas fa-id-badge text-purple"></i> ID: ${data.memberId || 'สมาชิกใหม่'}
+                        </span>
+                        <span style="background: #fef3c7; color: #b45309; padding: 6px 14px; font-size: 0.82rem; border-radius: 50px; font-weight: 700;">
+                            <i class="fas fa-map-marker-alt text-danger"></i> ${data.province || "กรุงเทพมหานคร"}
                         </span>
                     </div>
-                    <div class="mt-2 text-muted" style="font-size: 14px;">
-                        <i class="fas fa-map-marker-alt text-danger"></i> จังหวัดที่เกิด: ${data.province || "ไม่ระบุ (อ้างอิง กทม.)"}
-                    </div>
                 </div>
-                <div class="row text-center mb-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="p-2 rounded" style="background-color: rgba(212, 175, 55, 0.1); border: 1px solid #d4af37;">
-                            <strong>อายุย่างปัจจุบัน</strong><br>
-                            <span style="font-size: 20px; color: #b8860b; font-weight: bold;">${currentAge} ปี</span>
+            </div>
+
+            <!-- Calendar & Birth Timing Section (Modern Clean Card) -->
+            <div id="profileSection_calendar" class="mb-4" style="position:relative;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span style="font-weight: 800; font-size: 0.95rem; color: #4c1d95; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="far fa-calendar-alt" style="color: #8b5cf6;"></i> ข้อมูลปฏิทินและเวลาเกิด
+                    </span>
+                    <button class="btn-cute-action" style="padding: 3px 12px; font-size: 0.72rem;" onclick="saveSection('profileSection_calendar','ข้อมูลปฏิทิน')">
+                        <i class="fas fa-camera"></i> แคปส่วนนี้
+                    </button>
+                </div>
+                
+                <div style="background: #faf8ff; border-radius: 18px; padding: 18px; border: 1.5px solid #ece7f8;">
+                    <div class="row" style="row-gap: 14px;">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start" style="gap: 12px;">
+                                <i class="fas fa-sun text-warning fa-lg mt-1"></i>
+                                <div>
+                                    <strong style="color: #0f172a; font-size: 0.95rem;">สุริยคติ:</strong> 
+                                    <span style="color: #1e293b; font-weight: 700; font-size: 0.95rem;">${displayDay} ที่ ${birthDateObj.getDate()} ${monthNames[monthIdx]} พ.ศ. ${year + 543}</span>
+                                    ${astNote}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start" style="gap: 12px;">
+                                <i class="fas fa-moon fa-lg mt-1" style="color: #6b21a8;"></i>
+                                <div>
+                                    <strong style="color: #0f172a; font-size: 0.95rem;">จันทรคติไทย:</strong> 
+                                    <span style="color: #581c87; font-weight: 700; font-size: 0.95rem;">${lunarStr || "ไม่สามารถแปลงได้"}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2 pt-3 border-top" style="border-color: #e2e8f0 !important;">
+                            <div class="d-flex flex-wrap align-items-center" style="gap: 24px;">
+                                <div>
+                                    <i class="far fa-clock text-primary mr-1"></i>
+                                    <strong style="color: #0f172a;">เวลาเกิด:</strong> <span style="color: #0f172a; font-weight: 700;">${cleanTime} น.</span>
+                                </div>
+                                <div>
+                                    <i class="fas fa-yin-yang text-primary mr-1"></i>
+                                    <strong style="color: #0f172a;">ยามเกิด:</strong> <span style="color: #0f172a; font-weight: 700;">${yam || "ไม่ระบุ"}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="p-2 rounded" style="background-color: rgba(147, 112, 219, 0.1); border: 1px solid #9370db;">
-                            <strong>ลัคนา</strong><br>
-                            <span style="font-size: 20px; color: #6a0dad; font-weight: bold;">${ascText}</span>
-                            <br>${ascDesc}
+                </div>
+            </div>
+
+            <!-- Elements Section -->
+            <div id="profileSection_elements" class="mb-4" style="position:relative;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="section-title-badge">
+                        <i class="fas fa-atom" style="color: #059669;"></i> องค์ประกอบธาตุประจำตัว
+                    </div>
+                    <button class="snap-btn" onclick="saveSection('profileSection_elements','องค์ประกอบธาตุประจำตัว')" title="บันทึกภาพส่วนนี้">
+                        <i class="fas fa-camera"></i> แคปส่วนนี้
+                    </button>
+                </div>
+
+                <div class="row" style="row-gap: 12px;">
+                    <div class="col-md-4">
+                        <div class="element-pill-box h-100" style="background:#ffffff; border-left: 5px solid ${elementData.color}; border-top: 1.5px solid #e2e8f0; border-right: 1.5px solid #e2e8f0; border-bottom: 1.5px solid #e2e8f0;">
+                            <strong style="color:#0f172a; font-size: 0.95rem;">
+                                🧬 ธาตุประจำวันเกิด: <span style="color:${elementData.color}; font-weight: 800;">${elementData.name} ${elementData.level || ""}</span>
+                            </strong>
+                            <div class="mt-1" style="font-size: 0.88rem; color:#334155; line-height: 1.5;">${elementData.desc}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="element-pill-box h-100" style="background:#ffffff; border-left: 5px solid ${mElement.color}; border-top: 1.5px solid #e2e8f0; border-right: 1.5px solid #e2e8f0; border-bottom: 1.5px solid #e2e8f0;">
+                            <strong style="color:#0f172a; font-size: 0.95rem;">
+                                📅 ธาตุเดือนเกิด: <span style="color:${mElement.color}; font-weight: 800;">${mElement.name}</span> (กำลัง: ${mElement.strength})
+                            </strong>
+                            <div class="mt-1" style="font-size: 0.88rem; color:#334155; line-height: 1.5;">${mElement.desc}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="element-pill-box h-100" style="background:#ffffff; border-left: 5px solid ${zElement.color}; border-top: 1.5px solid #e2e8f0; border-right: 1.5px solid #e2e8f0; border-bottom: 1.5px solid #e2e8f0;">
+                            <strong style="color:#0f172a; font-size: 0.95rem;">
+                                🐉 ธาตุปีนักษัตร (${zElement.name}): <span style="color:${zElement.color}; font-weight: 800;">${zElement.element}</span>
+                            </strong>
+                            <div class="mt-1" style="font-size: 0.88rem; color:#334155; line-height: 1.5;">${zElement.desc}</div>
+                            <div class="mt-1" style="font-size: 0.84rem; color:#0f172a;"><b>🚀 งานที่เหมาะ:</b> ${zElement.job || "ไม่ระบุ"}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3 p-3 rounded" style="background: #fffdf5; border: 1.5px dashed #d97706; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                    <div class="d-flex align-items-center mb-2" style="gap: 8px;">
+                        <i class="fas fa-balance-scale text-warning"></i>
+                        <span style="color:#78350f; font-weight:800; font-size: 0.98rem;">วิเคราะห์สมพงษ์และปฏิสัมพันธ์ของธาตุ</span>
+                    </div>
+                    <div class="row" style="row-gap: 8px; font-size: 0.9rem;">
+                        <div class="col-md-6">
+                            <span style="color:#475569; font-weight: 600;">วันเกิด (${elementData.name}) + เดือนเกิด (${mElement.name}):</span>
+                            <div class="font-weight-bold" style="color: #0f172a;">${relDayMonth}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <span style="color:#475569; font-weight: 600;">วันเกิด (${elementData.name}) + ปีนักษัตร (${zElement.element}):</span>
+                            <div class="font-weight-bold" style="color: #0f172a;">${relDayYear}</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <hr style="border-top:1px dashed #d4af37; margin: 8px 0 12px;">
-
-            <div id="profileSection_calendar" style="position:relative; padding-top:6px;">
-                <button onclick="saveSection('profileSection_calendar','ข้อมูลปฏิทิน')" style="position:absolute;top:0;right:0;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพส่วนนี้" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
-                    <i class="fas fa-camera"></i>
-                </button>
-                <div class="p-3 mb-2 rounded" style="background: #fff; border: 1px solid #e0d4f5;">
-                    <div class="mb-2">
-                        <strong>📅 ข้อมูลปฏิทิน:</strong> ${displayDay} ที่ ${birthDateObj.getDate()} ${monthNames[monthIdx]} พ.ศ. ${year + 543}
-                        ${astNote}
-                    </div>
-                    <div class="mb-2">
-                        <strong>🌙 จันทรคติไทย:</strong> <span style="color:#6a0dad;">${lunarStr || "ไม่สามารถแปลงได้"}</span>
-                    </div>
-                    <div>
-                        <strong>⏰ เวลาเกิด:</strong> ${cleanTime} น. &nbsp;|&nbsp; <strong>ยามเกิด:</strong> ${yam || "ไม่ระบุ"}
-                    </div>
-                </div>
-            </div>
-
-            <hr style="border-top:1px dashed #9370db; margin: 12px 0;">
-
-            <div id="profileSection_elements" style="position:relative; padding-top:6px;">
-                <button onclick="saveSection('profileSection_elements','องค์ประกอบธาตุประจำตัว')" style="position:absolute;top:0;right:0;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพส่วนนี้" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
-                    <i class="fas fa-camera"></i>
-                </button>
-                <h5 class="text-center" style="color:#6a0dad; margin-top: 8px;">🌟 องค์ประกอบธาตุประจำตัว</h5>
-                <div class="mb-2 p-3 rounded shadow-sm" style="background:${elementData.color}15; border-left: 5px solid ${elementData.color}">
-                    <strong style="color:${elementData.color}">🧬 ธาตุประจำวันเกิด (${dayNames[dayIdx]}): ${elementData.name} ${elementData.level || ""}</strong>
-                    <br><span style="font-weight: normal; color:#444;">บุคลิก: ${elementData.desc}</span>
-                </div>
-                <div class="mb-2 p-3 rounded shadow-sm" style="background:${mElement.color}15; border-left: 5px solid ${mElement.color}">
-                    <strong style="color:${mElement.color}">📅 ธาตุเดือนเกิด: ${mElement.name} ${mElement.level || ""} (กำลัง: ${mElement.strength})</strong>
-                    <br><span style="font-weight: normal; color:#444;">บุคลิก: ${mElement.desc}</span>
-                </div>
-                <div class="mb-3 p-3 rounded shadow-sm" style="background:${zElement.color}15; border-left: 5px solid ${zElement.color}">
-                    <strong style="color:${zElement.color}">🐉 ธาตุปีนักษัตร (${zElement.name}): ${zElement.element}</strong>
-                    <br><span style="font-weight: normal; color:#444;">บุคลิก: ${zElement.desc}</span>
-                    <br><span style="font-weight: normal; color:#555;">🚀 <b>งานที่เหมาะ:</b> ${zElement.job || "ไม่ระบุ"}</span>
-                </div>
-                <div class="mt-2 p-3 rounded shadow-sm" style="background:#fff; border: 1px dashed #d4af37;">
-                    <h6 style="color:#b8860b; font-weight:bold;">⚖️ วิเคราะห์สมพงษ์ธาตุ</h6>
-                    <ul class="mb-0" style="padding-left: 20px; font-size: 0.9em; color:#444;">
-                        <li style="color:#444;"><strong style="color:#555;">วันเกิด (${elementData.name}) + เดือนเกิด (${mElement.name}):</strong> ${relDayMonth}</li>
-                        <li style="color:#444;"><strong style="color:#555;">วันเกิด (${elementData.name}) + ปีนักษัตร (${zElement.element}):</strong> ${relDayYear}</li>
-                    </ul>
-                </div>
-            </div>
-
-            <hr style="border-top:1px dashed #9370db; margin: 16px 0;">
-
-            <div id="profileSection_prediction" style="position:relative; padding-top:6px;">
-                <h5 class="text-center" style="color:#6a0dad; margin-top: 8px; margin-bottom: 15px;">📖 คำทำนายพื้นดวงชะตา</h5>
-                
-                <div id="profileSection_pred_day" class="mb-3 p-3 rounded shadow-sm" style="position:relative; background:#fff; border: 1px solid #e0d4f5;">
-                    <button onclick="saveSection('profileSection_pred_day','คำทำนายวันเกิด')" style="position:absolute;top:5px;right:5px;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพคำทำนายวันเกิด" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
-                        <i class="fas fa-camera"></i>
-                    </button>
-                    <strong style="color:#b8860b">คำทำนายวันเกิด:</strong>
-                    <div style="font-size: 0.9em; margin-top: 5px; color:#333;">${dayPredFn ? dayPredFn(dayIdx) : "-"}</div>
-                </div>
-                
-                <div id="profileSection_pred_month" class="mb-3 p-3 rounded shadow-sm" style="position:relative; background:#fff; border: 1px solid #e0d4f5;">
-                    <button onclick="saveSection('profileSection_pred_month','คำทำนายเดือนเกิด')" style="position:absolute;top:5px;right:5px;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพคำทำนายเดือนเกิด" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
-                        <i class="fas fa-camera"></i>
-                    </button>
-                    <strong style="color:#b8860b">คำทำนายเดือนเกิด:</strong>
-                    <div style="font-size: 0.9em; margin-top: 5px; color:#333;">${monthPredFn ? monthPredFn(monthIdx) : "-"}</div>
-                </div>
-                
-                <div id="profileSection_pred_year" class="mb-3 p-3 rounded shadow-sm" style="position:relative; background:#fff; border: 1px solid #e0d4f5;">
-                    <button onclick="saveSection('profileSection_pred_year','คำทำนายปีนักษัตร')" style="position:absolute;top:5px;right:5px;background:none;border:none;cursor:pointer;color:#9370db;font-size:13px;padding:2px 8px;border-radius:6px;opacity:0.7;" title="บันทึกภาพคำทำนายปีนักษัตร" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
-                        <i class="fas fa-camera"></i>
-                    </button>
-                    <strong style="color:#b8860b">คำทำนายปีนักษัตร:</strong>
-                    <div style="font-size: 0.9em; margin-top: 5px; color:#333;">${zodiacPredFn ? zodiacPredFn(["ชวด", "ฉลู", "ขาล", "เถาะ", "มะโรง", "มะเส็ง", "มะเมีย", "มะแม", "วอก", "ระกา", "จอ", "กุน"].indexOf(zElement.name)) : "-"}</div>
-                </div>
-            </div>
-
-            <hr style="border-top:1px dashed #9370db; margin-top:20px;">
-            <div class="text-center mt-3">
-                <p class="small text-muted" style="font-size:12px;">ดวงชะตานี้คำนวณด้วยหลักโหราศาสตร์ไทย นิรายันระบบ และการตัดวันเวลา 06:00 น.</p>
+            <!-- Footer Stamp -->
+            <div class="text-center mt-3 pt-3" style="border-top: 1px dashed #e2d9f3;">
+                <p class="mb-0 text-muted" style="font-size: 11px;">
+                    ✨ คำนวณตามคัมภีร์สุริยยาตร์ โหราศาสตร์ไทยนิรายันวิธี และยึดหลักตัดรอบวันเวลา 06:00 น. • สยามโหรามงคล
+                </p>
             </div>
         </div>
         
-        <div class="text-center mt-4">
+        <div class="text-center mt-3 mb-2">
             ${typeof isAdmin === 'function' && isAdmin() ?
                 `<p class="small text-success mb-2"><i class="fas fa-crown mr-2"></i>👑 Admin: จัดการข้อมูลจำนวนไม่จำกัด</p>` :
                 `<p class="small text-muted mb-2">💾 ระบบเก็บข้อมูลแบบ 1 คน 1 รายการ</p>
-                <button class="btn btn-danger btn-sm" onclick="deleteSingleProfile()" style="background-color: #dc3545; border: none;">
-                    <i class="fas fa-trash mr-2"></i>ลบข้อมูลสมาชิก
-                </button>
-                <p class="small text-muted mt-2">
-                    <i class="fas fa-info-circle mr-1"></i>หากต้องการเพิ่มข้อมูลใหม่ ให้ลบอันเก่าออกก่อน
-                </p>`
+                <button class="btn btn-outline-danger btn-sm" onclick="deleteSingleProfile()" style="border-radius: 50px; padding: 4px 14px; font-size:0.75rem;">
+                    <i class="fas fa-trash mr-1"></i>ลบข้อมูลสมาชิก
+                </button>`
             }
         </div>
     `;
+
+    // Trigger cute dashboard UI update if on profile page
+    if (typeof window.updateCuteProfileUI === 'function') {
+        window.updateCuteProfileUI(data);
+    }
 }
 
 function initProfileOnPageLoad() {
@@ -2034,12 +2067,35 @@ window.autoFillMemberData = function (memberKey) {
         }
     }
 
+    // ---- ส่วนของหน้า ฮวงจุ้ยตามหลักแท้ (fengshui.js) ----
+    const isFengShuiPage = isPageVisible('fengShuiPage');
+    if (isFengShuiPage) {
+        const fengshuiBirthDateEl = document.getElementById('fengshuiBirthday');
+        if (fengshuiBirthDateEl && formattedDate) {
+            fengshuiBirthDateEl.value = formattedDate;
+        }
+    }
+
+    // ---- ส่วนของหน้า พิรุณศาสตร์ (climate.js) ----
+    const isClimateSection = isPageVisible('climate-section');
+    if (isClimateSection) {
+        const pirunBirthDateEl = document.getElementById('pirunBirthDate');
+        if (pirunBirthDateEl && formattedDate) {
+            pirunBirthDateEl.value = formattedDate;
+            setTimeout(() => {
+                if (typeof calculatePirun === 'function') calculatePirun();
+            }, 100);
+        }
+    }
+
     // ---- ส่วนของหน้าทักษาพยากรณ์ (thaksanine.js) ----    
-    const isshowthaksaninepage = isPageVisible('showthaksaninepage');
+    const isshowthaksaninepage = isPageVisible('showthaksaninepage') || isPageVisible('thaksaninesection');
 
     if (isshowthaksaninepage) {
         const weekdaySelect = document.getElementById('weekday');
         const ageInput = document.getElementById('age');
+        const monthInput = document.getElementById('month');
+        const weekInput = document.getElementById('week');
 
         if (weekdaySelect) {
             const birthDay = window.getAstrologicalDayOfWeek(formattedDate, finalMember ? finalMember.birthtime : null);
@@ -2048,6 +2104,15 @@ window.autoFillMemberData = function (memberKey) {
 
         if (ageInput) {
             ageInput.value = window.calculateRunningAge(formattedDate);
+        }
+
+        // อัปเดตเดือนจรและสัปดาห์จรปัจจุบันแบบเรียลไทม์
+        const now = new Date();
+        if (monthInput) monthInput.value = now.getMonth() + 1;
+        if (weekInput) {
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const pastDaysOfYear = (now - startOfYear) / 86400000;
+            weekInput.value = Math.min(52, Math.max(1, Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7)));
         }
 
         // สั่งคำนวณอัตโนมัติ (ใช้ calculateAll สำหรับหน้านี้)
@@ -2099,49 +2164,58 @@ if (istaksapage && finalMember) {
 }
 
 
-const isbirthfortune = isPageVisible('birthfortune');
+    const isbirthfortune = isPageVisible('birthfortune');
 
-if (isbirthfortune) {
-    const birthfortune = document.getElementById('fortuneDay');
-    const monthfortune = document.getElementById('fortuneMonth');
-    const thaiyearname = 
-    {
-        'ชวด' : 0,
-        'ฉลู' : 1,
-        'ขาล' : 2,
-        'เถาะ' : 3,
-        'มะโรง' : 4,
-        'มะเส็ง' : 5,
-        'มะเมีย' : 6,
-        'มะแม' : 7,
-        'วอก' : 8,
-        'ระกา' : 9,
-        'จอ' : 10,
-        'กุน' : 11  
-    };
-    const yearfortune = document.getElementById('fortuneYear');
-    const befortune = document.getElementById('fortuneBE');
+    if (isbirthfortune) {
+        const birthfortune = document.getElementById('fortuneDay');
+        const monthfortune = document.getElementById('fortuneMonth');
+        const yearfortune = document.getElementById('fortuneYear');
+        const befortune = document.getElementById('fortuneBE');
+        const activeMember = finalMember || member;
 
+        if (activeMember && activeMember.birthdate) {
+            // คำนวณวันในสัปดาห์ (1=อาทิตย์, 2=จันทร์, ..., 5=พฤหัสบดี, 6=ศุกร์, 7=เสาร์)
+            if (birthfortune && formattedDate) {
+                const dateObj = new Date(formattedDate + 'T00:00:00');
+                const jsDay = dateObj.getDay(); // 0=Sun, 1=Mon, ..., 4=Thu, 6=Sat
+                const astroDay = jsDay + 1; // 1=อาทิตย์ ... 5=พฤหัสบดี ... 7=เสาร์
+                birthfortune.value = String(astroDay);
+            }
 
-    if (birthfortune && member.birthdate) {
-            const birthDay = new Date(formattedDate).getDay();
-            birthfortune.value = birthDay;        
+            // เดือนเกิด (1-12)
+            if (monthfortune) {
+                if (activeMember.birthMonththai) {
+                    monthfortune.value = activeMember.birthMonththai;
+                } else if (formattedDate) {
+                    const m = parseInt(formattedDate.split('-')[1], 10);
+                    monthfortune.value = m;
+                }
+            }
+
+            // ปีนักษัตร (1=ชวด, ..., 12=กุน)
+            if (yearfortune && activeMember.zodiac) {
+                const thaiyear1Based = {
+                    'ชวด': 1, 'ฉลู': 2, 'ขาล': 3, 'เถาะ': 4,
+                    'มะโรง': 5, 'มะเส็ง': 6, 'มะเมีย': 7, 'มะแม': 8,
+                    'วอก': 9, 'ระกา': 10, 'จอ': 11, 'กุน': 12
+                };
+                const zodiacIdx = thaiyear1Based[activeMember.zodiac];
+                yearfortune.value = zodiacIdx !== undefined ? String(zodiacIdx) : "1";
+            }
+
+            // ปี พ.ศ.
+            if (befortune) {
+                const dObj = new Date(activeMember.birthdate);
+                let rawYear = dObj.getFullYear();
+                if (rawYear < 2400) rawYear += 543;
+                befortune.value = rawYear;
+            }
+
+            setTimeout(() => {
+                if (typeof calculateBirthFortune === 'function') calculateBirthFortune();
+            }, 100);
         }
-    
-
-    if (monthfortune && member.birthMonththai) {
-        monthfortune.value = member.birthMonththai;
     }
-
-    if (yearfortune && member.zodiac) {
-        const zodiacIdx = thaiyearname[member.zodiac];
-        yearfortune.value = zodiacIdx !== undefined ? zodiacIdx : "ไม่ระบุ";
-    }
-
-    if (befortune && member.birthdate) {
-        befortune.value = toBE(new Date(member.birthdate).getFullYear());
-    }
-}
 
 const promchartsection = isPageVisible('promchartsection');
 
@@ -2430,8 +2504,7 @@ if (isLottoPage && finalMember) {
     }
 }
 
-
-}
+};
 
 // เพิ่มไว้ท้ายไฟล์ membermanager.js เพื่อแก้ Error: calculateEsh is not defined
 window.saveToHistory = saveToHistory;

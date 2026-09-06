@@ -36,8 +36,47 @@ function calculateSoulmateDirection() {
             prediction = "ไม่พบคำทำนาย กรุณาตรวจสอบการเลือกวันและปี";
     }
 
-    // แสดงผล
     display.style.display = "block";
     display.className = "result-card neutral"; // ใช้สไตล์สีกลางๆ ตาม CSS ที่แต่งไว้
     textContent.innerHTML = `<p style="text-align:left;">${prediction}</p>`;
 }
+
+function autoFillSoulmateMember(memberId) {
+    if (!memberId) return;
+    const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
+    const member = allHistory.find(m => m.memberId === memberId || m.id === memberId || m.birthdate === memberId);
+    if (member && member.birthdate) {
+        let year = 0;
+        let dayOfWeek = 0;
+        if (member.birthdate.includes('/')) {
+            const parts = member.birthdate.split('/');
+            let y = parseInt(parts[2]);
+            if (y > 2400) y -= 543;
+            year = y;
+            const d = new Date(y, parseInt(parts[1]) - 1, parseInt(parts[0]));
+            dayOfWeek = d.getDay(); // 0 = Sun
+        } else if (member.birthdate.includes('-')) {
+            const parts = member.birthdate.split('-');
+            let y = parseInt(parts[0]);
+            if (y > 2400) y -= 543;
+            year = y;
+            const d = new Date(y, parseInt(parts[1]) - 1, parseInt(parts[2]));
+            dayOfWeek = d.getDay();
+        }
+        
+        // Day num (1=Sun, 2=Mon... 7=Sat)
+        const dayVal = (dayOfWeek + 1).toString();
+        const dEl = document.getElementById('userBirthDay');
+        if (dEl) dEl.value = dayVal;
+
+        if (year > 1900) {
+            // Rat=1, Ox=2 ... Pig=12
+            const idx = ((year - 1900) % 12) + 1; // 1900 is Rat(1)
+            const yEl = document.getElementById('userBirthYear');
+            if (yEl) yEl.value = idx.toString();
+        }
+        calculateSoulmateDirection();
+    }
+}
+
+window.autoFillSoulmateMember = autoFillSoulmateMember;

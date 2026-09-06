@@ -256,169 +256,346 @@ async function downloadSummaryImage(action = 'download') {
     if (!window.lastGeneratedCards || window.lastGeneratedCards.length === 0) return alert('ยังไม่มีข้อมูล กรุณากดสร้างข้อความก่อน');
     
     Swal.fire({
-        title: 'กำลังสร้างภาพสรุป...',
+        title: 'กำลังสร้างโปสเตอร์สรุปดวงชะตา...',
         allowOutsideClick: false,
         didOpen: () => { Swal.showLoading(); }
     });
 
     try {
         const cards = window.lastGeneratedCards;
-        const HEX_COLORS = {
-            "🔴": "#ff4d4d", "🟡": "#ffd700", "🩷": "#ffb6c1",
-            "🟢": "#00e676", "🟠": "#ff9100", "🔵": "#2979ff", "🟣": "#d500f9",
-            "♈": "#ff4d4d", "♉": "#00e676", "♊": "#ffd700", "♋": "#b0bec5",
-            "♌": "#ff9100", "♍": "#78909c", "♎": "#2979ff", "♏": "#d500f9",
-            "♐": "#ffab00", "♑": "#455a64", "♒": "#00b0ff", "♓": "#00e5ff"
-        };
-        
         const dateStr = document.getElementById('genDate').value;
+        const type = document.getElementById('genType') ? document.getElementById('genType').value : 'day';
         const dateObj = new Date(dateStr);
         const dateThStr = dateObj.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-        // Calculate layout
+        // Adjust canvas aspect to match reference poster (1080 x 1520 for 7 days, 1080 x 1920 for 12 zodiacs)
+        const isZodiac = (type === 'zodiac' || cards.length > 7);
         const canvasWidth = 1080;
-        const cols = 3;
-        const rows = Math.ceil(cards.length / cols);
-        const cardWidth = 310; // (1080 - 60 padding - 40 gap) / 3 ≈ 326 -> 310 for safety
-        const cardHeight = 280;
-        const gap = 20;
-        
-        const paddingTop = 130;
-        const titleAreaHeight = 120;
-        const gridHeight = rows * cardHeight + (rows - 1) * gap;
-        const bottomAreaHeight = 100;
-        const paddingBottom = 65;
-        
-        const canvasHeight = paddingTop + titleAreaHeight + gridHeight + bottomAreaHeight + paddingBottom;
+        const canvasHeight = isZodiac ? 1920 : 1520;
 
         const canvas = document.createElement('canvas');
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
         const ctx = canvas.getContext('2d');
 
-        // Background
-        const bgGrad = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
-        bgGrad.addColorStop(0, '#6c7293');
-        bgGrad.addColorStop(0.5, '#8c90a8');
-        bgGrad.addColorStop(1, '#6c7293');
+        // 1. Midnight Cosmic Gradient Background
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvasHeight);
+        bgGrad.addColorStop(0, '#060815');
+        bgGrad.addColorStop(0.3, '#0b1129');
+        bgGrad.addColorStop(0.65, '#130f2d');
+        bgGrad.addColorStop(1, '#050713');
         ctx.fillStyle = bgGrad;
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-        // Stars
-        ctx.fillStyle = 'white';
-        for (let i = 0; i < 50; i++) {
-            ctx.globalAlpha = Math.random() * 0.5 + 0.1;
-            ctx.font = (Math.random() * 10 + 8) + "px Arial";
-            ctx.fillText("✨", Math.random() * canvasWidth, Math.random() * canvasHeight);
+        // 2. Cosmic Nebula Glow Centers
+        const radGlow1 = ctx.createRadialGradient(canvasWidth * 0.5, 380, 60, canvasWidth * 0.5, 380, 560);
+        radGlow1.addColorStop(0, 'rgba(168, 85, 247, 0.28)');
+        radGlow1.addColorStop(0.45, 'rgba(234, 179, 8, 0.16)');
+        radGlow1.addColorStop(1, 'transparent');
+        ctx.fillStyle = radGlow1;
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        const radGlow2 = ctx.createRadialGradient(canvasWidth * 0.5, canvasHeight - 380, 60, canvasWidth * 0.5, canvasHeight - 380, 500);
+        radGlow2.addColorStop(0, 'rgba(56, 189, 248, 0.22)');
+        radGlow2.addColorStop(1, 'transparent');
+        ctx.fillStyle = radGlow2;
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        // 3. Ambient Sparkling Constellations
+        ctx.fillStyle = '#ffffff';
+        for (let i = 0; i < 95; i++) {
+            const sx = (Math.sin(i * 127 + 3) * 0.5 + 0.5) * canvasWidth;
+            const sy = (Math.cos(i * 53 + 11) * 0.5 + 0.5) * canvasHeight;
+            const r = (i % 7 === 0) ? 2.6 : ((i % 3 === 0) ? 1.8 : 1.1);
+            ctx.globalAlpha = 0.25 + ((i % 8) / 10);
+            ctx.beginPath();
+            ctx.arc(sx, sy, r, 0, Math.PI * 2);
+            ctx.fill();
         }
         ctx.globalAlpha = 1.0;
 
-        // Main Panel (Glassmorphism effect)
-        drawRoundedRect(ctx, 30, 35, canvasWidth - 60, canvasHeight - 70, 24, 'rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.4)', {color: 'rgba(0,0,0,0.1)', blur: 35});
+        // 4. Luxury Golden Borders & Corners
+        ctx.save();
+        ctx.strokeStyle = 'rgba(234, 179, 8, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(30, 30, canvasWidth - 60, canvasHeight - 60);
 
-        // Title
+        ctx.strokeStyle = 'rgba(234, 179, 8, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(40, 40, canvasWidth - 80, canvasHeight - 80);
+
+        const drawDiamond = (dx, dy) => {
+            ctx.save();
+            ctx.translate(dx, dy);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillStyle = '#facc15';
+            ctx.fillRect(-6.5, -6.5, 13, 13);
+            ctx.restore();
+        };
+        drawDiamond(30, 30);
+        drawDiamond(canvasWidth - 30, 30);
+        drawDiamond(30, canvasHeight - 30);
+        drawDiamond(canvasWidth - 30, canvasHeight - 30);
+        ctx.restore();
+
+        // 5. Header Section (Bold, Grand, Clear)
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
-        ctx.font = 'bold 48px "Sarabun", sans-serif';
-        drawStrokedText(ctx, "🌙 สรุปดวงประจำวัน", canvasWidth / 2, 60, '#FFDF73', 'rgba(0,0,0,0.3)', 2);
-        
-        ctx.font = '500 22px "Sarabun", sans-serif';
-        drawStrokedText(ctx, `ประจำ${dateThStr}`, canvasWidth / 2, 120, '#ffffff', 'rgba(0,0,0,0.2)', 1);
+        ctx.font = '700 16px "Prompt", sans-serif';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.letterSpacing = '3px';
+        ctx.fillText("✦  SIAM HORAMONGKOL • COSMIC ASTROLOGY MAP  ✦", canvasWidth / 2, 60);
 
-        // Grid
-        const startX = 30 + (canvasWidth - 60 - (cols * cardWidth + (cols - 1) * gap)) / 2;
-        const startY = paddingTop + titleAreaHeight;
+        // Main Poster Title (Gold Gradient with Glow)
+        ctx.font = '800 48px "Prompt", sans-serif';
+        const titleGrad = ctx.createLinearGradient(canvasWidth / 2 - 280, 92, canvasWidth / 2 + 280, 92);
+        titleGrad.addColorStop(0, '#fffbeb');
+        titleGrad.addColorStop(0.3, '#fde047');
+        titleGrad.addColorStop(0.7, '#f59e0b');
+        titleGrad.addColorStop(1, '#fde047');
+        ctx.fillStyle = titleGrad;
+        ctx.shadowColor = 'rgba(245, 158, 11, 0.6)';
+        ctx.shadowBlur = 22;
+        const mainHeader = isZodiac ? "แผนผังชะตาพลังจักรวาล 12 ราศี" : "แผนผังพลังชะตารายวัน 7 วันเกิด";
+        ctx.fillText(mainHeader, canvasWidth / 2, 90);
+        ctx.shadowBlur = 0;
 
-        for (let i = 0; i < cards.length; i++) {
+        // Subtitle Line
+        ctx.font = '600 21px "Prompt", sans-serif';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(`วิเคราะห์พลังการงาน การเงิน ความรัก และเกณฑ์เสริมชะตา • ${dateThStr}`, canvasWidth / 2, 156);
+
+        // Gold Subtle Divider
+        const divGrad = ctx.createLinearGradient(120, 195, canvasWidth - 120, 195);
+        divGrad.addColorStop(0, 'transparent');
+        divGrad.addColorStop(0.5, 'rgba(234, 179, 8, 0.8)');
+        divGrad.addColorStop(1, 'transparent');
+        ctx.strokeStyle = divGrad;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(140, 195);
+        ctx.lineTo(canvasWidth - 140, 195);
+        ctx.stroke();
+
+        // 6. Center S-Curve Energy Wave (Thick, Radiant Gold & Violet like Reference)
+        const contentStartY = 220;
+        const bottomAreaH = 135;
+        const availableH = canvasHeight - contentStartY - bottomAreaH;
+        const midX = canvasWidth / 2;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(midX, contentStartY);
+        const wavePoints = 80;
+        const cycles = isZodiac ? 4.5 : 3.5;
+        for (let i = 0; i <= wavePoints; i++) {
+            const prog = i / wavePoints;
+            const py = contentStartY + prog * availableH;
+            const px = midX + Math.sin(prog * Math.PI * cycles) * 62;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        // Outer aura
+        ctx.lineWidth = 26;
+        ctx.strokeStyle = 'rgba(168, 85, 247, 0.22)';
+        ctx.stroke();
+        // Inner gold glow
+        ctx.lineWidth = 12;
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
+        ctx.stroke();
+        // Core radiant light
+        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = 'rgba(254, 240, 138, 0.95)';
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 20;
+        ctx.stroke();
+        ctx.restore();
+
+        // 7. Cards Layout - Expanded & Filled (No huge gaps!)
+        const count = cards.length;
+        const numRows = Math.ceil(count / 2);
+        const rowHeight = availableH / numRows;
+        const cardW = 410; // Wider cards to fill horizontal space
+        const cardH = Math.min(rowHeight - 16, 210); // Taller cards to fill vertical space nicely
+
+        // Zodiac element colors & icons map
+        const ZODIAC_EMOJIS = {
+            "เมษ": "♈", "พฤษภ": "♉", "เมถุน": "♊", "กรกฎ": "♋",
+            "สิงห์": "♌", "กันย์": "♍", "ตุลย์": "♎", "พิจิก": "♏",
+            "ธนู": "♐", "มังกร": "♑", "กุมภ์": "♒", "มีน": "♓"
+        };
+        const DAY_EMOJIS = ["☀️", "🌙", "⚔️", "🌱", "👑", "💎", "🛡️"];
+
+        for (let i = 0; i < count; i++) {
             const card = cards[i];
-            const col = i % cols;
-            const row = Math.floor(i / cols);
-            const cx = startX + col * (cardWidth + gap);
-            const cy = startY + row * (cardHeight + gap);
-            const bgColor = HEX_COLORS[card.icon] || "#d4af37";
+            const isLeft = (i % 2 === 0);
+            const rowIndex = Math.floor(i / 2);
 
-            // Card Panel
-            drawRoundedRect(ctx, cx, cy, cardWidth, cardHeight, 18, 'rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0.8)', {color: 'rgba(0,0,0,0.05)', blur: 15});
-            
-            // Header
-            ctx.beginPath();
-            ctx.moveTo(cx + 15, cy + 45);
-            ctx.lineTo(cx + cardWidth - 15, cy + 45);
-            ctx.strokeStyle = 'rgba(0,0,0,0.08)';
-            ctx.lineWidth = 1;
-            ctx.stroke();
+            const cardY = contentStartY + rowIndex * rowHeight + (rowHeight - cardH) / 2;
+            const cardX = isLeft ? (midX - cardW - 65) : (midX + 65);
 
-            // Color circle
+            // Center Node Connector Line
+            const nodeProgress = (rowIndex + 0.5) / numRows;
+            const nodeX = midX + Math.sin(nodeProgress * Math.PI * cycles) * 62;
+            const nodeY = cardY + cardH / 2;
+
+            ctx.save();
             ctx.beginPath();
-            ctx.arc(cx + 25, cy + 25, 9, 0, Math.PI * 2);
-            ctx.fillStyle = bgColor;
-            ctx.fill();
+            ctx.moveTo(isLeft ? (cardX + cardW) : cardX, nodeY);
+            ctx.lineTo(nodeX, nodeY);
+            ctx.strokeStyle = 'rgba(234, 179, 8, 0.55)';
             ctx.lineWidth = 2;
-            ctx.strokeStyle = 'white';
+            ctx.setLineDash([5, 4]);
             ctx.stroke();
-            
-            // Title
-            ctx.textAlign = 'left';
-            ctx.font = 'bold 20px "Sarabun", sans-serif';
-            ctx.fillStyle = '#1a1a2e';
-            ctx.fillText(card.title, cx + 42, cy + 13);
-            
-            // Content
-            ctx.font = '13.5px "Sarabun", sans-serif';
-            ctx.fillStyle = '#2d3436';
-            
-            const wShort = card.wText.length > 50 ? card.wText.substring(0, 50) + '...' : card.wText;
-            const fShort = card.fText.length > 50 ? card.fText.substring(0, 50) + '...' : card.fText;
-            const lShort = card.lText.length > 50 ? card.lText.substring(0, 50) + '...' : card.lText;
-            
-            let currentY = cy + 55;
-            ctx.fillText("💼", cx + 15, currentY);
-            let lines = wrapText(ctx, wShort, cx + 35, currentY, cardWidth - 50, 20);
-            
-            currentY += lines * 20 + 5;
-            ctx.fillText("💰", cx + 15, currentY);
-            lines = wrapText(ctx, fShort, cx + 35, currentY, cardWidth - 50, 20);
-            
-            currentY += lines * 20 + 5;
-            ctx.fillText("❤️", cx + 15, currentY);
-            wrapText(ctx, lShort, cx + 35, currentY, cardWidth - 50, 20);
 
-            // Bottom Pill
-            const pillWidth = 140;
-            const pillHeight = 28;
-            const pillX = cx + (cardWidth - pillWidth) / 2;
-            const pillY = cy + cardHeight - 55;
-            
-            const pillGrad = ctx.createLinearGradient(pillX, pillY, pillX + pillWidth, pillY);
-            pillGrad.addColorStop(0, '#b8860b');
-            pillGrad.addColorStop(1, '#d4af37');
-            drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, 14, pillGrad, null, {color: 'rgba(0,0,0,0.2)', blur: 5, offsetY: 2});
-            
+            // Center Glowing Node Orb
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.arc(nodeX, nodeY, 11, 0, Math.PI * 2);
+            ctx.fillStyle = '#0a0f24';
+            ctx.fill();
+            ctx.strokeStyle = '#facc15';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#facc15';
+            ctx.shadowBlur = 10;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(nodeX, nodeY, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#fef08a';
+            ctx.fill();
+            ctx.restore();
+
+            // Card Glassmorphism Container with Gold Glow
+            ctx.save();
+            drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 20, 'rgba(12, 18, 38, 0.88)', null, {
+                color: 'rgba(0, 0, 0, 0.55)',
+                blur: 18,
+                offsetY: 6
+            });
+            drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 20, null, {
+                color: isLeft ? 'rgba(245, 158, 11, 0.45)' : 'rgba(192, 132, 252, 0.48)',
+                width: 1.8
+            });
+
+            // Glowing Avatar Circle (Like the anatomy/zodiac bubble in the reference)
+            const circleR = 26;
+            const circleX = cardX + cardW - 42;
+            const circleY = cardY + 42;
+
+            ctx.beginPath();
+            ctx.arc(circleX, circleY, circleR, 0, Math.PI * 2);
+            const avatarGrad = ctx.createRadialGradient(circleX, circleY, 5, circleX, circleY, circleR);
+            avatarGrad.addColorStop(0, isLeft ? 'rgba(245, 158, 11, 0.4)' : 'rgba(168, 85, 247, 0.45)');
+            avatarGrad.addColorStop(1, 'rgba(15, 23, 42, 0.9)');
+            ctx.fillStyle = avatarGrad;
+            ctx.fill();
+            ctx.strokeStyle = isLeft ? '#facc15' : '#c084fc';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Circle Icon Text
             ctx.textAlign = 'center';
-            ctx.font = 'bold 13px "Sarabun", sans-serif';
-            ctx.fillStyle = 'white';
-            ctx.fillText(`เลขมงคล: ${card.luckyNum || '00'}`, cx + cardWidth / 2, pillY + 6);
-            
-            ctx.font = '14px Arial';
-            ctx.fillStyle = '#FFDF73';
-            ctx.fillText("⭐⭐⭐⭐⭐", cx + cardWidth / 2, pillY + 35);
+            ctx.textBaseline = 'middle';
+            ctx.font = '24px Arial, sans-serif';
+            const iconGlyph = isZodiac ? (ZODIAC_EMOJIS[card.title.replace('ราศี', '')] || card.icon || "♈") : (DAY_EMOJIS[i % 7] || "✦");
+            ctx.fillText(iconGlyph, circleX, circleY);
+
+            // Card Title (Large & Prominent)
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.font = '800 21px "Prompt", sans-serif';
+            ctx.fillStyle = '#fef08a';
+            const numPrefix = `${i + 1}. `;
+            ctx.fillText(numPrefix + card.title, cardX + 20, cardY + 18);
+
+            // Sub-headline under title
+            ctx.font = '600 13px "Prompt", sans-serif';
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText(isZodiac ? "พลังธาตุและเกณฑ์ชะตารายวัน" : "พลังจักรวาลประจำวันเกิด", cardX + 20, cardY + 45);
+
+            // Card Inner Divider
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(cardX + 20, cardY + 68);
+            ctx.lineTo(cardX + cardW - 20, cardY + 68);
+            ctx.stroke();
+
+            // Set font before measuring
+            ctx.textAlign = 'left';
+            ctx.font = '500 13.5px "Prompt", sans-serif';
+
+            // Function to truncate text strictly to fit inside max text width
+            const maxTextWidth = cardW - 44; // Ensure 22px margin on right side
+            const truncateToWidth = (prefix, rawText) => {
+                let full = `${prefix} ${rawText}`;
+                if (ctx.measureText(full).width <= maxTextWidth) return full;
+                let t = rawText;
+                while (t.length > 0 && ctx.measureText(`${prefix} ${t}...`).width > maxTextWidth) {
+                    t = t.slice(0, -1);
+                }
+                return `${prefix} ${t.trim()}...`;
+            };
+
+            // Work Text (Clean and strict single line)
+            const cleanWork = (card.wText || "").replace(/💼|✨|🧱|🌟|🗣️|🚶‍♂️|🤝|จ้า|เลย/g, '').trim();
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fillText(truncateToWidth('💼 งาน:', cleanWork), cardX + 20, cardY + 82);
+
+            // Finance / Love Text (Clean and strict single line)
+            const cleanFin = (card.fText || card.lText || "").replace(/💰|💸|💳|📈|⚠️|🎁|🛠️|❤️/g, '').trim();
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillText(truncateToWidth('💰 เงิน:', cleanFin), cardX + 20, cardY + 108);
+
+            // Lucky Pill Badge (Bottom row of card)
+            const pillY = cardY + cardH - 38;
+            ctx.font = '700 13px "Prompt", sans-serif';
+            ctx.fillStyle = '#38bdf8';
+            const luckyTxt = card.luckyColor ? `เลขมงคล ${card.luckyNum} • สี${card.luckyColor}` : `เลขเด่น ${card.luckyNum}`;
+            ctx.fillText(`✦ ${luckyTxt}`, cardX + 20, pillY);
+
+            // 5 Stars Rating
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = '13px Arial, sans-serif';
+            ctx.fillText("★★★★★", cardX + cardW - 20, pillY);
+
+            ctx.restore();
         }
 
-        // Bottom Banner
-        const bannerWidth = 450;
-        const bannerHeight = 40;
-        const bannerX = (canvasWidth - bannerWidth) / 2;
-        const bannerY = startY + gridHeight + 30;
-        
-        drawRoundedRect(ctx, bannerX, bannerY, bannerWidth, bannerHeight, 20, 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0.9)', {color: 'rgba(0,0,0,0.1)', blur: 10, offsetY: 4});
-        
-        ctx.textAlign = 'center';
-        ctx.font = 'bold 16px "Sarabun", sans-serif';
-        ctx.fillStyle = '#333';
-        ctx.fillText("🌟 อ่านคำทำนายเจาะลึก 100% ได้ที่แคปชั่น! #สยามโหรามงคล 🌟", canvasWidth / 2, bannerY + 12);
+        // 8. Bottom Action Callout (Like "GET YOUR FULL MAP & BALANCING TIPS!")
+        const ctaW = 620;
+        const ctaH = 58;
+        const ctaX = (canvasWidth - ctaW) / 2;
+        const ctaY = canvasHeight - 110;
 
-        // Save
-        const dataUrl = canvas.toDataURL('image/png', 0.9);
+        const ctaGrad = ctx.createLinearGradient(ctaX, ctaY, ctaX + ctaW, ctaY + ctaH);
+        ctaGrad.addColorStop(0, '#fffbeb');
+        ctaGrad.addColorStop(0.3, '#fde047');
+        ctaGrad.addColorStop(0.8, '#f59e0b');
+        ctaGrad.addColorStop(1, '#d97706');
+        drawRoundedRect(ctx, ctaX, ctaY, ctaW, ctaH, 29, ctaGrad, null, {
+            color: 'rgba(245, 158, 11, 0.55)',
+            blur: 24,
+            offsetY: 6
+        });
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = '800 22px "Prompt", sans-serif';
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText("อ่านคำทำนายฉบับเต็มและวิธีเสริมดวงที่แคปชั่น! 👆", canvasWidth / 2, ctaY + ctaH / 2);
+
+        // Web URL Footer
+        ctx.textBaseline = 'top';
+        ctx.font = '700 15px "Prompt", sans-serif';
+        ctx.fillStyle = '#94a3b8';
+        ctx.letterSpacing = '1.5px';
+        ctx.fillText("สยามโหรามงคล • SIAMHORAMONGKOL.COM", canvasWidth / 2, canvasHeight - 42);
+
+        // 9. Export Image
+        const dataUrl = canvas.toDataURL('image/png', 0.95);
         
         if (action === 'post') {
             Swal.close();
@@ -426,14 +603,14 @@ async function downloadSummaryImage(action = 'download') {
         }
 
         const link = document.createElement('a');
-        link.download = `ดวงรายวัน_${dateStr}.png`;
+        link.download = `แผนผังดวงรายวัน_${dateStr}.png`;
         link.href = dataUrl;
         link.click();
         
         Swal.close();
     } catch (err) {
         console.error("Error drawing canvas: ", err);
-        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถสร้างภาพได้', 'error');
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถสร้างภาพได้: ' + err.message, 'error');
     }
 }
 

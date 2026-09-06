@@ -1402,6 +1402,83 @@ function generateLifetimeReport() {
                 </div>
             </div>
         `;
+
+        // --- PAGE F: ดาววรโคตมนวางค์ (อัญมณีล้ำค่าในดวงชะตา) ---
+        if (ayanamsaPredictions.vargottamaData) {
+            const vData = ayanamsaPredictions.vargottamaData;
+            const reportPlanetMap = [
+                { key: 'sun',     plKey: 'sun',  nameTh: 'พระอาทิตย์ (๑)', color: '#e67e00', icon: '☀️' },
+                { key: 'moon',    plKey: 'moon', nameTh: 'พระจันทร์ (๒)',  color: '#5b8dd9', icon: '🌙' },
+                { key: 'mars',    plKey: 'mars', nameTh: 'พระอังคาร (๓)',  color: '#e74c3c', icon: '🔴' },
+                { key: 'mercury', plKey: 'mer',  nameTh: 'พระพุธ (๔)',     color: '#27ae60', icon: '💚' },
+                { key: 'jupiter', plKey: 'jup',  nameTh: 'พระพฤหัสบดี (๕)',color: '#8e44ad', icon: '🟣' },
+                { key: 'venus',   plKey: 'ven',  nameTh: 'พระศุกร์ (๖)',   color: '#e91e8c', icon: '🌸' },
+                { key: 'saturn',  plKey: 'sat',  nameTh: 'พระเสาร์ (๗)',   color: '#607d8b', icon: '⚫' },
+                { key: 'rahu',    plKey: 'rahu', nameTh: 'พระราหู (๘)',    color: '#4a148c', icon: '🌑' },
+                { key: 'ketu',    plKey: 'ketu', nameTh: 'พระเกตุ (๙)',    color: '#795548', icon: '🟤' },
+                { key: 'uranus',  plKey: 'ura',  nameTh: 'พระมฤตยู (๐)',   color: '#009688', icon: '⚡' }
+            ];
+
+            let vargottamaReportCards = '';
+            reportPlanetMap.forEach(p => {
+                if (!pl[p.plKey]) return;
+                const lon = pl[p.plKey].lon;
+                const signIdx = degToSign(lon);
+                // getNavamsaSign: standard calculation
+                const degInSign = lon % 30;
+                const pada = Math.floor(degInSign / (30 / 9));
+                let navamsaStart = 0;
+                if ([0, 4, 8].includes(signIdx)) navamsaStart = 0;
+                else if ([1, 5, 9].includes(signIdx)) navamsaStart = 9;
+                else if ([2, 6, 10].includes(signIdx)) navamsaStart = 6;
+                else if ([3, 7, 11].includes(signIdx)) navamsaStart = 3;
+                const navamsaIdx = (navamsaStart + pada) % 12;
+
+                if (signIdx === navamsaIdx) {
+                    const pInfo = vData.planets[p.key] || { name: p.nameTh, text: 'ดาวมีความมั่นคงเข้มแข็งทั้งราศีจักรและนวางค์จักร' };
+                    const signName = RASI_TH[signIdx] || '';
+                    vargottamaReportCards += `
+                        <div style="border-left:4px solid #b8860b; background:#fdfaf2; border-radius:6px; padding:10px 14px; margin-bottom:10px;">
+                            <div style="font-size:15px; font-weight:bold; color:#b8860b; margin-bottom:4px;">
+                                💎 ${p.icon} ${pInfo.name} — สถิตราศี${signName} (วรโคตมนวางค์)
+                            </div>
+                            <div style="font-size:13.5px; color:#222; line-height:1.6; text-align:justify;">
+                                ${pInfo.text}
+                            </div>
+                        </div>`;
+                }
+            });
+
+            const dimsReportHtml = vData.dimensions.map(d => `
+                <div style="margin-bottom:6px; padding-left:8px; border-left:3px solid #d4af37;">
+                    <div style="font-size:13px; font-weight:bold; color:#855800;">${d.title}</div>
+                    <div style="font-size:12.5px; color:#444; line-height:1.45;">${d.desc}</div>
+                </div>
+            `).join('');
+
+            htmlContent += `
+                <div class="pdf-page" style="width:210mm;height:297mm;max-height:297mm;overflow:hidden;box-sizing:border-box;background:#FFFFFF !important;color:#111 !important;border:15px solid #d4af37 !important;padding:50px 40px !important;display:flex;flex-direction:column;justify-content:space-between;">
+                    <div>
+                        <h2 style="color:#b8860b;text-align:center;font-size:23px;margin-top:0;margin-bottom:6px;">ส่วนที่ 7.5: ดาววรโคตมนวางค์ (อัญมณีล้ำค่าในดวงชะตา)</h2>
+                        <div style="width:60px;height:2px;background:#d4af37;margin:0 auto 12px auto;"></div>
+                        <div style="background:#fcf8ee;border:1px solid #ebd8a0;border-radius:8px;padding:10px 14px;margin-bottom:14px;">
+                            <div style="font-size:13.5px;font-weight:bold;color:#795548;margin-bottom:4px;">
+                                🌟 ความหมายของวรโคตมนวางค์ ("วร" = ประเสริฐ, "โคตม" = สูงสุด, "นวางค์" = ไส้ในดวงชะตา)
+                            </div>
+                            <div style="font-size:12.5px;color:#555;line-height:1.5;margin-bottom:8px;text-align:justify;">
+                                ดาวที่สถิตในราศีเดียวกันทั้งในดวงราศีจักร (ดวงหลัก) และดวงนวางค์จักร (ไส้ในดวงชะตา) เสมือนผลไม้ที่เปลือกนอกสวยและเนื้อในหวานฉ่ำ หรือเหล็กกล้าที่ชุบตัวมาอย่างดีทั้งนอกและใน ส่งผลต่อดวงชะตาใน 4 มิติหลัก:
+                            </div>
+                            ${dimsReportHtml}
+                        </div>
+                        <h3 style="font-size:15px;color:#b8860b;margin-bottom:8px;">ดาววรโคตมที่ปรากฏในดวงชะตา:</h3>
+                        ${vargottamaReportCards || '<p style="color:#777;font-size:13.5px;background:#f9f9f9;padding:12px;border-radius:6px;text-align:center;">ในดวงกำเนิดนี้ไม่มีดาวเคราะห์ครองตำแหน่งวรโคตมนวางค์ แต่ดาวเคราะห์หลักยังคงส่งผลตามตำแหน่งราศีและภพ</p>'}
+                    </div>
+                    <div style="border-top:1.5px solid rgba(212,175,55,0.3);padding-top:12px;text-align:center;font-size:13px;color:#777;">
+                        หน้า F | รายงานวิเคราะห์ดวงชะตาตลอดชีพ คุณ${name}
+                    </div>
+                </div>
+            `;
+        }
     }
 
     // ================= PAGES 10 - 14: 21 HOUSES DETAILED INTERPRETATIONS =================

@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียดสมาชิก - สยามโหรามงคล</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans & Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script charset="UTF-8" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script charset="UTF-8" src="../src/utils/utils-helpers.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #0a0d14;
+            --bg-surface: #121624;
+            --bg-card: rgba(22, 28, 45, 0.75);
+            --bg-card-inner: rgba(30, 38, 60, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(168, 85, 247, 0.3);
+            --text-main: #f8fafc;
+            --text-sub: #cbd5e1;
+            --text-muted: #64748b;
+            --accent-gold: #fbbf24;
+            --accent-purple: #a855f7;
+            --accent-blue: #38bdf8;
+            --accent-green: #10b981;
+            --accent-pink: #f472b6;
+            --accent-danger: #f43f5e;
+            --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f1f5f9;
+            --bg-surface: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.88);
+            --bg-card-inner: rgba(241, 245, 249, 0.9);
+            --border-color: rgba(0, 0, 0, 0.08);
+            --border-glow: rgba(168, 85, 247, 0.2);
+            --text-main: #0f172a;
+            --text-sub: #334155;
+            --text-muted: #94a3b8;
+            --shadow-card: 0 10px 25px -4px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(168, 85, 247, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 90% 90%, rgba(56, 189, 248, 0.08) 0%, transparent 45%);
+            background-attachment: fixed;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-color);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+            min-height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 0 8px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .brand-logo-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);
+        }
+
+        .brand-text {
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 16px 8px 8px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .sidebar-menu a:hover {
+            color: var(--text-main);
+            background-color: var(--bg-card-inner);
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--bg-card-inner);
+            color: var(--accent-purple);
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-menu a i {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* MAIN CONTENT */
+        .main-wrapper {
+            flex: 1;
+            padding: 28px 36px;
+            max-width: 1440px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-sub);
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .btn-back:hover {
+            color: var(--text-main);
+            border-color: var(--accent-purple);
+            background: var(--bg-card-inner);
+        }
+
+        .topbar h1 {
+            font-size: 1.55rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .member-id-pill {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(168, 85, 247, 0.15);
+            color: var(--accent-purple);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            font-family: monospace;
+        }
+
+        /* GRID LAYOUT */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* CARD STYLES */
+        .dash-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            backdrop-filter: blur(16px);
+            margin-bottom: 24px;
+        }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-header-flex h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* MEMBER PROFILE HEADER */
+        .profile-hero {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .avatar-large {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0 auto 16px;
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.35);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .profile-tier-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-gold);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        /* INFO LIST */
+        .info-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .info-label {
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: right;
+        }
+
+        /* STATS MINI CARDS */
+        .stats-3box-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 640px) {
+            .stats-3box-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-mini-box {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-mini-box .title {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .stat-mini-box .value {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* ACTION BUTTONS */
+        .action-btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-action-primary {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-action-primary:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        .btn-action-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            color: var(--text-sub);
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-action-secondary:hover {
+            color: var(--text-main);
+            border-color: var(--accent-gold);
+        }
+
+        .btn-danger-outline {
+            color: #f43f5e;
+            border-color: rgba(244, 63, 94, 0.3);
+            background: rgba(244, 63, 94, 0.06);
+        }
+
+        .btn-danger-outline:hover {
+            background: rgba(244, 63, 94, 0.15);
+            border-color: #f43f5e;
+            color: #f43f5e;
+        }
+
+        /* CONSULTATION / PAYMENT HISTORY TABLE */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+            margin-top: 10px;
+        }
+
+        .history-table th {
+            padding: 10px 12px;
+            color: var(--text-muted);
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .history-table td {
+            padding: 12px;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-table tr:hover td {
+            background: var(--bg-card-inner);
+        }
+
+        .status-badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .status-success { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a href="member-dashboard.html" class="sidebar-brand">
+            <div class="brand-logo-badge">
+                <i class="fas fa-cubes"></i>
+            </div>
+            <span class="brand-text">Siam Horamangkol</span>
+        </a>
+
+        <div class="nav-section-title">Menu</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="member-dashboard.html">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-console.html">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Admin Console</span>
+                </a>
+            </li>
+            <li>
+                <a href="lifetime-report.html">
+                    <i class="fas fa-scroll"></i>
+                    <span>Lifetime Reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-compass"></i>
+                    <span>ห้องพยากรณ์หลัก</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-wrapper">
+        
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <a href="member-dashboard.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> กลับไปแดชบอร์ด
+                </a>
+                <h1>
+                    รายละเอียดสมาชิก 
+                    <span class="member-id-pill" id="headerMemberId">MEM-000</span>
+                </h1>
+            </div>
+            <div>
+                <a href="../pages/profile.html" id="btnOpenFullProfile" target="_blank" class="btn-action-primary" style="font-size:0.85rem; padding:8px 16px;">
+                    <i class="fas fa-external-link-alt"></i> เปิดแผ่นดวงเต็ม (Profile)
+                </a>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            
+            <!-- LEFT COLUMN: Profile & Key Info -->
+            <div>
+                <div class="dash-card">
+                    <div class="profile-hero">
+                        <div class="avatar-large" id="profileAvatar">M</div>
+                        <h2 class="profile-name" id="profileFullName">กำลังโหลด...</h2>
+                        <div class="profile-tier-badge" id="profileTierBadge">
+                            <i class="fas fa-crown"></i> <span>ทั่วไป</span>
+                        </div>
+                    </div>
+
+                    <ul class="info-list">
+                        <li class="info-item">
+                            <span class="info-label"><i class="fas fa-id-card text-primary"></i> รหัสสมาชิก</span>
+                            <span class="info-value font-monospace" id="infoMemberId">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label"><i class="fas fa-venus-mars text-info"></i> เพศ</span>
+                            <span class="info-value" id="infoGender">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label"><i class="fas fa-cake-candles text-danger"></i> วันเกิด</span>
+                            <span class="info-value" id="infoBirthdate">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label"><i class="fas fa-clock text-warning"></i> เวลาเกิด</span>
+                            <span class="info-value" id="infoBirthtime">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label"><i class="fas fa-hourglass-half text-purple"></i> อายุ</span>
+                            <span class="info-value" id="infoAge">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label"><i class="fas fa-calendar-day text-success"></i> วันทางโหราศาสตร์</span>
+                            <span class="info-value" id="infoAstroDay">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label"><i class="fas fa-sun text-warning"></i> ราศีเกิด</span>
+                            <span class="info-value" id="infoZodiac">-</span>
+                        </li>
+                        <li class="info-item">
+                            <span class="info-label"><i class="fas fa-phone text-muted"></i> เบอร์โทรศัพท์</span>
+                            <span class="info-value" id="infoPhone">-</span>
+                        </li>
+                    </ul>
+
+                    <div class="action-btn-row">
+                        <button class="btn-action-secondary" onclick="openEditTierModal()" style="flex:1;">
+                            <i class="fas fa-pen-to-square"></i> แก้ไขระดับ
+                        </button>
+                        <button class="btn-action-secondary btn-danger-outline" onclick="deleteCurrentMember()">
+                            <i class="fas fa-trash-can"></i> ลบสมาชิก
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Astrological Stats & History -->
+            <div>
+                <!-- STATS 3 BOXES -->
+                <div class="stats-3box-grid">
+                    <div class="stat-mini-box">
+                        <div class="title"><i class="fas fa-book-bookmark text-primary mr-1"></i> เคสคำทำนายที่บันทึก</div>
+                        <div class="value" id="statCaseCount">0 เคส</div>
+                    </div>
+                    <div class="stat-mini-box">
+                        <div class="title"><i class="fas fa-receipt text-warning mr-1"></i> รายการชำระค่าครู</div>
+                        <div class="value" id="statPaymentCount">0 รายการ</div>
+                    </div>
+                    <div class="stat-mini-box">
+                        <div class="title"><i class="fas fa-coins text-success mr-1"></i> ยอดค่าครูสะสม</div>
+                        <div class="value" style="color:var(--accent-green);" id="statTotalPaid">0 ฿</div>
+                    </div>
+                </div>
+
+                <!-- ASTROLOGICAL PROFILE SUMMARY -->
+                <div class="dash-card">
+                    <div class="card-header-flex">
+                        <h3><i class="fas fa-dharmachakra text-warning"></i> ข้อมูลทางโหราศาสตร์พื้นดวง</h3>
+                        <span style="font-size:0.8rem; color:var(--text-muted);">ระบบสุริยยาตร์ / นิรายนะวิธี</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;" id="astroDetailGrid">
+                        <div style="background:var(--bg-card-inner); padding:16px; border-radius:10px; border:1px solid var(--border-color);">
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">ธาตุกำเนิด</div>
+                            <div style="font-size:1.1rem; font-weight:700; color:var(--accent-blue);" id="astroElement">-</div>
+                        </div>
+                        <div style="background:var(--bg-card-inner); padding:16px; border-radius:10px; border:1px solid var(--border-color);">
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">ปีนักษัตร</div>
+                            <div style="font-size:1.1rem; font-weight:700; color:var(--accent-gold);" id="astroYearZodiac">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONSULTATION CASES HISTORY -->
+                <div class="dash-card">
+                    <div class="card-header-flex">
+                        <h3><i class="fas fa-clipboard-list text-info"></i> ประวัติบันทึกการพยากรณ์ (Consultation Cases)</h3>
+                        <span style="font-size:0.8rem; color:var(--text-muted);" id="consultationSubtitle">ข้อมูลจริงจากระบบโต๊ะพยากรณ์</span>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>รหัสเคส</th>
+                                    <th>หัวข้อคำทำนาย</th>
+                                    <th>วันที่บันทึก</th>
+                                    <th style="text-align:right;">คำแนะนำ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="memberCaseTableBody">
+                                <tr><td colspan="4" style="text-align:center; padding:18px; color:var(--text-muted);">ไม่พบประวัติการบันทึกคำพยากรณ์ของสมาชิกท่านนี้</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAYMENT RECEIPTS HISTORY -->
+                <div class="dash-card">
+                    <div class="card-header-flex">
+                        <h3><i class="fas fa-file-invoice-dollar text-success"></i> ประวัติการชำระเงินค่าครู (Payment Receipts)</h3>
+                        <span style="font-size:0.8rem; color:var(--text-muted);">ใบเสร็จในระบบ</span>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>เลขที่ใบเสร็จ</th>
+                                    <th>บริการ / แพ็กเกจ</th>
+                                    <th>ยอดเงิน</th>
+                                    <th>วันที่</th>
+                                    <th>สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="memberPaymentTableBody">
+                                <tr><td colspan="5" style="text-align:center; padding:18px; color:var(--text-muted);">ไม่พบประวัติการชำระเงินค่าครูของสมาชิกท่านนี้</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        let currentMember = null;
+
+        const THAI_DAYS = ['วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ', 'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'];
+        const ZODIAC_NAMES = ['เมษ', 'พฤษภ', 'มิถุน', 'กรกฎ', 'สิงห์', 'กันย์', 'ตุลย์', 'พิจิก', 'ธนู', 'มังกร', 'กุมภ์', 'มีน'];
+
+        function getZodiacName(day, month) {
+            if ((month === 4 && day >= 13) || (month === 5 && day <= 13)) return 'เมษ';
+            if ((month === 5 && day >= 14) || (month === 6 && day <= 13)) return 'พฤษภ';
+            if ((month === 6 && day >= 14) || (month === 7 && day <= 14)) return 'มิถุน';
+            if ((month === 7 && day >= 15) || (month === 8 && day <= 16)) return 'กรกฎ';
+            if ((month === 8 && day >= 17) || (month === 9 && day <= 16)) return 'สิงห์';
+            if ((month === 9 && day >= 17) || (month === 10 && day <= 16)) return 'กันย์';
+            if ((month === 10 && day >= 17) || (month === 11 && day <= 15)) return 'ตุลย์';
+            if ((month === 11 && day >= 16) || (month === 12 && day <= 15)) return 'พิจิก';
+            if ((month === 12 && day >= 16) || (month === 1 && day <= 13)) return 'ธนู';
+            if ((month === 1 && day >= 14) || (month === 2 && day <= 12)) return 'มังกร';
+            if ((month === 2 && day >= 13) || (month === 3 && day <= 13)) return 'กุมภ์';
+            if ((month === 3 && day >= 14) || (month === 4 && day <= 12)) return 'มีน';
+            return 'เมษ';
+        }
+
+        function loadMemberDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const memberId = urlParams.get('id');
+
+            const allMembers = JSON.parse(localStorage.getItem('horo_history') || '[]');
+
+            if (memberId) {
+                currentMember = allMembers.find(m => String(m.memberId) === String(memberId) || String(m.id) === String(memberId));
+            }
+
+            if (!currentMember && allMembers.length > 0) {
+                currentMember = allMembers[0];
+            }
+
+            if (!currentMember) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ไม่พบข้อมูลสมาชิก',
+                    text: 'ยังไม่มีข้อมูลสมาชิกในระบบ กรุณาเลือกสมาชิกจากหน้าแดชบอร์ด',
+                    confirmButtonText: 'กลับไปยังแดชบอร์ด',
+                    confirmButtonColor: '#a855f7'
+                }).then(() => {
+                    window.location.href = 'member-dashboard.html';
+                });
+                return;
+            }
+
+            renderMemberUI(currentMember);
+        }
+
+        function renderMemberUI(m) {
+            const mId = m.memberId || m.id || '-';
+            document.getElementById('headerMemberId').textContent = mId;
+            document.getElementById('infoMemberId').textContent = mId;
+
+            // Name
+            const fullName = `${m.name || 'สมาชิก'} ${m.lastName || ''}`.trim();
+            document.getElementById('profileFullName').textContent = fullName;
+            document.getElementById('profileAvatar').textContent = (m.name || 'M')[0];
+
+            // VIP / Package Tier Badge
+            const isVip = m.isVip || (m.tier && m.tier !== 'ทดลองใช้' && m.tier !== 'ธรรมดา') || m.tier === 'vip' || m.role === 'vip';
+            const tierBadge = document.getElementById('profileTierBadge');
+            if (tierBadge) {
+                const pkgName = m.tier || (isVip ? 'ทองคำ' : 'ทดลองใช้');
+                tierBadge.innerHTML = isVip
+                    ? `<i class="fas fa-crown text-warning"></i> <span>แพ็กเกจ ${pkgName}</span>`
+                    : `<i class="fas fa-gem text-info"></i> <span>แพ็กเกจ ${pkgName}</span>`;
+            }
+
+            // Button link to Profile
+            const btnProf = document.getElementById('btnOpenFullProfile');
+            if (btnProf) {
+                btnProf.href = `../pages/profile.html?id=${encodeURIComponent(mId)}`;
+            }
+
+            // Gender
+            const genderStr = (m.gender === 'male' || m.gender === 'm') ? 'ชาย' : 'หญิง';
+            document.getElementById('infoGender').textContent = genderStr;
+
+            // Birthdate & Astro Day
+            document.getElementById('infoBirthdate').textContent = m.birthdate || '-';
+            document.getElementById('infoBirthtime').textContent = (m.birthtime ? m.birthtime.substring(0, 5) : '12:00') + ' น.';
+            document.getElementById('infoPhone').textContent = m.phone || '-';
+
+            let astroDayStr = '-';
+            let zodiacStr = m.zodiac || '-';
+            let ageStr = '-';
+
+            if (m.birthdate) {
+                const parsed = parseBirthdate(m.birthdate);
+                if (parsed && !isNaN(parsed.getTime())) {
+                    const now = new Date();
+                    const by = toCE(parsed.getFullYear());
+                    ageStr = (now.getFullYear() - by) + ' ปี';
+
+                    const dow = typeof getAstrologicalDayOfWeek === 'function'
+                        ? getAstrologicalDayOfWeek(m.birthdate, m.birthtime)
+                        : parsed.getDay();
+                    if (dow !== null && dow !== undefined && dow >= 0 && dow <= 6) {
+                        astroDayStr = THAI_DAYS[dow];
+                    }
+
+                    zodiacStr = getZodiacName(parsed.getDate(), parsed.getMonth() + 1);
+                }
+            }
+
+            document.getElementById('infoAge').textContent = ageStr;
+            document.getElementById('infoAstroDay').textContent = astroDayStr;
+            document.getElementById('infoZodiac').textContent = zodiacStr;
+
+            // Astro Detail Box
+            document.getElementById('astroYearZodiac').textContent = m.zodiac || 'ตามปีเกิด';
+            const elements = ['ธาตุไฟ', 'ธาตุดิน', 'ธาตุลม', 'ธาตุน้ำ'];
+            const randomElement = elements[(m.name || '').charCodeAt(0) % elements.length] || 'ธาตุไฟ';
+            document.getElementById('astroElement').textContent = randomElement;
+
+            // Load Member Specific Consultations & Payments
+            loadMemberHistoryData(fullName, mId);
+        }
+
+        function loadMemberHistoryData(clientName, mId) {
+            // 1. Cases from bureau_all_case_notes
+            const allCases = JSON.parse(localStorage.getItem('bureau_all_case_notes') || '[]');
+            const memberCases = allCases.filter(c => 
+                (c.clientName && c.clientName.includes(clientName)) || 
+                (c.memberId && String(c.memberId) === String(mId))
+            );
+
+            document.getElementById('statCaseCount').textContent = `${memberCases.length} เคส`;
+
+            const caseTbody = document.getElementById('memberCaseTableBody');
+            if (caseTbody) {
+                if (memberCases.length === 0) {
+                    caseTbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:18px; color:var(--text-muted);">ยังไม่มีประวัติการบันทึกคำพยากรณ์ของสมาชิกท่านนี้ในระบบ</td></tr>`;
+                } else {
+                    caseTbody.innerHTML = memberCases.map(c => `
+                        <tr>
+                            <td class="font-monospace" style="color:var(--accent-purple); font-weight:700;">${c.id || '-'}</td>
+                            <td><strong>${c.topic || c.title || 'ตรวจดวงชะตาชีวิต'}</strong></td>
+                            <td style="color:var(--text-muted);">${c.savedAt || c.date || '-'}</td>
+                            <td style="text-align:right; color:var(--text-sub);">${c.summary || c.advice || '-'}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            // 2. Payments from bureau_payments
+            const allPayments = JSON.parse(localStorage.getItem('bureau_payments') || '[]');
+            const memberPayments = allPayments.filter(p => 
+                (p.clientName && p.clientName.includes(clientName)) || 
+                (p.memberId && String(p.memberId) === String(mId))
+            );
+
+            let totalPaid = 0;
+            memberPayments.forEach(p => {
+                totalPaid += (parseFloat(p.amount) || 0);
+            });
+
+            document.getElementById('statPaymentCount').textContent = `${memberPayments.length} รายการ`;
+            document.getElementById('statTotalPaid').textContent = `${totalPaid.toLocaleString('th-TH')} ฿`;
+
+            const paymentTbody = document.getElementById('memberPaymentTableBody');
+            if (paymentTbody) {
+                if (memberPayments.length === 0) {
+                    paymentTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:18px; color:var(--text-muted);">ยังไม่มีประวัติการชำระเงินค่าครูของสมาชิกท่านนี้ในระบบ</td></tr>`;
+                } else {
+                    paymentTbody.innerHTML = memberPayments.map(p => `
+                        <tr>
+                            <td class="font-monospace" style="color:var(--accent-gold); font-weight:700;">${p.id || '-'}</td>
+                            <td>${p.packageName || 'ตรวจดวงชะตาส่วนบุคคล'}</td>
+                            <td style="color:var(--accent-green); font-weight:700;">${(parseFloat(p.amount) || 0).toLocaleString()} ฿</td>
+                            <td style="color:var(--text-muted);">${p.date || '-'}</td>
+                            <td><span class="status-badge status-success"><i class="fas fa-check-circle"></i> สำเร็จ</span></td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        }
+
+        // Official Packages from src/utils/tiers.js
+        const OFFICIAL_PACKAGES = [
+            { name: "ทดลองใช้", desc: "ฟรี" },
+            { name: "ธรรมดา", desc: "60 บ./ด." },
+            { name: "ทองแดง", desc: "90 บ./ด." },
+            { name: "เงิน", desc: "150 บ./ด." },
+            { name: "ทองคำ", desc: "300 บ./ด." },
+            { name: "ทองคำขาว", desc: "600 บ./ด." },
+            { name: "ไข่มุก", desc: "900 บ./ด." },
+            { name: "ทับทิม", desc: "1,200 บ./ด." },
+            { name: "ไพฑูรย์", desc: "1,500 บ./ด." },
+            { name: "มรกต", desc: "3,000 บ./ด." },
+            { name: "เพชร", desc: "6,000 บ./ด." },
+            { name: "มงกุฎ", desc: "9,000 บ./ด." },
+            { name: "มงกุฎเพชร", desc: "18,000 บ./ด." },
+            { name: "ไตรมงกุฎ", desc: "27,000 บ./ด." },
+            { name: "เพชรยอดมงกุฎ", desc: "36,000 บ./ด." },
+            { name: "วิมาน", desc: "ระดับพิเศษ" }
+        ];
+
+        // Edit Tier Modal using Official Packages
+        function openEditTierModal() {
+            if (!currentMember) return;
+            const currentTier = currentMember.tier || (currentMember.isVip ? 'ทองคำ' : 'ทดลองใช้');
+
+            const optionsHTML = OFFICIAL_PACKAGES.map(pkg => `
+                <option value="${pkg.name}" ${currentTier === pkg.name ? 'selected' : ''}>
+                    แพ็กเกจ ${pkg.name} (${pkg.desc})
+                </option>
+            `).join('');
+
+            Swal.fire({
+                title: 'ปรับระดับแพ็กเกจสมาชิก',
+                html: `
+                    <div style="text-align:left; font-size:0.92rem; color:var(--text-sub);">
+                        <p class="mb-2">สมาชิก: <strong style="color:var(--text-main); font-size:1rem;">${currentMember.name} ${currentMember.lastName || ''}</strong></p>
+                        <label style="display:block; margin-bottom:6px; font-weight:600; color:var(--text-muted);">เลือกแพ็กเกจระดับสมาชิก (Package Tier):</label>
+                        <select id="swalSelectTier" class="swal2-input" style="width:100%; margin:0; display:block; padding:10px; font-size:0.95rem; border-radius:10px; background:var(--bg-card-inner); color:var(--text-main); border:1px solid var(--border-color);">
+                            ${optionsHTML}
+                        </select>
+                        <small style="display:block; margin-top:8px; color:var(--text-muted);">* อ้างอิงตามโครงสร้างแพ็กเกจและสิทธิ์การใช้งานของระบบสยามโหรามงคล</small>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'บันทึกแพ็กเกจ',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#a855f7',
+                preConfirm: () => {
+                    return document.getElementById('swalSelectTier').value;
+                }
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    const newTier = res.value;
+                    const allMembers = JSON.parse(localStorage.getItem('horo_history') || '[]');
+                    const targetIdx = allMembers.findIndex(m => String(m.memberId) === String(currentMember.memberId) || String(m.id) === String(currentMember.id));
+                    
+                    if (targetIdx !== -1) {
+                        allMembers[targetIdx].tier = newTier;
+                        // Tier สูงกว่าทดลองใช้/ธรรมดา ถือเป็น VIP/Premium
+                        allMembers[targetIdx].isVip = (newTier !== 'ทดลองใช้' && newTier !== 'ธรรมดา');
+                        localStorage.setItem('horo_history', JSON.stringify(allMembers));
+                        currentMember = allMembers[targetIdx];
+                        renderMemberUI(currentMember);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'อัปเดตแพ็กเกจสมาชิกสำเร็จ',
+                            text: `ปรับเป็นแพ็กเกจ ${newTier} เรียบร้อยแล้ว`,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                }
+            });
+        }
+
+        // Delete Member
+        function deleteCurrentMember() {
+            if (!currentMember) return;
+
+            Swal.fire({
+                title: 'ยืนยันการลบสมาชิก?',
+                text: `คุณต้องการลบข้อมูลของคุณ ${currentMember.name} ออกจากฐานข้อมูลหรือไม่?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'ลบข้อมูล',
+                cancelButtonText: 'ยกเลิก'
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    let allMembers = JSON.parse(localStorage.getItem('horo_history') || '[]');
+                    allMembers = allMembers.filter(m => String(m.memberId) !== String(currentMember.memberId) && String(m.id) !== String(currentMember.id));
+                    localStorage.setItem('horo_history', JSON.stringify(allMembers));
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'ลบสมาชิกเรียบร้อย',
+                        text: 'กำลังนำท่านกลับไปยังแดชบอร์ด...',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = 'member-dashboard.html';
+                    });
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMemberDetail();
+        });
+    </script>
+</body>
+</html>

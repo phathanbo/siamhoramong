@@ -252,84 +252,87 @@ function showname() {
     container.style.display = 'block';
 
     const html = `
-        <div class="container py-4">
-            <div class="card shadow-lg border-0 mb-4" style="background: rgba(26,26,26,0.95); border: 1px solid rgba(212,175,55,0.4)!important;">
-                <div class="card-body p-4 text-center">
-                    <h2 class="text-gold mb-2"><i class="fas fa-fingerprint"></i> วิเคราะห์เลขศาสตร์ ชื่อ-นามสกุล</h2>
-                    <p class="small text-white-50 mb-4">ถอดรหัสตัวเลขและตรวจสอบอักษรกาลกิณีอย่างละเอียด</p>                
-                    
-                    <div class="row mt-3">
-                        <div class="col-12 mb-3 text-left">
-                            <label class="text-gold small mb-1"><i class="fas fa-users"></i> เลือกจากประวัติสมาชิก (ไม่บังคับ):</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-user-check"></i></span>
-                                </div>
-                                <select id="nameMemberSelect" class="form-control bg-dark text-white border-gold member-selector-shared"
-                                    onchange="autoFillMemberData(this.value); analyzeName(this.value);">
+        <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
+            
+            <!-- Main Hero Card -->
+            <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
+                
+                <!-- Header -->
+                <div class="card-header text-center py-4 py-md-5 position-relative" style="background: linear-gradient(180deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(21, 25, 53, 0.8) 100%); border: 2px solid rgba(232, 200, 118, 0.6); box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);" class="mb-2 animate__animated animate__pulse">
+                        <i class="fas fa-fingerprint fa-2x" style="color: #ffd700; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6));"></i>
+                    </div>
+                    <h1 class="fw-bold mb-2" style="font-family: 'Chonburi', 'Sarabun', serif; color: #ffd700; text-shadow: 0 2px 10px rgba(255,215,0,0.3); font-size: clamp(1.8rem, 4vw, 2.4rem);">วิเคราะห์เลขศาสตร์ ชื่อ-นามสกุล</h1>
+                    <p class="text-light mb-0" style="font-size: 1rem; opacity: 0.85; letter-spacing: 0.5px;">ถอดรหัสตัวเลขพลังชะตาและตรวจสอบอักษรกาลกิณีตามหลักทักษาปกรณ์</p>
+                </div>
+
+                <div class="card-body p-3 p-md-4">
+                    <div style="max-width: 860px; margin: 0 auto;">
+                        
+                        <div class="p-3 p-md-4 rounded-4 mb-4" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25); box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+                            
+                            <!-- Member Selector -->
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold" style="color: #e8c876;"><i class="fas fa-address-book me-1"></i> เลือกจากประวัติสมาชิก (ไม่บังคับ):</label>
+                                <select id="nameMemberSelect" class="form-select bg-dark text-white border-gold member-selector-shared" onchange="autoFillMemberData(this.value); analyzeName(this.value);" style="border-radius: 10px; border-color: rgba(212,175,55,0.4);">
                                     <option value="">-- กรอกใหม่ด้วยตนเอง --</option>
                                 </select>
                             </div>
-                        </div>
 
-                        <div class="col-md-6 col-12 mb-3 text-left">
-                            <label class="text-gold small mb-1"><i class="fas fa-user"></i> ชื่อจริง:</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-user"></i></span>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label small fw-semibold" style="color: #e8c876;"><i class="fas fa-user me-1"></i> ชื่อจริง:</label>
+                                    <input type="text" id="firstName" class="form-control bg-dark text-white border-gold fw-bold" placeholder="กรอกชื่อจริง เช่น ภัสสร" style="border-radius: 10px; height: 46px; border-color: rgba(212,175,55,0.4);">
                                 </div>
-                                <input type="text" id="firstName" class="form-control bg-dark text-white border-gold" placeholder="ชื่อจริง">
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label small fw-semibold" style="color: #e8c876;"><i class="fas fa-user-friends me-1"></i> นามสกุล:</label>
+                                    <input type="text" id="lastName" class="form-control bg-dark text-white border-gold fw-bold" placeholder="กรอกนามสกุล เช่น บุญทรัพย์" style="border-radius: 10px; height: 46px; border-color: rgba(212,175,55,0.4);">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6 col-12 mb-3 text-left">
-                            <label class="text-gold small mb-1"><i class="fas fa-user-friends"></i> นามสกุล:</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-user-friends"></i></span>
-                                </div>
-                                <input type="text" id="lastName" class="form-control bg-dark text-white border-gold" placeholder="นามสกุล">
-                            </div>
-                        </div>
-                        <div class="col-12 mb-4 text-left">
-                            <label class="text-gold small mb-1"><i class="fas fa-calendar-day"></i> วันเกิด (ใช้เช็คกาลกิณี):</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text bg-dark border-gold text-gold"><i class="fas fa-calendar-day"></i></span>
-                                </div>
-                                <select id="birthDaynumSelect" class="form-control bg-dark text-white border-gold">
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-semibold" style="color: #e8c876;"><i class="fas fa-calendar-day me-1"></i> วันเกิด (ใช้เช็คกาลกิณี):</label>
+                                <select id="birthDaynumSelect" class="form-select bg-dark text-white border-gold fw-bold" style="border-radius: 10px; height: 46px; border-color: rgba(212,175,55,0.4);">
                                     <option value="">-- เลือกวันเกิด (ใช้เช็คกาลกิณี) --</option>
                                     <option value="0">วันอาทิตย์</option>
                                     <option value="1">วันจันทร์</option>
                                     <option value="2">วันอังคาร</option>
                                     <option value="3">วันพุธ (กลางวัน)</option>
-                                    <option value="7">วันพุธ (กลางคืน)</option>
+                                    <option value="7">วันพุธ (กลางคืน/ราหู)</option>
                                     <option value="4">วันพฤหัสบดี</option>
                                     <option value="5">วันศุกร์</option>
                                     <option value="6">วันเสาร์</option>
                                 </select>
                             </div>
+
+                            <div class="text-center">
+                                <button class="btn btn-gold px-5 py-2 py-md-3 shadow fw-bold d-inline-flex align-items-center gap-2" onclick="analyzeName()" style="border-radius: 50px; font-size: 1.05rem; min-width: 220px; justify-content: center;">
+                                    <i class="fas fa-magic text-danger"></i> วิเคราะห์รหัสชีวิต
+                                </button>
+                            </div>
+
                         </div>
-                        <div class="col-12 mb-2">
-                            <button class="btn btn-gold btn-block btn-lg shadow" onclick="analyzeName()"><i class="fas fa-magic"></i> วิเคราะห์รหัสชีวิต</button>
-                        </div>
+
+                        <div id="nameResultArea" style="display: none;"></div>
+
                     </div>
                 </div>
             </div>
 
-            <div id="nameResultArea" style="display: none;"></div>
-
-            <div class="row mt-4">
+            <!-- Bottom Navigation -->
+            <div class="row mt-4 g-2">
                 <div class="col-6">
-                    <button class="btn btn-outline-gold btn-block border-0" onclick="navigateTo('mainpage')">
+                    <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="navigateTo('mainpage')">
                         <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
                     </button>
                 </div>
                 <div class="col-6">
-                    <button class="btn btn-outline-light btn-block border-0" onclick="goBack()">
+                    <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="goBack()">
                         <i class="fas fa-home"></i> กลับหน้าหลัก
                     </button>
                 </div>
             </div>
+
         </div>
     `;
     container.innerHTML = html;
@@ -766,89 +769,273 @@ function renderNameUI(f, l, sf, sl, st, dayIdx, kalaList) {
     // ส่วนแสดงผลลัพธ์
 
 
-        resultDiv.innerHTML = `
-            <div class="card bg-dark border-gold text-white p-4 mt-3 shadow-lg animate__animated animate__fadeInUp" style="background: rgba(26,26,26,0.95)!important; border: 1px solid rgba(212,175,55,0.4)!important;">
-                <div class="text-center mb-4">
-                    <h4 class="text-gold"><i class="fas fa-scroll mr-2"></i>รายงานวิเคราะห์รหัสชีวิต</h4>
-                    <div style="color: ${dayColor}; font-weight: bold; font-size: 1.1rem; margin-top: 10px;">
-                        <i class="fas fa-sun"></i> ดวงวันเกิด: ${dayName}
-                    </div>
-                    <h5 class="mt-2 text-white">${f} ${l}</h5>
+    // ประเมินเกรดและดวงชะตา 4 ด้าน (การงาน การเงิน ความรัก สุขภาพ) ตามผลรวมตัวเลขศาสตร์
+    const getFortuneAspects = (totalNum) => {
+        const rootNum = ((totalNum - 1) % 9) + 1; // 1-9
+        
+        const aspects = {
+            1: {
+                title: "ผู้นำผู้ยิ่งใหญ่ & เกียรติยศ",
+                badge: "มงคลชั้นสูง",
+                work: "โดดเด่นในสายงานบริหาร เจ้าของกิจการ ข้าราชการระดับสูง มีอำนาจการตัดสินใจเฉียบขาด ชะตาเกิดมาเพื่อเป็นผู้นำมากกว่าผู้ตาม",
+                wealth: "หาเงินเก่งจากความสามารถเฉพาะตัวและตำแหน่งหน้าที่การงาน ยิ่งทำงานใหญ่ยิ่งได้ผลตอบแทนสูง มั่นคงไม่ขัดสน",
+                love: "มักเป็นผู้นำในครอบครัว ต้องการคู่ครองที่ให้เกียรติและเข้าใจในภาระหน้าที่ ควรลดทิฐิและความเผด็จการลงจะราบรื่นยิ่งขึ้น",
+                health: "ระวังระบบสายตา หัวใจ ความดันโลหิตสูง และความเครียดจากการแบกรับภาระงานหนัก",
+                color: "สีแดง, สีส้ม, สีทอง",
+                direction: "ทิศตะวันออกเฉียงเหนือ",
+                amulet: "พระพุทธชินราช, ท้าวเวสสุวรรณ, พญาครุฑ เสริมอำนาจบารมี"
+            },
+            2: {
+                title: "เสน่ห์เมตตา & ปัญญาญาณ",
+                badge: "เมตตามหานิยม",
+                work: "เหมาะกับงานเจรจา การทูต บริการ ศิลปะ การแพทย์ พยาบาล และการประสานงาน มีมนุษยสัมพันธ์เป็นเลิศ ใครเห็นใครรัก",
+                wealth: "การเงินไหลเวียนคล่องตัว มีเงินเข้ามาเรื่อยๆ จากเสน่ห์วาจาและผู้ใหญ่อุปถัมภ์ ไม่เดือดร้อนเรื่องเงินทอง",
+                love: "เป็นคนโรแมนติก อ่อนโยน เอาใจใส่คู่ครองดีเยี่ยม แต่ระวังความโลเลและอารมณ์ที่อ่อนไหวง่ายเกินไป",
+                health: "ระวังระบบทางเดินอาหาร ลำไส้ กระเพาะอาหาร และระบบสืบพันธุ์สตรี",
+                color: "สีขาว, สีครีม, สีเหลืองอ่อน",
+                direction: "ทิศตะวันออก",
+                amulet: "พระนางพญา, พระแม่กวนอิม, สาริกาลิ้นทอง เสริมเสน่ห์วาจา"
+            },
+            3: {
+                title: "นักสู้ผู้พิชิต & ชัยชนะ",
+                badge: "พลังกล้าแกร่ง",
+                work: "เหมาะกับสายงานลุย วิศวกรรม กองทัพ ตำรวจ อสังหาริมทรัพย์ หรือธุรกิจที่ต้องแข่งขัน ขยัน ทุ่มเท ไม่ย่อท้อต่ออุปสรรค",
+                wealth: "ได้ทรัพย์สินมาจากน้ำพักน้ำแรงและการต่อสู้ฟันฝ่า หาเงินได้ก้อนโตแต่ต้องระวังเรื่องการใช้จ่ายตามอารมณ์",
+                love: "รักแรง หึงแรง จริงใจและทุ่มเท แต่ต้องระวังอารมณ์ร้อนหรือคำพูดขวานผ่าซากที่อาจกระทบกระทั่งคนรัก",
+                health: "ระวังอุบัติเหตุจากการเดินทาง กล้ามเนื้ออักเสบ และระบบประสาทส่วนปลาย",
+                color: "สีชมพู, สีม่วงแดง, สีบานเย็น",
+                direction: "ทิศตะวันออกเฉียงใต้",
+                amulet: "พระไพรีพินาศ, หนุมาน, เสือมหาอำนาจ เสริมชัยชนะและความปลอดภัย"
+            },
+            4: {
+                title: "วาจาศักดิ์สิทธิ์ & ปัญญาว่องไว",
+                badge: "ปัญญาเจิดจรัส",
+                work: "โดดเด่นในงานค้าขาย การตลาด สื่อสารมวลชน ไอที พิธีกร และนักเขียน หัวไว ปรับตัวเข้ากับทุกสถานการณ์ได้ดีเลิศ",
+                wealth: "พูดจาเป็นเงินเป็นทอง มีช่องทางหารายได้หลากหลายทาง มีหัวการค้าและเซนส์ธุรกิจเฉียบแหลม",
+                love: "ชอบคนคุยเก่ง มีไหวพริบ ความรักเริ่มต้นจากการเป็นเพื่อนหรือคู่คิดที่ดี เข้าใจกันด้วยเหตุผล",
+                health: "ระวังระบบทางเดินหายใจ หลอดลม อาการภูมิแพ้ และปัญหาเส้นประสาทมือ/นิ้ว",
+                color: "สีเขียวทุกเฉด, สีเขียวมรกต, สีฟ้าอมเขียว",
+                direction: "ทิศใต้",
+                amulet: "พระสังกัจจายน์, พระสีวลี, ปี่เซียะ เสริมโชคลาภการค้าขาย"
+            },
+            5: {
+                title: "มหาคุณธรรม & ผู้ใหญ่ค้ำจุน",
+                badge: "มงคลจักรพรรดิ",
+                work: "เหมาะกับงานวิชาการ การศึกษา ครูอาจารย์ ที่ปรึกษา กฎหมาย การแพทย์ และงานวางแผนยุทธศาสตร์ ผู้ใหญ่ให้ความไว้วางใจ",
+                wealth: "การเงินมั่นคง ถาวร มีทรัพย์สมบัติมรดก หรือสร้างฐานะได้อย่างเป็นปึกแผ่นจากคุณธรรมความดี",
+                love: "ชีวิตคู่มั่นคง ยั่งยืน ซื่อสัตย์ต่อคนรัก ยึดมั่นในศีลธรรมและขนบธรรมเนียมที่ดีงาม",
+                health: "ระวังระบบตับ ไต อาการปวดเมื่อยหลังและข้อเข่าจากพฤติกรรมการนั่งนาน",
+                color: "สีส้ม, สีน้ำตาลทอง, สีเหลืองทอง",
+                direction: "ทิศตะวันตก",
+                amulet: "พระสมเด็จวัดระฆัง, พระพุทธชินราช, หลวงพ่อโสธร เสริมสิริมงคลสูงสุด"
+            },
+            6: {
+                title: "มหาเสน่ห์ทรัพย์ & สุนทรียภาพ",
+                badge: "โภคทรัพย์มั่งคั่ง",
+                work: "เหมาะกับธุรกิจความงาม แฟชั่น อาหาร บันเทิง เครื่องประดับ โรงแรม และงานศิลปะ มีรสนิยมล้ำเลิศ ดึงดูดลูกค้าเก่ง",
+                wealth: "มีโชคลาภเงินทองไหลมาเทมาไม่ขาดสาย เงินทองคล่องมือ มีทรัพย์สมบัติและของมีค่าประดับบารมี",
+                love: "มีเสน่ห์ดึงดูดเพศตรงข้ามอย่างสูง คนรักเอาใจใส่ดูแลดั่งเจ้าหญิง/เจ้าชาย ชีวิตคู่เต็มไปด้วยความสุข",
+                health: "ระวังระบบไต ต่อมไร้ท่อ ปัญหาผิวพรรณ และน้ำตาลในเลือด",
+                color: "สีฟ้า, สีน้ำเงินสว่าง, สีขาวประกายเพชร",
+                direction: "ทิศเหนือ",
+                amulet: "แม่นางกวัก, พระปิดตามหาลาภ, สร้อยไข่มุก/อัญมณี เสริมทรัพย์และเสน่ห์"
+            },
+            7: {
+                title: "ขันติธรรม & ความสำเร็จอันยิ่งใหญ่",
+                badge: "เพียรสร้างบารมี",
+                work: "เหมาะกับงานโครงการระยะยาว เกษตรกรรม อุตสาหกรรม เหมืองแร่ การวิจัย และงานรับเหมาก่อสร้าง ต้องใช้ความอดทนสูง",
+                wealth: "สร้างฐานะจากความประหยัดมัธยัสถ์และความเพียรพยายาม มักมีอสังหาริมทรัพย์และที่ดินสะสมมาก",
+                love: "รักแท้ที่มั่นคง แต่อาจแสดงออกไม่เก่ง ควรเพิ่มความหวานและการพูดจาเอาใจใส่คู่ครองให้มากขึ้น",
+                health: "ระวังกระดูก ข้อต่อ ฟัน ผิวหนัง และความเครียดสะสมเรื้อรัง",
+                color: "สีม่วง, สีเทาเข้ม, สีดำสนิท",
+                direction: "ทิศตะวันตกเฉียงใต้",
+                amulet: "พระคง, หลวงปู่ทวด, พญานาคราช เสริมความแคล้วคลาดและบารมี"
+            },
+            8: {
+                title: "มหาอำนาจบารมี & ธุรกิจโลกกว้าง",
+                badge: "มหาเศรษฐีเงินล้าน",
+                work: "เหมาะกับธุรกิจเสี่ยง ธุรกิจต่างประเทศ การเงิน การลงทุน อสังหาฯ ขนาดใหญ่ และการบริหารจัดการคนหมู่มาก ใจใหญ่ กล้าตัดสินใจ",
+                wealth: "มีดวงจับเงินล้าน หมุนเงินก้อนใหญ่ได้คล่องแคล่ว มีโชคลาภจากการเสี่ยงและการลงทุนที่มองการณ์ไกล",
+                love: "ดูแลคนรักและครอบครัวอย่างเต็มที่ เป็นที่พึ่งพิงได้อย่างดีเยี่ยม แต่ระวังเรื่องอารมณ์เอาแต่ใจ",
+                health: "ระวังระบบขับถ่าย ลำไส้ใหญ่ และการพักผ่อนไม่เพียงพอจากการทำงานหนัก",
+                color: "สีน้ำตาลเข้ม, สีบรอนซ์, สีกรมท่า, สีทองคำ",
+                direction: "ทิศตะวันตกเฉียงเหนือ",
+                amulet: "พญาครุฑมหาอำนาจ, พระราหูอมจันทร์, ท้าวเวสสุวรรณ เสริมบารมีและขจัดศัตรู"
+            },
+            9: {
+                title: "ญาณทัศนะ & เทวดาคุ้มครอง",
+                badge: "สิ่งศักดิ์สิทธิ์หนุนดวง",
+                work: "เหมาะกับงานสร้างสรรค์ ศาสนา งานจิตอาสา เทคโนโลยีขั้นสูง ธุรกิจระหว่างประเทศ และงานที่ต้องใช้ญาณหยั่งรู้",
+                wealth: "มีเงินทองเข้ามาแบบไม่คาดฝัน แคล้วคลาดปลอดภัยจากวิกฤตทางการเงิน มีสิ่งศักดิ์สิทธิ์ช่วยเหลือเสมอ",
+                love: "เป็นคู่บุญบารมี ชวนกันทำความดี เสริมสร้างบุญกุศลร่วมกัน ชีวิตครอบครัวสงบร่มเย็น",
+                health: "ระวังเรื่องระบบทางเดินหายใจ ไมเกรน และการไวต่อสภาพอากาศ/พลังงานรอบตัว",
+                color: "สีทอง, สีเงิน, สีขาวบริสุทธิ์, สีรุ้ง",
+                direction: "ทิศอิสาน (ตะวันออกเฉียงเหนือ)",
+                amulet: "พระแก้วมรกต, พระพรหม, พญาอนันตนาคราช เสริมบารมีและปาฏิหาริย์"
+            }
+        };
+
+        return aspects[rootNum] || aspects[9];
+    };
+
+    const fortune = getFortuneAspects(st);
+
+    resultDiv.innerHTML = `
+        <div class="card border-0 rounded-4 p-3 p-md-4 mt-4 shadow-lg animate__animated animate__fadeInUp" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1.5px solid rgba(212, 175, 55, 0.4) !important;">
+            
+            <!-- หัวเรื่องรายงาน -->
+            <div class="text-center mb-4 pb-3" style="border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                <span class="badge px-3 py-2 rounded-pill fw-bold mb-2" style="background: rgba(212,175,55,0.2); color: #ffd700; border: 1px solid rgba(212,175,55,0.4); font-size: 0.9rem;">
+                    <i class="fas fa-crown me-1"></i> รายงานวิเคราะห์รหัสชีวิตฉบับสมบูรณ์
+                </span>
+                <h2 class="fw-bold text-white mb-1" style="font-family: 'Chonburi', serif; font-size: clamp(1.4rem, 3.5vw, 2rem);">
+                    ${f} ${l}
+                </h2>
+                <div style="color: ${dayColor}; font-weight: bold; font-size: 1.05rem;">
+                    <i class="fas fa-sun me-1"></i> ภูมิวันเกิด: ${dayName}
                 </div>
+            </div>
 
-                <!-- 1. กาลกิณี และ ทักษา -->
-                <div class="row mb-4">
-                    <div class="col-12 text-center mb-3">
-                        ${kalaHTML}
-                    </div>
-                    <div class="col-12">
-                        ${taksaHTML}
-                    </div>
+            <!-- หมวดที่ 1: ตรวจสอบอักษรกาลกิณีและทักษาปกรณ์ -->
+            <div class="card border-0 rounded-4 p-3 p-md-4 mb-4" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25) !important;">
+                <h5 class="fw-bold mb-3" style="font-family: 'Chonburi', serif; color: #ffd700; font-size: 1.15rem;">
+                    <i class="fas fa-shield-alt me-2 text-warning"></i> ๑. มหาทักษาปกรณ์ & อักษรมงคล
+                </h5>
+                <div class="text-center mb-3">
+                    ${kalaHTML}
                 </div>
+                <div>
+                    ${taksaHTML}
+                </div>
+            </div>
 
-                <hr style="border-color: rgba(212,175,55,0.2);">
-
-                <!-- 2. ถอดรหัสตัวเลข (3 ระดับ) -->
-                <h5 class="text-gold text-center mb-4 mt-3"><i class="fas fa-sort-numeric-up-alt"></i> ถอดรหัสพลังตัวเลขศาสตร์</h5>
+            <!-- หมวดที่ 2: ถอดรหัสตัวเลขศาสตร์ 3 ระดับ -->
+            <div class="card border-0 rounded-4 p-3 p-md-4 mb-4" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25) !important;">
+                <h5 class="fw-bold mb-3 text-center" style="font-family: 'Chonburi', serif; color: #ffd700; font-size: 1.15rem;">
+                    <i class="fas fa-sort-numeric-up-alt me-2 text-warning"></i> ๒. ถอดรหัสพลังตัวเลขศาสตร์ (๓ มิติ)
+                </h5>
                 
-                <div class="row g-4 mb-4">
+                <div class="row g-3 mb-3">
                     <!-- พลังชื่อตัว -->
-                    <div class="col-md-6 mb-3">
-                        <div class="p-3 h-100 rounded" style="background: rgba(23,162,184,0.05); border: 1px solid rgba(23,162,184,0.3);">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="text-info m-0"><i class="fas fa-user-tag"></i> พลังชื่อตัว (อุปนิสัย)</h6>
-                                <div style="width: 45px; height: 45px; line-height: 41px; border-radius: 50%; border: 2px solid #17a2b8; color: #17a2b8; font-weight: bold; font-size: 1.2rem; text-align: center; background: rgba(23, 162, 184, 0.1);">
+                    <div class="col-md-6 col-12">
+                        <div class="p-3 rounded-4 h-100" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3);">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="fw-bold text-info mb-0"><i class="fas fa-user-tag me-1"></i> พลังชื่อตัว (วาสนาตน)</h6>
+                                <div class="badge rounded-circle" style="width: 42px; height: 42px; line-height: 32px; font-size: 1.15rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1.5px solid #3b82f6;">
                                     ${sf}
                                 </div>
                             </div>
-                            <div class="text-light small" style="line-height: 1.6; font-weight: 300;">
+                            <p class="small text-light mb-0" style="line-height: 1.6;">
                                 ${NameAnalysis.getMeaning(sf)}
-                            </div>
+                            </p>
                         </div>
                     </div>
 
                     <!-- พลังนามสกุล -->
-                    <div class="col-md-6 mb-3">
-                        <div class="p-3 h-100 rounded" style="background: rgba(40,167,69,0.05); border: 1px solid rgba(40,167,69,0.3);">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="text-success m-0"><i class="fas fa-users"></i> พลังนามสกุล (พื้นฐานครอบครัว)</h6>
-                                <div style="width: 45px; height: 45px; line-height: 41px; border-radius: 50%; border: 2px solid #28a745; color: #28a745; font-weight: bold; font-size: 1.2rem; text-align: center; background: rgba(40, 167, 69, 0.1);">
+                    <div class="col-md-6 col-12">
+                        <div class="p-3 rounded-4 h-100" style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3);">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="fw-bold text-success mb-0"><i class="fas fa-users me-1"></i> พลังนามสกุล (รากฐานวงศ์ตระกูล)</h6>
+                                <div class="badge rounded-circle" style="width: 42px; height: 42px; line-height: 32px; font-size: 1.15rem; background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1.5px solid #22c55e;">
                                     ${sl}
                                 </div>
                             </div>
-                            <div class="text-light small" style="line-height: 1.6; font-weight: 300;">
+                            <p class="small text-light mb-0" style="line-height: 1.6;">
                                 ${NameAnalysis.getMeaning(sl)}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- พลังผลรวม (ชะตาชีวิตโดยรวม) -->
-                    <div class="col-md-12 mb-2">
-                        <div class="p-4 rounded shadow" style="background: rgba(212,175,55,0.1); border: 2px solid rgba(212,175,55,0.6);">
-                            <div class="text-center mb-3">
-                                <h5 class="text-warning m-0"><i class="fas fa-star"></i> พลังผลรวม (ชะตาชีวิตโดยรวม)</h5>
-                                <div class="mx-auto mt-3" style="width: 70px; height: 70px; line-height: 62px; border-radius: 50%; border: 4px solid #d4af37; color: #d4af37; font-weight: bold; font-size: 2rem; background: rgba(212, 175, 55, 0.2); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);">
-                                    ${st}
-                                </div>
-                            </div>
-                            <div class="text-light text-center" style="line-height: 1.7; font-size: 1.1rem; font-weight: 400;">
-                                ${NameAnalysis.getMeaning(st)}
-                            </div>
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3. อักษรนำโชค -->
-                ${luckySectionHTML}
-
-                <div class="mt-4">
-                    <button onclick="exportNameAnalysis()" class="btn btn-gold btn-block btn-lg shadow">
-                        <i class="fas fa-camera mr-2"></i> บันทึกภาพมงคล
-                    </button>
+                <!-- พลังผลรวมสูงสุด -->
+                <div class="p-3 p-md-4 rounded-4 text-center" style="background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(0,0,0,0.5) 100%); border: 1.5px dashed #ffd700;">
+                    <small class="text-white-50 d-block mb-1">ผลรวมชะตาชีวิต (ชื่อ + นามสกุล)</small>
+                    <div class="display-4 fw-bold mb-2" style="color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.5); font-size: clamp(2.5rem, 5vw, 3.5rem);">
+                        ${st}
+                    </div>
+                    <div class="badge px-3 py-1 rounded-pill mb-3 fw-bold" style="background: #ffd700; color: #000; font-size: 0.95rem;">
+                        ${fortune.badge} : ${fortune.title}
+                    </div>
+                    <p class="text-light mb-0" style="font-size: 1.05rem; line-height: 1.7; max-width: 750px; margin: 0 auto;">
+                        ${NameAnalysis.getMeaning(st)}
+                    </p>
                 </div>
             </div>
-        `;
-    
+
+            <!-- หมวดที่ 3: วิเคราะห์เจาะลึก 4 ด้านของชีวิต (การงาน การเงิน ความรัก สุขภาพ) -->
+            <div class="card border-0 rounded-4 p-3 p-md-4 mb-4" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25) !important;">
+                <h5 class="fw-bold mb-3 text-center" style="font-family: 'Chonburi', serif; color: #ffd700; font-size: 1.15rem;">
+                    <i class="fas fa-chart-pie me-2 text-warning"></i> ๓. พยากรณ์ชะตาชีวิต ๔ มิติหลัก
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-6 col-12">
+                        <div class="p-3 rounded-3 h-100" style="background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.2);">
+                            <h6 class="fw-bold text-info mb-2"><i class="fas fa-briefcase me-2"></i> ด้านการงานและอาชีพ</h6>
+                            <p class="small text-light mb-0" style="line-height: 1.65;">${fortune.work}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="p-3 rounded-3 h-100" style="background: rgba(234, 179, 8, 0.06); border: 1px solid rgba(234, 179, 8, 0.2);">
+                            <h6 class="fw-bold text-warning mb-2"><i class="fas fa-coins me-2"></i> ด้านการเงินและโชคลาภ</h6>
+                            <p class="small text-light mb-0" style="line-height: 1.65;">${fortune.wealth}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="p-3 rounded-3 h-100" style="background: rgba(244, 114, 182, 0.06); border: 1px solid rgba(244, 114, 182, 0.2);">
+                            <h6 class="fw-bold text-danger mb-2" style="color: #f472b6 !important;"><i class="fas fa-heart me-2"></i> ด้านความรักและครอบครัว</h6>
+                            <p class="small text-light mb-0" style="line-height: 1.65;">${fortune.love}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div class="p-3 rounded-3 h-100" style="background: rgba(34, 197, 94, 0.06); border: 1px solid rgba(34, 197, 94, 0.2);">
+                            <h6 class="fw-bold text-success mb-2"><i class="fas fa-heartbeat me-2"></i> ด้านสุขภาพและข้อควรระวัง</h6>
+                            <p class="small text-light mb-0" style="line-height: 1.65;">${fortune.health}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- หมวดที่ 4: เคล็ดลับเสริมดวงประจำชื่อ (สีมงคล / ทิศ / สิ่งศักดิ์สิทธิ์) -->
+            <div class="card border-0 rounded-4 p-3 p-md-4 mb-4" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25) !important;">
+                <h5 class="fw-bold mb-3 text-center" style="font-family: 'Chonburi', serif; color: #ffd700; font-size: 1.15rem;">
+                    <i class="fas fa-gem me-2 text-warning"></i> ๔. เคล็ดลับเสริมบารมีและปรับสมดุลธาตุ
+                </h5>
+                <div class="row g-3 text-start">
+                    <div class="col-md-4 col-12">
+                        <div class="p-3 rounded-3 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+                            <div class="text-gold mb-1"><i class="fas fa-palette fa-lg"></i></div>
+                            <strong class="text-white d-block mb-1">สีมงคลเสริมชะตา</strong>
+                            <small class="text-warning">${fortune.color}</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <div class="p-3 rounded-3 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+                            <div class="text-info mb-1"><i class="fas fa-compass fa-lg"></i></div>
+                            <strong class="text-white d-block mb-1">ทิศมงคลหนุนดวง</strong>
+                            <small class="text-info">${fortune.direction}</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <div class="p-3 rounded-3 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+                            <div class="text-success mb-1"><i class="fas fa-dharmachakra fa-lg"></i></div>
+                            <strong class="text-white d-block mb-1">สิ่งศักดิ์สิทธิ์บูชาเสริมโชค</strong>
+                            <small class="text-success">${fortune.amulet}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- หมวดที่ 5: เข็มทิศอักษรมงคล -->
+            ${luckySectionHTML}
+
+            <div class="mt-4 text-center">
+                <button onclick="exportNameAnalysis()" class="btn btn-gold px-5 py-2 py-md-3 shadow-lg fw-bold d-inline-flex align-items-center gap-2" style="border-radius: 50px; font-size: 1.05rem;">
+                    <i class="fas fa-camera text-danger"></i> บันทึกภาพผลวิเคราะห์มงคล
+                </button>
+            </div>
+        </div>
+    `;
+
     resultDiv.style.display = 'block';
     resultDiv.scrollIntoView({ behavior: 'smooth' });
 }

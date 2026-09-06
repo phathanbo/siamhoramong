@@ -421,10 +421,10 @@ function showdaybirth(){
     <div class="container" style="max-width: 900px; margin: 0 auto; padding: 20px 10px;">
             <h2 class="text-center text-gold mb-4 font-weight-bold" style="text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);">✨ คำพยากรณ์ลักษณะนิสัยและพื้นดวงตามวันเกิด ✨</h2>
     
-            <div class="form-group mb-4 mx-auto" style="max-width: 350px;">
-                <label class="text-gold"><i class="fas fa-users mr-1"></i> เลือกสมาชิกจากประวัติ:</label>
-                <select class="form-control bg-black text-black border-gold member-selector-shared"
-                    onchange="autoFillMemberData(this.value)" style="border-radius: 8px;">
+            <div class="form-group mb-4 mx-auto" style="max-width: 500px; width: 100%;">
+                <label class="text-gold font-weight-bold" style="font-size: 1.05rem;"><i class="fas fa-users mr-1"></i> เลือกสมาชิกจากประวัติ:</label>
+                <select class="form-control bg-dark text-white border-gold member-selector-shared"
+                    onchange="autoFillMemberData(this.value)" style="border-radius: 12px; width: 100%; min-height: 48px; height: auto; font-size: 1rem;">
                     <option value="">-- เลือกสมาชิก --</option>
                 </select>
             </div>

@@ -7,21 +7,36 @@
     <script charset="UTF-8" src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        body { font-family: 'Sarabun', sans-serif; background: #0f172a; color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        body { font-family: 'Sarabun', sans-serif; background: #0f172a; color: white; min-height: 100vh; display: flex; flex-direction: column; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
         .gold-text { background: linear-gradient(135deg, #e8c97a 0%, #f0e0b0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-<body class="p-4">
+<body class="p-0">
+    <!-- Top Header -->
+    <header class="header-bar w-full">
+        <a href="../index.html" class="header-title">
+            <i class="fas fa-dharmachakra"></i>
+            <div>
+                <h1>สยามโหรามงคล</h1>
+                <div class="header-sub">Siam Horamongkol • วิเคราะห์ดวงฉับพลัน (มหาทักษาสัตตเลข)</div>
+            </div>
+        </a>
+        <div class="header-actions">
+            <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าหลัก</a>
+        </div>
+    </header>
 
-    <div class="max-w-md w-full glass rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl"></div>
-        
-        <header class="text-center mb-8">
-            <h1 class="text-2xl font-semibold gold-text">วิเคราะห์ดวงฉับพลัน</h1>
-            <p class="text-slate-400 text-sm mt-1">คัมภีร์มหาทักษาสัตตเลข</p>
-        </header>
+    <div class="flex-1 flex items-center justify-center p-4">
+        <div class="max-w-md w-full glass rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl"></div>
+            
+            <header class="text-center mb-8">
+                <h1 class="text-2xl font-semibold gold-text">วิเคราะห์ดวงฉับพลัน</h1>
+                <p class="text-slate-400 text-sm mt-1">คัมภีร์มหาทักษาสัตตเลข</p>
+            </header>
 
         <div class="space-y-6">
             <!-- ส่วนเลือกสมาชิก -->
@@ -77,6 +92,7 @@
         <footer class="mt-8 text-center text-[10px] text-slate-600 tracking-widest uppercase">
             Powered by Siam Horamongkol
         </footer>
+    </div>
     </div>
 
     <script charset="UTF-8" src="../src/data/horo-database.js"></script>

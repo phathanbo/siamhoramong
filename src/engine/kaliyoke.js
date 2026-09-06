@@ -38,6 +38,41 @@ function calculateKaliyoke(yearBE) {
         return r === 0 ? mod : r;
     };
 
+    const typeConfig = {
+        thongchai: {
+            border: "#22c55e",
+            badgeBg: "rgba(34, 197, 94, 0.2)",
+            badgeColor: "#4ade80",
+            titleColor: "#4ade80",
+            glow: "rgba(34, 197, 94, 0.25)",
+            badgeText: "เกณฑ์มงคลสูงสุด (ดีเลิศ)"
+        },
+        athibadi: {
+            border: "#3b82f6",
+            badgeBg: "rgba(59, 130, 246, 0.2)",
+            badgeColor: "#60a5fa",
+            titleColor: "#60a5fa",
+            glow: "rgba(59, 130, 246, 0.25)",
+            badgeText: "เกณฑ์บารมี อำนาจ สำเร็จ"
+        },
+        ubat: {
+            border: "#f59e0b",
+            badgeBg: "rgba(245, 158, 11, 0.2)",
+            badgeColor: "#fbbf24",
+            titleColor: "#fbbf24",
+            glow: "rgba(245, 158, 11, 0.25)",
+            badgeText: "เกณฑ์อุปสรรค ขัดข้อง (ควรเลี่ยง)"
+        },
+        lokawinas: {
+            border: "#ef4444",
+            badgeBg: "rgba(239, 68, 68, 0.2)",
+            badgeColor: "#f87171",
+            titleColor: "#f87171",
+            glow: "rgba(239, 68, 68, 0.25)",
+            badgeText: "เกณฑ์วิบัติ สูญเสีย (ห้ามเด็ดขาด)"
+        }
+    };
+
     const createCard = (base, type, title) => {
         const dIdx = getRem(base, 7);
         const yIdx = getRem(base, 16);
@@ -48,20 +83,54 @@ function calculateKaliyoke(yearBE) {
         let reukValue = safeIndex(reuks, rkIdx);
         let dithiValue = safeIndex(dithis, dtIdx);
 
-         // ✅ อธิบดี (สูตรใหม่ที่คุณให้)
-    if (type === "athibadi") {
-        reukValue = safeIndex(reuks, rkIdx);
-        dithiValue = safeIndex(dithis, dtIdx);
-    }
+        const cfg = typeConfig[type] || typeConfig.thongchai;
 
         return `
-        <div class="card ${type} shadow bg-white/10">
-            <h3 style="color:gold; font-weight: bold;">${title}</h3>
-            <p><span class="label">วัน:</span> <span style="color:black; font-weight: bold;">${days[dIdx]}</span></p>
-            <p><span class="label">ยาม:</span> <span style="color:black; font-weight: bold;">${safeIndex(yarms, yIdx)}</span></p>
-            <p><span class="label">ราศี:</span> <span style="color:black; font-weight: bold;">${safeIndex(rasris, rsIdx - 1)}</span></p>
-            <p><span class="label">ดิถี:</span> <span style="color:black; font-weight: bold;">${dithiValue}</span></p>
-            <p><span class="label">ฤกษ์:</span> <span style="color:black; font-weight: bold;">${reukValue}</span></p>
+        <div class="col-md-6 col-12 mb-3">
+            <div class="card h-100 border-0 rounded-4 shadow-lg overflow-hidden" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1.5px solid ${cfg.border} !important; box-shadow: 0 4px 20px ${cfg.glow};">
+                <div class="card-header py-3 px-4 d-flex align-items-center justify-content-between" style="background: ${cfg.badgeBg}; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                    <h3 class="mb-0 fw-bold" style="color: ${cfg.titleColor}; font-family: 'Chonburi', serif; font-size: 1.35rem;">
+                        ${title}
+                    </h3>
+                    <span class="badge py-1 px-3" style="background: ${cfg.badgeBg}; color: ${cfg.badgeColor}; border: 1px solid ${cfg.border}; font-size: 0.8rem;">
+                        ${cfg.badgeText}
+                    </span>
+                </div>
+                <div class="card-body p-3 p-md-4">
+                    <div class="row g-2 text-light">
+                        <div class="col-6">
+                            <div class="p-2 rounded-3" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05);">
+                                <small class="text-white-50 d-block"><i class="fas fa-calendar-day me-1 text-gold"></i> วันประจำเกณฑ์:</small>
+                                <strong class="fs-6" style="color: #ffd700;">วัน${days[dIdx]}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded-3" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05);">
+                                <small class="text-white-50 d-block"><i class="fas fa-clock me-1 text-gold"></i> ยามประจำเกณฑ์:</small>
+                                <strong class="fs-6 text-white">${safeIndex(yarms, yIdx)} น.</strong>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 rounded-3 text-center" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05);">
+                                <small class="text-white-50 d-block">ราศี</small>
+                                <strong class="small text-white">ราศี${safeIndex(rasris, rsIdx - 1)}</strong>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 rounded-3 text-center" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05);">
+                                <small class="text-white-50 d-block">ดิถี</small>
+                                <strong class="small text-white">${dithiValue}</strong>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 rounded-3 text-center" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05);">
+                                <small class="text-white-50 d-block">ฤกษ์</small>
+                                <strong class="small text-white">${reukValue}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>`;
     };
 
@@ -71,12 +140,14 @@ function calculateKaliyoke(yearBE) {
     const ubatBase = (cs * 10) + 2;
     const lokawinasBase = cs + 1120;
 
-    return [
-        createCard(thongchaiBase, 'thongchai', '🚩 ธงชัย'),
-        createCard(athibadiBase, 'athibadi', '👑 อธิบดี'),
-        createCard(ubatBase, 'ubat', '💀 อุบาทว์'),
-        createCard(lokawinasBase, 'lokawinas', '🏚️ โลกาวินาศ')
-    ].join('');
+    return `
+    <div class="row g-3">
+        ${createCard(thongchaiBase, 'thongchai', '🚩 ธงชัย')}
+        ${createCard(athibadiBase, 'athibadi', '👑 อธิบดี')}
+        ${createCard(ubatBase, 'ubat', '💀 อุบาทว์')}
+        ${createCard(lokawinasBase, 'lokawinas', '🏚️ โลกาวินาศ')}
+    </div>
+    `;
 }
 
 /**

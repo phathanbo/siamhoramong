@@ -21,7 +21,7 @@
     <style>
         body {
             margin: 0;
-            padding: 20px;
+            padding: 0 0 40px 0;
             font-family: 'Prompt', sans-serif !important;
             background-color: var(--modern-bg-base, #0c1424);
             color: #FFFFFF;
@@ -34,7 +34,7 @@
 
         .container {
             max-width: 1400px;
-            margin: auto;
+            margin: 20px auto;
             background: linear-gradient(135deg, rgba(30, 46, 78, 0.75) 0%, rgba(18, 28, 50, 0.85) 100%);
             border-radius: 28px;
             padding: 35px;
@@ -533,9 +533,22 @@
 </head>
 
 <body>
+    <!-- Top Header -->
+    <header class="header-bar no-print">
+        <a href="../index.html" class="header-title">
+            <i class="fas fa-dharmachakra"></i>
+            <div>
+                <h1>สยามโหรามงคล</h1>
+                <div class="header-sub">Siam Horamongkol • คัมภีร์มหาทักษาสัตตเลข (ฐาน ๔ ฐาน ๙ บูรณาการ)</div>
+            </div>
+        </a>
+        <div class="header-actions">
+            <button onclick="window.print()" class="btn-nav"><i class="fas fa-print"></i> พิมพ์รายงาน</button>
+            <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าหลัก</a>
+        </div>
+    </header>
 
     <div id="mahataksasattalek" class="container">
-        <a class="back-btn" href="../index.html"><i class="fa-solid fa-arrow-left"></i> กลับหน้า 🔮 สยามโหรามงคล</a>
 
         <h1>📜 คัมภีร์มหาทักษาสัตตเลข</h1>
         <p class="page-subtitle">วิเคราะห์โครงดวงชะตาสัตตเลข ฐาน ๔ ฐาน ๙ และการคำนวณกำลังดาวแบบบูรณาการ</p>
@@ -838,8 +851,6 @@
             </div>
         </div>
 
-        <!-- ปุ่มนำทาง (Web Component) -->
-        <nav-buttons></nav-buttons>
 
     </div>
 

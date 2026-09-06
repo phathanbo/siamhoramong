@@ -329,61 +329,95 @@ function generateLuckyNumbers() {
     const zodiacDisplay = calc.zodiacInfo ? `${calc.zodiacInfo.animal} (${calc.zodiacInfo.element})` : "ไม่สามารถคำนวณ";
 
     const html = `
-    <div id="lottoCaptureArea" class="card shadow mt-4 border-0 p-4 bg-white">
-        <div class="card-body">
-            <h4 class="text-gold text-center">🔮 วิเคราะห์เลขมงคล</h4>
-
-            <div class="alert alert-info small mt-3">
-                <strong>📊 ข้อมูลที่ใช้:</strong><br>
-                ✓ วันเกิด: <strong>${birthDay}/${birthMonth}/${birthYear}</strong> (${dayName} = ดาว${calc.planetNum})<br>
-                ✓ ชื่อ: <strong>${userName}</strong> (Sum = ${calc.nameSum})<br>
-                ✓ ปีเกิด: <strong>${birthYear}</strong> (นักษัตร: ${zodiacDisplay})<br>
-                ✓ ธาตุประจำปี: <strong>${calc.elementType}</strong> (ธาตุ = ${calc.elementNum})<br>
-                <hr class="my-2">
-                <strong>📐 สูตร:</strong> ${calc.explanation}
-            </div>
-
-            <hr>
-            <h5 class="text-center text-gold">📅 งวด ${next.fullDate} (วัน${next.dayName})</h5>
-            <hr>
-
-            <div class="row mt-3">
-                <div class="col-4 text-center">
-                    <h6 class="text-gold">⭐ เด่น</h6>
-                    <h2 class="text-success" style="font-weight: bold;">${calc.main}</h2>
-                    <small class="text-muted">(จำหน่วย)</small>
-                </div>
-                <div class="col-4 text-center">
-                    <h6 class="text-gold">✨ รอง</h6>
-                    <h2 style="color: #ffc107; font-weight: bold;">${calc.secondary}</h2>
-                    <small class="text-muted">(เลขกลาง)</small>
-                </div>
-                <div class="col-4 text-center">
-                    <h6 style="color: #dc3545;">⚠️ กัน</h6>
-                    <h2 style="color: #dc3545; font-weight: bold;">${calc.forbidden}</h2>
-                    <small class="text-muted">(หลีกเลี่ยง)</small>
+    <div id="lottoCaptureArea" class="card shadow-lg mt-4 border-0 p-3 p-md-4" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 27, 75, 0.9) 100%); border: 1.5px solid rgba(245, 158, 11, 0.35) !important; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);">
+        <div class="card-body p-2 p-md-3">
+            <div class="text-center mb-3">
+                <span class="badge px-3 py-2 text-gold font-weight-bold" style="background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); border-radius: 30px; font-size: 0.85rem;">
+                    <i class="fas fa-sparkles mr-1"></i> ผลการวิเคราะห์เลขมงคลประจำชะตา
+                </span>
+                <h4 class="text-white font-weight-bold mt-2 mb-1" style="font-family: 'Prompt', sans-serif;">🔮 เลขมงคลเสริมโชคลาภ</h4>
+                <div class="text-warning font-weight-bold" style="font-size: 0.95rem;">
+                    📅 งวดประจำวันที่ ${next.fullDate} (วัน${next.dayName})
                 </div>
             </div>
 
-            <hr>
-            <h5 class="mt-4 text-gold text-center">🎯 เลขเสี่ยงทายแนะนำ 2 ตัว</h5>
-            <div class="text-center" style="font-size: 1.3rem; color: #0066cc; font-weight: bold;">
-                ${twoDigits.join(" &nbsp; &nbsp; ")}
+            <!-- Profile Summary Box -->
+            <div class="p-3 mb-4" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; font-size: 0.88rem; line-height: 1.7; color: #cbd5e1;">
+                <div style="color: #fbbf24; font-weight: 700; margin-bottom: 6px;"><i class="fas fa-id-card mr-1"></i> ข้อมูลฐานดวงชะตา:</div>
+                <div class="row g-2">
+                    <div class="col-sm-6">✦ วันเกิด: <strong class="text-white">${birthDay}/${birthMonth}/${birthYear}</strong> (${dayName} · ดาว${calc.planetNum})</div>
+                    <div class="col-sm-6">✦ ชื่อ: <strong class="text-white">${userName}</strong> (กำลังเลขศาสตร์ = ${calc.nameSum})</div>
+                    <div class="col-sm-6">✦ ปีนักษัตร: <strong class="text-white">${zodiacDisplay}</strong></div>
+                    <div class="col-sm-6">✦ ธาตุประจำปี: <strong class="text-white">ธาตุ${calc.elementType}</strong> (เลขธาตุ = ${calc.elementNum})</div>
+                </div>
+                <div class="mt-2 pt-2 border-top border-secondary text-light" style="font-size: 0.82rem; opacity: 0.85;">
+                    <i class="fas fa-square-root-alt mr-1 text-gold"></i> <strong>หลักการคำนวณ:</strong> ${calc.explanation}
+                </div>
             </div>
 
-            <h5 class="mt-4 text-gold text-center">🎯 เลขเสี่ยงทายแนะนำ 3 ตัว</h5>
-            <div class="text-center" style="font-size: 1.3rem; color: #28a745; font-weight: bold;">
-                ${threeDigits.join(" &nbsp; &nbsp; ")}
+            <!-- Main Triad Lucky Numbers -->
+            <div class="row text-center my-3 g-3">
+                <div class="col-4">
+                    <div class="p-3 h-100" style="background: rgba(16, 185, 129, 0.12); border: 1.5px solid rgba(52, 211, 153, 0.4); border-radius: 16px; box-shadow: 0 4px 15px rgba(16,185,129,0.15);">
+                        <div style="color: #34d399; font-size: 0.85rem; font-weight: 700;"><i class="fas fa-star mr-1"></i> เด่น (Main)</div>
+                        <div class="my-2" style="font-size: 2.8rem; font-weight: 800; color: #4ade80; line-height: 1; font-family: 'Courier New', monospace; text-shadow: 0 0 15px rgba(74,222,128,0.5);">${calc.main}</div>
+                        <div class="small" style="color: #cbd5e1; font-size: 0.75rem;">เลขดวงหลัก</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="p-3 h-100" style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(251, 191, 36, 0.4); border-radius: 16px; box-shadow: 0 4px 15px rgba(245,158,11,0.15);">
+                        <div style="color: #fbbf24; font-size: 0.85rem; font-weight: 700;"><i class="fas fa-sparkle mr-1"></i> รอง (Second)</div>
+                        <div class="my-2" style="font-size: 2.8rem; font-weight: 800; color: #fde047; line-height: 1; font-family: 'Courier New', monospace; text-shadow: 0 0 15px rgba(253,224,71,0.5);">${calc.secondary}</div>
+                        <div class="small" style="color: #cbd5e1; font-size: 0.75rem;">เลขส่งเสริม</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="p-3 h-100" style="background: rgba(239, 68, 68, 0.12); border: 1.5px solid rgba(248, 113, 113, 0.4); border-radius: 16px; box-shadow: 0 4px 15px rgba(239,68,68,0.15);">
+                        <div style="color: #f87171; font-size: 0.85rem; font-weight: 700;"><i class="fas fa-ban mr-1"></i> กัน (Avoid)</div>
+                        <div class="my-2" style="font-size: 2.8rem; font-weight: 800; color: #f87171; line-height: 1; font-family: 'Courier New', monospace; text-shadow: 0 0 15px rgba(248,113,113,0.5);">${calc.forbidden}</div>
+                        <div class="small" style="color: #cbd5e1; font-size: 0.75rem;">ธาตุขัดแย้ง</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="alert alert-warning small mt-3">
-                <strong>⚡ สำคัญ:</strong> เลขนี้มีพื้นฐานมาจากลัคนา ชื่อ และธาตุประจำปี<br>
-                เป็นการวิเคราะห์เชิงศาสตร์ ไม่ใช่การรับประกัน
+            <!-- 2-Digit Sets -->
+            <div class="my-4 p-3 text-center" style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 16px;">
+                <div style="color: #38bdf8; font-size: 0.95rem; font-weight: 700; margin-bottom: 10px;">
+                    🎯 ชุดเลขเสี่ยงทาย 2 ตัวมงคล
+                </div>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    ${twoDigits.map(num => `
+                        <span style="display:inline-flex; align-items:center; justify-content:center; width:48px; height:48px; background:linear-gradient(135deg, #0284c7, #0369a1); color:#ffffff; font-size:1.35rem; font-weight:800; border-radius:50%; box-shadow:0 4px 10px rgba(2,132,199,0.4); border:2px solid rgba(255,255,255,0.4); margin:4px 6px;">
+                            ${num}
+                        </span>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- 3-Digit Sets -->
+            <div class="my-4 p-3 text-center" style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 16px;">
+                <div style="color: #c084fc; font-size: 0.95rem; font-weight: 700; margin-bottom: 10px;">
+                    🎯 ชุดเลขเสี่ยงทาย 3 ตัวมงคล
+                </div>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    ${threeDigits.map(num => `
+                        <span style="display:inline-flex; align-items:center; justify-content:center; padding:6px 14px; background:linear-gradient(135deg, #7e22ce, #6b21a8); color:#ffffff; font-size:1.25rem; font-weight:800; border-radius:24px; box-shadow:0 4px 10px rgba(126,34,206,0.4); border:2px solid rgba(255,255,255,0.4); margin:4px 6px;">
+                            ${num}
+                        </span>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="p-3" style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: 12px; font-size: 0.8rem; color: #fde047;">
+                <i class="fas fa-info-circle mr-1"></i> <strong>ข้อแนะนำเชิงโหรา:</strong> การเสี่ยงโชคควรทำด้วยความมีสติ ไม่เกินกำลังทรัพย์ เลขมงคลนี้ถอดจากรหัสบุญบารมี ดวงดาว และกำลังธาตุประจำตัวบุคคล
             </div>
         </div>
-    </div><br>
-    <div class="text-center">
-        <button class="btn btn-gold" onclick="downloadLottoResult()">🔮 บันทึกเป็นรูปภาพ</button>
+    </div>
+    
+    <div class="text-center my-3">
+        <button class="btn btn-gold px-4 py-2 font-weight-bold" style="border-radius: 8px; font-size: 0.92rem; box-shadow: 0 4px 14px rgba(245,158,11,0.35); display: inline-flex; align-items: center; gap: 8px;" onclick="downloadLottoResult()">
+            <i class="fas fa-camera"></i> บันทึกภาพเลขมงคล
+        </button>
     </div>
     `;
 
@@ -391,76 +425,86 @@ function generateLuckyNumbers() {
 }
 
 function showlotto(){
-    const contioner = document.getElementById("lottoResultpage")
+    const contioner = document.getElementById("lottoResultpage");
+    if (!contioner) return;
 
     const html = `
-    <div class="card shadow-lg border-gold overflow-hidden">
-            <div class="card-header bg-dark text-white text-center py-4">
-                <h2 class="text-gold mb-1">🎰 หอคำนวณเลขมงคล</h2>
-                <span class="text-white-50 mb-0 small">✨ อิงจากลัคนา ชื่อ และธาตุประจำปี</span>
+    <div class="container py-3" style="max-width: 800px; margin: 0 auto; font-family: 'Prompt', sans-serif;">
+        <div class="card shadow-lg border-0 overflow-hidden" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 27, 75, 0.9) 100%); border: 1px solid rgba(245, 158, 11, 0.3) !important; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <div class="card-header text-center py-4 position-relative" style="background: radial-gradient(ellipse at top, rgba(99,102,241,0.3) 0%, transparent 80%); border-bottom: 1px solid rgba(245,158,11,0.2);">
+                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-2" style="background: rgba(245,158,11,0.15); border: 2px solid rgba(245,158,11,0.4); box-shadow: 0 0 20px rgba(245,158,11,0.3);">
+                    <i class="fas fa-dice-d20 fa-2x text-warning"></i>
+                </div>
+                <h2 class="text-white font-weight-bold mb-1" style="font-size: 1.6rem; letter-spacing: 0.5px;">🎰 หอคำนวณเลขมงคล</h2>
+                <div style="color: #fbbf24; font-size: 0.88rem; font-weight: 500;">
+                    ✦ ถอดรหัสโชคลาภตามหลักลัคนา ดาวกำเนิด เลขศาสตร์ และธาตุประจำปี
+                </div>
             </div>
-            <div class="card-body bg-light">
-                <div class="py-4" id="beforeGenerate">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-dice-d20 fa-5x text-gold mb-3 animate__animated animate__infinite animate__pulse"></i>
-                        <h4 style="color: #000;">วิเคราะห์เลขมงคลด้วยหลักโหรา</h4>
-                        <p class="text-muted small">ระบบใช้ลัคนา (ดาวเกิด) + ชื่อ (เลขศาสตร์) + ธาตุประจำปี</p>
-                    </div>
 
+            <div class="card-body p-3 p-md-4">
+                <div class="py-2" id="beforeGenerate">
                     <form onsubmit="return false;">
                         <div class="form-group mb-3">
-                            <label class="text-gold"><strong>👤 เลือกสมาชิกจากประวัติ:</strong></label>
-                            <select class="form-control bg-black text-black border-gold member-selector-shared"
+                            <label style="color: #fbbf24; font-size: 0.88rem; font-weight: 600;">
+                                <i class="fas fa-user-circle mr-1"></i> เลือกสมาชิกจากประวัติ:
+                            </label>
+                            <select class="form-control member-selector-shared" style="background: rgba(15,23,42,0.8); color: #ffffff; border: 1px solid rgba(245,158,11,0.35); border-radius: 10px; padding: 10px 14px; font-size: 0.9rem;"
                                 onchange="autoFillMemberData(this.value); setTimeout(generateLuckyNumbers, 300)">
                                 <option value="">-- เลือกสมาชิก --</option>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label class="text-gold"><strong>📅 วันเกิด <span class="text-danger">*</span></strong></label>
-                            <input type="date" id="lottoBirthday" class="form-control form-control-lg" required>
-                            <div class="custom-control custom-checkbox mt-2">
+                        <div class="form-group mb-3">
+                            <label style="color: #fbbf24; font-size: 0.88rem; font-weight: 600;">
+                                <i class="fas fa-calendar-alt mr-1"></i> วัน เดือน ปีเกิด <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" id="lottoBirthday" class="form-control" style="background: rgba(15,23,42,0.8); color: #ffffff; border: 1px solid rgba(245,158,11,0.35); border-radius: 10px; padding: 10px 14px; font-size: 0.95rem;" required>
+                            <div class="custom-control custom-checkbox mt-2" style="background: rgba(255,255,255,0.03); padding: 8px 12px 8px 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
                                 <input type="checkbox" class="custom-control-input" id="lottoIsWednesdayNight">
-                                <label class="custom-control-label text-dark small" for="lottoIsWednesdayNight">🌌 เกิดวันพุธกลางคืน (หลัง 18:00 น. - นับเป็นดาวราหู เลข 8)</label>
+                                <label class="custom-control-label small" for="lottoIsWednesdayNight" style="color: #cbd5e1; cursor: pointer;">
+                                    🌌 เกิดวันพุธกลางคืน (หลัง 18:00 น. ถึง 05:59 น. ให้นับเป็นดาวราหู เลข 8)
+                                </label>
                             </div>
-                            <small class="text-muted">วันเกิด = คำนวณดาว 9 + ปีเกิด = ปีนักษัตร + ธาตุ</small>
                         </div>
 
-                        <div class="form-group">
-                            <label class="text-gold"><strong>📝 ชื่อของคุณ <span class="text-danger">*</span></strong></label>
-                            <input type="text" id="lottoUserName" class="form-control form-control-lg" placeholder="ใส่ชื่อจริง (ที่ใช้อยู่)" required>
-                            <small class="text-muted">เช่น สมหญิง, สมชาย, อนิรุธ ฯลฯ</small>
+                        <div class="form-group mb-3">
+                            <label style="color: #fbbf24; font-size: 0.88rem; font-weight: 600;">
+                                <i class="fas fa-signature mr-1"></i> ชื่อของคุณ (ชื่อจริงที่ใช้ปัจจุบัน) <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="lottoUserName" class="form-control" placeholder="เช่น สมหญิง, กิตติศักดิ์, ภัทรพล" style="background: rgba(15,23,42,0.8); color: #ffffff; border: 1px solid rgba(245,158,11,0.35); border-radius: 10px; padding: 10px 14px; font-size: 0.95rem;" required>
                         </div>
 
-                        <div class="alert alert-secondary small">
-                            <strong>🐭 ระบบคำนวณอัตโนมัติ:</strong><br>
-                            ✓ ธาตุประจำปี = คำนวณจากปีนักษัตร (Chinese Zodiac)<br>
-                            ✓ ตัวอย่าง: หนู/หมู=น้ำ, วัว/มังกร/แพะ/สุนัข=ดิน, เสือ/กระต่าย=ไม้, งู/ม้า=ไฟ, ลิง/ไก่=โลหะ
+                        <div class="p-3 mb-3" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; font-size: 0.82rem; color: #94a3b8; line-height: 1.6;">
+                            <strong style="color: #fbbf24;"><i class="fas fa-atom mr-1"></i> ระบบคำนวณผสมผสาน:</strong><br>
+                            • วันเกิด = ดาวเกษตรประจำวัน (1-8)<br>
+                            • ชื่อ = กำลังเลขศาสตร์ผลรวมพยัญชนะและสระ<br>
+                            • ปีเกิด = ปีนักษัตรและธาตุกำเนิด (ดิน น้ำ ลม ไฟ โลหะ)
                         </div>
 
-                        <button type="button" class="btn btn-gold btn-lg btn-block mt-4" onclick="generateLuckyNumbers()">
-                            <i class="fas fa-wand-magic-sparkles"></i> คำนวณเลขมงคล
+                        <button type="button" class="btn btn-gold btn-block py-2 font-weight-bold" style="border-radius: 8px; font-size: 0.95rem; box-shadow: 0 4px 15px rgba(245,158,11,0.3); display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="generateLuckyNumbers()">
+                            <i class="fas fa-wand-magic-sparkles"></i> คำนวณเลขมงคลชะตา
                         </button>
                     </form>
                 </div>
 
-                <div id="lottoResult" class="mt-3"></div>
+                <div id="lottoResult" class="mt-2"></div>
 
-                <hr class="my-4">
-                <div class="row mt-4">
+                <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+                <div class="row pt-1" style="max-width: 480px; margin: 0 auto;">
                     <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
-                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                        <button class="btn btn-outline-light btn-block py-2" style="border-radius: 8px; font-size: 0.85rem; border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04);" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-chevron-left mr-1"></i> ห้องพยากรณ์
                         </button>
                     </div>
                     <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
-                            <i class="fas fa-home"></i> กลับหน้าหลัก
+                        <button class="btn btn-outline-light btn-block py-2" style="border-radius: 8px; font-size: 0.85rem; border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04);" onclick="goBack()">
+                            <i class="fas fa-home mr-1"></i> หน้าหลัก
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     `;
     contioner.innerHTML = html;
 }

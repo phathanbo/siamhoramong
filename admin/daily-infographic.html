@@ -3,748 +3,1191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสร้างอินโฟกราฟิกคำทำนายรายวัน - สยามโหรามงคล</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
+    <title>Daily Infographic Studio - สยามโหรามงคล</title>
+    <!-- Google Fonts: Plus Jakarta Sans & Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SweetAlert2 -->
     <script charset="UTF-8" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- html2canvas -->
-    <script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
-        * { box-sizing: border-box; }
-        body { 
-            margin: 0; 
-            padding: 0;
-            background: linear-gradient(135deg, #0f0c29, #1e1b4b, #0f172a); 
-            color: #fff; 
-            font-family: 'Sarabun', sans-serif; 
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        :root {
+            --bg-body: #f4f7fe;
+            --bg-card: #ffffff;
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-radius: 20px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
         }
 
-        /* Top Header Navigation */
-        .admin-nav {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 18px 35px;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
+        }
+
+        /* -------------------------------------------------------------
+           1. SIDEBAR (Left Navigation)
+           ------------------------------------------------------------- */
+        .app-sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 28px 20px;
+            position: fixed;
             top: 0;
+            left: 0;
+            bottom: 0;
             z-index: 100;
         }
-        .admin-nav h1 {
-            margin: 0;
-            color: #ffdf73;
-            font-size: 24px;
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 28px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .brand-text h2 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+
+        .brand-text span {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .nav-section-label {
+            font-size: 0.72rem;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #94a3b8;
+            margin: 24px 12px 10px 12px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            list-style: none;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover {
+            color: var(--primary);
+            background: #f8fafc;
+        }
+
+        .nav-item.active a {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+        }
+
+        .nav-item.active a i {
+            color: #ffffff;
+        }
+
+        .nav-item a i {
+            font-size: 1.05rem;
+            width: 20px;
+            text-align: center;
+            color: #94a3b8;
+            transition: color 0.2s ease;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        /* -------------------------------------------------------------
+           2. MAIN CONTAINER & HEADER
+           ------------------------------------------------------------- */
+        .app-main {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .app-topbar {
+            height: 76px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .topbar-search {
+            position: relative;
+            width: 320px;
+        }
+
+        .topbar-search i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .topbar-search input {
+            width: 100%;
+            height: 42px;
+            padding: 0 16px 0 38px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .topbar-search input:focus {
+            background: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        .icon-btn .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 12px;
+            border-left: 1px solid #e2e8f0;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .user-info {
+            line-height: 1.2;
+        }
+
+        .user-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* -------------------------------------------------------------
+           3. DASHBOARD CONTENT
+           ------------------------------------------------------------- */
+        .dashboard-body {
+            padding: 32px 36px 60px 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .dashboard-title h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .dashboard-title p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .dashboard-controls {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-        .back-btn {
-            background: rgba(255, 255, 255, 0.08);
-            color: #ffdf73;
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            padding: 8px 22px;
-            border-radius: 50px;
+
+        .btn-outline-action {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            padding: 9px 18px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
-            text-decoration: none;
-            transition: all 0.25s ease;
-            font-weight: 500;
-            font-size: 15px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-        }
-        .back-btn:hover {
-            background: rgba(212, 175, 55, 0.2);
-            border-color: #d4af37;
-            transform: translateY(-2px);
-            color: #fff;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            text-decoration: none;
         }
 
-        /* Main Workspace Layout */
-        .main-container {
-            display: flex;
-            flex: 1;
-            padding: 25px;
-            gap: 25px;
-            max-width: 1920px;
-            margin: 0 auto;
-            width: 100%;
+        .btn-outline-action:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
         }
 
-        /* Left Control Sidebar */
-        .sidebar {
-            width: 350px;
-            flex-shrink: 0;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            border-radius: 18px;
-            padding: 22px;
+        /* -------------------------------------------------------------
+           4. METRIC KPI CARDS (SalesMonk Style with Notch & Arrow)
+           ------------------------------------------------------------- */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            border-radius: var(--card-radius);
+            padding: 22px 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #f1f5f9;
+            position: relative;
             display: flex;
             flex-direction: column;
-            gap: 18px;
-            max-height: calc(100vh - 100px);
-            overflow-y: auto;
+            justify-content: space-between;
+            min-height: 140px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .sidebar-header {
-            font-size: 18px;
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-card.highlight {
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.25);
+        }
+
+        .kpi-card.highlight .kpi-title {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .kpi-card.highlight .kpi-sub {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .kpi-card.highlight .arrow-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .kpi-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kpi-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .arrow-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .kpi-value {
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin: 10px 0 6px 0;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .kpi-trend {
+            font-size: 0.72rem;
             font-weight: 700;
-            color: #ffdf73;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trend-up {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .kpi-card.highlight .trend-up {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+        }
+
+        .kpi-sub {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        /* -------------------------------------------------------------
+           5. MAIN WORKSPACE (Form & Preview Panels)
+           ------------------------------------------------------------- */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+        }
+
+        .panel-card {
+            background: #ffffff;
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-header-title {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .form-group {
+        .panel-header-title i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .panel-header-title h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .panel-badge {
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .panel-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Form Inputs */
+        .form-group-clean {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
-        .form-group label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #cbd5e1;
+
+        .form-group-clean label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #334155;
             display: flex;
             align-items: center;
             gap: 6px;
         }
-        .form-control, select, input[type="date"], textarea {
-            background: rgba(2, 6, 23, 0.6);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 8px;
-            color: #fff;
-            padding: 10px 14px;
-            font-size: 14px;
-            font-family: 'Sarabun', sans-serif;
+
+        .form-group-clean label i {
+            color: var(--primary);
+            font-size: 0.85rem;
+        }
+
+        .date-control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-date-arrow {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-date-arrow:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .input-clean, .select-clean {
+            height: 44px;
+            border-radius: 12px;
+            border: 1.5px solid #cbd5e1;
+            background: #ffffff;
+            color: var(--text-main);
+            padding: 0 16px;
+            font-size: 0.92rem;
+            font-family: inherit;
             outline: none;
-            transition: border-color 0.2s;
-        }
-        .form-control:focus, select:focus, input[type="date"]:focus, textarea:focus {
-            border-color: #f59e0b;
+            transition: all 0.2s;
+            width: 100%;
         }
 
-        .btn-action {
-            background: linear-gradient(135deg, #d97706, #f59e0b);
-            color: #0f172a;
+        .input-clean:focus, .select-clean:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .btn-primary-generate {
+            background: var(--primary-gradient);
+            color: #ffffff;
             border: none;
-            border-radius: 10px;
-            padding: 12px 18px;
-            font-size: 15px;
+            height: 48px;
+            border-radius: 14px;
+            font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
-        }
-        .btn-action:hover {
-            background: linear-gradient(135deg, #f59e0b, #fbbf24);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4);
-        }
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: #e2e8f0;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            padding: 10px 16px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
-        .btn-success {
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 18px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            transition: all 0.2s ease;
-        }
-        .btn-success:hover {
-            background: linear-gradient(135deg, #10b981, #34d399);
-            transform: translateY(-2px);
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 6px;
+            font-family: inherit;
         }
 
-        /* Right Canvas Workspace */
-        .preview-area {
+        .btn-primary-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-primary-generate:active {
+            transform: translateY(0);
+        }
+
+        /* -------------------------------------------------------------
+           6. PREVIEW AREA & OUTPUT
+           ------------------------------------------------------------- */
+        .preview-content-box {
+            padding: 24px;
             flex: 1;
             display: flex;
             flex-direction: column;
+            background: #fafafa;
+            min-height: 480px;
+        }
+
+        .empty-placeholder {
+            margin: auto;
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 360px;
+        }
+
+        .empty-placeholder .icon-wrapper {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: #eff6ff;
+            color: var(--primary);
+            display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 16px auto;
+        }
+
+        .empty-placeholder h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .empty-placeholder p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .result-layout {
+            display: flex;
+            flex-direction: column;
             gap: 20px;
-            overflow: auto;
-            padding: 10px;
-            min-width: 0;
+            width: 100%;
         }
 
-        /* Infographic Canvas Scaler Container */
-        .canvas-scaler {
-            position: relative;
-            margin: 0 auto;
-            overflow: hidden;
+        .preview-img-container {
+            background: linear-gradient(145deg, #0b1021, #060913);
             border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            flex-shrink: 0;
-            background: #fdfbf7;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        #infographicCanvas {
-            width: 1920px;
-            height: 1080px;
-            background: #fdfbf7;
-            background-image: 
-                radial-gradient(circle at 10% 10%, rgba(251, 191, 36, 0.08), transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(225, 29, 72, 0.06), transparent 40%);
+        .preview-img-container img {
+            max-width: 100%;
+            max-height: 640px;
+            border-radius: 14px;
+            box-shadow: 0 10px 36px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .preview-textarea {
+            width: 100%;
+            border-radius: 16px;
+            border: 1.5px solid #cbd5e1;
+            padding: 16px;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.9rem;
+            line-height: 1.6;
             color: #1e293b;
-            padding: 30px 55px 25px 55px;
-            position: absolute;
+            background: #ffffff;
+            resize: vertical;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .preview-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .action-button-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .btn-modern {
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-modern-copy {
+            background: #eff6ff;
+            color: var(--primary);
+            border: 1px solid #bfdbfe;
+        }
+        .btn-modern-copy:hover {
+            background: #dbeafe;
+        }
+
+        .btn-modern-download {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .btn-modern-download:hover {
+            background: #dcfce7;
+        }
+
+        .btn-modern-facebook {
+            background: linear-gradient(135deg, #1877f2 0%, #0d65d9 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(24, 119, 242, 0.3);
+        }
+        .btn-modern-facebook:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-sidebar {
+                display: none;
+            }
+            .app-main {
+                margin-left: 0;
+            }
+            .dashboard-body {
+                padding: 20px;
+            }
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            .action-button-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Lightbox Image Preview Modal */
+        .img-modal-backdrop {
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            transform-origin: top left;
-            overflow: hidden;
-            font-family: 'Sarabun', sans-serif;
-        }
-
-        /* Infographic Decor Accents */
-        .bg-decor-top-right {
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(217, 119, 6, 0.1) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        .bg-decor-bottom-left {
-            position: absolute;
-            bottom: -50px;
-            left: -50px;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(190, 24, 93, 0.1) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        /* Infographic Header */
-        .info-header {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            position: relative;
-            z-index: 2;
-        }
-        .info-header-title-row {
-            display: flex;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(4, 7, 18, 0.88);
+            backdrop-filter: blur(12px);
+            z-index: 9999;
             align-items: center;
             justify-content: center;
-            gap: 14px;
+            padding: 24px;
+            cursor: zoom-out;
         }
-        .info-crystal-ball {
-            font-size: 48px;
-            filter: drop-shadow(0 4px 10px rgba(126, 34, 206, 0.3));
+        .img-modal-content {
+            max-width: 95vw;
+            max-height: 92vh;
+            border-radius: 16px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            border: 1.5px solid rgba(234, 179, 8, 0.4);
+            cursor: default;
+            object-fit: contain;
         }
-        .info-main-title {
-            font-size: 38px;
-            font-weight: 800;
-            color: #0f172a;
-            margin: 0;
-            letter-spacing: -0.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .info-subhead-1 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #334155;
-            margin: 0;
-        }
-        .info-subhead-2 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #64748b;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .sparkle-icon {
-            color: #f59e0b;
-            font-size: 15px;
-        }
-
-        /* Infographic Content Grid (2 Columns) */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            flex: 1;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Left Card (Work & Finance) */
-        .card-left {
-            background: #ffffff;
-            border: 3px solid #d97706;
-            border-radius: 28px;
-            padding: 40px 30px 25px 30px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            box-shadow: 0 12px 30px rgba(217, 119, 6, 0.1);
-        }
-        .pill-badge-orange {
+        .img-modal-close {
             position: absolute;
-            top: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(90deg, #d97706, #f59e0b);
+            top: 24px;
+            right: 28px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
             color: #ffffff;
-            font-size: 22px;
-            font-weight: 800;
-            padding: 8px 36px;
-            border-radius: 50px;
-            box-shadow: 0 6px 16px rgba(217, 119, 6, 0.35);
-            white-space: nowrap;
-        }
-
-        .left-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            padding: 8px 0;
-        }
-        .left-item-icon {
-            width: 80px;
-            height: 80px;
-            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 64px;
-        }
-        .left-item-content {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .left-item-title {
-            font-size: 22px;
-            font-weight: 800;
-            color: #0f172a;
-            margin: 0;
-        }
-        .left-item-text {
-            font-size: 18.5px;
-            font-weight: 500;
-            color: #334155;
-            line-height: 1.55;
-            margin: 0;
-        }
-
-        /* Right Side Column */
-        .col-right {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            justify-content: flex-start;
-        }
-
-        /* Right Top Card (Love & Lucky Tips) */
-        .card-right-top {
-            background: #ffffff;
-            border: 3px solid #be185d;
-            border-radius: 26px;
-            padding: 42px 28px 24px 28px;
-            position: relative;
-            box-shadow: 0 10px 25px rgba(190, 24, 93, 0.1);
-        }
-        .pill-badge-pink {
-            position: absolute;
-            top: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(90deg, #be185d, #e11d48);
-            color: #ffffff;
-            font-size: 22px;
-            font-weight: 800;
-            padding: 8px 36px;
-            border-radius: 50px;
-            box-shadow: 0 6px 16px rgba(190, 24, 93, 0.35);
-            white-space: nowrap;
-        }
-        .right-top-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        .right-top-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 8px;
-            padding: 0 4px;
-        }
-        .right-top-icon {
-            font-size: 62px;
-            height: 66px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .right-top-title {
-            font-size: 21px;
-            font-weight: 800;
-            color: #0f172a;
-            margin: 0;
-        }
-        .right-top-text {
-            font-size: 17.5px;
-            font-weight: 500;
-            color: #334155;
-            line-height: 1.5;
-            margin: 0;
-        }
-
-        /* Right Bottom Table Box */
-        .card-right-bottom {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex: 1;
-        }
-        .table-section-title {
-            text-align: center;
-            font-size: 21px;
-            font-weight: 800;
-            color: #0f172a;
-            margin: 0;
-        }
-
-        .lucky-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            border: 2px solid #cbd5e1;
-            border-radius: 18px;
-            overflow: hidden;
-            background: #ffffff;
-        }
-        .lucky-table th {
-            background: #e2e8f0;
-            color: #0f172a;
-            font-size: 17px;
-            font-weight: 800;
-            padding: 10px 10px;
-            text-align: center;
-            border-bottom: 2px solid #cbd5e1;
-            border-right: 1.5px solid #cbd5e1;
-        }
-        .lucky-table th:last-child {
-            border-right: none;
-        }
-        .lucky-table td {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1e293b;
-            padding: 8.5px 10px;
-            text-align: center;
-            border-bottom: 1px solid #e2e8f0;
-            border-right: 1px solid #e2e8f0;
-            vertical-align: middle;
-        }
-        .lucky-table td:last-child {
-            border-right: none;
-        }
-        .lucky-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* Color Pill Badges */
-        .color-pill {
-            display: inline-block;
-            padding: 4px 14px;
-            border-radius: 14px;
-            color: #fff;
-            font-weight: 700;
-            font-size: 14px;
-            margin: 2px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-        }
-        .color-pill.green { background-color: #16a34a; }
-        .color-pill.red { background-color: #dc2626; }
-        .color-pill.yellow { background-color: #eab308; color: #1e293b; }
-        .color-pill.orange { background-color: #ea580c; }
-        .color-pill.pink { background-color: #ec4899; }
-        .color-pill.blue { background-color: #0284c7; }
-        .color-pill.purple { background-color: #9333ea; }
-        .color-pill.black { background-color: #1e293b; }
-        .color-pill.white { background-color: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; }
-
-        /* Infographic Footer */
-        .info-footer {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-            padding-top: 5px;
-        }
-        .watermark-brand {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 16px;
-            font-weight: 700;
-            color: #64748b;
-            letter-spacing: 0.5px;
-        }
-
-        /* Editable inline highlight outline */
-        [contenteditable="true"]:hover {
-            outline: 2px dashed #f59e0b;
-            border-radius: 4px;
             cursor: pointer;
+            transition: all 0.2s;
         }
-        [contenteditable="true"]:focus {
-            outline: 2px solid #3b82f6;
-            background: rgba(59, 130, 246, 0.05);
-            border-radius: 4px;
+        .img-modal-close:hover {
+            background: #ef4444;
+            border-color: #ef4444;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Navigation -->
-    <div class="admin-nav">
-        <h1><i class="fas fa-magic"></i> ระบบสร้างอินโฟกราฟิกคำทำนายรายวัน</h1>
-        <a href="../admin.html" class="back-btn"><i class="fas fa-arrow-left"></i> กลับไประบบหลังบ้าน</a>
-    </div>
+    <!-- 1. LEFT SIDEBAR (SaaS Minimalist Style) -->
+    <aside class="app-sidebar">
+        <a href="admin-console.html" class="brand-logo" title="ไปหน้าศูนย์ควบคุม">
+            <div class="brand-icon">
+                <i class="fas fa-dharmachakra"></i>
+            </div>
+            <div class="brand-text">
+                <h2>สยามโหรามงคล</h2>
+                <span>Infographic Studio ERP</span>
+            </div>
+        </a>
 
-    <!-- Main Workspace -->
-    <div class="main-container">
-        
-        <!-- Left Sidebar Controls -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-sliders-h"></i> ตั้งค่าระบบคำทำนาย
+        <div class="nav-section-label">MAIN MENU</div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="admin-console.html">
+                    <i class="fas fa-th-large"></i>
+                    <span>แดชบอร์ดหลัก</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="daily-content.html">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>สร้างดวงรายวัน</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a href="daily-infographic.html">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>สร้างอินโฟกราฟิก</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="admin-console.html#bureauStats">
+                    <i class="fas fa-chart-line"></i>
+                    <span>สถิติและการเงิน</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="member-dashboard.html">
+                    <i class="fas fa-users"></i>
+                    <span>จัดการสมาชิก</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-section-label">SETTINGS & TOOLS</div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="../pages/thai-horoscope-pro.html">
+                    <i class="fas fa-star"></i>
+                    <span>เปิดหน้าระบบทำนาย</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="../index.html">
+                    <i class="fas fa-globe"></i>
+                    <span>ไปหน้าแรกเว็บไซต์</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="admin-console.html" style="color: #ef4444;">
+                        <i class="fas fa-sign-out-alt" style="color: #ef4444;"></i>
+                        <span>ออกจากสตูดิโอ</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- 2. MAIN APPLICATION CONTENT -->
+    <main class="app-main">
+        <!-- Topbar -->
+        <header class="app-topbar">
+            <div class="topbar-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="topbarSearchInput" placeholder="ค้นหาเนื้อหา / คำทำนาย..." onkeyup="if(event.key==='Enter') window.filterDailySearch(this.value)">
             </div>
 
-            <div class="form-group">
-                <label><i class="fas fa-calendar-alt"></i> วันที่ทำนาย:</label>
-                <div style="display: flex; gap: 8px;">
-                    <button type="button" class="btn-secondary" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
-                    <input type="date" id="predictDate" style="flex: 1;">
-                    <button type="button" class="btn-secondary" onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
+            <div class="topbar-actions">
+                <div class="icon-btn" title="ระบบพร้อมใช้งานปกติ" onclick="alert('สถานะระบบ: เชื่อมต่อฐานข้อมูลและเครื่องมือสร้างสื่อพร้อมใช้งาน 100%')">
+                    <i class="far fa-bell"></i>
+                    <span class="badge-dot"></span>
+                </div>
+                <a href="admin-console.html" class="user-profile" style="text-decoration: none; cursor: pointer;" title="ไปยังแดชบอร์ดผู้ดูแล">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Admin" class="user-avatar">
+                    <div class="user-info">
+                        <div class="user-name">Astrologer Admin</div>
+                        <div class="user-role">ผู้ดูแลระบบโหราศาสตร์</div>
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Dashboard Body -->
+        <div class="dashboard-body">
+            <!-- Header Row -->
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h1>Daily Infographic Studio</h1>
+                    <p>ระบบสร้างภาพอินโฟกราฟิกแผนผังชะตาพลังจักรวาลและกราฟิกสรุปดวงรายวัน</p>
+                </div>
+                <div class="dashboard-controls">
+                    <a href="admin-console.html" class="btn-outline-action">
+                        <i class="fas fa-arrow-left"></i> กลับหลังบ้าน
+                    </a>
+                    <button class="btn-outline-action" onclick="window.location.reload()">
+                        <i class="fas fa-sync-alt"></i> รีเฟรช
+                    </button>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label><i class="fas fa-comment-dots"></i> โทนคำทำนาย:</label>
-                <select id="predictTone">
-                    <option value="mystic">ฟันธงดวงรายวัน (ขลัง/แม่นยำ/ดุดัน)</option>
-                    <option value="casual">เป็นกันเอง (น่ารัก/เข้าใจง่าย)</option>
-                    <option value="formal">สุภาพ เป็นทางการ</option>
-                </select>
-            </div>
-
-            <button class="btn-action" onclick="generateDailyInfographic()"><i class="fas fa-wand-magic-sparkles"></i> สร้างคำทำนายอัตโนมัติ</button>
-
-            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 5px 0;">
-
-            <div class="sidebar-header" style="font-size: 16px; border: none; padding: 0;">
-                <i class="fas fa-download"></i> ส่งออกและส่งต่อ
-            </div>
-
-            <button class="btn-success" onclick="downloadInfographicPNG()"><i class="fas fa-file-image"></i> ดาวน์โหลดรูปภาพ PNG (1920x1080)</button>
-            <button class="btn-secondary" onclick="copyCaptionText()"><i class="fas fa-copy"></i> คัดลอกแคปชันสำหรับโพสต์ FB</button>
-
-            <div class="form-group" style="margin-top: 10px;">
-                <label><i class="fas fa-align-left"></i> แคปชันพร้อมโพสต์ (Preview):</label>
-                <textarea id="captionTextArea" rows="6" readonly style="font-size: 13px; line-height: 1.4; resize: vertical;"></textarea>
-            </div>
-        </div>
-
-        <!-- Right Preview Canvas Area -->
-        <div class="preview-area">
-            <div class="canvas-scaler" id="canvasScaler">
-                
-                <!-- Infographic Canvas Output (1920x1080) -->
-                <div id="infographicCanvas">
-                    <div class="bg-decor-top-right"></div>
-                    <div class="bg-decor-bottom-left"></div>
-
-                    <!-- Top Header Section -->
-                    <div class="info-header">
-                        <div class="info-header-title-row">
-                            <span class="info-crystal-ball">🔮</span>
-                            <h1 class="info-main-title" id="canvasMainTitle" contenteditable="true">เปิดชะตาฟ้าลิขิต: ฟันธงดวงรายวันประจำวันเสาร์ที่ 25 ก.ค. 2569</h1>
-                        </div>
-                        <p class="info-subhead-1" id="canvasSubhead1" contenteditable="true">สรุปคำทำนายดวงชะตาตามวันเกิดทั้ง 7 วัน ประจำวันเสาร์ที่ 25 กรกฎาคม พ.ศ. 2569</p>
-                        <p class="info-subhead-2">
-                            <i class="fas fa-star sparkle-icon"></i>
-                            <span id="canvasSubhead2" contenteditable="true">ครอบคลุมทั้งด้านความสำเร็จในการทำงาน โชคลาภทางการเงิน และสถานะความรัก พร้อมเลขและสีมงคลเสริมดวง</span>
-                            <i class="fas fa-star sparkle-icon"></i>
-                        </p>
+            <!-- Metric KPI Cards (SalesMonk Inspired) -->
+            <div class="kpi-grid">
+                <!-- Card 1 (Active Highlight) -->
+                <div class="kpi-card highlight">
+                    <div class="kpi-top">
+                        <span class="kpi-title">คอนเทนต์รายวัน</span>
+                        <div class="arrow-badge"><i class="fas fa-arrow-up-right"></i></div>
                     </div>
-
-                    <!-- Main Grid (2 Columns) -->
-                    <div class="info-grid">
-                        
-                        <!-- Left Column Card -->
-                        <div class="card-left">
-                            <div class="pill-badge-orange" id="badgeLeftTitle" contenteditable="true">ภาพรวมดวงชะตาด้านการงานและการเงิน</div>
-
-                            <!-- Row 1 -->
-                            <div class="left-item">
-                                <div class="left-item-icon">📈</div>
-                                <div class="left-item-content">
-                                    <h3 class="left-item-title" id="workTitle" contenteditable="true">เกณฑ์ความสำเร็จและข่าวดีเรื่องงาน</h3>
-                                    <p class="left-item-text" id="workDesc" contenteditable="true">วันจันทร์ พุธ และเสาร์ มีเกณฑ์โปรเจกต์สำเร็จเกินคาด ส่วนวันอาทิตย์เด่นเรื่องการเจรจา</p>
-                                </div>
-                            </div>
-
-                            <!-- Row 2 -->
-                            <div class="left-item">
-                                <div class="left-item-icon">💰</div>
-                                <div class="left-item-content">
-                                    <h3 class="left-item-title" id="wealthTitle" contenteditable="true">โชคลาภและการเงินที่โดดเด่น</h3>
-                                    <p class="left-item-text" id="wealthDesc" contenteditable="true">วันอาทิตย์ อังคาร ศุกร์ และเสาร์ มีเกณฑ์ได้ลาภลอยหรือได้เงินคืนจากลูกหนี้</p>
-                                </div>
-                            </div>
-
-                            <!-- Row 3 -->
-                            <div class="left-item">
-                                <div class="left-item-icon">⚡</div>
-                                <div class="left-item-content">
-                                    <h3 class="left-item-title" id="cautionTitle" contenteditable="true">ข้อควรระวังทางการเงินและงาน</h3>
-                                    <p class="left-item-text" id="cautionDesc" contenteditable="true">วันพุธระวังของหาย วันพฤหัสบดีระวังการสื่อสารผิดพลาด และวันจันทร์ระวังการใช้จ่ายตามอารมณ์</p>
-                                </div>
-                            </div>
+                    <div>
+                        <div class="kpi-value">
+                            7 วัน / 12 ราศี
+                            <span class="kpi-trend trend-up"><i class="fas fa-check"></i> พร้อมเจน</span>
                         </div>
-
-                        <!-- Right Column (Top Card + Table Card) -->
-                        <div class="col-right">
-                            
-                            <!-- Top Right Card -->
-                            <div class="card-right-top">
-                                <div class="pill-badge-pink" id="badgeRightTitle" contenteditable="true">ความรักและเคล็ดลับเสริมดวง</div>
-
-                                <div class="right-top-grid">
-                                    <div class="right-top-item">
-                                        <div class="right-top-icon">💕</div>
-                                        <h3 class="right-top-title" id="loveTitle" contenteditable="true">สถานะหัวใจ: คนโสดและคนมีคู่</h3>
-                                        <p class="right-top-text" id="loveDesc" contenteditable="true">คนโสดวันจันทร์ พฤหัสบดี และศุกร์ มีลุ้นพบรักจากงาน ส่วนคนมีคู่ควรระวังคำพูดในวันอาทิตย์และเสาร์</p>
-                                    </div>
-                                    <div class="right-top-item">
-                                        <div class="right-top-icon">📿</div>
-                                        <h3 class="right-top-title" id="trickTitle" contenteditable="true">ทริคเสริมดวงด้วยสีและเลขมงคล</h3>
-                                        <p class="right-top-text" id="trickDesc" contenteditable="true">ใช้สีและเลขมงคลตามวันเกิดเพื่อปรับพลังงานบวกให้ชีวิตตลอดทั้งวัน</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Bottom Right Table -->
-                            <div class="card-right-bottom">
-                                <h3 class="table-section-title" id="tableTitle" contenteditable="true">ตารางสรุปข้อมูลมงคลประจำวัน</h3>
-                                <table class="lucky-table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 28%;">วันเกิด</th>
-                                            <th style="width: 25%;">สีมงคล</th>
-                                            <th style="width: 18%;">เลขมงคล</th>
-                                            <th style="width: 29%;">จุดเด่นที่ต้องโฟกัส</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="luckyTableBody">
-                                        <tr>
-                                            <td>อาทิตย์ / จันทร์ / อังคาร</td>
-                                            <td>
-                                                <span class="color-pill green">เขียว</span>
-                                                <span class="color-pill red">แดง</span>
-                                                <span class="color-pill red">แดง</span>
-                                            </td>
-                                            <td>05 / 54 / 40</td>
-                                            <td>การเจรจา / ข่าวดีเรื่องงาน / ความอดทน</td>
-                                        </tr>
-                                        <tr>
-                                            <td>พุธ / พฤหัสบดี / ศุกร์</td>
-                                            <td>
-                                                <span class="color-pill yellow">เหลือง</span>
-                                                <span class="color-pill red">แดง</span>
-                                                <span class="color-pill red">แดง</span>
-                                            </td>
-                                            <td>01 / 12 / 20</td>
-                                            <td>ระวังของหาย / จัดสรรเวลา / ผู้ใหญ่หนุน</td>
-                                        </tr>
-                                        <tr>
-                                            <td>เสาร์</td>
-                                            <td>
-                                                <span class="color-pill orange">ส้ม</span>
-                                            </td>
-                                            <td>00</td>
-                                            <td>งานสำเร็จ / ลาภลอย</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </div>
+                        <div class="kpi-sub">สูตรคำนวณตามหลักโหรราษฎร์แท้</div>
                     </div>
-
-                    <!-- Footer Watermark -->
-                    <div class="info-footer">
-                        <div class="watermark-brand" id="brandWatermark" contenteditable="true">
-                            <i class="fas fa-moon"></i> สยามโหรามงคล
-                        </div>
-                    </div>
-
                 </div>
 
+                <!-- Card 2 -->
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-title">ความเร็วสร้างภาพสรุป</span>
+                        <div class="arrow-badge"><i class="fas fa-bolt"></i></div>
+                    </div>
+                    <div>
+                        <div class="kpi-value">
+                            1080px
+                            <span class="kpi-trend trend-up">+HD Canvas</span>
+                        </div>
+                        <div class="kpi-sub">เรนเดอร์ภาพกราฟิกคมชัดสำหรับโพสต์</div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-title">ช่องทางเผยแพร่</span>
+                        <div class="arrow-badge"><i class="fab fa-facebook-f"></i></div>
+                    </div>
+                    <div>
+                        <div class="kpi-value">
+                            Facebook Page
+                        </div>
+                        <div class="kpi-sub">รองรับโพสต์ตรง & โพสต์ล่วงหน้า</div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-title">ระบบสุ่มแม่นยำ</span>
+                        <div class="arrow-badge"><i class="fas fa-seedling"></i></div>
+                    </div>
+                    <div>
+                        <div class="kpi-value">
+                            Seed-based
+                            <span class="kpi-trend trend-up">100% สม่ำเสมอ</span>
+                        </div>
+                        <div class="kpi-sub">ผลทำนายไม่เปลี่ยนแม้กดซ้ำในวันเดียวกัน</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workspace Grid (Sidebar Settings + Preview Area) -->
+            <div class="workspace-grid">
+                <!-- Left Setting Form Panel -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-header-title">
+                            <i class="fas fa-sliders-h"></i>
+                            <h3>ตั้งค่าการทำนาย</h3>
+                        </div>
+                        <span class="panel-badge">Configuration</span>
+                    </div>
+
+                    <div class="panel-body">
+                        <!-- Date selector with arrows -->
+                        <div class="form-group-clean">
+                            <label><i class="far fa-calendar-alt"></i> เลือกวันที่ทำนาย:</label>
+                            <div class="date-control-group">
+                                <button type="button" class="btn-date-arrow" onclick="window.changeDate(-1)" title="วันก่อนหน้า">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <input type="date" id="genDate" class="input-clean">
+                                <button type="button" class="btn-date-arrow" onclick="window.changeDate(1)" title="วันถัดไป">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Type Selector -->
+                        <div class="form-group-clean">
+                            <label><i class="fas fa-layer-group"></i> รูปแบบการทำนาย:</label>
+                            <select id="genType" class="select-clean">
+                                <option value="day">ดวงรายวัน (ตามวันเกิด 7 วัน)</option>
+                                <option value="zodiac">ดวงรายวัน (ตาม 12 ราศี)</option>
+                            </select>
+                        </div>
+
+                        <!-- Tone Selector -->
+                        <div class="form-group-clean">
+                            <label><i class="far fa-comment-dots"></i> โทนสำนวนคำทำนาย (Tone of Voice):</label>
+                            <select id="genTone" class="select-clean">
+                                <option value="casual">วัยรุ่น เป็นกันเอง (มี Emoji เยอะ)</option>
+                                <option value="formal">สุภาพ เป็นทางการ</option>
+                                <option value="mystic">ขลัง แม่นยำ ดุดัน (ฟันธง!)</option>
+                            </select>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="button" class="btn-primary-generate" onclick="generateDailyContent()">
+                            <i class="fas fa-magic"></i> สร้างเนื้อหา (Generate)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Preview & Output Panel -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-header-title">
+                            <i class="far fa-eye"></i>
+                            <h3>ตัวอย่างผลลัพธ์และส่งออก</h3>
+                        </div>
+                        <span class="panel-badge" id="previewStatusBadge">รอการสร้าง</span>
+                    </div>
+
+                    <div class="preview-content-box">
+                        <!-- Empty State -->
+                        <div class="empty-placeholder" id="previewPlaceholder">
+                            <div class="icon-wrapper">
+                                <i class="fas fa-feather-alt"></i>
+                            </div>
+                            <h4>ยังไม่ได้สร้างคอนเทนต์</h4>
+                            <p>กำหนดวันที่และรูปแบบที่ต้องการทางด้านซ้าย แล้วกดปุ่ม <strong>"สร้างเนื้อหา"</strong> เพื่อเริ่มสร้างภาพและคำทำนาย</p>
+                        </div>
+
+                        <!-- Results Container (Hidden initially) -->
+                        <div id="genResultContainer" class="result-layout" style="display: none;">
+                            <!-- Preview Image Card -->
+                            <div class="preview-img-container">
+                                <div id="dailyPreviewLoading" style="display: none; padding: 30px; color: #94a3b8;">
+                                    <i class="fas fa-circle-notch fa-spin" style="font-size: 28px; color: #f59e0b; margin-bottom: 12px;"></i>
+                                    <p style="font-size: 0.9rem; font-weight: 600;">กำลังเรนเดอร์ภาพแผนผังจักรวาลความละเอียดสูง...</p>
+                                </div>
+                                <img id="dailyPreviewImg" src="" alt="Daily Fortune Preview" style="display: none; cursor: pointer;" onclick="openImageLightbox()" title="คลิกเพื่อดูภาพขนาดเต็ม">
+                                <div style="margin-top: 10px; font-size: 0.82rem; color: #94a3b8; cursor: pointer;" onclick="openImageLightbox()">
+                                    <i class="fas fa-search-plus mr-1" style="color: #f59e0b;"></i> คลิกที่ภาพเพื่อเปิดดูขนาดใหญ่คมชัด (HD Lightbox)
+                                </div>
+                            </div>
+
+                            <!-- Textarea for post content -->
+                            <div class="form-group-clean">
+                                <label><i class="far fa-copy"></i> ข้อความพยากรณ์สำหรับแคปชั่น:</label>
+                                <textarea id="genResultText" class="preview-textarea" rows="10" readonly></textarea>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="action-button-grid">
+                                <button type="button" class="btn-modern btn-modern-copy" onclick="copyGenResult()">
+                                    <i class="far fa-copy"></i> คัดลอกข้อความ
+                                </button>
+                                <button type="button" class="btn-modern btn-modern-download" onclick="downloadSummaryImage()">
+                                    <i class="fas fa-download"></i> ดาวน์โหลดภาพ (PNG)
+                                </button>
+                                <button type="button" class="btn-modern btn-modern-facebook" onclick="postToFacebook()">
+                                    <i class="fab fa-facebook-f"></i> โพสต์ลงเพจทันที
+                                </button>
+                            </div>
+
+                            <div id="canvasExportArea" style="width: 1080px; position: absolute; left: -9999px; top: 0;"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </main>
 
+    <!-- Fullscreen Lightbox Modal -->
+    <div id="imageLightboxModal" class="img-modal-backdrop" onclick="closeImageLightbox()">
+        <div class="img-modal-close" onclick="closeImageLightbox()" title="ปิด (Esc)">&times;</div>
+        <img id="lightboxModalImg" class="img-modal-content" src="" alt="Full Preview" onclick="event.stopPropagation()">
     </div>
 
-    <!-- Script Implementation -->
-    <script charset="UTF-8" src="../admin/js/admin-daily-infographic.js"></script>
+    <script charset="UTF-8" src="../src/utils/canvas-helpers.js"></script>
+    <script charset="UTF-8" src="../admin/js/admin-content-generator.js"></script>
+    <script>
+        // Lightbox Functions
+        window.openImageLightbox = function() {
+            const previewImg = document.getElementById('dailyPreviewImg');
+            if (!previewImg || !previewImg.src || previewImg.src === window.location.href) return;
+            const modal = document.getElementById('imageLightboxModal');
+            const modalImg = document.getElementById('lightboxModalImg');
+            if (modal && modalImg) {
+                modalImg.src = previewImg.src;
+                modal.style.display = 'flex';
+            }
+        };
+
+        window.closeImageLightbox = function() {
+            const modal = document.getElementById('imageLightboxModal');
+            if (modal) modal.style.display = 'none';
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeImageLightbox();
+        });
+
+        window.changeDate = function(delta) {
+            const dateInput = document.getElementById('genDate');
+            let d = dateInput.value ? new Date(dateInput.value) : new Date();
+            d.setDate(d.getDate() + delta);
+            
+            const offset = d.getTimezoneOffset();
+            d = new Date(d.getTime() - (offset*60*1000));
+            dateInput.value = d.toISOString().split('T')[0];
+            
+            if(document.getElementById('genResultContainer').style.display !== 'none') {
+                generateDailyContent();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('genDate').value = new Date().toISOString().split('T')[0];
+        });
+
+        // Update badge on generation
+        const origGenerate = window.generateDailyContent;
+        if (typeof origGenerate === 'function') {
+            window.generateDailyContent = function() {
+                origGenerate();
+                const badge = document.getElementById('previewStatusBadge');
+                if (badge) {
+                    badge.innerText = 'สร้างสำเร็จ';
+                    badge.style.background = '#ecfdf5';
+                    badge.style.color = '#10b981';
+                }
+            };
+        }
+        // Search helper
+        window.filterDailySearch = function(keyword) {
+            if (!keyword || !keyword.trim()) return;
+            const term = keyword.trim().toLowerCase();
+            const textarea = document.getElementById('genResultText');
+            if (textarea && textarea.value && textarea.value.toLowerCase().includes(term)) {
+                textarea.focus();
+                alert(`พบคำว่า "${keyword}" ในข้อความคำทำนายที่กำลังแสดง`);
+            } else {
+                alert(`กำลังค้นหา "${keyword}" ในคลังคอนเทนต์...`);
+            }
+        };
+    </script>
 </body>
 </html>
+

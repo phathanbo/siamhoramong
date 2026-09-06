@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ดวงชะตากรุงรัตนโกสินทร์ (ดวงเมือง) — สยามโหรามงคล</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & SweetAlert2 & HTML2Canvas -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Engines -->
+    <script src="../src/engine/suriyayatra-engine.js"></script>
+    <script src="../src/engine/rattanakosin-chart.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070d1e;
+            --bg-secondary: #0e1a38;
+            --card-bg: #13234d;
+            --card-inner: #192e63;
+            --gold: #f3ba2f;
+            --gold-light: #ffd768;
+            --gold-dark: #b8860b;
+            --gold-gradient: linear-gradient(135deg, #fff2a8 0%, #f3ba2f 50%, #b8860b 100%);
+            --text-main: #f8fafc;
+            --text-sub: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-gold: rgba(212, 175, 55, 0.4);
+            --border-soft: rgba(255, 255, 255, 0.12);
+            --accent-cyan: #00d2ff;
+            --accent-green: #10b981;
+            --accent-purple: #a855f7;
+            --accent-red: #ef4444;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', 'Prompt', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #172c63 0%, var(--bg-primary) 50%, #03060f 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* Top Header */
+        .header-bar {
+            background: rgba(7, 13, 30, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-gold);
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+        .header-title i {
+            font-size: 1.8rem;
+            color: var(--gold);
+            filter: drop-shadow(0 0 10px rgba(243, 186, 47, 0.7));
+        }
+        .header-title h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header-title span {
+            font-size: 0.75rem;
+            color: var(--gold-light);
+            display: block;
+            opacity: 0.9;
+        }
+
+        .btn-nav {
+            background: rgba(243, 186, 47, 0.15);
+            border: 1px solid var(--border-gold);
+            color: var(--gold-light);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.25s ease;
+        }
+        .btn-nav:hover {
+            background: var(--gold);
+            color: #070d1e;
+            box-shadow: 0 0 15px rgba(243, 186, 47, 0.4);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(25, 46, 99, 0.8) 0%, rgba(14, 26, 56, 0.9) 100%);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            margin-bottom: 24px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(243, 186, 47, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero-banner h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px 16px;
+            margin-top: 14px;
+            font-size: 0.92rem;
+            color: var(--gold-light);
+        }
+        .hero-meta span {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(243, 186, 47, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Nav Tabs */
+        .tabs-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-gold);
+            padding-bottom: 12px;
+        }
+        .tab-btn {
+            background: rgba(19, 35, 77, 0.7);
+            border: 1px solid var(--border-soft);
+            color: var(--text-sub);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+        .tab-btn:hover {
+            background: rgba(243, 186, 47, 0.15);
+            color: #fff;
+            border-color: var(--border-gold);
+        }
+        .tab-btn.active {
+            background: var(--gold-gradient);
+            color: #070d1e;
+            border-color: var(--gold);
+            box-shadow: 0 4px 15px rgba(243, 186, 47, 0.35);
+        }
+
+        /* Card styles */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(243, 186, 47, 0.25);
+            padding-bottom: 12px;
+        }
+        .card-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 18px;
+        }
+        @media (max-width: 900px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Horizon Cards */
+        .horizon-card {
+            background: var(--card-inner);
+            border: 1px solid rgba(243, 186, 47, 0.3);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .horizon-card.daily { border-top: 4px solid var(--accent-cyan); }
+        .horizon-card.monthly { border-top: 4px solid var(--gold); }
+        .horizon-card.yearly { border-top: 4px solid var(--accent-purple); }
+
+        .horizon-tag {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .horizon-tag.daily { background: rgba(0, 210, 255, 0.15); color: var(--accent-cyan); }
+        .horizon-tag.monthly { background: rgba(243, 186, 47, 0.15); color: var(--gold); }
+        .horizon-tag.yearly { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+
+        .horizon-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .score-bar-wrap {
+            background: rgba(0,0,0,0.35);
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+            margin: 10px 0 14px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: var(--gold-gradient);
+            transition: width 0.6s ease;
+        }
+
+        /* Wheel Canvas Box */
+        .wheel-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(7, 13, 30, 0.6);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            border: 1px solid var(--border-soft);
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 0 25px rgba(243, 186, 47, 0.15);
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        .data-table th, .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: left;
+        }
+        .data-table th {
+            background: rgba(0, 0, 0, 0.35);
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+        .data-table tr:hover {
+            background: rgba(243, 186, 47, 0.05);
+        }
+        .badge-dignity {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .badge-maha-uch { background: #b91c1c; color: #fff; }
+        .badge-kaset { background: #047857; color: #fff; }
+        .badge-raja-chok { background: #d97706; color: #fff; }
+        .badge-maha-jak { background: #6d28d9; color: #fff; }
+        .badge-nich { background: #4b5563; color: #cbd5e1; }
+        .badge-pra { background: #9ca3af; color: #111; }
+        .badge-normal { background: #1e293b; color: #e2e8f0; }
+
+        /* Bhava Grid */
+        .bhava-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+        .bhava-item {
+            background: var(--card-inner);
+            border: 1px solid rgba(243, 186, 47, 0.2);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            transition: all 0.2s ease;
+        }
+        .bhava-item:hover {
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
+        .bhava-item strong {
+            color: var(--gold-light);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+        .bhava-item p {
+            font-size: 0.86rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        /* Pillars 4 Box */
+        .pillar-card {
+            background: var(--card-inner);
+            border-left: 4px solid var(--gold);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+        .pillar-card.good { border-left-color: var(--accent-green); }
+        .pillar-card.warning { border-left-color: var(--gold); }
+        .pillar-card.danger { border-left-color: var(--accent-red); }
+
+        .pillar-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .pillar-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #fff;
+        }
+        .pillar-status {
+            font-size: 0.85rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            background: rgba(0,0,0,0.3);
+            color: var(--gold-light);
+        }
+
+        /* Form Inputs */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .form-control {
+            background: rgba(7, 13, 30, 0.8);
+            border: 1px solid var(--border-gold);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: var(--gold-light);
+            box-shadow: 0 0 10px rgba(243, 186, 47, 0.3);
+        }
+        .btn-gold {
+            background: var(--gold-gradient);
+            border: none;
+            color: #070d1e;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(243, 186, 47, 0.4);
+        }
+
+        /* Holy Places */
+        .holy-place-card {
+            background: var(--card-inner);
+            border: 1px solid rgba(243, 186, 47, 0.3);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            margin-bottom: 14px;
+        }
+        .holy-place-card h4 {
+            color: var(--gold-light);
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chant-box {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px dashed var(--gold);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            font-size: 1.05rem;
+            color: #fff4bd;
+            line-height: 1.8;
+            margin-top: 14px;
+        }
+
+        .share-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header-bar">
+        <a href="../index.html" class="header-title">
+            <i class="fas fa-dharmachakra"></i>
+            <div>
+                <h1>สยามโหรามงคล</h1>
+                <span>ดวงชะตากรุงรัตนโกสินทร์ • สำนักพยากรณ์ชั้นสูง</span>
+            </div>
+        </a>
+        <div style="display: flex; gap: 8px;">
+            <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าหลัก</a>
+            <a href="thai-horoscope-pro.html" class="btn-nav"><i class="fas fa-star"></i> ผูกดวงชะตา</a>
+        </div>
+    </header>
+
+    <div class="container" id="captureArea">
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <h2>🏛️ ดวงชะตากรุงรัตนโกสินทร์ (ดวงเมือง)</h2>
+            <p style="color: var(--text-sub); font-size: 1rem; max-width: 800px; margin: 0 auto;">
+                พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลกมหาราช (รัชกาลที่ ๑) ทรงพระกรุณาโปรดเกล้าฯ ให้สถาปนาเสาหลักเมือง เมื่อวันอาทิตย์ที่ ๒๑ เมษายน พ.ศ. ๒๓๒๕ เวลา ๐๖:๕๔ น. ลัคนาสถิตราศีเมษ
+            </p>
+            <div class="hero-meta">
+                <span><i class="fas fa-calendar-check"></i> วันอาทิตย์ ๒๑ เมษายน ๒๓๒๕</span>
+                <span><i class="fas fa-clock"></i> ๐๖:๕๔ น. (ย่ำรุ่ง ๙ บาท)</span>
+                <span><i class="fas fa-compass"></i> ลัคนาสถิตราศีเมษ (๐° ๕๔')</span>
+                <span id="cityAgeBadge"><i class="fas fa-hourglass-half"></i> กำลังคำนวณอายุเมือง...</span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchCityTab('trendsTab')">
+                <i class="fas fa-chart-line"></i> ๑. ทิศทาง วัน / เดือน / ปี ปัจจุบัน
+            </button>
+            <button class="tab-btn" onclick="switchCityTab('natalTab')">
+                <i class="fas fa-landmark"></i> ๒. ผังดวงเดิมรัตนโกสินทร์
+            </button>
+            <button class="tab-btn" onclick="switchCityTab('transitTab')">
+                <i class="fas fa-satellite-dish"></i> ๓. ดาวจร ๒ ชั้น & สภาพการณ์
+            </button>
+            <button class="tab-btn" onclick="switchCityTab('synastryTab')">
+                <i class="fas fa-user-shield"></i> ๔. ตรวจสมพงศ์ดวงชะตากับดวงเมือง
+            </button>
+            <button class="tab-btn" onclick="switchCityTab('holyTab')">
+                <i class="fas fa-praying-hands"></i> ๕. สถานที่ศักดิ์สิทธิ์ & เสริมดวง
+            </button>
+        </div>
+
+        <!-- TAB 1: ทิศทาง วัน / เดือน / ปี ปัจจุบัน (Day / Month / Year Horizon) -->
+        <div id="trendsTab" class="tab-content">
+            <!-- Date Controller -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-calendar-alt text-gold"></i> ตรวจสอบทิศทางดวงเมืองตามวัน-เดือน-ปี</h3>
+                    <span style="font-size: 0.85rem; color: var(--gold-light);">สามารถเปลี่ยนวันที่เพื่อดูแนวโน้มล่วงหน้าได้</span>
+                </div>
+                <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                    <label style="font-weight: 500;">เลือกวันที่ที่ต้องการตรวจสอบ:</label>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <button class="btn-gold" style="padding: 8px 12px; min-width: auto;" onclick="shiftTrendsDate(-1)" title="วันก่อนหน้า"><i class="fas fa-chevron-left"></i> ย้อน 1 วัน</button>
+                        <input type="date" id="horizonDateInput" class="form-control" style="width: auto;" onchange="updateTrendsView()">
+                        <button class="btn-gold" style="padding: 8px 12px; min-width: auto;" onclick="shiftTrendsDate(1)" title="วันถัดไป">ถัดไป 1 วัน <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <button class="btn-gold" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="setTodayTrends()"><i class="fas fa-calendar-day"></i> วันนี้</button>
+                    <button class="btn-gold" onclick="updateTrendsView()"><i class="fas fa-sync-alt"></i> วิเคราะห์ทิศทาง</button>
+                </div>
+                <div id="horizonDateTitle" style="font-size: 0.95rem; color: var(--gold-light); margin-top: 4px;">
+                    กำลังวิเคราะห์ทิศทาง...
+                </div>
+            </div>
+
+            <!-- 3 Columns: Day / Month / Year -->
+            <div class="grid-3" id="horizonCardsGrid">
+                <!-- Daily Card -->
+                <div class="horizon-card daily" id="dailyHorizonCard">
+                    <div>
+                        <span class="horizon-tag daily"><i class="fas fa-sun"></i> ทิศทางประจำวัน (DAILY)</span>
+                        <div class="horizon-title" id="dailyTitle">กำลังโหลด...</div>
+                        <div style="font-size: 0.88rem; color: var(--text-sub);" id="dailyVibe"></div>
+                        
+                        <div style="margin-top: 14px;">
+                            <div style="display:flex; justify-content:space-between; font-size:0.82rem;">
+                                <span>ดัชนีพลังงานประจำวัน:</span>
+                                <strong id="dailyScoreText" style="color:var(--accent-cyan);">0%</strong>
+                            </div>
+                            <div class="score-bar-wrap">
+                                <div class="score-bar-fill" id="dailyScoreBar" style="width: 0%; background: linear-gradient(90deg, #00d2ff, #3a7bd5);"></div>
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px; font-size: 0.88rem; line-height: 1.6; margin-top: 8px;">
+                            <p style="color: #67e8f9; margin-bottom: 4px;"><i class="fas fa-bullseye"></i> <strong id="dailyFocusHead">จุดเด่นวันนี้:</strong> <span id="dailyFocusText"></span></p>
+                            <p style="color: #fca5a5; margin-bottom: 0;"><i class="fas fa-exclamation-triangle"></i> <strong>ข้อพึงระวัง:</strong> <span id="dailyCautionText"></span></p>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: 14px; font-size: 0.84rem; color: var(--text-sub);" id="dailyRecommend">
+                    </div>
+                </div>
+
+                <!-- Monthly Card -->
+                <div class="horizon-card monthly" id="monthlyHorizonCard">
+                    <div>
+                        <span class="horizon-tag monthly"><i class="fas fa-moon"></i> ทิศทางประจำเดือน (MONTHLY)</span>
+                        <div class="horizon-title" id="monthlyTitle">กำลังโหลด...</div>
+                        <div style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 10px;" id="monthlyTheme"></div>
+
+                        <div style="margin-top: 14px;">
+                            <div style="display:flex; justify-content:space-between; font-size:0.82rem;">
+                                <span>ดัชนีการขับเคลื่อนเศรษฐกิจ:</span>
+                                <strong id="monthlyScoreText" style="color:var(--gold);">0%</strong>
+                            </div>
+                            <div class="score-bar-wrap">
+                                <div class="score-bar-fill" id="monthlyScoreBar" style="width: 0%; background: var(--gold-gradient);"></div>
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px; font-size: 0.88rem; line-height: 1.6; margin-top: 8px;">
+                            <p style="color: #fde047; margin-bottom: 4px;"><i class="fas fa-chart-line"></i> <strong>เศรษฐกิจ & ท่องเที่ยว:</strong> <span id="monthlyEcoText"></span></p>
+                            <p style="color: #cbd5e1; margin-bottom: 0;"><i class="fas fa-users"></i> <strong>กระแสสังคม:</strong> <span id="monthlySocialText"></span></p>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: 14px; font-size: 0.84rem; color: var(--text-sub);" id="monthlyAdvice">
+                    </div>
+                </div>
+
+                <!-- Yearly Card -->
+                <div class="horizon-card yearly" id="yearlyHorizonCard">
+                    <div>
+                        <span class="horizon-tag yearly"><i class="fas fa-globe-asia"></i> ทิศทางประจำปี (YEARLY)</span>
+                        <div class="horizon-title" id="yearlyTitle">กำลังโหลด...</div>
+                        <div style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 8px;" id="yearlyAgeText"></div>
+
+                        <div style="background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 8px; padding: 10px; font-size: 0.84rem; margin-bottom: 12px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                                <span>ดาวศรีจรประจำปี:</span> <strong id="taksaSriBadge" style="color:#10b981;"></strong>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                                <span>ดาวเดชจรประจำปี:</span> <strong id="taksaDechBadge" style="color:#f59e0b;"></strong>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span>ดาวกาลกิณีจร:</span> <strong id="taksaKalaBadge" style="color:#ef4444;"></strong>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 0.86rem; color: #e2e8f0; line-height: 1.6;" id="yearlyMacroText"></p>
+                    </div>
+
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: 14px; font-size: 0.84rem; color: #ffd768;" id="yearlyGoldenRule">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yearly 4 Macro Pillars Detail -->
+            <div class="card" style="margin-top: 24px;">
+                <div class="card-header">
+                    <h3><i class="fas fa-layer-group text-gold"></i> ๔ ยุทธศาสตร์ใหญ่ขับเคลื่อนบ้านเมืองในรอบปี</h3>
+                </div>
+                <div class="grid-2" id="yearlyPillarsGrid">
+                    <!-- Dynamic Render -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: ดวงเดิมกรุงรัตนโกสินทร์ (Natal Chart) -->
+        <div id="natalTab" class="tab-content" style="display: none;">
+            <div class="grid-2">
+                <!-- วงล้อดวงเดิม -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-dharmachakra text-gold"></i> ผังดวงจักรราศีกำเนิดดวงเมือง</h3>
+                        <span style="font-size: 0.85rem; color: var(--gold-light);">ลัคนาสถิตราศีเมษ</span>
+                    </div>
+                    <div class="wheel-box">
+                        <canvas id="natalCityCanvas" width="380" height="380"></canvas>
+                        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 10px; text-align: center;">
+                            * สีแดง = ดาวอุจจ์/เกษตร/ราชาโชค | ล = ลัคนาดวงเมือง (ราศีเมษ)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ตารางดาวกำเนิด 10 ดวง -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-list-ol text-gold"></i> ตำแหน่งและมาตรฐานดาวกำเนิด</h3>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="data-table" id="natalPlanetsTable">
+                            <thead>
+                                <tr>
+                                    <th>ดาว</th>
+                                    <th>ราศี</th>
+                                    <th>ภพ</th>
+                                    <th>มาตรฐาน</th>
+                                    <th>ทักษาเดิม</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- วิเคราะห์ 12 ภพเรือนชะตาของชาติ -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-archway text-gold"></i> ความหมาย ๑๒ ภพเรือนชะตากรุงรัตนโกสินทร์</h3>
+                </div>
+                <div class="bhava-grid" id="bhavaGrid">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: ดาวจร ๒ ชั้น & สภาพการณ์ (Transit Tab) -->
+        <div id="transitTab" class="tab-content" style="display: none;">
+            <div class="grid-2">
+                <!-- วงล้อดวงเดิม + ดาวจร 2 ชั้น -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-circle-notch text-gold"></i> ผังดาวจรเทียบดวงเดิม ๒ ชั้น</h3>
+                    </div>
+                    <div class="wheel-box">
+                        <canvas id="dualTransitCanvas" width="400" height="400"></canvas>
+                        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 8px; text-align: center;">
+                            <span style="color: #60a5fa;">● วงใน = ดวงกำเนิดเดิม (พ.ศ. ๒๓๒๕)</span> | 
+                            <span style="color: #f59e0b;">● วงนอก = ดาวจรปัจจุบัน</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ทักษาจรและอายุเมือง -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-compass text-gold"></i> ชันษาดวงเมือง & ทักษาจรประจำปี</h3>
+                    </div>
+                    <div id="taksaJorBox">
+                        <!-- Dynamic render -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ดัชนี 4 เสาหลักสภาพการณ์บ้านเมือง -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-chart-line text-gold"></i> แนวโน้มสถานการณ์บ้านเมือง ๔ เสาหลัก</h3>
+                </div>
+                <div id="pillarsContainer">
+                    <!-- Dynamic render -->
+                </div>
+            </div>
+
+            <!-- อิทธิพลดาวใหญ่ย้ายราศี -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-satellite text-gold"></i> วิเคราะห์ผลกระทบดาวประธานจร</h3>
+                </div>
+                <div id="planetTransitAnalysis">
+                    <!-- Dynamic render -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: ตรวจสมพงศ์ดวงชะตากับดวงเมือง (Personal Synastry) -->
+        <div id="synastryTab" class="tab-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-user-check text-gold"></i> คำนวณความสมพงศ์ระหว่างท่านกับดวงเมือง</h3>
+                    <span style="font-size: 0.85rem; color: var(--gold-light);">สามารถเลือกจากสมาชิกในระบบ หรือระบุลัคนาเอง</span>
+                </div>
+                <p style="color: var(--text-sub); font-size: 0.95rem; margin-bottom: 16px;">
+                    ตรวจสอบว่าลัคนาและดวงชะตาของท่านหรือสมาชิกในครอบครัว มีบทบาท วาสนา และเกื้อหนุนผืนแผ่นดินไทยในด้านใด
+                </p>
+
+                <!-- Member Selection Box -->
+                <div style="background: var(--card-inner); border-radius: var(--radius-md); padding: 18px; border: 1px solid var(--border-gold); margin-bottom: 20px;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+                        <div style="flex: 1; min-width: 260px;">
+                            <label style="display: block; font-size: 0.9rem; color: var(--gold-light); font-weight: 600; margin-bottom: 6px;">
+                                <i class="fas fa-users text-gold"></i> เลือกสมาชิกที่มีในระบบ:
+                            </label>
+                            <select id="synastryMemberSelect" class="form-control" style="width: 100%;" onchange="onSynastryMemberChanged()">
+                                <option value="">— กรุณาเลือกสมาชิกจากฐานข้อมูล —</option>
+                            </select>
+                        </div>
+                        <div style="min-width: 180px;">
+                            <label style="display: block; font-size: 0.9rem; color: var(--gold-light); font-weight: 600; margin-bottom: 6px;">
+                                หรือ เลือกลัคนาราศีเกิดเอง:
+                            </label>
+                            <select id="userAscRasiSelect" class="form-control" style="width: 100%;" onchange="onManualRasiChanged()">
+                                <option value="0">ราศีเมษ (♈)</option>
+                                <option value="1">ราศีพฤษภ (♉)</option>
+                                <option value="2">ราศีมิถุน (♊)</option>
+                                <option value="3">ราศีกรกฎ (♋)</option>
+                                <option value="4">ราศีสิงห์ (♌)</option>
+                                <option value="5">ราศีกันย์ (♍)</option>
+                                <option value="6">ราศีตุลย์ (♎)</option>
+                                <option value="7">ราศีพิจิก (♏)</option>
+                                <option value="8">ราศีธนู (♐)</option>
+                                <option value="9">ราศีมังกร (♑)</option>
+                                <option value="10">ราศีกุมภ์ (♒)</option>
+                                <option value="11">ราศีมีน (♓)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button class="btn-gold" onclick="calculatePersonalSynastry()">
+                                <i class="fas fa-search"></i> ทำนายสมพงศ์
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Selected Member Info Card -->
+                    <div id="selectedMemberInfoBox" style="display: none; background: rgba(0,0,0,0.35); border-radius: 8px; padding: 12px 16px; margin-top: 14px; border-left: 4px solid var(--accent-cyan); font-size: 0.9rem;">
+                        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center;">
+                            <div>
+                                <strong style="color: #fff; font-size: 1.05rem;" id="infoMemberName">คุณสมชาย ใจดี</strong>
+                                <span style="color: var(--gold-light); margin-left: 10px;" id="infoMemberBirth">เกิด 15 สิงหาคม 2535 เวลา 08:30 น.</span>
+                            </div>
+                            <div>
+                                <span class="badge-dignity badge-maha-uch" id="infoMemberLagnaBadge" style="font-size: 0.85rem; padding: 4px 12px;">
+                                    ลัคนาราศีเมษ
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ผลการวิเคราะห์สมพงศ์ -->
+            <div id="synastryResultCard" class="card" style="display: none;">
+                <div class="card-header">
+                    <h3><i class="fas fa-award text-gold"></i> ผลการทำนายวาสนาของท่านต่อแผ่นดิน</h3>
+                    <span id="synastrySubjectName" style="font-size: 0.9rem; color: var(--gold-light); font-weight: 600;"></span>
+                </div>
+                <div style="background: var(--card-inner); border-radius: var(--radius-md); padding: 22px; border: 1px solid var(--border-gold);">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <span style="font-size: 2rem; color: var(--gold); filter: drop-shadow(0 0 8px rgba(243,186,47,0.6));">👑</span>
+                        <div>
+                            <h4 id="synastryRoleTitle" style="color: var(--gold); font-size: 1.35rem; font-weight: 700; margin: 0;"></h4>
+                            <span id="synastryRasiRelation" style="font-size: 0.88rem; color: var(--accent-cyan); font-weight: 600;"></span>
+                        </div>
+                    </div>
+                    
+                    <p id="synastryRoleDetail" style="color: #fff; font-size: 1.05rem; line-height: 1.8; margin-bottom: 16px; background: rgba(0,0,0,0.3); padding: 14px; border-radius: 8px;"></p>
+                    
+                    <div style="border-top: 1px solid rgba(243, 186, 47, 0.25); padding-top: 16px; margin-top: 16px;">
+                        <strong style="color: var(--gold-light); font-size: 1.05rem; display: block; margin-bottom: 10px;">
+                            <i class="fas fa-map-marker-alt text-gold"></i> สถานที่ศักดิ์สิทธิ์ประจำสายชะตาของท่าน เพื่อเสริมบารมีคู่บ้านคู่เมือง:
+                        </strong>
+                        <div id="synastryHolyList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: สถานที่ศักดิ์สิทธิ์ & เสริมดวง (Holy Places) -->
+        <div id="holyTab" class="tab-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-place-of-worship text-gold"></i> มหาสิริมงคล ๔ แดนศักดิ์สิทธิ์คุ้มครองดวงเมือง</h3>
+                </div>
+                <div id="holyPlacesGrid">
+                    <!-- Dynamic holy places -->
+                </div>
+
+                <div class="chant-box">
+                    <strong style="color: var(--gold); font-size: 1.15rem; display: block; margin-bottom: 8px;">
+                        🕉️ พระคาถาบูชาพระสยามเทวาธิราช (คุ้มครองดวงเมืองและตนเอง)
+                    </strong>
+                    (ตั้งนะโม ๓ จบ)<br>
+                    <span style="font-weight: 500;">
+                        "สยามะเทวาธิราชา เทวา ติระกะขะกา มะหิทธิกา<br>
+                        ธะยัมปะติราชินี จะ อิมัง รัฏฐัง รังขันตุ สัพพะทาฯ"
+                    </span>
+                    <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 10px;">
+                        สวดบูชาเป็นประจำทุกวัน เพื่อเสริมสิริมงคล คุ้มครองเคหสถาน บ้านเมือง และให้กิจการงานเจริญรุ่งเรือง
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Share / Export Button -->
+        <div class="share-btn-group">
+            <button class="btn-gold" onclick="exportCityChartImage()">
+                <i class="fas fa-camera"></i> บันทึกรูปภาพดวงเมือง
+            </button>
+            <button class="btn-gold" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="window.print()">
+                <i class="fas fa-print"></i> พิมพ์เอกสาร
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Data & Variables
+        let currentTargetDate = new Date();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initDateInputs();
+            initNatalCity();
+            updateTrendsView();
+            initSynastryDefault();
+            initHolyPlaces();
+        });
+
+        function initDateInputs() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const hInput = document.getElementById('horizonDateInput');
+            if (hInput) hInput.value = todayStr;
+        }
+
+        function switchCityTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const target = document.getElementById(tabId);
+            if (target) target.style.display = 'block';
+
+            const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick')?.includes(tabId));
+            if (activeBtn) activeBtn.classList.add('active');
+
+            if (tabId === 'transitTab') {
+                updateTransitView();
+            } else if (tabId === 'trendsTab') {
+                updateTrendsView();
+            }
+        }
+
+        // 1. Trends View (Day / Month / Year)
+        function shiftTrendsDate(days) {
+            const hInput = document.getElementById('horizonDateInput');
+            if (hInput) {
+                const cur = hInput.value ? new Date(hInput.value + 'T00:00:00') : new Date();
+                cur.setDate(cur.getDate() + days);
+                const yyyy = cur.getFullYear();
+                const mm = String(cur.getMonth() + 1).padStart(2, '0');
+                const dd = String(cur.getDate()).padStart(2, '0');
+                hInput.value = `${yyyy}-${mm}-${dd}`;
+                updateTrendsView();
+            }
+        }
+
+        function setTodayTrends() {
+            const hInput = document.getElementById('horizonDateInput');
+            if (hInput) {
+                const now = new Date();
+                const yyyy = now.getFullYear();
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                hInput.value = `${yyyy}-${mm}-${dd}`;
+                updateTrendsView();
+            }
+        }
+
+        function updateTrendsView() {
+            const hInput = document.getElementById('horizonDateInput');
+            const targetDate = hInput && hInput.value ? new Date(hInput.value) : new Date();
+            currentTargetDate = targetDate;
+
+            const trends = RattanakosinCityEngine.calculateDayMonthYearTrends(targetDate);
+            const dateTitle = document.getElementById('horizonDateTitle');
+            if (dateTitle) {
+                dateTitle.innerHTML = `🔮 วิเคราะห์ทิศทาง ณ <strong>${trends.dailyTrend.dayName}ที่ ${targetDate.getDate()} ${trends.monthlyTrend.monthName} พ.ศ. ${trends.yearlyTrend.yearBE}</strong>`;
+            }
+
+            // Daily Card
+            document.getElementById('dailyTitle').innerText = `${trends.dailyTrend.dayName} (${trends.dailyTrend.dayPlanet.name})`;
+            document.getElementById('dailyVibe').innerHTML = `✨ <strong>กระแสสังคม:</strong> ${trends.dailyTrend.vibe} (จันทร์เสวย${trends.dailyTrend.moonBhavaName})`;
+            document.getElementById('dailyScoreText').innerText = `${trends.dailyTrend.score}%`;
+            document.getElementById('dailyScoreBar').style.width = `${trends.dailyTrend.score}%`;
+            document.getElementById('dailyFocusText').innerText = trends.dailyTrend.focus;
+            document.getElementById('dailyCautionText').innerText = trends.dailyTrend.caution;
+            document.getElementById('dailyRecommend').innerHTML = `💡 <strong>คำแนะนำวันนี้:</strong> ${trends.dailyTrend.recommendation}`;
+
+            // Monthly Card
+            document.getElementById('monthlyTitle').innerText = `เดือน${trends.monthlyTrend.monthName} ${trends.monthlyTrend.yearBE}`;
+            document.getElementById('monthlyTheme').innerHTML = `🌟 <strong>ธีมประจำเดือน:</strong> ${trends.monthlyTrend.theme} (อาทิตย์สถิต${trends.monthlyTrend.sunBhava})`;
+            document.getElementById('monthlyScoreText').innerText = `${trends.monthlyTrend.economicScore}%`;
+            document.getElementById('monthlyScoreBar').style.width = `${trends.monthlyTrend.economicScore}%`;
+            document.getElementById('monthlyEcoText').innerText = trends.monthlyTrend.economicTrend;
+            document.getElementById('monthlySocialText').innerText = trends.monthlyTrend.socialTrend;
+            document.getElementById('monthlyAdvice').innerHTML = `💼 <strong>กลยุทธ์ผู้ประกอบการ:</strong> ${trends.monthlyTrend.strategicAdvice}`;
+
+            // Yearly Card
+            document.getElementById('yearlyTitle').innerText = `ปี พ.ศ. ${trends.yearlyTrend.yearBE}`;
+            document.getElementById('yearlyAgeText').innerHTML = `🏛️ <strong>ชันษาดวงเมือง:</strong> ${trends.yearlyTrend.cityAge} • ${trends.yearlyTrend.currentWai}`;
+            document.getElementById('taksaSriBadge').innerText = trends.yearlyTrend.taksaSri;
+            document.getElementById('taksaDechBadge').innerText = trends.yearlyTrend.taksaDech;
+            document.getElementById('taksaKalaBadge').innerText = trends.yearlyTrend.taksaKala;
+            document.getElementById('yearlyMacroText').innerText = trends.yearlyTrend.macroOutlook;
+            document.getElementById('yearlyGoldenRule').innerHTML = `👑 <strong>กฎทองประจำปี:</strong> ${trends.yearlyTrend.goldenRule}`;
+
+            // Yearly Pillars Grid
+            const pGrid = document.getElementById('yearlyPillarsGrid');
+            if (pGrid) {
+                pGrid.innerHTML = trends.yearlyTrend.keyPillars.map(p => `
+                    <div style="background: var(--card-inner); border-radius: 8px; padding: 14px; border-left: 4px solid var(--gold);">
+                        <strong style="color: var(--gold-light); font-size: 1rem; display:block; margin-bottom: 4px;">${p.area}</strong>
+                        <span style="font-size: 0.85rem; color: #00d2ff; font-weight: 600; display:block; margin-bottom: 6px;">🎯 ${p.trend}</span>
+                        <p style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; margin:0;">${p.detail}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // 2. Init Natal City Chart
+        function initNatalCity() {
+            const ageInfo = RattanakosinCityEngine.calculateCityAgeAndTaksa(new Date());
+            const badge = document.getElementById('cityAgeBadge');
+            if (badge) {
+                badge.innerHTML = `<i class="fas fa-hourglass-half"></i> ครบรอบ ${ageInfo.fullYears} ปี (ย่าง ${ageInfo.turningAge} ปี)`;
+            }
+
+            // Populate Table
+            const tbody = document.querySelector('#natalPlanetsTable tbody');
+            if (tbody) {
+                tbody.innerHTML = RattanakosinCityEngine.NATAL_PLANETS.map(p => {
+                    let badgeClass = 'badge-normal';
+                    if (p.dignity.includes('มหาอุจจ์')) badgeClass = 'badge-maha-uch';
+                    else if (p.dignity.includes('เกษตร')) badgeClass = 'badge-kaset';
+                    else if (p.dignity.includes('ราชาโชค')) badgeClass = 'badge-raja-chok';
+                    else if (p.dignity.includes('มหาจักร')) badgeClass = 'badge-maha-jak';
+                    else if (p.dignity.includes('นิจ')) badgeClass = 'badge-nich';
+                    else if (p.dignity.includes('ประ')) badgeClass = 'badge-pra';
+
+                    return `
+                        <tr>
+                            <td><strong>${p.name} (${p.thNum})</strong></td>
+                            <td>${p.rasiName} (${p.deg}°${p.min}')</td>
+                            <td>${p.bhava}</td>
+                            <td><span class="badge-dignity ${badgeClass}">${p.dignity}</span></td>
+                            <td style="color: var(--gold-light);">${p.taksaRole}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // Populate 12 Bhavas
+            const bGrid = document.getElementById('bhavaGrid');
+            if (bGrid) {
+                bGrid.innerHTML = RattanakosinCityEngine.BHAVA_CITY_MEANING.map((b, idx) => `
+                    <div class="bhava-item">
+                        <strong>ภพ ${idx+1}: ${b.name}</strong>
+                        <span style="font-size: 0.78rem; color: var(--gold); display: block; margin-bottom: 4px;">ดาวเกษตรครองเรือน: ${b.lord}</span>
+                        <p>${b.meaning}</p>
+                    </div>
+                `).join('');
+            }
+
+            // Draw Natal Canvas
+            drawNatalWheel('natalCityCanvas');
+        }
+
+        // Draw Canvas Wheel for Natal
+        function drawNatalWheel(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+            const r = w / 2 - 15;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Dark space background
+            const bgGrad = ctx.createRadialGradient(cx, cy, 10, cx, cy, r);
+            bgGrad.addColorStop(0, '#1a326b');
+            bgGrad.addColorStop(1, '#070f24');
+            ctx.fillStyle = bgGrad;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Outer golden ring
+            ctx.strokeStyle = '#f3ba2f';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Inner circle
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.3, 0, Math.PI * 2);
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Center Label
+            ctx.fillStyle = '#f3ba2f';
+            ctx.font = 'bold 13px Sarabun';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ดวงเมือง', cx, cy - 8);
+            ctx.fillText('๒๓๒๕', cx, cy + 10);
+
+            // 12 Sectors
+            const rasiNames = ["เมษ", "พฤษภ", "มิถุน", "กรกฎ", "สิงห์", "กันย์", "ตุลย์", "พิจิก", "ธนู", "มังกร", "กุมภ์", "มีน"];
+            for (let i = 0; i < 12; i++) {
+                const angle = (i * 30 - 90) * Math.PI / 180;
+                const x1 = cx + (r * 0.3) * Math.cos(angle);
+                const y1 = cy + (r * 0.3) * Math.sin(angle);
+                const x2 = cx + r * Math.cos(angle);
+                const y2 = cy + r * Math.sin(angle);
+
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = 'rgba(243, 186, 47, 0.35)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Rasi label on outer edge
+                const midAngle = ((i * 30) - 75) * Math.PI / 180;
+                const rx = cx + (r * 0.88) * Math.cos(midAngle);
+                const ry = cy + (r * 0.88) * Math.sin(midAngle);
+                ctx.fillStyle = '#cbd5e1';
+                ctx.font = 'bold 11px Sarabun';
+                ctx.fillText(rasiNames[i], rx, ry);
+            }
+
+            // Planets group by Rasi
+            const planetsInRasi = {};
+            for (let i = 0; i < 12; i++) planetsInRasi[i] = [];
+            planetsInRasi[0].push({ label: 'ลั', color: '#ff4d4d', isAsc: true });
+
+            RattanakosinCityEngine.NATAL_PLANETS.forEach(p => {
+                let color = '#ffd768';
+                if (p.dignity.includes('มหาอุจจ์') || p.dignity.includes('เกษตร')) color = '#ff4d4d';
+                planetsInRasi[p.rasiIndex].push({ label: p.thNum, color: color });
+            });
+
+            // Draw Planets
+            for (let rasi = 0; rasi < 12; rasi++) {
+                const list = planetsInRasi[rasi];
+                if (!list.length) continue;
+                const midAngle = ((rasi * 30) - 75) * Math.PI / 180;
+
+                list.forEach((item, pIdx) => {
+                    const distRatio = 0.45 + (pIdx * 0.15);
+                    const px = cx + (r * distRatio) * Math.cos(midAngle);
+                    const py = cy + (r * distRatio) * Math.sin(midAngle);
+
+                    ctx.fillStyle = item.color;
+                    ctx.font = item.isAsc ? 'bold 14px Sarabun' : 'bold 13px Sarabun';
+                    ctx.fillText(item.label, px, py);
+                });
+            }
+        }
+
+        // 3. Transit View
+        function updateTransitView() {
+            const targetDate = currentTargetDate || new Date();
+            const ageInfo = RattanakosinCityEngine.calculateCityAgeAndTaksa(targetDate);
+            const transitList = RattanakosinCityEngine.calculateTransitPlanets(targetDate);
+            const report = RattanakosinCityEngine.analyzeTransitToCity(transitList, ageInfo);
+
+            // Draw Dual Wheel
+            drawDualTransitWheel('dualTransitCanvas', transitList);
+
+            // Render Taksa Jor
+            const taksaBox = document.getElementById('taksaJorBox');
+            if (taksaBox) {
+                let html = `
+                    <div style="background: var(--card-inner); border-radius: 8px; padding: 14px; margin-bottom: 12px; border: 1px solid rgba(243, 186, 47, 0.2);">
+                        <strong style="color: var(--gold);">วัยปัจจุบัน:</strong> ${ageInfo.currentWai}<br>
+                        <strong style="color: var(--gold);">วันเกิดดวงเมือง:</strong> ${ageInfo.cityBirthday}
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>ภูมิ</th><th>ดาวจรเสวยอายุ</th></tr>
+                        </thead>
+                        <tbody>
+                `;
+                for (const [role, info] of Object.entries(ageInfo.taksaJor)) {
+                    let color = 'inherit';
+                    if (role === 'ศรี') color = '#10b981';
+                    if (role === 'เดช') color = '#f59e0b';
+                    if (role === 'กาลกิณี') color = '#ef4444';
+                    if (role === 'มนตรี') color = '#00d2ff';
+
+                    html += `<tr><td><strong style="color:${color};">${role}</strong></td><td>${info.planetName}</td></tr>`;
+                }
+                html += `</tbody></table>`;
+                taksaBox.innerHTML = html;
+            }
+
+            // Render 4 Pillars
+            const pillarsEl = document.getElementById('pillarsContainer');
+            if (pillarsEl) {
+                pillarsEl.innerHTML = Object.values(report.pillars).map(p => `
+                    <div class="pillar-card warning">
+                        <div class="pillar-head">
+                            <span class="pillar-title">${p.title}</span>
+                            <span class="pillar-status">${p.status}</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-sub); line-height: 1.6;">${p.details}</p>
+                    </div>
+                `).join('');
+            }
+
+            // Render Planet Transits
+            const planetTransEl = document.getElementById('planetTransitAnalysis');
+            if (planetTransEl) {
+                planetTransEl.innerHTML = report.analysis.map(a => `
+                    <div style="background: var(--card-inner); border-radius: 8px; padding: 14px; margin-bottom: 10px; border-left: 4px solid var(--gold);">
+                        <strong style="color: var(--gold-light); font-size: 1rem;">ดาว${a.planet} สถิต${a.rasi} (${a.bhava})</strong>
+                        <p style="font-size: 0.88rem; color: var(--text-sub); margin-top: 4px; line-height: 1.5;">${a.summary}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Draw Dual Canvas Wheel (Natal inside + Transit outside)
+        function drawDualTransitWheel(canvasId, transitList) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+            const r = w / 2 - 10;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Dark background
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fillStyle = '#070d1e';
+            ctx.fill();
+            ctx.strokeStyle = '#f3ba2f';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Middle border (divides transit from natal)
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.65, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(243, 186, 47, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Inner center circle
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.25, 0, Math.PI * 2);
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Center Label
+            ctx.fillStyle = '#f3ba2f';
+            ctx.font = 'bold 12px Sarabun';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ดวงเมือง', cx, cy - 6);
+            ctx.fillText('๒ ชั้น', cx, cy + 8);
+
+            const rasiNames = ["เมษ", "พฤษภ", "มิถุน", "กรกฎ", "สิงห์", "กันย์", "ตุลย์", "พิจิก", "ธนู", "มังกร", "กุมภ์", "มีน"];
+
+            // 12 Sectors
+            for (let i = 0; i < 12; i++) {
+                const angle = (i * 30 - 90) * Math.PI / 180;
+                const x1 = cx + (r * 0.25) * Math.cos(angle);
+                const y1 = cy + (r * 0.25) * Math.sin(angle);
+                const x2 = cx + r * Math.cos(angle);
+                const y2 = cy + r * Math.sin(angle);
+
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = 'rgba(243, 186, 47, 0.2)';
+                ctx.stroke();
+
+                // Outer Rasi Names
+                const midAngle = ((i * 30) - 75) * Math.PI / 180;
+                const rx = cx + (r * 0.92) * Math.cos(midAngle);
+                const ry = cy + (r * 0.92) * Math.sin(midAngle);
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = 'bold 10px Sarabun';
+                ctx.fillText(rasiNames[i], rx, ry);
+            }
+
+            // Draw Natal Planets in Inner Ring (0.35 - 0.6)
+            const natalGroup = {};
+            for (let i = 0; i < 12; i++) natalGroup[i] = [];
+            natalGroup[0].push({ label: 'ลั', color: '#ef4444' });
+            RattanakosinCityEngine.NATAL_PLANETS.forEach(p => {
+                natalGroup[p.rasiIndex].push({ label: p.thNum, color: '#60a5fa' });
+            });
+
+            for (let rasi = 0; rasi < 12; rasi++) {
+                const list = natalGroup[rasi];
+                const midAngle = ((rasi * 30) - 75) * Math.PI / 180;
+                list.forEach((item, pIdx) => {
+                    const distRatio = 0.36 + (pIdx * 0.12);
+                    const px = cx + (r * distRatio) * Math.cos(midAngle);
+                    const py = cy + (r * distRatio) * Math.sin(midAngle);
+                    ctx.fillStyle = item.color;
+                    ctx.font = 'bold 11px Sarabun';
+                    ctx.fillText(item.label, px, py);
+                });
+            }
+
+            // Draw Transit Planets in Outer Ring (0.68 - 0.85)
+            const transitGroup = {};
+            for (let i = 0; i < 12; i++) transitGroup[i] = [];
+            transitList.forEach(p => {
+                transitGroup[p.rasi].push({ label: p.thNum, color: '#f59e0b' });
+            });
+
+            for (let rasi = 0; rasi < 12; rasi++) {
+                const list = transitGroup[rasi];
+                const midAngle = ((rasi * 30) - 75) * Math.PI / 180;
+                list.forEach((item, pIdx) => {
+                    const distRatio = 0.72 + (pIdx * 0.08);
+                    const px = cx + (r * distRatio) * Math.cos(midAngle);
+                    const py = cy + (r * distRatio) * Math.sin(midAngle);
+                    ctx.fillStyle = item.color;
+                    ctx.font = 'bold 12px Sarabun';
+                    ctx.fillText(item.label, px, py);
+                });
+            }
+        }
+
+        // 4. Init Synastry with Member Management
+        let currentSelectedMember = null;
+        let loadedMemberList = [];
+
+        function initSynastryDefault() {
+            loadMembersForSynastry();
+            calculatePersonalSynastry();
+        }
+
+        // โหลดรายชื่อสมาชิกจากทุกแหล่งข้อมูลในระบบ
+        function loadMembersForSynastry() {
+            const memberSelect = document.getElementById('synastryMemberSelect');
+            if (!memberSelect) return;
+
+            let allMembers = [];
+
+            // 1. ดึงจาก horo_history
+            try {
+                const h = JSON.parse(localStorage.getItem('horo_history') || '[]');
+                if (Array.isArray(h)) allMembers = allMembers.concat(h);
+            } catch (e) {}
+
+            // 2. ดึงจาก siamhoramangkol_members
+            try {
+                const sm = JSON.parse(localStorage.getItem('siamhoramangkol_members') || '[]');
+                if (Array.isArray(sm)) allMembers = allMembers.concat(sm);
+            } catch (e) {}
+
+            // 3. ดึงจาก userProfile / userBirthdate
+            try {
+                const uProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                const uBirth = localStorage.getItem('userBirthdate');
+                if (uProfile.name || uBirth) {
+                    allMembers.unshift({
+                        id: 'current_user',
+                        name: uProfile.name || 'เจ้าของบัญชี (ผู้ใช้ปัจจุบัน)',
+                        birthdate: uBirth || uProfile.birthdate || '',
+                        birthtime: localStorage.getItem('userBirthTime') || uProfile.birthtime || '06:00',
+                        ascRasi: localStorage.getItem('userAscRasi') !== null ? parseInt(localStorage.getItem('userAscRasi')) : undefined
+                    });
+                }
+            } catch (e) {}
+
+            // กรองสมาชิกที่ไม่ซ้ำกัน
+            const uniqueMap = new Map();
+            allMembers.forEach(m => {
+                const fullName = ((m.name || m.firstName || '') + ' ' + (m.lastName || '')).trim() || 'สมาชิกไม่ระบุชื่อ';
+                const key = `${fullName}_${m.birthdate || ''}`;
+                if (!uniqueMap.has(key)) {
+                    uniqueMap.set(key, { ...m, displayName: fullName });
+                }
+            });
+
+            loadedMemberList = Array.from(uniqueMap.values());
+
+            // เติมลงใน Dropdown
+            let html = '<option value="">— กรุณาเลือกสมาชิกจากฐานข้อมูล —</option>';
+            loadedMemberList.forEach((m, idx) => {
+                const bStr = m.birthdate ? ` (เกิด ${m.birthdate})` : '';
+                html += `<option value="${idx}">👤 ${m.displayName}${bStr}</option>`;
+            });
+
+            memberSelect.innerHTML = html;
+        }
+
+        // เมื่อผู้ใช้เลือกสมาชิกจาก Dropdown
+        function onSynastryMemberChanged() {
+            const memberSelect = document.getElementById('synastryMemberSelect');
+            const idx = memberSelect ? memberSelect.value : '';
+            const infoBox = document.getElementById('selectedMemberInfoBox');
+
+            if (idx === '' || !loadedMemberList[idx]) {
+                currentSelectedMember = null;
+                if (infoBox) infoBox.style.display = 'none';
+                return;
+            }
+
+            const member = loadedMemberList[idx];
+            currentSelectedMember = member;
+
+            // คำนวณหรือดึงลัคนาราศีเกิดของสมาชิก
+            const calculatedAsc = getMemberAscRasi(member);
+            
+            // อัปเดต Dropdown ลัคนา
+            const rasiSelect = document.getElementById('userAscRasiSelect');
+            if (rasiSelect) rasiSelect.value = calculatedAsc;
+
+            // แสดงการ์ดข้อมูลสมาชิก
+            if (infoBox) {
+                infoBox.style.display = 'block';
+                const nameEl = document.getElementById('infoMemberName');
+                const birthEl = document.getElementById('infoMemberBirth');
+                const badgeEl = document.getElementById('infoMemberLagnaBadge');
+                
+                const rasiNames = ["เมษ", "พฤษภ", "มิถุน", "กรกฎ", "สิงห์", "กันย์", "ตุลย์", "พิจิก", "ธนู", "มังกร", "กุมภ์", "มีน"];
+                if (nameEl) nameEl.innerText = `👤 คุณ${member.displayName}`;
+                if (birthEl) birthEl.innerText = `เกิด: ${member.birthdate || 'ไม่ระบุวัน'} | เวลา: ${member.birthtime || member.birthTime || '12:00'} น.`;
+                if (badgeEl) badgeEl.innerText = `ลัคนาราศี${rasiNames[calculatedAsc]}`;
+            }
+
+            // คำนวณสมพงศ์ทันที
+            calculatePersonalSynastry();
+        }
+
+        function onManualRasiChanged() {
+            // เมื่อผู้ใช้ปรับราศีเอง ให้รีเซ็ตการเลือกสมาชิก
+            const memberSelect = document.getElementById('synastryMemberSelect');
+            const infoBox = document.getElementById('selectedMemberInfoBox');
+            if (memberSelect) memberSelect.value = '';
+            if (infoBox) infoBox.style.display = 'none';
+            currentSelectedMember = null;
+            calculatePersonalSynastry();
+        }
+
+        // ฟังก์ชันคำนวณลัคนาราศีของสมาชิก
+        function getMemberAscRasi(member) {
+            if (member.ascRasi !== undefined && !isNaN(member.ascRasi)) {
+                return parseInt(member.ascRasi);
+            }
+            if (member.ascendant !== undefined && !isNaN(member.ascendant)) {
+                return parseInt(member.ascendant);
+            }
+
+            // คำนวณจากวันเดือนปีเกิด
+            if (member.birthdate) {
+                try {
+                    let d = 1, m = 1, y = 2000;
+                    if (member.birthdate.includes('/')) {
+                        const p = member.birthdate.split('/');
+                        d = parseInt(p[0]); m = parseInt(p[1]); y = parseInt(p[2]);
+                        if (y > 2400) y -= 543;
+                    } else if (member.birthdate.includes('-')) {
+                        const p = member.birthdate.split('-');
+                        if (p[0].length === 4) {
+                            y = parseInt(p[0]); m = parseInt(p[1]); d = parseInt(p[2]);
+                            if (y > 2400) y -= 543;
+                        } else {
+                            d = parseInt(p[0]); m = parseInt(p[1]); y = parseInt(p[2]);
+                            if (y > 2400) y -= 543;
+                        }
+                    }
+
+                    const timeStr = member.birthtime || member.birthTime || "06:00";
+                    const tParts = timeStr.split(':');
+                    const hour = parseInt(tParts[0]) || 6;
+                    const minute = parseInt(tParts[1]) || 0;
+
+                    // การคำนวณลัคนาอันโตนาที / สุริยวิถี
+                    // อาทิตย์ขึ้นประมาณ 06:00 น. = ราศีตามเดือนเกิด
+                    const sunRasi = getRassiByMonthDay(m, d);
+                    const hoursPastDawn = ((hour - 6) + (minute / 60) + 24) % 24;
+                    const rasiShift = Math.floor(hoursPastDawn / 2); // 1 ราศี = 2 ชั่วโมงโดยประมาณ
+                    return (sunRasi + rasiShift) % 12;
+                } catch (e) {}
+            }
+
+            return 0; // ราศีเมษ default
+        }
+
+        function getRassiByMonthDay(m, d) {
+            if ((m == 4 && d >= 13) || (m == 5 && d <= 13)) return 0; // เมษ
+            if ((m == 5 && d >= 14) || (m == 6 && d <= 14)) return 1; // พฤษภ
+            if ((m == 6 && d >= 15) || (m == 7 && d <= 15)) return 2; // มิถุน
+            if ((m == 7 && d >= 16) || (m == 8 && d <= 16)) return 3; // กรกฎ
+            if ((m == 8 && d >= 17) || (m == 9 && d <= 16)) return 4; // สิงห์
+            if ((m == 9 && d >= 17) || (m == 10 && d <= 16)) return 5; // กันย์
+            if ((m == 10 && d >= 17) || (m == 11 && d <= 15)) return 6; // ตุลย์
+            if ((m == 11 && d >= 16) || (m == 12 && d <= 15)) return 7; // พิจิก
+            if ((m == 12 && d >= 16) || (m == 1 && d <= 14)) return 8; // ธนู
+            if ((m == 1 && d >= 15) || (m == 2 && d <= 12)) return 9; // มังกร
+            if ((m == 2 && d >= 13) || (m == 3 && d <= 13)) return 10; // กุมภ์
+            return 11; // มีน
+        }
+
+        function calculatePersonalSynastry() {
+            const select = document.getElementById('userAscRasiSelect');
+            const rasiVal = select ? parseInt(select.value) : 0;
+            const res = RattanakosinCityEngine.matchPersonalWithCity({ ascRasi: rasiVal });
+            if (!res) return;
+
+            const card = document.getElementById('synastryResultCard');
+            if (card) card.style.display = 'block';
+
+            const namePrefix = currentSelectedMember ? `เจ้าชะตา: คุณ${currentSelectedMember.displayName}` : `เจ้าชะตา: ลัคนาราศี${res.userAscName}`;
+            const subjNameEl = document.getElementById('synastrySubjectName');
+            if (subjNameEl) subjNameEl.innerText = namePrefix;
+
+            document.getElementById('synastryRoleTitle').innerHTML = res.roleTitle;
+            document.getElementById('synastryRasiRelation').innerHTML = `ลัคนาของท่านสถิต <strong>ราศี${res.userAscName}</strong> เป็น <strong>ภพที่ ${res.relationshipRasi}</strong> ต่อลัคนาดวงเมือง (ราศีเมษ)`;
+            document.getElementById('synastryRoleDetail').innerHTML = `
+                ✨ <strong>พันธกิจและวาสนาต่อแผ่นดิน:</strong><br>
+                ${res.roleDetail}
+            `;
+
+            const listEl = document.getElementById('synastryHolyList');
+            if (listEl) {
+                listEl.innerHTML = res.holyPlaces.map(h => `
+                    <div style="background: rgba(0,0,0,0.35); padding: 14px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--gold);">
+                        <strong style="color: var(--gold-light); font-size: 1rem;"><i class="fas fa-place-of-worship text-gold"></i> ${h.name}</strong> 
+                        <span style="font-size: 0.82rem; color: #94a3b8;">(${h.location})</span><br>
+                        <div style="margin-top: 4px; font-size: 0.88rem; color: #e2e8f0;">
+                            🎯 <strong>ขอพร:</strong> ${h.blessing}
+                        </div>
+                        <div style="margin-top: 2px; font-size: 0.85rem; color: var(--gold-light);">
+                            🪔 <strong>เครื่องสักการะ:</strong> ${h.item}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // 5. Init Holy Places
+        function initHolyPlaces() {
+            const grid = document.getElementById('holyPlacesGrid');
+            const places = [
+                {
+                    name: "ศาลหลักเมืองกรุงเทพมหานคร",
+                    location: "หัวมุมสนามหลวง ตรงข้ามพระบรมมหาราชวัง",
+                    icon: "fa-monument",
+                    desc: "หลักชัยคู่บ้านคู่เมือง ประดิษฐานเสาหลักเมืองเดิมรัชกาลที่ ๑ และเสาหลักเมืองรัชกาลที่ ๔ พร้อมเทพารักษ์ทั้ง ๕ (พระเสื้อเมือง, พระทรงเมือง, พระกาฬไชยศรี, เจ้าเจตคุปต์, เจ้าหอกลอง) คุ้มครองความมั่นคง",
+                    blessing: "ตัดเคราะห์ ต่อชะตา เสริมความมั่นคงในอาชีพการงาน ยศศักดิ์ และหลักฐานชีวิต"
+                },
+                {
+                    name: "วัดพระศรีรัตนศาสดาราม (วัดพระแก้ว)",
+                    location: "ในพระบรมมหาราชวัง",
+                    icon: "fa-vihara",
+                    desc: "ประดิษฐาน 'พระพุทธมหามณีรัตนปฏิมากร' (พระแก้วมรกต) พระพุทธรูปคู่บ้านคู่เมืองอันเป็นมหาสิริมงคลสูงสุดแห่งสยามประเทศ ทรงเปลี่ยนเครื่องทรงตามฤดูกาล ๓ ครั้งต่อปี",
+                    blessing: "ความร่มเย็นเป็นสุข ปราศจากโรคภัย แคล้วคลาดปลอดภัย และความเจริญรุ่งเรืองสูงสุด"
+                },
+                {
+                    name: "พระที่นั่งไพศาลทักษิณ (พระสยามเทวาธิราช)",
+                    location: "พระบรมมหาราชวัง",
+                    icon: "fa-crown",
+                    desc: "เทวรูปศักดิ์สิทธิ์ที่สร้างขึ้นในรัชสมัยรัชกาลที่ ๔ เพื่อปกปักรักษาผืนแผ่นดินสยามให้รอดพ้นจากภัยพิบัติและอริราชศัตรูทั้งปวง",
+                    blessing: "ขอพรเพื่อความสงบสุขของชาติ ครอบครัว และขอให้ผ่านพ้นอุปสรรคปัญหาใหญ่ได้สำเร็จ"
+                },
+                {
+                    name: "ศาลเจ้าพ่อหอกลอง",
+                    location: "ภายในบริเวณศาลหลักเมือง",
+                    icon: "fa-drum",
+                    desc: "เทพารักษ์ผู้พิทักษ์เสียงระฆังและกลองศึก สัญลักษณ์แห่งการเตือนภัย การระดมพล และเกียรติยศชื่อเสียงอันขจรขจาย",
+                    blessing: "การสอบแข่งขัน การเลื่อนขั้นเลื่อนตำแหน่ง ชัยชนะ และชื่อเสียงเกียรติภูมิ"
+                }
+            ];
+
+            if (grid) {
+                grid.innerHTML = places.map(p => `
+                    <div class="holy-place-card">
+                        <h4><i class="fas ${p.icon}"></i> ${p.name}</h4>
+                        <p style="font-size: 0.85rem; color: var(--gold-light); margin-bottom: 6px;">📍 ${p.location}</p>
+                        <p style="font-size: 0.9rem; color: var(--text-sub); line-height: 1.6; margin-bottom: 8px;">${p.desc}</p>
+                        <div style="background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: #fff;">
+                            <strong>✨ มงคลอานุภาพ:</strong> ${p.blessing}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Export Image
+        function exportCityChartImage() {
+            const captureArea = document.getElementById('captureArea');
+            if (!captureArea) return;
+
+            Swal.fire({
+                title: 'กำลังสร้างรูปภาพ...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            html2canvas(captureArea, {
+                scale: 2,
+                backgroundColor: '#070d1e',
+                useCORS: true
+            }).then(canvas => {
+                Swal.close();
+                const link = document.createElement('a');
+                link.download = `ดวงชะตากรุงรัตนโกสินทร์_สยามโหรามงคล.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพได้: ' + err.message, 'error');
+            });
+        }
+    </script>
+</body>
+</html>

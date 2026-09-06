@@ -11,25 +11,52 @@ function initDeepSynastry() {
 }
 
 function dsMemberSelected(personNum) {
-    const memberId = document.getElementById(`dsMemberSelect${personNum}`).value;
+    const selectEl = document.getElementById(`dsMemberSelect${personNum}`);
+    if (!selectEl) return;
+    const memberId = selectEl.value;
     if (!memberId) return;
 
-    const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
-    const member = allHistory.find(m => m.memberId === memberId || m.birthdate === memberId);
+    // First try data-member attribute
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    let member = null;
+    if (selectedOption && selectedOption.getAttribute('data-member')) {
+        try {
+            member = JSON.parse(selectedOption.getAttribute('data-member'));
+        } catch (e) {}
+    }
+
+    if (!member) {
+        const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
+        member = allHistory.find(m => m.memberId === memberId || m.id === memberId || m.birthdate === memberId);
+    }
     
     if (member) {
         if (member.birthdate) {
-            const parts = member.birthdate.split('/');
-            if (parts.length === 3) {
-                let year = parseInt(parts[2]);
-                if (year > 2400) year -= 543;
-                const formatted = `${year}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-                document.getElementById(`dsBirthDate${personNum}`).value = formatted;
+            let formatted = "";
+            if (member.birthdate.includes('/')) {
+                const parts = member.birthdate.split('/');
+                if (parts.length === 3) {
+                    let year = parseInt(parts[2]);
+                    if (year > 2400) year -= 543;
+                    formatted = `${year}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                }
+            } else if (member.birthdate.includes('-')) {
+                const parts = member.birthdate.split('-');
+                if (parts.length === 3) {
+                    let year = parseInt(parts[0]);
+                    if (year > 2400) year -= 543;
+                    formatted = `${year}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+                }
+            }
+            if (formatted) {
+                const bEl = document.getElementById(`dsBirthDate${personNum}`);
+                if (bEl) bEl.value = formatted;
             }
         }
         if (member.gender) {
-            const genderVal = (member.gender === 'm' || member.gender === 'male') ? 'male' : 'female';
-            document.getElementById(`dsGender${personNum}`).value = genderVal;
+            const genderVal = (member.gender === 'm' || member.gender === 'male' || member.gender === 'ชาย') ? 'male' : 'female';
+            const gEl = document.getElementById(`dsGender${personNum}`);
+            if (gEl) gEl.value = genderVal;
         }
     }
 }
@@ -169,66 +196,104 @@ function calculateDeepSynastry() {
         let heartIcon = totalScore >= 80 ? '💖' : totalScore >= 60 ? '💛' : '💔';
 
         let html = `
-            <div class="card bg-dark border-gold p-4 mb-4 shadow-lg text-center" style="border-radius: 15px;">
-                <h3 class="text-gold mb-3"><i class="fas fa-gem"></i> ผลลัพธ์การผูกดวง VIP</h3>
+            <div class="card border-0 rounded-4 p-3 p-md-4 mb-4 shadow-lg text-center" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1.5px solid rgba(212, 175, 55, 0.4) !important;">
+                <h3 class="fw-bold mb-4" style="font-family: 'Chonburi', serif; color: #ffd700; font-size: 1.4rem;">
+                    <i class="fas fa-gem me-2"></i> ผลลัพธ์การผูกดวงคู่สมพงษ์ VIP
+                </h3>
                 
-                <div class="d-flex justify-content-center align-items-center mb-4">
-                    <div class="text-center mx-3">
-                        <i class="fas ${g1 === 'male' ? 'fa-male text-info' : 'fa-female text-danger'} fa-3x mb-2"></i>
-                        <h5 class="text-white mt-2">ฝ่ายที่ 1</h5>
-                        <p class="small text-white-50">วัน${thaiDayNames[day1]}<br>ปี${z1} (ธาตุ${e1})</p>
+                <div class="row align-items-center justify-content-center g-3 mb-4">
+                    <!-- ฝ่ายที่ 1 -->
+                    <div class="col-md-4 col-4 text-center">
+                        <div class="p-2 p-md-3 rounded-4" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);">
+                            <div class="mb-2">
+                                <i class="fas ${g1 === 'male' ? 'fa-male text-info' : 'fa-female text-danger'} fa-3x"></i>
+                            </div>
+                            <h5 class="fw-bold text-white mb-1" style="font-size: 1.05rem;">ฝ่ายที่ ๑</h5>
+                            <div class="small text-white-50">วัน${thaiDayNames[day1]}</div>
+                            <div class="badge mt-1" style="background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4);">
+                                ปี${z1} (ธาตุ${e1})
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="mx-3 text-center">
-                        <h1 class="display-4" style="color: ${gradeColor}; text-shadow: 0 0 10px ${gradeColor}; font-weight: bold;">${totalScore}%</h1>
-                        <span class="badge" style="background-color: ${gradeColor}; color: #000; font-size: 1.1rem; padding: 8px 15px;">${gradeText}</span>
+                    <!-- คะแนนรวม -->
+                    <div class="col-md-4 col-4 text-center">
+                        <div class="p-2 p-md-3 rounded-4" style="background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(0,0,0,0.4) 100%); border: 1.5px dashed ${gradeColor};">
+                            <div class="display-4 fw-bold mb-1" style="color: ${gradeColor}; text-shadow: 0 0 15px ${gradeColor}; font-size: clamp(2rem, 5vw, 3.2rem);">
+                                ${totalScore}%
+                            </div>
+                            <div class="badge px-2 py-1 px-md-3 py-md-2 rounded-pill fw-bold text-wrap" style="background-color: ${gradeColor}; color: #000; font-size: 0.95rem;">
+                                ${gradeText}
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="text-center mx-3">
-                        <i class="fas ${g2 === 'male' ? 'fa-male text-info' : 'fa-female text-danger'} fa-3x mb-2"></i>
-                        <h5 class="text-white mt-2">ฝ่ายที่ 2</h5>
-                        <p class="small text-white-50">วัน${thaiDayNames[day2]}<br>ปี${z2} (ธาตุ${e2})</p>
+                    <!-- ฝ่ายที่ 2 -->
+                    <div class="col-md-4 col-4 text-center">
+                        <div class="p-2 p-md-3 rounded-4" style="background: rgba(244, 114, 182, 0.1); border: 1px solid rgba(244, 114, 182, 0.3);">
+                            <div class="mb-2">
+                                <i class="fas ${g2 === 'male' ? 'fa-male text-info' : 'fa-female text-danger'} fa-3x"></i>
+                            </div>
+                            <h5 class="fw-bold text-white mb-1" style="font-size: 1.05rem;">ฝ่ายที่ ๒</h5>
+                            <div class="small text-white-50">วัน${thaiDayNames[day2]}</div>
+                            <div class="badge mt-1" style="background: rgba(244, 114, 182, 0.2); color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.4);">
+                                ปี${z2} (ธาตุ${e2})
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <hr class="border-gold mb-4">
+                <hr class="border-gold opacity-25 mb-4">
 
-                <div class="row text-left">
-                    <div class="col-md-4 mb-3">
-                        <div class="card bg-black border-gold p-3 h-100" style="border-radius: 10px;">
-                            <h5 class="text-warning"><i class="fas fa-star-and-crescent"></i> มิติที่ 1: มหาทักษา</h5>
-                            <div class="progress mb-2" style="height: 10px; background-color: #333;">
+                <!-- 3 มิติวิเคราะห์ -->
+                <div class="row text-start g-3 mb-4">
+                    <div class="col-md-4 col-12">
+                        <div class="p-3 rounded-3 h-100" style="background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.25);">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h6 class="fw-bold text-warning mb-0"><i class="fas fa-star-and-crescent me-1"></i> ๑. มหาทักษา</h6>
+                                <span class="badge bg-warning text-dark">${Math.round((taksaScore/40)*100)}%</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 8px; background-color: rgba(255,255,255,0.1); border-radius: 4px;">
                                 <div class="progress-bar bg-warning" role="progressbar" style="width: ${(taksaScore/40)*100}%"></div>
                             </div>
-                            <p class="text-light small mb-0">${taksaText}</p>
+                            <p class="small text-light mb-0" style="line-height: 1.6;">${taksaText}</p>
                         </div>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card bg-black border-gold p-3 h-100" style="border-radius: 10px;">
-                            <h5 class="text-info"><i class="fas fa-water"></i> มิติที่ 2: ธาตุกำเนิด</h5>
-                            <div class="progress mb-2" style="height: 10px; background-color: #333;">
+                    
+                    <div class="col-md-4 col-12">
+                        <div class="p-3 rounded-3 h-100" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25);">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h6 class="fw-bold text-info mb-0"><i class="fas fa-water me-1"></i> ๒. ธาตุกำเนิด</h6>
+                                <span class="badge bg-info text-dark">${Math.round((elemScore/30)*100)}%</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 8px; background-color: rgba(255,255,255,0.1); border-radius: 4px;">
                                 <div class="progress-bar bg-info" role="progressbar" style="width: ${(elemScore/30)*100}%"></div>
                             </div>
-                            <p class="text-light small mb-0">${elemText}</p>
+                            <p class="small text-light mb-0" style="line-height: 1.6;">${elemText}</p>
                         </div>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card bg-black border-gold p-3 h-100" style="border-radius: 10px;">
-                            <h5 class="text-danger"><i class="fas fa-dragon"></i> มิติที่ 3: ปีนักษัตร</h5>
-                            <div class="progress mb-2" style="height: 10px; background-color: #333;">
+                    
+                    <div class="col-md-4 col-12">
+                        <div class="p-3 rounded-3 h-100" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25);">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h6 class="fw-bold text-danger mb-0"><i class="fas fa-dragon me-1"></i> ๓. ปีนักษัตร</h6>
+                                <span class="badge bg-danger text-light">${Math.round((zScore/30)*100)}%</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 8px; background-color: rgba(255,255,255,0.1); border-radius: 4px;">
                                 <div class="progress-bar bg-danger" role="progressbar" style="width: ${(zScore/30)*100}%"></div>
                             </div>
-                            <p class="text-light small mb-0">${zText}</p>
+                            <p class="small text-light mb-0" style="line-height: 1.6;">${zText}</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="mt-4 p-3 rounded" style="background: rgba(212, 175, 55, 0.1); border: 1px dashed #d4af37;">
-                    <h5 class="text-gold"><i class="fas fa-comment-dots"></i> คำแนะนำเพิ่มเติม</h5>
-                    <p class="text-light mb-0 text-left">
-                        ${totalScore >= 80 ? 'ท่านทั้งสองเป็นคู่ที่มีวาสนาต่อกันอย่างลึกซึ้ง พลังงานดวงชะตาส่งเสริมกันในทุกมิติ แนะนำให้หมั่นทำบุญร่วมกันเพื่อเสริมบารมีให้ยิ่งใหญ่ขึ้นไปอีก' : 
-                          totalScore >= 60 ? 'ดวงชะตาของท่านทั้งสองอยู่ในเกณฑ์ปานกลาง มีจุดที่เกื้อหนุนและจุดที่ต้องปรับตัวเข้าหากัน แนะนำให้ใช้สติและเหตุผลในการครองคู่' : 
-                          'พื้นดวงชะตามีความขัดแย้งกันค่อนข้างสูง (ดวงชง หรือกาลกิณี) ต้องอาศัยความอดทนและความเข้าใจอย่างมาก แนะนำให้ทำบุญปล่อยสัตว์ หรือแก้ชงร่วมกันเพื่อผ่อนหนักเป็นเบา'}
+                <!-- คำแนะนำ -->
+                <div class="p-3 rounded-3 text-start" style="background: rgba(212, 175, 55, 0.1); border: 1px dashed rgba(212,175,55,0.4);">
+                    <h6 class="fw-bold text-gold mb-2"><i class="fas fa-comment-dots me-1"></i> คำแนะนำและเคล็ดลับการครองคู่</h6>
+                    <p class="small text-light mb-0" style="line-height: 1.7;">
+                        ${totalScore >= 80 ? '🌟 ท่านทั้งสองเป็นคู่ที่มีวาสนาต่อกันอย่างลึกซึ้ง พลังงานดวงชะตาส่งเสริมกันในทุกมิติ แนะนำให้หมั่นทำบุญร่วมกันเพื่อเสริมบารมีให้ยิ่งใหญ่และมั่นคงยืนนาน' : 
+                          totalScore >= 60 ? '⚖️ ดวงชะตาของท่านทั้งสองอยู่ในเกณฑ์ปานกลาง มีจุดที่เกื้อหนุนและจุดที่ต้องปรับตัวเข้าหากัน แนะนำให้ใช้สติ ความประนีประนอม และเหตุผลในการครองคู่' : 
+                          '⚠️ พื้นดวงชะตามีความขัดแย้งกันค่อนข้างสูง (ดวงชง หรือกาลกิณี) ต้องอาศัยความอดทน ความเข้าใจ และการให้อภัยอย่างมาก แนะนำให้ทำบุญปล่อยสัตว์ หรือทำบุญร่วมกันเพื่อผ่อนหนักเป็นเบา'}
                     </p>
                 </div>
             </div>

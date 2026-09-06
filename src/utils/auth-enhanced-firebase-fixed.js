@@ -76,24 +76,9 @@ const AUTH_CONFIG = {
     usersStorageKey: 'siamhora_users'
 };
 
-// ⚠️ ความปลอดภัย: DEFAULT_USERS เป็น fallback credentials ที่ hardcode อยู่ในโค้ด
-// ควรเปลี่ยนรหัสผ่านหรือลบ entry เหล่านี้ออก และจัดการ user ผ่าน Firestore แทน
-// admin hash = SHA-256("1234567") — เปลี่ยนก่อน deploy จริง
-// user  hash = SHA-256("123456")  — เปลี่ยนก่อน deploy จริง
-const DEFAULT_USERS = [
-    {
-        username: "admin",
-        passwordHash: "1035cdf4255b95ca16f9240a9cd8c13b8415d5bc3575ea8b20116296655486e8",
-        displayName: "ประธานโบ้",
-        role: "admin"
-    },
-    {
-        username: "user",
-        passwordHash: "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
-        displayName: "ผู้ใช้งาน",
-        role: "user"
-    }
-];
+// 🔐 ความปลอดภัย: ไม่มีการฮาร์ดโค้ดรหัสผ่านในไฟล์โค้ด
+// บัญชีผู้ใช้และสิทธิ์ Admin ทั้งหมดถูกจัดเก็บและตรวจสอบผ่าน Firestore Database โดยตรง
+const DEFAULT_USERS = [];
 
 // ===================================================
 // HTML ESCAPE (ป้องกัน XSS)
@@ -420,13 +405,41 @@ async function doLogin() {
 
     try {
         const hash = await sha256(password);
-        const allUsers = getAllUsers();
-        const user = allUsers.find(u => u.username.toLowerCase() === username && u.passwordHash === hash);
+        let user = null;
+
+        // 1. ตรวจสอบจาก Firestore Database โดยตรงเป็นอันดับแรก
+        try {
+            const { getFirestore, collection, getDocs, query, where } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+            const db = (typeof window.firebaseDb !== 'undefined' && window.firebaseDb) ? window.firebaseDb : getFirestore();
+            
+            // ค้นหาจาก registered_users
+            const usersCol = collection(db, "registered_users");
+            const q = query(usersCol, where("username", "==", username));
+            const snap = await getDocs(q);
+            
+            if (!snap.empty) {
+                for (const docSnap of snap.docs) {
+                    const data = docSnap.data();
+                    if (data.passwordHash === hash) {
+                        user = { id: docSnap.id, ...data };
+                        break;
+                    }
+                }
+            }
+        } catch (fsErr) {
+            console.warn("⚠️ Firestore login query fallback to local cache:", fsErr);
+        }
+
+        // 2. Fallback: ตรวจสอบจาก Local Cache ถ้าออฟไลน์
+        if (!user) {
+            const allUsers = getAllUsers();
+            user = allUsers.find(u => u.username.toLowerCase() === username && u.passwordHash === hash);
+        }
 
         if (user) {
             resetAttempts();
             
-            // ดึง package จาก Firebase ถ้ามี
+            // ดึง package จาก Firebase เพิ่มเติมถ้ามี
             try {
                 const { collection, getDocs, query, where } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
                 const q = query(collection(window.firebaseDb, "users"), where("username", "==", user.username.toLowerCase()));
@@ -438,6 +451,18 @@ async function doLogin() {
                 }
             } catch (e) { console.error("Could not sync package", e); }
             
+            // แคช user ไว้ใน LocalStorage ให้ใช้งานออฟไลน์ได้
+            try {
+                const localUsers = getRegisteredUsers();
+                const existIdx = localUsers.findIndex(u => u.username.toLowerCase() === user.username.toLowerCase());
+                if (existIdx >= 0) {
+                    localUsers[existIdx] = { ...localUsers[existIdx], ...user };
+                } else {
+                    localUsers.push(user);
+                }
+                localStorage.setItem(AUTH_CONFIG.usersStorageKey, JSON.stringify(localUsers));
+            } catch (cErr) {}
+
             const session = saveSession(user);
             showWelcomeMessage(session.displayName);
 
@@ -672,9 +697,9 @@ function startPackageCountdown(session) {
 function navigateToProfile() {
     const session = getSession();
 
-    // ถ้าเป็น Admin ให้ไปหน้าระบบจัดการหลังบ้าน (Admin Dashboard)
+    // ถ้าเป็น Admin ให้ไปหน้าระบบจัดการหลังบ้าน (Admin Console)
     if (session && typeof isAdmin === 'function' && isAdmin()) {
-        window.location.href = 'admin/index.html';
+        window.location.href = 'admin/admin-console.html';
         return;
     }
 

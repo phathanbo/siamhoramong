@@ -719,6 +719,12 @@ function navigateTo(pageId, addHistory = true) {
         }, 50);
     }
 
+    if (pageId === 'package') {
+        if (typeof renderAllPackageCards === 'function') {
+            renderAllPackageCards();
+        }
+    }
+
     // 8. โหลดข้อมูลผู้ใช้มาเติม (ถ้ามีระบบ Profile)
     if (typeof UserProfile !== 'undefined') UserProfile.load();
 }

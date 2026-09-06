@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แดชบอร์ดดูดวงประจำวันและดาวจรโลก (Admin Daily Horoscope & Global Transit) - สยามโหรามงคล</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <style>
+        :root {
+            --bg-base: #0a0e1a;
+            --bg-surface: #111728;
+            --bg-card: rgba(18, 26, 46, 0.85);
+            --bg-card-hover: rgba(28, 38, 66, 0.95);
+            --border-color: rgba(212, 175, 55, 0.25);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-sub: #cbd5e1;
+            --text-muted: #94a3b8;
+            --gold-primary: #ffd700;
+            --gold-light: #fef08a;
+            --gold-dark: #b8960c;
+            --accent-green: #10b981;
+            --accent-blue: #38bdf8;
+            --accent-purple: #a855f7;
+            --accent-rose: #f43f5e;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+                linear-gradient(180deg, #090d18 0%, #0d1424 50%, #0a0f1d 100%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: rgba(13, 18, 32, 0.95);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 18px;
+            flex-shrink: 0;
+            min-height: 100vh;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+            padding: 0 8px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .brand-logo-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ffd700 0%, #b8960c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0b0f19;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .brand-text {
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+        }
+
+        .nav-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 16px 8px 8px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 12px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .sidebar-menu a:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateX(3px);
+        }
+
+        .sidebar-menu a.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(30, 41, 69, 0.8) 100%);
+            color: var(--gold-primary);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .sidebar-menu a i {
+            font-size: 1.05rem;
+            width: 22px;
+            text-align: center;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-wrapper {
+            flex: 1;
+            padding: 24px 32px 80px 32px;
+            max-width: 1560px;
+            margin: 0 auto;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        /* TOP NAV BAR */
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .nav-breadcrumbs a {
+            color: var(--text-sub);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-breadcrumbs a:hover {
+            color: var(--gold-primary);
+        }
+
+        .quick-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-top-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-sub);
+            font-size: 0.86rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-top-action:hover {
+            color: #fff;
+            background: rgba(212, 175, 55, 0.18);
+            border-color: var(--gold-primary);
+        }
+
+        /* HERO DASHBOARD BANNER */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(28, 38, 66, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 28px 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .hero-title-group h1 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #ffffff 30%, #ffd700 80%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title-group p {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* LIVE CLOCK & DATE BAR */
+        .live-clock-badge {
+            background: rgba(10, 15, 28, 0.85);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px 24px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .live-clock-time {
+            font-family: 'Courier New', monospace;
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: var(--gold-primary);
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            line-height: 1.1;
+        }
+
+        .live-clock-date {
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        /* DATE CONTROLLER TOOLBAR */
+        .date-control-toolbar {
+            background: rgba(17, 24, 40, 0.8);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 14px 20px;
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            backdrop-filter: blur(12px);
+        }
+
+        .date-nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .date-nav-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .date-nav-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: var(--gold-primary);
+            color: var(--gold-light);
+        }
+
+        .date-input-admin {
+            background: #090d18;
+            border: 1.5px solid var(--border-color);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .date-input-admin:focus {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
+        }
+
+        .btn-today-pill {
+            background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+            color: #0b0f19;
+            font-weight: 700;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.35);
+            transition: all 0.2s;
+        }
+
+        .btn-today-pill:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.5);
+        }
+
+        /* SECTION CARD STYLES */
+        .dash-section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(14px);
+            transition: all 0.3s ease;
+        }
+
+        .dash-section-card:hover {
+            border-color: rgba(212, 175, 55, 0.35);
+        }
+
+        .section-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .section-icon-box.gold { background: rgba(212, 175, 55, 0.18); color: #ffd700; border: 1px solid rgba(212, 175, 55, 0.35); }
+        .section-icon-box.blue { background: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); }
+        .section-icon-box.green { background: rgba(16, 185, 129, 0.18); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35); }
+        .section-icon-box.red { background: rgba(244, 63, 94, 0.18); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.35); }
+        .section-icon-box.purple { background: rgba(168, 85, 247, 0.18); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.35); }
+
+        .section-title-h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .section-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* TOP 3 LUCKY ZODIAC PODIUM */
+        .lucky-podium-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .lucky-podium-item {
+            background: linear-gradient(135deg, rgba(30, 41, 69, 0.8) 0%, rgba(18, 26, 46, 0.9) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 16px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.25s ease;
+        }
+
+        .lucky-podium-item:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold-primary);
+            box-shadow: 0 12px 25px rgba(212, 175, 55, 0.25);
+        }
+
+        .rank-medal-num {
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1;
+            font-family: 'Courier New', monospace;
+            flex-shrink: 0;
+        }
+
+        .rank-1 { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+        .rank-2 { color: #cbd5e1; text-shadow: 0 0 12px rgba(203, 213, 225, 0.5); }
+        .rank-3 { color: #d97706; text-shadow: 0 0 12px rgba(217, 119, 6, 0.5); }
+
+        /* ZODIAC CARDS GRID */
+        .zodiac-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 18px;
+        }
+
+        .zodiac-item-card {
+            background: rgba(13, 19, 36, 0.7);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .zodiac-item-card:hover {
+            transform: translateY(-3px);
+            background: rgba(20, 29, 52, 0.85);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+        }
+
+        .zodiac-card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .zodiac-card-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .score-pill-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .zodiac-dimension-box {
+            display: grid;
+            gap: 8px;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        .dimension-block {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-left: 3px solid #64748b;
+        }
+
+        .dimension-block.work { border-left-color: #38bdf8; }
+        .dimension-block.money { border-left-color: #10b981; }
+        .dimension-block.love { border-left-color: #f43f5e; }
+        .dimension-block.health { border-left-color: #fbbf24; }
+
+        /* DAYS GRID */
+        .days-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .day-born-card {
+            background: rgba(13, 19, 36, 0.75);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.25s ease;
+        }
+
+        .day-born-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+        }
+
+        /* ANIMAL GRID */
+        .animal-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+        }
+
+        .animal-item-card {
+            background: rgba(13, 19, 36, 0.75);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .animal-item-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        /* MAJOR TRANSITS SECTION */
+        .major-transits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .major-transit-card {
+            background: linear-gradient(135deg, rgba(20, 29, 52, 0.75) 0%, rgba(13, 19, 36, 0.9) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .major-transit-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; min-height: auto; position: relative; }
+            .main-wrapper { width: 100%; padding: 20px 16px 60px 16px; }
+            .hero-title-group h1 { font-size: 1.5rem; }
+            .live-clock-time { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a href="member-dashboard.html" class="sidebar-brand">
+            <div class="brand-logo-badge">
+                <i class="fas fa-sun"></i>
+            </div>
+            <span class="brand-text">Admin Horamangkol</span>
+        </a>
+
+        <div class="nav-section-title">ศูนย์บัญชาการ</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="member-dashboard.html">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>แดชบอร์ดสมาชิก</span>
+                </a>
+            </li>
+            <li>
+                <a href="daily-horoscope-dashboard.html" class="active">
+                    <i class="fas fa-bullhorn" style="color: #ffd700;"></i>
+                    <span>ดวงประจำวัน & ดาวจร</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-console.html">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Admin Console</span>
+                </a>
+            </li>
+            <li>
+                <a href="package-permissions.html">
+                    <i class="fas fa-crown"></i>
+                    <span>สิทธิ์แพ็กเกจ</span>
+                </a>
+            </li>
+            <li>
+                <a href="lifetime-report.html">
+                    <i class="fas fa-scroll"></i>
+                    <span>Lifetime Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-section-title">ระบบพยากรณ์หลัก</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="../pages/thai-horoscope-pro.html">
+                    <i class="fas fa-dharmachakra"></i>
+                    <span>ราศีจักร Thai Horo Pro</span>
+                </a>
+            </li>
+            <li>
+                <a href="../pages/twelve-zodiac-fortune.html">
+                    <i class="fas fa-star-and-crescent"></i>
+                    <span>๑๒ ราศีเจาะลึก</span>
+                </a>
+            </li>
+            <li>
+                <a href="../index.html#mainpage">
+                    <i class="fas fa-compass"></i>
+                    <span>ห้องพยากรณ์หลัก</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-section-title" style="margin-top: auto;">การจัดการ</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" onclick="resetDateToday(); return false;">
+                    <i class="fas fa-rotate-right"></i>
+                    <span>รีเซ็ตเป็นวันปัจจุบัน</span>
+                </a>
+            </li>
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>ออกจากระบบ</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="main-wrapper">
+        <!-- TOP NAV BAR -->
+        <div class="top-navbar">
+            <div class="nav-breadcrumbs">
+                <a href="member-dashboard.html"><i class="fas fa-house mr-1"></i> Admin</a>
+                <i class="fas fa-chevron-right" style="font-size: 0.7rem;"></i>
+                <span style="color: var(--gold-primary);">ดวงประจำวัน & ดาวจรโลก (Daily Horoscope & Global Transit)</span>
+            </div>
+
+            <div class="quick-nav-actions">
+                <a href="../pages/thai-horoscope-pro.html" class="btn-top-action" title="เปิดหน้าผูกดวงแบบเต็ม">
+                    <i class="fas fa-external-link-alt text-warning"></i> ดูใน Thai Horo Pro
+                </a>
+                <button type="button" class="btn-top-action" onclick="window.print()">
+                    <i class="fas fa-print"></i> พิมพ์รายงาน
+                </button>
+            </div>
+        </div>
+
+        <!-- HERO BANNER WITH LIVE CLOCK -->
+        <div class="hero-banner">
+            <div class="hero-header-flex">
+                <div class="hero-title-group">
+                    <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(212, 175, 55, 0.15); border:1px solid rgba(212, 175, 55, 0.35); padding:4px 14px; border-radius:30px; color:#ffd700; font-size:0.8rem; font-weight:700; margin-bottom:8px;">
+                        <i class="fas fa-shield-halved"></i> แดชบอร์ดมอนิเตอร์ดวงดาวสำหรับผู้ดูแลระบบ
+                    </div>
+                    <h1>ดูดวงประจำวันทั่วไป & ตำแหน่งดาวจรโลก</h1>
+                    <p id="transitSubtitleHeader">คำนวณสมผุสดาวจรจริงตามคัมภีร์สุริยยาตร์และดาราศาสตร์ไทย วิเคราะห์ 12 ราศี, 7 วันเกิด, 12 นักษัตร และดาวใหญ่ย้ายราศี</p>
+                </div>
+
+                <div class="live-clock-badge">
+                    <div class="live-clock-time" id="dashClock">00:00:00</div>
+                    <div class="live-clock-date" id="dashDateSummary">กำลังคำนวณ...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATE CONTROL TOOLBAR -->
+        <div class="date-control-toolbar">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-weight:700; color:var(--gold-light); font-size:1rem;">
+                    <i class="fas fa-calendar-alt text-warning mr-1"></i> เลือกวันที่พยากรณ์:
+                </span>
+                <span id="activeDateDisplayBadge" style="color:var(--text-sub); font-size:0.92rem; font-weight:600;">-</span>
+            </div>
+
+            <div class="date-nav-controls">
+                <button type="button" class="date-nav-btn" onclick="changeAdminDate(-1)">
+                    <i class="fas fa-chevron-left"></i> วันก่อนหน้า
+                </button>
+                <input type="date" id="adminDatePicker" class="date-input-admin" onchange="onAdminDateChange(this.value)">
+                <button type="button" class="date-nav-btn" onclick="changeAdminDate(1)">
+                    วันถัดไป <i class="fas fa-chevron-right"></i>
+                </button>
+                <button type="button" class="btn-today-pill" onclick="resetDateToday()">
+                    <i class="fas fa-calendar-day mr-1"></i> วันนี้
+                </button>
+            </div>
+        </div>
+
+        <!-- SECTION 1: TOP 3 LUCKY ZODIACS -->
+        <div class="dash-section-card" style="border-left: 5px solid #ffd700;">
+            <div class="section-header-row">
+                <div class="section-header-title">
+                    <div class="section-icon-box gold"><i class="fas fa-trophy"></i></div>
+                    <div>
+                        <h3 class="section-title-h3">3 อันดับราศีที่ดวงดีและเฮงที่สุดประจำวัน (Top Lucky Zodiacs)</h3>
+                        <div class="section-subtitle">คำนวณตามองศาพระจันทร์เสวยภพศุภมงคล (ลาภะ • กดุมภะ • ตนุ)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="lucky-podium-grid" id="adminTopRasisArea">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+
+        <!-- SECTION 2: 12 ZODIAC SIGNS (4 DIMENSIONS) -->
+        <div class="dash-section-card">
+            <div class="section-header-row">
+                <div class="section-header-title">
+                    <div class="section-icon-box blue"><i class="fas fa-star-half-stroke"></i></div>
+                    <div>
+                        <h3 class="section-title-h3">1. เจาะลึกดวง ๑๒ ราศีประจำวัน (Zodiac Signs Analysis)</h3>
+                        <div class="section-subtitle">วิเคราะห์เจาะลึก 4 มิติ: การงาน & ธุรกิจ, การเงิน & โชคลาภ, ความรัก & ครอบครัว, สุขภาพ & เสริมดวง</div>
+                    </div>
+                </div>
+            </div>
+            <div class="zodiac-grid-container" id="adminZodiacGrid">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+
+        <!-- SECTION 3: 7 DAYS OF BIRTH & THAKSA -->
+        <div class="dash-section-card">
+            <div class="section-header-row">
+                <div class="section-header-title">
+                    <div class="section-icon-box green"><i class="fas fa-calendar-week"></i></div>
+                    <div>
+                        <h3 class="section-title-h3">2. ดวงคนเกิดทั้ง ๗ วัน & สีมงคลเปิดทรัพย์ (Days of Birth & Thaksa)</h3>
+                        <div class="section-subtitle">ผังทักษาจรประจำวัน: วิเคราะห์ภูมิ บริวาร อายุ เดช ศรี มูละ อุตสาหะ มนตรี และกาลกิณี</div>
+                    </div>
+                </div>
+            </div>
+            <div class="days-grid-container" id="adminDaysGrid">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+
+        <!-- SECTION 4: 12 CHINESE ZODIAC ANIMALS -->
+        <div class="dash-section-card">
+            <div class="section-header-row">
+                <div class="section-header-title">
+                    <div class="section-icon-box red"><i class="fas fa-dragon"></i></div>
+                    <div>
+                        <h3 class="section-title-h3">3. ดวง ๑๒ นักษัตรประจำวัน & เกณฑ์ชง-สมพงษ์ (Chinese Zodiac Harmony)</h3>
+                        <div class="section-subtitle">วิเคราะห์เกณฑ์คู่มิตร (ฮะ), ไตรภาคี (ซาฮะ) และเกณฑ์ปะทะ (ชง) พร้อมเคล็ดลับเปิดโชค</div>
+                    </div>
+                </div>
+            </div>
+            <div class="animal-grid-container" id="adminAnimalGrid">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+
+        <!-- SECTION 5: MAJOR TRANSITS ALERT (ดาวใหญ่ย้ายราศี) -->
+        <div class="dash-section-card">
+            <div class="section-header-row">
+                <div class="section-header-title">
+                    <div class="section-icon-box purple"><i class="fas fa-meteor"></i></div>
+                    <div>
+                        <h3 class="section-title-h3">4. มอนิเตอร์ดาวใหญ่จรระดับโลก (Major Transits: ๕, ๗, ๘, ๐)</h3>
+                        <div class="section-subtitle">การสถิตและจังหวะย้ายราศีของดาวเคราะห์ขนาดใหญ่ที่มีอิทธิพลต่อดวงเมืองและดวงโลก</div>
+                    </div>
+                </div>
+            </div>
+            <div class="major-transits-grid" id="adminMajorTransitsGrid">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script src="../src/engine/thai-horoscope-engine.js"></script>
+
+    <script>
+        let selectedDate = new Date();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initLiveClock();
+            
+            const datePicker = document.getElementById('adminDatePicker');
+            if (datePicker) {
+                datePicker.value = selectedDate.toISOString().split('T')[0];
+            }
+
+            renderAdminDashboard();
+        });
+
+        function initLiveClock() {
+            function updateClock() {
+                const now = new Date();
+                const clockEl = document.getElementById('dashClock');
+                if (clockEl) {
+                    const h = String(now.getHours()).padStart(2, '0');
+                    const m = String(now.getMinutes()).padStart(2, '0');
+                    const s = String(now.getSeconds()).padStart(2, '0');
+                    clockEl.textContent = `${h}:${m}:${s}`;
+                }
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        function renderAdminDashboard() {
+            if (typeof ThaiHoroProEngine === 'undefined') {
+                console.error("ThaiHoroProEngine not found!");
+                return;
+            }
+
+            const data = ThaiHoroProEngine.calculatePublicDailyOverview(selectedDate);
+            
+            // Header Info
+            const dateDisplayEl = document.getElementById('activeDateDisplayBadge');
+            if (dateDisplayEl) {
+                dateDisplayEl.innerHTML = `📅 ${data.dateDisplay} <span style="color:#ffd700;">(อาทิตย์: ราศี${data.sunRasiName} • จันทร์: ราศี${data.moonRasiName})</span>`;
+            }
+
+            const summaryEl = document.getElementById('dashDateSummary');
+            if (summaryEl) {
+                summaryEl.textContent = `อาทิตย์สถิตราศี${data.sunRasiName} • จันทร์สถิตราศี${data.moonRasiName}`;
+            }
+
+            // 1. Top 3 Lucky Zodiacs
+            renderTopLuckyZodiacs(data.topRasis);
+
+            // 2. 12 Zodiacs
+            render12Zodiacs(data.zodiacReadings);
+
+            // 3. 7 Days of Birth
+            render7Days(data.dayBornReadings);
+
+            // 4. 12 Animals
+            render12Animals(data.animalReadings);
+
+            // 5. Major Transits
+            renderMajorTransits();
+        }
+
+        function renderTopLuckyZodiacs(topRasis) {
+            const container = document.getElementById('adminTopRasisArea');
+            if (!container || !topRasis) return;
+
+            const medals = [
+                { class: 'rank-1', label: 'อันดับ 1', icon: '🥇' },
+                { class: 'rank-2', label: 'อันดับ 2', icon: '🥈' },
+                { class: 'rank-3', label: 'อันดับ 3', icon: '🥉' }
+            ];
+
+            container.innerHTML = topRasis.map((r, i) => {
+                const medal = medals[i] || medals[2];
+                return `
+                    <div class="lucky-podium-item">
+                        <div class="rank-medal-num ${medal.class}">
+                            #${i + 1}
+                        </div>
+                        <div style="flex:1;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <strong style="font-size:1.15rem; color:#fff;">ราศี${r.name} (${r.symbol})</strong>
+                                <span style="font-size:0.82rem; font-weight:700; color:var(--gold-primary);">${medal.icon} ${medal.label}</span>
+                            </div>
+                            <div style="font-size:0.88rem; color:#34d399; font-weight:600; margin-top:2px;">
+                                ${r.tag}
+                            </div>
+                            <div style="font-size:0.82rem; color:var(--text-muted); margin-top:4px;">
+                                ภพ${r.moonHouse} • ธาตุ${r.element}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function render12Zodiacs(readings) {
+            const container = document.getElementById('adminZodiacGrid');
+            if (!container || !readings) return;
+
+            container.innerHTML = readings.map(r => {
+                const isTop = r.score >= 4;
+                const isLow = r.score <= 2;
+                const borderColor = isTop ? '#10b981' : isLow ? '#f43f5e' : '#38bdf8';
+                const badgeBg = isTop ? 'rgba(16, 185, 129, 0.2)' : isLow ? 'rgba(244, 63, 94, 0.2)' : 'rgba(56, 189, 248, 0.2)';
+                const badgeColor = isTop ? '#34d399' : isLow ? '#fb7185' : '#7dd3fc';
+
+                return `
+                    <div class="zodiac-item-card" style="border-top: 3.5px solid ${borderColor};">
+                        <div class="zodiac-card-head">
+                            <div class="zodiac-card-title">
+                                <span style="font-size:1.4rem;">${r.symbol}</span>
+                                <div>
+                                    <span>ราศี${r.name}</span>
+                                    <small style="font-weight:normal; color:var(--text-muted); font-size:0.75rem; margin-left:4px;">(ธาตุ${r.element} • ภพ${r.moonHouse})</small>
+                                </div>
+                            </div>
+                            <span class="score-pill-badge" style="background:${badgeBg}; color:${badgeColor}; border:1px solid ${borderColor};">
+                                ${r.tag}
+                            </span>
+                        </div>
+
+                        <div class="zodiac-dimension-box">
+                            <div class="dimension-block work">
+                                <strong style="color:#7dd3fc;"><i class="fas fa-briefcase mr-1"></i> การงาน & ธุรกิจ:</strong> ${r.work}
+                            </div>
+                            <div class="dimension-block money">
+                                <strong style="color:#34d399;"><i class="fas fa-coins mr-1"></i> การเงิน & โชคลาภ:</strong> ${r.money}
+                            </div>
+                            <div class="dimension-block love">
+                                <strong style="color:#fb7185;"><i class="fas fa-heart mr-1"></i> ความรัก & ครอบครัว:</strong> ${r.love}
+                            </div>
+                            <div class="dimension-block health">
+                                <strong style="color:#fde047;"><i class="fas fa-heart-pulse mr-1"></i> สุขภาพ & เสริมดวง:</strong> ${r.health}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function render7Days(readings) {
+            const container = document.getElementById('adminDaysGrid');
+            if (!container || !readings) return;
+
+            container.innerHTML = readings.map(d => `
+                <div class="day-born-card" style="border-left: 5px solid ${d.color};">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border-subtle);">
+                        <strong style="font-size:1.15rem; color:#fff;">${d.name}</strong>
+                        <span style="font-size:0.8rem; font-weight:700; padding:3px 10px; border-radius:20px; background:rgba(212,175,55,0.15); color:var(--gold-light); border:1px solid var(--border-color);">
+                            ${d.badge}
+                        </span>
+                    </div>
+
+                    <p style="font-size:0.9rem; line-height:1.6; color:#e2e8f0; margin-bottom:12px;">
+                        ${d.overallDesc}
+                    </p>
+
+                    <div style="font-size:0.86rem; line-height:1.6; display:grid; gap:6px; margin-bottom:14px;">
+                        <div style="color:#93c5fd;"><i class="fas fa-lightbulb mr-1"></i> <strong>กลยุทธ์การงาน:</strong> ${d.careerTip}</div>
+                        <div style="color:#86efac;"><i class="fas fa-money-bill-wave mr-1"></i> <strong>โอกาสการเงิน:</strong> ${d.moneyTip}</div>
+                        <div style="color:#fca5a5;"><i class="fas fa-triangle-exclamation mr-1"></i> <strong>ข้อควรระวัง:</strong> ${d.cautionTip}</div>
+                    </div>
+
+                    <div style="font-size:0.82rem; background:rgba(0,0,0,0.3); padding:10px 12px; border-radius:10px; border:1px dashed rgba(212,175,55,0.3); display:flex; flex-direction:column; gap:6px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                            <span style="color:#4ade80; font-weight:600;"><i class="fas fa-gem mr-1"></i> สีมงคลโชคลาภ (ศรี):</span>
+                            <span>${d.sriColor} <span style="display:inline-block; width:12px; height:12px; background-color:${d.sriHex}; border-radius:3px; vertical-align:middle; margin-left:4px; box-shadow:0 0 6px ${d.sriHex};"></span></span>
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                            <span style="color:#fbbf24; font-weight:600;"><i class="fas fa-shield-alt mr-1"></i> สีเดชอำนาจ:</span>
+                            <span>${d.dechaColor} <span style="display:inline-block; width:12px; height:12px; background-color:${d.dechaHex}; border-radius:3px; vertical-align:middle; margin-left:4px;"></span></span>
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                            <span style="color:#f87171; font-weight:600;"><i class="fas fa-ban mr-1"></i> สีที่ควรเลี่ยง (กาลกิณี):</span>
+                            <span>${d.kalaColor} <span style="display:inline-block; width:12px; height:12px; background-color:${d.kalaHex}; border-radius:3px; vertical-align:middle; margin-left:4px;"></span></span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function render12Animals(readings) {
+            const container = document.getElementById('adminAnimalGrid');
+            if (!container || !readings) return;
+
+            container.innerHTML = readings.map(a => `
+                <div class="animal-item-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid var(--border-subtle);">
+                        <strong style="font-size:1.05rem; color:#fff;">
+                            ${a.name} <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">(ธาตุ${a.element})</span>
+                        </strong>
+                        <span style="font-size:0.75rem; padding:3px 8px; border-radius:6px; ${a.statusStyle}">
+                            ${a.status}
+                        </span>
+                    </div>
+                    <div style="font-size:0.88rem; line-height:1.6; color:#cbd5e1; margin-bottom:10px;">
+                        ${a.desc}
+                    </div>
+                    <div style="font-size:0.8rem; color:#34d399; background:rgba(16, 185, 129, 0.12); padding:6px 10px; border-radius:8px; border:1px solid rgba(16, 185, 129, 0.25);">
+                        💡 <strong>เคล็ดลับเปิดโชค:</strong> ${a.luckTip}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMajorTransits() {
+            const container = document.getElementById('adminMajorTransitsGrid');
+            if (!container || typeof ThaiHoroProEngine === 'undefined') return;
+
+            const transits = ThaiHoroProEngine.calculateMajorTransitsAlert(0); // ภพเทียบจากราศีเมษ (ดวงโลก/ดวงเมือง)
+            if (!transits) return;
+
+            container.innerHTML = transits.map(t => `
+                <div class="major-transit-card">
+                    <div class="major-transit-badge" style="background:${t.badgeColor}22; color:${t.badgeColor}; border:1px solid ${t.badgeColor}55;">
+                        <i class="fas fa-planet mr-1"></i> ดาวใหญ่ประจำจักรวาล
+                    </div>
+                    <h4 style="font-size:1.15rem; font-weight:700; color:#ffd700; margin-bottom:6px;">
+                        ${t.name} (${t.thNum})
+                    </h4>
+                    <div style="font-size:0.85rem; color:#94a3b8; margin-bottom:10px;">
+                        สถิตปัจจุบัน: <strong style="color:#fff;">ราศี${t.currentRasi}</strong> ➔ ราศีถัดไป: <strong style="color:#fff;">ราศี${t.nextRasi}</strong> (${t.moveDate})
+                    </div>
+                    <div style="background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; font-size:0.86rem; line-height:1.6; color:#cbd5e1; margin-bottom:10px; border-left:3px solid ${t.badgeColor};">
+                        <strong>อิทธิพลต่อดวงโลก:</strong> ${t.impact}
+                    </div>
+                    <div style="font-size:0.82rem; color:var(--gold-light);">
+                        🙏 <strong>การเสริมบารมี:</strong> ${t.ritual}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function onAdminDateChange(dateVal) {
+            if (!dateVal) return;
+            selectedDate = new Date(dateVal);
+            renderAdminDashboard();
+        }
+
+        function changeAdminDate(daysOffset) {
+            selectedDate.setDate(selectedDate.getDate() + daysOffset);
+            const picker = document.getElementById('adminDatePicker');
+            if (picker) {
+                picker.value = selectedDate.toISOString().split('T')[0];
+            }
+            renderAdminDashboard();
+        }
+
+        function resetDateToday() {
+            selectedDate = new Date();
+            const picker = document.getElementById('adminDatePicker');
+            if (picker) {
+                picker.value = selectedDate.toISOString().split('T')[0];
+            }
+            renderAdminDashboard();
+        }
+    </script>
+</body>
+</html>

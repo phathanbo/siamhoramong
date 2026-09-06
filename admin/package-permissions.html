@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการสิทธิ์แพ็กเกจสมาชิก - Siam Horamongkol Admin</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1995/1995434.png">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/1995/1995434.png">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <style>
+        :root {
+            --bg-body: #0b0f19;
+            --bg-card: #13182b;
+            --border-color: rgba(212, 175, 55, 0.25);
+            --gold: #f59e0b;
+            --gold-bright: #ffd700;
+        }
+
+        html, body {
+            min-height: 100vh;
+            overflow-x: auto;
+            overflow-y: auto;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: #f8fafc;
+            font-family: 'Prompt', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-bar {
+            background: rgba(10, 15, 29, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .main-app-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 16px 40px 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .header-title i {
+            font-size: 1.8rem;
+            color: var(--gold-bright);
+        }
+
+        .header-title h1 {
+            font-size: 1.25rem;
+            margin: 0;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd700, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-sub {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #94a3b8 !important;
+            padding: 6px 13px !important;
+            border-radius: 6px !important;
+            font-size: 0.82rem !important;
+            text-decoration: none !important;
+            transition: all 0.2s !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }
+
+        .admin-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            margin-bottom: 8px;
+        }
+
+        /* ตารางสิทธิ์ package — เอาออกจากล่องจำกัดความสูง ให้เลื่อนทั้งหน้าได้อย่างอิสระ */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            position: relative;
+            background: #090e1f;
+            border-radius: 14px;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            margin-bottom: 30px;
+        }
+
+        #singlePackageContainer {
+            width: 100%;
+            padding-bottom: 24px;
+        }
+
+        .badge-instruction {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            color: var(--gold-bright);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* ===== Modern Sleek SaaS Matrix Table (Inspired by Reference) ===== */
+        #fortuneTable {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #090e1f;
+        }
+
+        #fortuneTable thead th {
+            position: sticky;
+            top: 59px; /* ใต้ header-bar */
+            z-index: 30;
+            background: #0d152e;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            white-space: nowrap;
+            padding: 8px 10px;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+        }
+
+        #fortuneTable tbody tr {
+            transition: background 0.15s ease;
+        }
+
+        #fortuneTable tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        #fortuneTable tbody tr:hover {
+            background-color: rgba(99, 102, 241, 0.12) !important;
+        }
+
+        #fortuneTable tbody tr:hover td.sticky-col {
+            background-color: #111d40 !important;
+        }
+
+        #fortuneTable tbody td {
+            padding: 10px 8px;
+            font-size: 0.84rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        #fortuneTable tbody td.sticky-col,
+        #fortuneTable thead th.sticky-col,
+        #fortuneTable tfoot td.sticky-col,
+        #fortuneTable tfoot th.sticky-col {
+            position: -webkit-sticky !important;
+            position: sticky !important;
+            left: 0 !important;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.86rem;
+            color: #f8fafc;
+            background-color: #0d1736 !important;
+            border-right: 2.5px solid rgba(212, 175, 55, 0.45) !important;
+            box-shadow: 4px 0 14px rgba(0, 0, 0, 0.55) !important;
+            min-width: 320px !important;
+            max-width: 380px !important;
+            white-space: nowrap !important;
+        }
+
+        /* มุมบนซ้าย: sticky ทั้ง top: 59px + left: 0 → z-index สูงสุด */
+        #fortuneTable thead th.sticky-col {
+            top: 59px !important;
+            left: 0 !important;
+            z-index: 60 !important;
+            background: linear-gradient(135deg, #102154 0%, #0c173b 100%) !important;
+        }
+
+        #fortuneTable tbody td.sticky-col {
+            z-index: 25 !important;
+        }
+
+        /* แถบราคาด้านล่าง (tfoot) */
+        #fortuneTable tfoot {
+            background: #0b1228 !important;
+        }
+
+        #fortuneTable tfoot tr {
+            background: #0b1228 !important;
+            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #fortuneTable tfoot th,
+        #fortuneTable tfoot td {
+            background-color: #0b1228 !important;
+            border-top: 2px solid rgba(212, 175, 55, 0.35) !important;
+        }
+
+        /* มุมล่างซ้าย: sticky ทั้ง bottom: 0 + left: 0 */
+        #fortuneTable tfoot td.sticky-col,
+        #fortuneTable tfoot th.sticky-col {
+            bottom: 0 !important;
+            left: 0 !important;
+            z-index: 55 !important;
+            background-color: #0d1736 !important;
+        }
+
+        /* Clean Tick / Cross minimal icons matching reference image */
+        .perm-icon-tick {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: #22c55e;
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .perm-icon-cross {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: #ef4444;
+            opacity: 0.55;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        td.status-cell {
+            transition: background 0.15s ease;
+        }
+
+        td.status-cell:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        td.status-cell:hover .perm-icon-tick {
+            transform: scale(1.25);
+            color: #4ade80;
+            filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.6));
+        }
+
+        td.status-cell:hover .perm-icon-cross {
+            transform: scale(1.25);
+            color: #f87171;
+            opacity: 1;
+            filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
+        }
+
+        /* Sleek Button Controls */
+        .btn-sleek {
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 5px 12px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-sleek-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border: 1px solid rgba(99, 102, 241, 0.5);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+        }
+
+        .btn-sleek-primary:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-sleek-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+        }
+
+        /* Clean iOS-like Minimal Toggle Switch */
+        .switch-sm {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 20px;
+            margin: 0;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+        .switch-sm input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider-sm {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.15);
+            transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 20px;
+        }
+        .slider-sm:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input:checked + .slider-sm {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        input:checked + .slider-sm:before {
+            transform: translateX(18px);
+        }
+
+        /* ===== STRICT RESET FOR MINIMAL BUTTONS (Override style.css .btn defaults) ===== */
+        .admin-box .btn,
+        .admin-box button,
+        #permissionControlsMount .btn,
+        #permissionControlsMount button,
+        #singlePackageContainer .btn,
+        #singlePackageContainer button {
+            width: auto !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 6px !important;
+            font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif !important;
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
+            padding: 5px 12px !important;
+            line-height: 1.4 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+            transition: all 0.15s ease !important;
+        }
+
+        .admin-box .btn::before,
+        #permissionControlsMount .btn::before,
+        #singlePackageContainer .btn::before {
+            display: none !important;
+        }
+
+        /* Minimal Outline & Solid Button Styles */
+        .btn-outline-success {
+            background: rgba(16, 185, 129, 0.08) !important;
+            border: 1px solid rgba(16, 185, 129, 0.4) !important;
+            color: #34d399 !important;
+        }
+        .btn-outline-success:hover {
+            background: #10b981 !important;
+            color: #0c1424 !important;
+            border-color: #10b981 !important;
+        }
+
+        .btn-outline-danger {
+            background: rgba(244, 63, 94, 0.08) !important;
+            border: 1px solid rgba(244, 63, 94, 0.4) !important;
+            color: #fb7185 !important;
+        }
+        .btn-outline-danger:hover {
+            background: #f43f5e !important;
+            color: #ffffff !important;
+            border-color: #f43f5e !important;
+        }
+
+        .btn-outline-secondary,
+        .btn-outline-info {
+            background: rgba(255, 255, 255, 0.04) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #cbd5e1 !important;
+        }
+        .btn-outline-secondary:hover,
+        .btn-outline-info:hover {
+            background: rgba(255, 255, 255, 0.12) !important;
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        /* View Mode Toggle Button Group */
+        .mode-toggle-group {
+            display: inline-flex;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 3px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 2px;
+        }
+
+        .mode-toggle-btn {
+            border: none !important;
+            padding: 4px 12px !important;
+            font-size: 0.78rem !important;
+            border-radius: 6px !important;
+            color: #94a3b8 !important;
+            background: transparent !important;
+            cursor: pointer;
+        }
+
+        .mode-toggle-btn.active {
+            background: #ffd700 !important;
+            color: #0b0f19 !important;
+            font-weight: 700 !important;
+        }
+
+        /* Category Filter Tabs (Minimal & Clean) */
+        .btn-category-tab {
+            border-radius: 6px !important;
+            font-size: 0.76rem !important;
+            padding: 4px 10px !important;
+            font-weight: 500 !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            background: rgba(255, 255, 255, 0.02) !important;
+            color: #94a3b8 !important;
+            cursor: pointer;
+        }
+        .btn-category-tab:hover {
+            background: rgba(255, 255, 255, 0.06) !important;
+            color: #ffffff !important;
+        }
+        .btn-category-tab.active {
+            background: rgba(212, 175, 55, 0.15) !important;
+            border-color: #ffd700 !important;
+            color: #ffd700 !important;
+            font-weight: 600 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="header-bar">
+        <a href="admin-console.html" class="header-title">
+            <i class="fas fa-crown"></i>
+            <div>
+                <h1>จัดการสิทธิ์การเข้าถึงแพ็กเกจ</h1>
+                <div class="header-sub">Package Permissions & Matrix Configuration</div>
+            </div>
+        </a>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="member-dashboard.html" class="btn-nav"><i class="fas fa-users-cog"></i> แดชบอร์ดสมาชิก</a>
+            <a href="daily-horoscope-dashboard.html" class="btn-nav"><i class="fas fa-bullhorn text-warning"></i> ดวงประจำวัน & ดาวจร</a>
+            <a href="admin-console.html" class="btn-nav"><i class="fas fa-tools"></i> Admin Console</a>
+            <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าบ้าน (ห้องพยากรณ์)</a>
+        </div>
+    </header>
+
+    <div class="main-app-container">
+        
+        <!-- Banner Explanation (Slim Compact Bar) -->
+        <div class="admin-box" style="padding: 8px 14px; margin-bottom: 6px; border-radius: 8px; flex-shrink: 0; background: rgba(15, 23, 42, 0.65);">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <span style="color: #ffd700; font-size: 0.95rem; font-weight: 700;">
+                        <i class="fas fa-sliders-h mr-1"></i> สิทธิ์แพ็กเกจ (16 ระดับ)
+                    </span>
+                    <span class="badge-instruction" style="padding: 2px 10px; font-size: 0.74rem;">
+                        <i class="fas fa-info-circle"></i> ระบบ Cascade บันทึกอัตโนมัติลง Firestore
+                    </span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="member-dashboard.html" class="btn-nav py-1 px-2" style="font-size: 0.74rem;">
+                        <i class="fas fa-arrow-left mr-1"></i> แดชบอร์ดสมาชิก
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mount for Enhanced Package Permissions Controls (Search, Filter, Mode Toggle & Bulk Actions) -->
+        <div id="permissionControlsMount" style="flex-shrink: 0;"></div>
+
+        <!-- Single Package View Container (Single Mode) -->
+        <div id="singlePackageContainer" style="display: none;"></div>
+
+        <!-- Table Container (Matrix View) -->
+        <div class="table-container">
+            <table id="fortuneTable">
+                <thead>
+                    <tr id="headerRow">
+                        <th class="sticky-col">รายการพยากรณ์</th>
+                    </tr>
+                </thead>
+                <tbody id="serviceBody">
+                </tbody>
+                <tfoot id="priceFoot">
+                    <tr class="row-m">
+                        <td class="sticky-col">รายเดือน (30 วัน)</td>
+                    </tr>
+                    <tr class="row-y">
+                        <td class="sticky-col">รายปี (365 วัน)</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="../src/utils/firebase-config.js"></script>
+    <script src="../src/ui/mainpage.js"></script>
+    <script src="../src/utils/tiers.js"></script>
+    <script src="js/admin-package-permissions.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof buildTable === 'function') {
+                buildTable();
+            }
+            if (window.PackagePermissionsAdmin && typeof window.PackagePermissionsAdmin.init === 'function') {
+                window.PackagePermissionsAdmin.init();
+            }
+        });
+    </script>
+</body>
+</html>

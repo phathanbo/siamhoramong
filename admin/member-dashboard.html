@@ -1,0 +1,1436 @@
+
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Analytics Dashboard - สยามโหรามงคล</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN for Analytics Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* Dark Theme (Default) */
+            --bg-body: #11131c;
+            --bg-sidebar: #171926;
+            --bg-card: #1c1f30;
+            --bg-card-inner: #24273d;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(245, 158, 11, 0.4);
+            --text-main: #ffffff;
+            --text-sub: #94a3b8;
+            --text-muted: #64748b;
+            --accent-primary: #6366f1;
+            --accent-purple: #a855f7;
+            --accent-gold: #f59e0b;
+            --accent-blue: #38bdf8;
+            --accent-green: #10b981;
+            --accent-pink: #f43f5e;
+            --shadow-card: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --table-hover: rgba(255, 255, 255, 0.03);
+            --sidebar-active: #ffffff;
+            --sidebar-active-bg: rgba(255, 255, 255, 0.08);
+            --sidebar-active-color: #ffffff;
+        }
+
+        [data-theme="light"] {
+            /* Light Theme */
+            --bg-body: #f4f7fc;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-inner: #f8fafc;
+            --border-color: rgba(0, 0, 0, 0.06);
+            --border-highlight: rgba(245, 158, 11, 0.4);
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --text-muted: #94a3b8;
+            --accent-primary: #6366f1;
+            --accent-purple: #9333ea;
+            --accent-gold: #d97706;
+            --accent-blue: #0284c7;
+            --accent-green: #059669;
+            --accent-pink: #e11d48;
+            --shadow-card: 0 8px 24px rgba(148, 163, 184, 0.12);
+            --table-hover: rgba(0, 0, 0, 0.02);
+            --sidebar-active: #0f172a;
+            --sidebar-active-bg: #f1f5f9;
+            --sidebar-active-color: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif;
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 250px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 18px;
+            flex-shrink: 0;
+            min-height: 100vh;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding: 0 8px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .brand-logo-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);
+        }
+
+        .brand-text {
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 16px 8px 8px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-menu a:hover {
+            color: var(--text-main);
+            background-color: var(--sidebar-active-bg);
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--sidebar-active-bg);
+            color: var(--sidebar-active-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-menu a i {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Help Support Card in Sidebar */
+        .sidebar-help-card {
+            margin-top: auto;
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+        }
+
+        .sidebar-help-card .help-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin: -32px auto 8px;
+            border: 3px solid var(--bg-sidebar);
+            background: #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-help-card h5 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .sidebar-help-card p {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+        }
+
+        .sidebar-help-card .btn-support {
+            display: block;
+            background: var(--accent-primary);
+            color: #ffffff;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+        .sidebar-help-card .btn-support:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            padding: 24px 32px 40px;
+        }
+
+        /* Top Bar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .topbar-left h1 {
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .topbar-left .date-range-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            margin-left: 12px;
+            vertical-align: middle;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Theme Toggle Switch */
+        .theme-switch {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 4px;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .theme-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            color: var(--text-sub);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .theme-btn.active {
+            background: var(--accent-primary);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+        }
+
+        /* User Profile Pill */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 4px 12px 4px 6px;
+            border-radius: 30px;
+        }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .user-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* ===== ANALYTICS GRID ===== */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                position: relative;
+            }
+            .main-wrapper {
+                padding: 16px;
+            }
+        }
+
+        /* Card Base */
+        .dash-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+        }
+
+        /* 4 Small Metrics Box in Top Left */
+        .metrics-4box-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            height: 100%;
+        }
+
+        .metric-mini-card {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .mini-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-sub);
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .mini-header i {
+            font-size: 1.1rem;
+            opacity: 0.75;
+        }
+
+        .mini-value {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 6px 0 2px;
+            letter-spacing: -0.5px;
+        }
+
+        .mini-growth {
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .growth-up { color: var(--accent-green); }
+        .growth-down { color: var(--accent-pink); }
+
+        /* Donut Chart Cards */
+        .donut-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-header-flex h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .chart-container-relative {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 130px;
+        }
+
+        .chart-legend-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: var(--text-sub);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* ===== SECOND ROW: Charts & Financials ===== */
+        .grid-row-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .grid-row-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .wallet-stat-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .wallet-icon-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .wallet-badge-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--accent-gold);
+        }
+
+        .wallet-circle-pct {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-green);
+            color: var(--accent-green);
+            font-size: 0.75rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ===== THIRD ROW: Activity & Recent Table ===== */
+        .grid-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 992px) {
+            .grid-row-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Members Table & Search Bar */
+        .table-glass-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
+        table.analytics-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+            text-align: left;
+        }
+
+        table.analytics-table th {
+            padding: 10px 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        table.analytics-table td {
+            padding: 12px;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        table.analytics-table tr:hover td {
+            background-color: var(--table-hover);
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .status-delivered { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .status-processed { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+        .status-cancelled { background: rgba(244, 63, 94, 0.15); color: #f43f5e; }
+
+        /* Action Buttons */
+        .btn-action-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card-inner);
+            color: var(--text-sub);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+        .btn-action-icon:hover {
+            color: #ffffff;
+            border-color: var(--accent-gold);
+            background: rgba(245, 158, 11, 0.2);
+            text-decoration: none;
+        }
+
+        /* Search input */
+        .table-search-input {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            outline: none;
+            width: 200px;
+        }
+        .table-search-input:focus {
+            border-color: var(--accent-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a href="member-dashboard.html" class="sidebar-brand">
+            <div class="brand-logo-badge">
+                <i class="fas fa-cubes"></i>
+            </div>
+            <span class="brand-text">Siam Horamangkol</span>
+        </a>
+
+        <div class="nav-section-title">Menu</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="member-dashboard.html" class="active">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li>
+                <a href="daily-horoscope-dashboard.html">
+                    <i class="fas fa-bullhorn" style="color: #ffd700;"></i>
+                    <span>ดวงประจำวัน & ดาวจร</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-console.html">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Admin Console</span>
+                </a>
+            </li>
+            <li>
+                <a href="package-permissions.html">
+                    <i class="fas fa-crown"></i>
+                    <span>สิทธิ์แพ็กเกจ</span>
+                </a>
+            </li>
+            <li>
+                <a href="lifetime-report.html">
+                    <i class="fas fa-scroll"></i>
+                    <span>Lifetime Reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-compass"></i>
+                    <span>ห้องพยากรณ์หลัก</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-section-title">Settings</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" onclick="reloadMemberData(); return false;">
+                    <i class="fas fa-arrows-rotate"></i>
+                    <span>Refresh Data</span>
+                </a>
+            </li>
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-right-from-bracket"></i>
+                    <span>Sign Out</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Help Center Card -->
+        <div class="sidebar-help-card">
+            <div class="help-avatar">
+                <i class="fas fa-user-astronaut"></i>
+            </div>
+            <h5>ต้องการความช่วยเหลือ?</h5>
+            <p>ติดต่อทีมงานผู้ดูแลระบบสยามโหรามงคล</p>
+            <a href="https://lin.ee/xyz" target="_blank" class="btn-support">
+                <i class="fab fa-line mr-1"></i> ติดต่อ Support
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-wrapper">
+        
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h1>
+                    Analytics
+                    <span class="date-range-badge" id="liveDateBadge">
+                        <i class="far fa-calendar-alt"></i> วันนี้ · 01 ก.ย. 2569
+                    </span>
+                </h1>
+            </div>
+            <div class="topbar-right">
+                <!-- Light / Dark Toggle Switch -->
+                <div class="theme-switch" onclick="toggleTheme()" title="สลับโหมดสว่าง / มืด">
+                    <button class="theme-btn" id="btnThemeLight"><i class="fas fa-sun"></i></button>
+                    <button class="theme-btn active" id="btnThemeDark"><i class="fas fa-moon"></i></button>
+                </div>
+
+                <!-- User Profile -->
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <span class="user-name">Admin Console</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 1: 4 Mini Metric Cards + Gender Donut + Age Donut -->
+        <div class="dashboard-grid">
+            
+            <!-- Left: 4 Metric Cards Grid -->
+            <div class="dash-card">
+                <div class="metrics-4box-grid">
+                    <!-- Orders / สมาชิกทั้งหมด -->
+                    <div class="metric-mini-card">
+                        <div class="mini-header">
+                            <span>สมาชิกทั้งหมด (Total)</span>
+                            <i class="fas fa-users text-primary"></i>
+                        </div>
+                        <div class="mini-value" id="kpiTotalMembers">0</div>
+                        <div class="mini-growth" style="color: var(--text-muted);">
+                            <i class="fas fa-database text-primary mr-1"></i> จากฐานข้อมูลระบบ
+                        </div>
+                    </div>
+
+                    <!-- Approved / สมาชิก VIP -->
+                    <div class="metric-mini-card">
+                        <div class="mini-header">
+                            <span>สมาชิก VIP (Premium)</span>
+                            <i class="fas fa-crown text-warning"></i>
+                        </div>
+                        <div class="mini-value" id="kpiVipMembers" style="color: var(--accent-gold);">0</div>
+                        <div class="mini-growth" style="color: var(--text-muted);">
+                            <i class="fas fa-star text-warning mr-1"></i> สถานะ VIP ปัจจุบัน
+                        </div>
+                    </div>
+
+                    <!-- Consultations / เคสพยากรณ์ -->
+                    <div class="metric-mini-card">
+                        <div class="mini-header">
+                            <span>เคสบันทึกคำพยากรณ์</span>
+                            <i class="fas fa-clipboard-list text-info"></i>
+                        </div>
+                        <div class="mini-value" id="kpiConsultationCases">0</div>
+                        <div class="mini-growth" style="color: var(--text-muted);">
+                            <i class="fas fa-calendar-check text-info mr-1"></i> โต๊ะพยากรณ์จริง
+                        </div>
+                    </div>
+
+                    <!-- Revenue / ยอดค่าครูบริการ -->
+                    <div class="metric-mini-card">
+                        <div class="mini-header">
+                            <span>ยอดรวมค่าครูสะสม</span>
+                            <i class="fas fa-hand-holding-dollar text-purple"></i>
+                        </div>
+                        <div class="mini-value" id="kpiTotalRevenue" style="font-size: 1.35rem; color: var(--accent-green);">0 ฿</div>
+                        <div class="mini-growth" style="color: var(--text-muted);">
+                            <i class="fas fa-receipt text-success mr-1"></i> สลิปการชำระเงินจริง
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle: Users (เพศ ชาย/หญิง) Donut Chart -->
+            <div class="dash-card donut-card">
+                <div class="card-header-flex">
+                    <h3>สัดส่วนเพศ (Users)</h3>
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;" id="kpiGenderTotal">0</span>
+                </div>
+                <div class="chart-container-relative">
+                    <canvas id="genderDonutChart" style="max-height: 140px;"></canvas>
+                </div>
+                <div class="chart-legend-row">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #38bdf8;"></div>
+                        <span>ชาย: <b id="legendMalePct" class="text-white">0%</b></span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #f472b6;"></div>
+                        <span>หญิง: <b id="legendFemalePct" class="text-white">0%</b></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Subscriptions (ช่วงอายุ) Donut Chart -->
+            <div class="dash-card donut-card">
+                <div class="card-header-flex">
+                    <h3>ช่วงอายุ (Demographics)</h3>
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;" id="kpiAgeTotal">0</span>
+                </div>
+                <div class="chart-container-relative">
+                    <canvas id="ageDonutChart" style="max-height: 140px;"></canvas>
+                </div>
+                <div class="chart-legend-row">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #38bdf8;"></div>
+                        <span>&lt;20</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #6366f1;"></div>
+                        <span>20-60</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #fbbf24;"></div>
+                        <span>60+</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ROW 2: Bar Chart + 2 Financial Stat Cards -->
+        <div class="grid-row-2">
+            
+            <!-- สถิติสมาชิกแยกตาม 7 วันเกิด (อาทิตย์ - เสาร์) จากฐานข้อมูลจริง -->
+            <div class="dash-card">
+                <div class="card-header-flex">
+                    <h3>สถิติสมาชิกตาม 7 วันเกิด (อาทิตย์ – เสาร์)</h3>
+                    <span style="font-size:0.8rem; color:var(--text-sub); font-weight:600;">คำนวณจากวันเกิดจริง</span>
+                </div>
+                <div style="height: 180px; position: relative;">
+                    <canvas id="birthDayBarChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Paid Invoices Card: บันทึกใบเสร็จ / การชำระเงินจริง -->
+            <div class="dash-card wallet-stat-card">
+                <div>
+                    <div class="wallet-icon-row">
+                        <div class="wallet-badge-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div id="kpiReceiptCountBadge" style="font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: rgba(168, 85, 247, 0.15); color: #a855f7;">
+                            ใบเสร็จ
+                        </div>
+                    </div>
+                    <div style="font-size:0.82rem; color:var(--text-sub);">รายการชำระเงินทั้งหมด</div>
+                    <div style="font-size:1.75rem; font-weight:800; color:var(--text-main); margin-top:4px;" id="kpiTotalReceipts">0 รายการ</div>
+                </div>
+                <div style="font-size:0.75rem; color:var(--text-muted);" id="kpiReceiptsSubtitle">อิงจากฐานข้อมูลสำนักพยากรณ์</div>
+            </div>
+
+            <!-- Funds received Card: เคสพยากรณ์สะสมจริง -->
+            <div class="dash-card wallet-stat-card">
+                <div>
+                    <div class="wallet-icon-row">
+                        <div class="wallet-badge-icon" style="color: var(--accent-green);">
+                            <i class="fas fa-book-bookmark"></i>
+                        </div>
+                        <div style="font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                            บันทึกดวง
+                        </div>
+                    </div>
+                    <div style="font-size:0.82rem; color:var(--text-sub);">บันทึกคำทำนายสะสม</div>
+                    <div style="font-size:1.75rem; font-weight:800; color:var(--accent-green); margin-top:4px;" id="kpiCaseNotesCount">0 เคส</div>
+                </div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">ระบบโต๊ะพยากรณ์ (Bureau Notes)</div>
+            </div>
+
+        </div>
+
+        <!-- ROW 3: Overall User Activity Line Chart + Customer order / Member Table -->
+        <div class="grid-row-3">
+            
+            <!-- สถิติสมาชิกแยกตาม 12 ราศี (จากวัน/เดือนเกิดจริง) -->
+            <div class="dash-card">
+                <div class="card-header-flex">
+                    <h3>สถิติสมาชิกตาม 12 ราศีเกิด</h3>
+                    <span style="font-size:0.8rem; color:var(--text-sub); font-weight:600;">คำนวณจากฐานข้อมูลสมาชิก</span>
+                </div>
+                <div style="height: 220px; position: relative;">
+                    <canvas id="zodiacBarChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Customer order / Member Table -->
+            <div class="dash-card">
+                <div class="card-header-flex">
+                    <h3>รายชื่อสมาชิกล่าสุด (Recent Members)</h3>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="text" id="dashboardSearchInput" class="table-search-input" placeholder="ค้นหาชื่อ, รหัส..." onkeyup="filterDashboardTable()">
+                        <button class="btn-action-icon" onclick="exportTableToCSV()" title="ส่งออก CSV"><i class="fas fa-file-csv"></i></button>
+                    </div>
+                </div>
+                <div class="table-glass-wrapper">
+                    <table class="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>สมาชิก</th>
+                                <th>เพศ / อายุ</th>
+                                <th>วันเกิด</th>
+                                <th>สถานะ</th>
+                                <th style="text-align:right;">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboardTableBody">
+                            <tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">กำลังโหลดข้อมูลสมาชิก...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- SweetAlert2 -->
+    <script charset="UTF-8" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Helpers -->
+    <script charset="UTF-8" src="../src/utils/utils-helpers.js"></script>
+    <script charset="UTF-8" src="js/admin-dashboard.js"></script>
+
+    <!-- Script Implementation for Modern Analytics -->
+    <script>
+        // Chart Instances
+        let genderChartInstance = null;
+        let ageChartInstance = null;
+        let birthDayChartInstance = null;
+        let zodiacChartInstance = null;
+
+        // Thai Zodiac Signs Helper
+        const ZODIAC_NAMES = ['เมษ', 'พฤษภ', 'มิถุน', 'กรกฎ', 'สิงห์', 'กันย์', 'ตุลย์', 'พิจิก', 'ธนู', 'มังกร', 'กุมภ์', 'มีน'];
+        const THAI_DAYS = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+
+        function getZodiacIndex(day, month) {
+            // month is 1-indexed (1=Jan, 12=Dec)
+            // Approximate tropical/sidereal sun sign boundaries:
+            // เมษ: 13 เม.ย. - 13 พ.ค.
+            // พฤษภ: 14 พ.ค. - 13 มิ.ย.
+            // มิถุน: 14 มิ.ย. - 14 ก.ค.
+            // กรกฎ: 15 ก.ค. - 16 ส.ค.
+            // สิงห์: 17 ส.ค. - 16 ก.ย.
+            // กันย์: 17 ก.ย. - 16 ต.ค.
+            // ตุลย์: 17 ต.ค. - 15 พ.ย.
+            // พิจิก: 16 พ.ย. - 15 ธ.ค.
+            // ธนู: 16 ธ.ค. - 13 ม.ค.
+            // มังกร: 14 ม.ค. - 12 ก.พ.
+            // กุมภ์: 13 ก.พ. - 13 มี.ค.
+            // มีน: 14 มี.ค. - 12 เม.ย.
+            if ((month === 4 && day >= 13) || (month === 5 && day <= 13)) return 0; // เมษ
+            if ((month === 5 && day >= 14) || (month === 6 && day <= 13)) return 1; // พฤษภ
+            if ((month === 6 && day >= 14) || (month === 7 && day <= 14)) return 2; // มิถุน
+            if ((month === 7 && day >= 15) || (month === 8 && day <= 16)) return 3; // กรกฎ
+            if ((month === 8 && day >= 17) || (month === 9 && day <= 16)) return 4; // สิงห์
+            if ((month === 9 && day >= 17) || (month === 10 && day <= 16)) return 5; // กันย์
+            if ((month === 10 && day >= 17) || (month === 11 && day <= 15)) return 6; // ตุลย์
+            if ((month === 11 && day >= 16) || (month === 12 && day <= 15)) return 7; // พิจิก
+            if ((month === 12 && day >= 16) || (month === 1 && day <= 13)) return 8; // ธนู
+            if ((month === 1 && day >= 14) || (month === 2 && day <= 12)) return 9; // มังกร
+            if ((month === 2 && day >= 13) || (month === 3 && day <= 13)) return 10; // กุมภ์
+            if ((month === 3 && day >= 14) || (month === 4 && day <= 12)) return 11; // มีน
+            return 0;
+        }
+
+        // Live Date Badge
+        function updateLiveDateBadge() {
+            const badge = document.getElementById('liveDateBadge');
+            if (badge) {
+                const now = new Date();
+                const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+                const day = now.getDate().toString().padStart(2, '0');
+                const month = thaiMonths[now.getMonth()];
+                const year = now.getFullYear() + 543;
+                badge.innerHTML = `<i class="far fa-calendar-alt"></i> วันนี้ · ${day} ${month} ${year}`;
+            }
+        }
+
+        // Theme Toggle Handler
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('horo_analytics_theme', newTheme);
+
+            document.getElementById('btnThemeLight').classList.toggle('active', newTheme === 'light');
+            document.getElementById('btnThemeDark').classList.toggle('active', newTheme === 'dark');
+
+            // Re-render charts with new theme colors
+            initCharts();
+            updateMemberDashboardUI();
+        }
+
+        // Init theme on load
+        (function() {
+            const savedTheme = localStorage.getItem('horo_analytics_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            if (document.getElementById('btnThemeLight') && document.getElementById('btnThemeDark')) {
+                document.getElementById('btnThemeLight').classList.toggle('active', savedTheme === 'light');
+                document.getElementById('btnThemeDark').classList.toggle('active', savedTheme === 'dark');
+            }
+        })();
+
+        // Chart Initialization
+        function initCharts() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)';
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+
+            // 1. Gender Donut Chart
+            const genderCtx = document.getElementById('genderDonutChart')?.getContext('2d');
+            if (genderCtx) {
+                if (genderChartInstance) genderChartInstance.destroy();
+                genderChartInstance = new Chart(genderCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['ชาย', 'หญิง'],
+                        datasets: [{
+                            data: [0, 0],
+                            backgroundColor: ['#38bdf8', '#f472b6'],
+                            borderWidth: 0,
+                            cutout: '72%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // 2. Age Donut Chart
+            const ageCtx = document.getElementById('ageDonutChart')?.getContext('2d');
+            if (ageCtx) {
+                if (ageChartInstance) ageChartInstance.destroy();
+                ageChartInstance = new Chart(ageCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['< 20 ปี', '20-60 ปี', '60+ ปี'],
+                        datasets: [{
+                            data: [0, 0, 0],
+                            backgroundColor: ['#38bdf8', '#6366f1', '#fbbf24'],
+                            borderWidth: 0,
+                            cutout: '72%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // 3. Birth Day of Week Bar Chart (Real 7 Days)
+            const birthDayCtx = document.getElementById('birthDayBarChart')?.getContext('2d');
+            if (birthDayCtx) {
+                if (birthDayChartInstance) birthDayChartInstance.destroy();
+                birthDayChartInstance = new Chart(birthDayCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
+                        datasets: [{
+                            data: [0, 0, 0, 0, 0, 0, 0],
+                            backgroundColor: [
+                                '#ef4444', // อาทิตย์ แดง
+                                '#eab308', // จันทร์ เหลือง
+                                '#ec4899', // อังคาร ชมพู
+                                '#10b981', // พุธ เขียว
+                                '#f97316', // พฤหัส ส้ม
+                                '#06b6d4', // ศุกร์ ฟ้า
+                                '#8b5cf6'  // เสาร์ ม่วง
+                            ],
+                            borderRadius: 6,
+                            barPercentage: 0.55
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: (items) => `วันเกิด: วัน${THAI_DAYS[items[0].dataIndex]}`,
+                                    label: (item) => ` สมาชิก: ${item.raw} ราย`
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: textColor, font: { size: 10 } } },
+                            y: { 
+                                grid: { color: gridColor }, 
+                                ticks: { 
+                                    color: textColor, 
+                                    font: { size: 10 },
+                                    precision: 0,
+                                    stepSize: 1
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 4. 12 Zodiacs Bar Chart (Real Birth Dates)
+            const zodiacCtx = document.getElementById('zodiacBarChart')?.getContext('2d');
+            if (zodiacCtx) {
+                if (zodiacChartInstance) zodiacChartInstance.destroy();
+                zodiacChartInstance = new Chart(zodiacCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ZODIAC_NAMES,
+                        datasets: [{
+                            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            backgroundColor: '#8b5cf6',
+                            borderRadius: 6,
+                            barPercentage: 0.6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: (items) => `ราศี: ${ZODIAC_NAMES[items[0].dataIndex]}`,
+                                    label: (item) => ` สมาชิก: ${item.raw} ราย`
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: textColor, font: { size: 9 } } },
+                            y: { 
+                                grid: { color: gridColor }, 
+                                ticks: { 
+                                    color: textColor, 
+                                    font: { size: 10 },
+                                    precision: 0,
+                                    stepSize: 1
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Update Dashboard Data with 100% Real Database Items
+        function updateMemberDashboardUI() {
+            updateLiveDateBadge();
+
+            // Real Data Source 1: Members (horo_history)
+            const stats = getAdminStatistics();
+            const members = stats.members || [];
+            
+            // Real Data Source 2: Bureau Consultations (bureau_all_case_notes)
+            const caseNotes = JSON.parse(localStorage.getItem('bureau_all_case_notes') || '[]');
+            
+            // Real Data Source 3: Bureau Payments (bureau_payments)
+            const payments = JSON.parse(localStorage.getItem('bureau_payments') || '[]');
+            let totalRevenue = 0;
+            payments.forEach(p => {
+                totalRevenue += (parseFloat(p.amount) || 0);
+            });
+
+            // 1. KPI Numbers
+            document.getElementById('kpiTotalMembers').textContent = stats.total.toLocaleString('th-TH');
+            const vipCount = members.filter(m => m.tier === 'vip' || m.isVip || m.role === 'vip').length;
+            document.getElementById('kpiVipMembers').textContent = vipCount.toLocaleString('th-TH');
+            
+            // Consultation Cases KPI
+            const casesEl = document.getElementById('kpiConsultationCases');
+            if (casesEl) casesEl.textContent = `${caseNotes.length.toLocaleString('th-TH')} เคส`;
+
+            // Total Revenue KPI
+            const revEl = document.getElementById('kpiTotalRevenue');
+            if (revEl) revEl.textContent = `${totalRevenue.toLocaleString('th-TH')} ฿`;
+
+            // Row 2 Wallet Stat Cards (Real data)
+            const receiptsEl = document.getElementById('kpiTotalReceipts');
+            if (receiptsEl) receiptsEl.textContent = `${payments.length.toLocaleString('th-TH')} รายการ`;
+
+            const caseNotesEl = document.getElementById('kpiCaseNotesCount');
+            if (caseNotesEl) caseNotesEl.textContent = `${caseNotes.length.toLocaleString('th-TH')} เคส`;
+
+            // Donut Summaries
+            document.getElementById('kpiGenderTotal').textContent = `${stats.total} ราย`;
+            document.getElementById('kpiAgeTotal').textContent = `${stats.total} ราย`;
+
+            const malePct = stats.total > 0 ? Math.round((stats.byGender.male / stats.total) * 100) : 0;
+            const femalePct = stats.total > 0 ? (100 - malePct) : 0;
+            document.getElementById('legendMalePct').textContent = malePct + '%';
+            document.getElementById('legendFemalePct').textContent = femalePct + '%';
+
+            // 2. Update Donut Charts with Real Counts
+            if (genderChartInstance) {
+                const maleCount = stats.byGender.male || 0;
+                const femaleCount = stats.byGender.female || 0;
+                genderChartInstance.data.datasets[0].data = (maleCount === 0 && femaleCount === 0) 
+                    ? [0, 0] 
+                    : [maleCount, femaleCount];
+                genderChartInstance.update();
+            }
+
+            if (ageChartInstance) {
+                const teen = stats.byAgeGroup.teen || 0;
+                const adult = stats.byAgeGroup.adult || 0;
+                const senior = stats.byAgeGroup.senior || 0;
+                ageChartInstance.data.datasets[0].data = (teen === 0 && adult === 0 && senior === 0)
+                    ? [0, 0, 0]
+                    : [teen, adult, senior];
+                ageChartInstance.update();
+            }
+
+            // 3. Compute Real 7-Day Birth Distribution
+            const dayDistribution = [0, 0, 0, 0, 0, 0, 0]; // 0=Sun, 1=Mon, ..., 6=Sat
+            const zodiacDistribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+            members.forEach(m => {
+                if (m.birthdate) {
+                    try {
+                        const parsed = parseBirthdate(m.birthdate);
+                        if (parsed && !isNaN(parsed.getTime())) {
+                            // Day of week
+                            let dow = typeof getAstrologicalDayOfWeek === 'function'
+                                ? getAstrologicalDayOfWeek(m.birthdate, m.birthtime)
+                                : parsed.getDay();
+                            if (dow !== null && dow !== undefined && dow >= 0 && dow <= 6) {
+                                dayDistribution[dow]++;
+                            }
+
+                            // Zodiac
+                            const zIdx = getZodiacIndex(parsed.getDate(), parsed.getMonth() + 1);
+                            if (zIdx >= 0 && zIdx < 12) {
+                                zodiacDistribution[zIdx]++;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("Date parse error for member:", m, e);
+                    }
+                }
+            });
+
+            // Update 7-Day Bar Chart
+            if (birthDayChartInstance) {
+                birthDayChartInstance.data.datasets[0].data = dayDistribution;
+                birthDayChartInstance.update();
+            }
+
+            // Update 12 Zodiac Bar Chart
+            if (zodiacChartInstance) {
+                zodiacChartInstance.data.datasets[0].data = zodiacDistribution;
+                zodiacChartInstance.update();
+            }
+
+            // Render Table Rows
+            renderDashboardTableRows(stats.members);
+        }
+
+        function renderDashboardTableRows(members) {
+            const tbody = document.getElementById('dashboardTableBody');
+            if (!tbody) return;
+
+            let filtered = members;
+            const searchVal = (document.getElementById('dashboardSearchInput')?.value || '').toLowerCase().trim();
+            if (searchVal) {
+                filtered = filtered.filter(m => 
+                    (m.name && m.name.toLowerCase().includes(searchVal)) ||
+                    (m.memberId && m.memberId.toLowerCase().includes(searchVal)) ||
+                    (m.phone && m.phone.includes(searchVal))
+                );
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--text-muted);">ไม่พบข้อมูลสมาชิกในระบบ</td></tr>';
+                return;
+            }
+
+            const paged = filtered.slice(0, 6); // Top 6 recent
+            const now = new Date();
+
+            tbody.innerHTML = paged.map(m => {
+                let ageStr = '-';
+                if (m.birthdate) {
+                    try {
+                        const p = m.birthdate.split('/');
+                        const by = toCE(parseInt(p[2]));
+                        ageStr = (now.getFullYear() - by) + ' ปี';
+                    } catch(e) {}
+                }
+
+                const isVip = m.isVip || (m.tier && m.tier !== 'ทดลองใช้' && m.tier !== 'ธรรมดา') || m.tier === 'vip';
+                const pkgDisplay = m.tier || (isVip ? 'ทองคำ' : 'ทดลองใช้');
+                const statusBadge = isVip
+                    ? `<span class="status-pill status-delivered"><i class="fas fa-crown"></i> ${pkgDisplay}</span>`
+                    : `<span class="status-pill status-processed"><i class="fas fa-gem"></i> ${pkgDisplay}</span>`;
+
+                const genderSymbol = (m.gender === 'male' || m.gender === 'm') ? 'ชาย' : 'หญิง';
+
+                const memberDetailUrl = `member-detail.html?id=${encodeURIComponent(m.memberId || m.id || '')}`;
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <a href="${memberDetailUrl}" style="text-decoration:none;">
+                                    <div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, #6366f1, #a855f7); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; box-shadow:0 2px 8px rgba(99,102,241,0.3);">
+                                        ${(m.name || 'M')[0]}
+                                    </div>
+                                </a>
+                                <div>
+                                    <a href="${memberDetailUrl}" style="text-decoration:none; font-weight:700; color:var(--text-main); display:inline-block;" title="คลิกเพื่อดูรายละเอียดสมาชิก">
+                                        ${m.name || '-'} ${m.lastName || ''} <i class="fas fa-arrow-up-right-from-square ml-1" style="font-size:0.7rem; color:var(--accent-purple);"></i>
+                                    </a>
+                                    <div style="font-size:0.72rem; color:var(--text-muted); font-family:monospace;">${m.memberId || '-'}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${genderSymbol} / ${ageStr}</td>
+                        <td style="color:var(--text-sub);">${m.birthdate || '-'}</td>
+                        <td>${statusBadge}</td>
+                        <td style="text-align:right;">
+                            <a href="${memberDetailUrl}" class="btn-action-icon" title="ดูหน้ารายละเอียดสมาชิก"><i class="fas fa-user-circle"></i></a>
+                            <button class="btn-action-icon" onclick="viewMemberDetail('${m.memberId || m.id}')" title="ดูป๊อปอัปย่อ"><i class="fas fa-eye"></i></button>
+                            <button class="btn-action-icon" onclick="deleteMemberAdmin('${m.memberId || m.id}')" title="ลบ" style="color:#f43f5e;"><i class="fas fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterDashboardTable() {
+            updateMemberDashboardUI();
+        }
+
+        function reloadMemberData() {
+            updateMemberDashboardUI();
+            Swal.fire({
+                icon: 'success',
+                title: 'รีเฟรชข้อมูลสำเร็จ',
+                timer: 1200,
+                showConfirmButton: false,
+                background: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1c1f30' : '#ffffff',
+                color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#ffffff' : '#0f172a'
+            });
+        }
+
+        function viewMemberDetail(id) {
+            const members = JSON.parse(localStorage.getItem('horo_history') || '[]');
+            const m = members.find(item => item.memberId === id || item.id === id);
+            if (!m) return;
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            Swal.fire({
+                title: `<span style="color: #fbbf24;">${m.name} ${m.lastName || ''}</span>`,
+                html: `
+                    <div style="text-align: left; font-size: 0.92rem; line-height: 1.9; color: ${isDark ? '#cbd5e1' : '#475569'};">
+                        <p class="mb-1"><strong>รหัสสมาชิก:</strong> <span style="color: #6366f1; font-family:monospace;">${m.memberId || '-'}</span></p>
+                        <p class="mb-1"><strong>เพศ:</strong> ${m.gender === 'male' || m.gender === 'm' ? 'ชาย' : 'หญิง'}</p>
+                        <p class="mb-1"><strong>วันเกิด:</strong> ${m.birthdate || '-'}</p>
+                        <p class="mb-1"><strong>เวลาเกิด:</strong> ${m.birthtime || '-'}</p>
+                        <p class="mb-1"><strong>เบอร์โทร:</strong> ${m.phone || '-'}</p>
+                        <p class="mb-2"><strong>แพ็กเกจสมาชิก:</strong> <span style="color: #fbbf24; font-weight:700;">แพ็กเกจ ${m.tier || (m.isVip ? 'ทองคำ' : 'ทดลองใช้')}</span></p>
+                        <div style="text-align:center; margin-top:12px; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.15);">
+                            <a href="member-detail.html?id=${encodeURIComponent(m.memberId || m.id || '')}" style="color:#a855f7; font-weight:700; text-decoration:none; font-size:0.9rem;">
+                                <i class="fas fa-arrow-up-right-from-square mr-1"></i> ไปยังหน้ารายละเอียดสมาชิกฉบับเต็ม ➡️
+                            </a>
+                        </div>
+                    </div>
+                `,
+                background: isDark ? '#1c1f30' : '#ffffff',
+                color: isDark ? '#ffffff' : '#0f172a',
+                confirmButtonColor: '#6366f1',
+                confirmButtonText: 'ปิด'
+            });
+        }
+
+        function deleteMemberAdmin(id) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            Swal.fire({
+                title: 'ยืนยันการลบสมาชิก?',
+                text: 'ข้อมูลสมาชิกจะถูกลบออกจากฐานข้อมูล',
+                icon: 'warning',
+                background: isDark ? '#1c1f30' : '#ffffff',
+                color: isDark ? '#ffffff' : '#0f172a',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'ลบข้อมูล',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let members = JSON.parse(localStorage.getItem('horo_history') || '[]');
+                    members = members.filter(item => item.memberId !== id && item.id !== id);
+                    localStorage.setItem('horo_history', JSON.stringify(members));
+                    updateMemberDashboardUI();
+                    Swal.fire({
+                        title: 'ลบสำเร็จ!',
+                        icon: 'success',
+                        background: isDark ? '#1c1f30' : '#ffffff',
+                        color: isDark ? '#ffffff' : '#0f172a',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            updateMemberDashboardUI();
+        });
+    </script>
+</body>
+</html>
+

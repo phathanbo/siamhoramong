@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>ตำราโหราศาสตร์ - วงจักรราศีไทย (ผูกดวงชะตาพยากรณ์)</title>
-    <!-- FontAwesome -->
+    <!-- FontAwesome & Unified Stylesheet -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -560,7 +561,8 @@
                 radial-gradient(ellipse at 50% 50%, rgba(0,40,15,0.5) 0%, transparent 80%);
             color: #e8f0e4;
             min-height: 100vh;
-            padding: 24px 16px 80px;
+            margin: 0;
+            padding: 0;
             overflow-x: hidden;
         }
 
@@ -579,6 +581,7 @@
             margin: 0 auto;
             position: relative;
             z-index: 1;
+            padding: 24px 16px 80px;
         }
 
         /* === BACK BUTTON === */
@@ -1076,11 +1079,22 @@
         </div>
     </div>
 
-    <div class="container" id="exportArea">
-        <!-- Back Button -->
-        <div style="margin-top: 10px;" class="no-print">
-            <a href="../index.html" class="back-btn"><i class="fas fa-arrow-left"></i> กลับหน้าหลัก</a>
+    <!-- Top Header -->
+    <header class="header-bar no-print">
+        <a href="../index.html" class="header-title">
+            <i class="fas fa-dharmachakra"></i>
+            <div>
+                <h1>สยามโหรามงคล</h1>
+                <div class="header-sub">Siam Horamongkol • ตำราโหราศาสตร์ไทย (ผูกดวงชะตาพยากรณ์สมผุสจริง)</div>
+            </div>
+        </a>
+        <div class="header-actions">
+            <button onclick="window.print()" class="btn-nav"><i class="fas fa-print"></i> พิมพ์รายงาน</button>
+            <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าหลัก</a>
         </div>
+    </header>
+
+    <div class="container" id="exportArea">
 
         <div class="header-banner">
             <h1>📘 ตำราโหราศาสตร์</h1>
@@ -2893,6 +2907,7 @@
                 }
 
                                 // 5. คุณภาพดวงดาว (สถิตราศี และ นวางค์จักร)
+                let vargottamaList = [];
                 predHtml += `<div class="prediction-section" id="section-qualities" class="pred-card-item" data-category="personality">`;
                 predHtml += `<div class="section-header" onclick="toggleAccordion(this)"><h3 style="color:#ffd88a;">✨ จิตใต้สำนึกและนิสัยเชิงลึก (ตรียางค์/นวางค์) <i class="fas fa-chevron-down accordion-icon"></i></h3><button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-qualities', 'ดวงชะตา-คุณภาพดาว.png')"><i class="fas fa-download"></i> เซฟรูป</button></div>`;
                 predHtml += `<div class="accordion-content"><div class="prediction-grid">`;
@@ -2903,9 +2918,15 @@
                         const decanIdx = getDecanSign(p.sidereal);
                         const navamsaIdx = getNavamsaSign(signIdx, p.sidereal);
                         
-                        let vargottamaText = "";
-                        if (signIdx === navamsaIdx) {
-                            vargottamaText = `<div style="color:#ffd88a; font-size:0.9em; margin-top:5px;">⭐ วรโคตมนวางค์ (ดาวเข้มแข็งมาก)</div>`;
+                        let isVargottama = (signIdx === navamsaIdx);
+                        let vargottamaBadge = "";
+                        if (isVargottama) {
+                            vargottamaBadge = `<div style="color:#ffd88a; font-size:0.9em; margin-top:5px; font-weight:bold;">⭐ วรโคตมนวางค์ (ดาวเข้มแข็งสูงสุด)</div>`;
+                            vargottamaList.push({
+                                planet: p,
+                                key: key,
+                                signIdx: signIdx
+                            });
                         }
                         
                         const decanRuler = signToRulerKey[decanIdx];
@@ -2914,15 +2935,62 @@
                         const decanText = ayanamsaPredictions.decanNavamsaTraits ? ayanamsaPredictions.decanNavamsaTraits[decanRuler] : "";
                         const navamsaText = ayanamsaPredictions.decanNavamsaTraits ? ayanamsaPredictions.decanNavamsaTraits[navamsaRuler] : "";
                         
-                        predHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left;">
+                        predHtml += `<div class="birth-card" style="margin-bottom: 0; text-align: left; ${isVargottama ? 'border: 1px solid #ffd88a; box-shadow: 0 0 10px rgba(255,216,138,0.2);' : ''}">
                             <b><span style="color:${p.color}; font-size:1.2em;">●</span> ${p.nameTh}</b><br>
                             <span style="font-size:0.9em; color:#bbb;">ตรียางค์: ${decanText}</span><br>
                             <span style="font-size:0.9em; color:#bbb;">นวางค์: ${navamsaText}</span>
-                            ${vargottamaText}
+                            ${vargottamaBadge}
                         </div>`;
                     }
                 });
                 predHtml += `</div></div></div>`; // Close section
+
+                // 5.1 ส่วนพยากรณ์พิเศษ: ดาววรโคตมนวางค์ (อัญมณีล้ำค่าในดวงชะตา)
+                if (vargottamaList.length > 0 && ayanamsaPredictions.vargottamaData) {
+                    const vData = ayanamsaPredictions.vargottamaData;
+                    let vargottamaCards = "";
+                    vargottamaList.forEach(item => {
+                        const pInfo = vData.planets[item.key] || { name: item.planet.nameTh, text: "มีพลังอำนาจเข้มแข็ง มั่นคงสูงส่ง ให้คุณอย่างยั่งยืนแท้จริง" };
+                        const signName = ['เมษ','พฤษภ','เมถุน','กรกฎ','สิงห์','กันย์','ตุลย์','พิจิก','ธนู','มังกร','กุมภ์','มีน'][item.signIdx];
+                        vargottamaCards += `
+                            <div class="birth-card" style="margin-bottom: 12px; text-align: left; border-left: 4px solid #ffd88a; background: rgba(255, 216, 138, 0.08);">
+                                <div style="color:#ffd88a; font-weight:bold; font-size:1.05em; margin-bottom:5px;">
+                                    💎 <span style="color:${item.planet.color}; font-size:1.2em;">●</span> ${pInfo.name} — วรโคตมนวางค์ ณ ราศี${signName}
+                                </div>
+                                <div style="font-size:0.95em; color:#ddd; line-height:1.6; text-align:justify;">
+                                    ${pInfo.text}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    let dimsHtml = vData.dimensions.map(d => `
+                        <div style="margin-bottom:8px; padding-left:10px; border-left:2px solid #e0a93b;">
+                            <b style="color:#ffd88a; font-size:0.95em;">${d.title}</b>
+                            <div style="color:#bbb; font-size:0.9em; line-height:1.5; margin-top:2px;">${d.desc}</div>
+                        </div>
+                    `).join('');
+
+                    predHtml += `
+                        <div class="prediction-section pred-card-item" id="section-vargottama" data-category="personality" style="border: 1px solid rgba(255, 216, 138, 0.4); background: linear-gradient(180deg, rgba(30, 25, 15, 0.7) 0%, rgba(20, 20, 25, 0.9) 100%);">
+                            <div class="section-header" onclick="toggleAccordion(this)">
+                                <h3 style="color:#ffd88a;">💎 ดาววรโคตมนวางค์ (อัญมณีล้ำค่าในดวงชะตา) <i class="fas fa-chevron-down accordion-icon"></i></h3>
+                                <button class="export-btn-sm hide-on-export" onclick="event.stopPropagation(); exportSection(this, 'section-vargottama', 'ดวงชะตา-ดาววรโคตมนวางค์.png')"><i class="fas fa-download"></i> เซฟรูป</button>
+                            </div>
+                            <div class="accordion-content">
+                                <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; color: #ddd; font-size: 0.92em; line-height: 1.6;">
+                                    <div style="font-weight:bold; color:#ffd88a; margin-bottom:6px;">✨ ความหมายแห่งวรโคตมนวางค์ ("วร" = ประเสริฐ, "โคตม" = สูงสุด)</div>
+                                    ดาวที่สถิตในราศีเดียวกันทั้งในดวงราศีจักร (ดวงหลัก) และดวงนวางค์จักร (ไส้ในดวงชะตา) เปรียบเสมือนผลไม้ที่เปลือกนอกสวยและเนื้อในหวานฉ่ำ หรือเหล็กกล้าที่ชุบตัวมาอย่างดีทั้งนอกและใน ส่งผลต่อดวงชะตาใน 4 มิติหลัก:
+                                    <div style="margin-top:10px;">${dimsHtml}</div>
+                                </div>
+                                <h4 style="color:#ffd88a; margin-bottom:10px; font-size:1em;">อิทธิพลของดาววรโคตมที่ปรากฏในดวงชะตานี้:</h4>
+                                <div class="prediction-grid" style="grid-template-columns: 1fr;">
+                                    ${vargottamaCards}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
 
 
                 // ================= บรรพที่ ๕ : คัมภีร์ดวงจร (Transit) และมหาทักษาพยากรณ์ =================

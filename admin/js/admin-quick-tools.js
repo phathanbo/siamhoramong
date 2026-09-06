@@ -23,17 +23,62 @@ function initAdminQuickTools() {
 
             <div class="row g-3">
                 
-                <!-- 0. โต๊ะพยากรณ์ประจำสำนัก (Pro Studio) -->
+                <!-- 0. แดชบอร์ดสมาชิก (Member Analytics) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}member-dashboard.html'"
+                         style="background: linear-gradient(135deg, rgba(20,184,166,0.25) 0%, rgba(20,32,58,0.85) 100%); border: 1.5px solid rgba(45,212,191,0.5); border-radius: 16px; cursor: pointer; transition: all 0.25s ease;"
+                         onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='#2DD4BF'; this.style.boxShadow='0 8px 20px rgba(45,212,191,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(45,212,191,0.5)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2rem; margin-bottom: 8px; color: #2DD4BF;"><i class="fas fa-users-cog"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #99F6E4; font-size: 0.95rem;">👥 แดชบอร์ดสมาชิก</div>
+                            <small class="text-white-50" style="font-size: 0.78rem;">สถิติเพศ-อายุ & จัดการสมาชิก</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 0.00 ดวงประจำวัน & ดาวจรโลก (Daily Horoscope & Global Transit) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}daily-horoscope-dashboard.html'"
+                         style="background: linear-gradient(135deg, rgba(234,179,8,0.25) 0%, rgba(20,32,58,0.85) 100%); border: 1.5px solid rgba(250,204,21,0.5); border-radius: 16px; cursor: pointer; transition: all 0.25s ease;"
+                         onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='#FDE047'; this.style.boxShadow='0 8px 20px rgba(250,204,21,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(250,204,21,0.5)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2rem; margin-bottom: 8px; color: #FACC15;"><i class="fas fa-bullhorn"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FEF08A; font-size: 0.95rem;">📢 ดวงประจำวัน & ดาวจร</div>
+                            <small class="text-white-50" style="font-size: 0.78rem;">มอนิเตอร์ 12 ราศี & ดาวจรโลก</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 0.01 จัดการสิทธิ์แพ็กเกจ (Package Permissions) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p}package-permissions.html'"
+                         style="background: linear-gradient(135deg, rgba(245,158,11,0.25) 0%, rgba(20,32,58,0.85) 100%); border: 1.5px solid rgba(251,191,36,0.5); border-radius: 16px; cursor: pointer; transition: all 0.25s ease;"
+                         onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='#FDE047'; this.style.boxShadow='0 8px 20px rgba(251,191,36,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(251,191,36,0.5)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2rem; margin-bottom: 8px; color: #FBBF24;"><i class="fas fa-crown"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #FEF08A; font-size: 0.95rem;">👑 สิทธิ์แพ็กเกจ</div>
+                            <small class="text-white-50" style="font-size: 0.78rem;">กำหนดสิทธิ์ 16 ระดับ</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 0.1 โต๊ะพยากรณ์ประจำสำนัก (Pro Studio) -->
                 <div class="col-6 col-md-4 col-lg-3 mb-3">
                     <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
                          onclick="window.location.href='${p}../pages/thai-horoscope-pro.html'"
-                         style="background: linear-gradient(135deg, rgba(217,119,6,0.3) 0%, rgba(20,32,58,0.8) 100%); border: 2px solid rgba(251,191,36,0.6); border-radius: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);"
-                         onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#FDE047'; this.style.boxShadow='0 12px 25px rgba(251,191,36,0.3)';"
-                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(251,191,36,0.6)'; this.style.boxShadow='none';">
-                        <div style="font-size: 2.2rem; margin-bottom: 10px; color: #FBBF24;"><i class="fas fa-dharmachakra"></i></div>
+                         style="background: linear-gradient(135deg, rgba(217,119,6,0.25) 0%, rgba(20,32,58,0.85) 100%); border: 1.5px solid rgba(251,191,36,0.5); border-radius: 16px; cursor: pointer; transition: all 0.25s ease;"
+                         onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='#FDE047'; this.style.boxShadow='0 8px 20px rgba(251,191,36,0.25)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(251,191,36,0.5)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2rem; margin-bottom: 8px; color: #FBBF24;"><i class="fas fa-dharmachakra"></i></div>
                         <div>
-                            <div class="font-weight-bold" style="color: #FEF08A; font-size: 1rem;">🏛️ โต๊ะพยากรณ์สำนัก</div>
-                            <small class="text-white-50">ผูกดวง 6 มิติ + Dossier</small>
+                            <div class="font-weight-bold" style="color: #FEF08A; font-size: 0.95rem;">🏛️ โต๊ะพยากรณ์สำนัก</div>
+                            <small class="text-white-50" style="font-size: 0.78rem;">ผูกดวง 6 มิติ + Dossier</small>
                         </div>
                     </div>
                 </div>

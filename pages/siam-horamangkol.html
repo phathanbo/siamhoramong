@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>สยามโหรามงคล — ระบบผังการพยากรณ์ดวงชะตากำเนิด ๑๐ ขั้นตอน ๔ ระยะ</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Siam Horamangkol Engine -->
+    <script src="../src/engine/siam-horamangkol-system.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #0a1128;
+            --bg-secondary: #101f42;
+            --card-bg: #162854;
+            --card-inner: #1c336b;
+            --gold: #f3ba2f;
+            --gold-light: #ffd768;
+            --gold-dark: #b8860b;
+            --gold-gradient: linear-gradient(135deg, #f5d77f 0%, #d4af37 50%, #aa7c11 100%);
+            --text-main: #f8fafc;
+            --text-sub: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent-cyan: #00d2ff;
+            --accent-green: #10b981;
+            --accent-purple: #a855f7;
+            --accent-red: #ef4444;
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --border-soft: rgba(255, 255, 255, 0.12);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', 'Prompt', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 10%, #1e3a78 0%, var(--bg-primary) 60%, #050a18 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 60px;
+            overflow-x: hidden;
+        }
+
+        /* Top Header */
+        .header-bar {
+            background: rgba(10, 17, 40, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-gold);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+        .header-title i {
+            font-size: 1.8rem;
+            color: var(--gold);
+            filter: drop-shadow(0 0 8px rgba(243, 186, 47, 0.6));
+        }
+        .header-title h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-nav {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-gold);
+            background: rgba(243, 186, 47, 0.1);
+            color: var(--gold-light);
+        }
+        .btn-nav:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 15px rgba(243, 186, 47, 0.4);
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            text-align: center;
+            padding: 36px 20px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .badge-pill {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(243, 186, 47, 0.15);
+            border: 1px solid var(--gold);
+            border-radius: 50px;
+            color: var(--gold);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .hero-banner h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-banner p {
+            color: var(--text-sub);
+            font-size: 1rem;
+            max-width: 750px;
+            margin: 0 auto 24px;
+        }
+
+        /* 4 Phases Flow Bar */
+        .flow-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            padding: 0 16px;
+        }
+        .flow-phase-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: 14px 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .flow-phase-card:hover, .flow-phase-card.active {
+            border-color: var(--gold);
+            background: var(--card-inner);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .phase-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+        .phase-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .phase-steps {
+            font-size: 0.75rem;
+            color: var(--gold-light);
+        }
+
+        /* Container Layout */
+        .main-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Card Panels */
+        .gold-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .gold-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: var(--gold-gradient);
+        }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-soft);
+            padding-bottom: 12px;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Inputs */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-sub);
+        }
+        .form-control {
+            background: rgba(10, 17, 40, 0.7);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(243, 186, 47, 0.2);
+        }
+
+        /* Decision Toggle */
+        .decision-box {
+            background: rgba(243, 186, 47, 0.08);
+            border: 1px dashed var(--gold);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .decision-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .toggle-btn-group {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 4px;
+            gap: 4px;
+        }
+        .toggle-btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .toggle-btn.active {
+            background: var(--gold);
+            color: #000;
+            font-weight: 700;
+        }
+
+        /* Rectification Quiz Box */
+        .quiz-container {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-soft);
+            display: none;
+        }
+        .quiz-question-card {
+            background: var(--card-inner);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .quiz-question-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gold-light);
+            margin-bottom: 8px;
+        }
+        .quiz-option {
+            display: block;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.25);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            transition: all 0.2s;
+        }
+        .quiz-option:hover {
+            background: rgba(243, 186, 47, 0.15);
+            color: #fff;
+        }
+        .quiz-option input {
+            margin-right: 8px;
+        }
+
+        /* Calculate Button */
+        .btn-calc {
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--gold-gradient);
+            border: none;
+            border-radius: var(--radius-md);
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(243, 186, 47, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+        .btn-calc:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(243, 186, 47, 0.6);
+        }
+
+        /* Output Grid Layout */
+        .output-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .flow-container { grid-template-columns: 1fr 1fr; }
+            .output-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 500px) {
+            .flow-container { grid-template-columns: 1fr; }
+        }
+
+        /* Zodiac SVG Chart */
+        .zodiac-wheel-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+        .zodiac-svg {
+            width: 100%;
+            max-width: 440px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(243, 186, 47, 0.15));
+        }
+
+        /* Planet Dignity Table */
+        .planet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+        .planet-table th {
+            background: var(--card-inner);
+            color: var(--gold-light);
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-gold);
+            font-weight: 600;
+        }
+        .planet-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .planet-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+        .badge-primary { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
+        .badge-info { background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid #06b6d4; }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+        .badge-dark { background: rgba(100, 116, 139, 0.2); color: #94a3b8; border: 1px solid #64748b; }
+        .badge-secondary { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); }
+
+        /* 144 House Combination Matrix Filter */
+        .combo-filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        /* 5-D Synthesis Cards */
+        .dim-card {
+            background: var(--card-inner);
+            border-left: 4px solid var(--gold);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+        }
+        .dim-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .dim-content {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+
+        /* Kendra 4 & Life Pillars Cards */
+        .kendra-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        .kendra-box {
+            background: rgba(10, 17, 40, 0.6);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: 14px;
+        }
+        .kendra-box.highlight {
+            border-color: var(--gold);
+            background: rgba(243, 186, 47, 0.05);
+        }
+
+        /* Print styles */
+        @media print {
+            .header-bar, .flow-container, .btn-calc, .form-grid, .decision-box, .header-actions { display: none !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .gold-card { border: 1px solid #ccc !important; background: #fff !important; color: #000 !important; box-shadow: none !important; }
+            .card-title, .dim-title, .phase-name { color: #000 !important; }
+            .dim-card { border-left-color: #000 !important; background: #f8fafc !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Header -->
+    <header class="header-bar">
+        <a href="../index.html" class="header-title">
+            <i class="fas fa-dharmachakra"></i>
+            <div>
+                <h1>สยามโหรามงคล</h1>
+                <div style="font-size: 0.72rem; color: var(--gold-light);">Siam Horamongkol • ระบบผังการพยากรณ์ดวงชะตากำเนิด</div>
+            </div>
+        </a>
+        <div class="header-actions">
+            <button onclick="window.print()" class="btn-nav"><i class="fas fa-print"></i> พิมพ์รายงาน</button>
+            <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าหลัก</a>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+        <div class="badge-pill"><i class="fas fa-star-and-crescent"></i> 10 ขั้นตอน • 4 ระยะ • Decision Points ครบทุกจุด</div>
+        <h2>ผังการพยากรณ์ดวงชะตา (สไตล์โหรสยามฯ)</h2>
+        <p>ระบบถอดรหัสวาสนาและพิมพ์เขียวชีวิตตามคัมภีร์โหราศาสตร์ไทยโบราณ วิเคราะห์ลึกซึ้งตั้งแต่การสอบลัคนา ศักยภาพดาว 10 ดวง แรงเอื้อมพิเศษ 144 สูตรผสมภพ จนถึงการสังเคราะห์ 5 มิติ</p>
+    </section>
+
+    <!-- 4 Phases Interactive Nav -->
+    <div class="flow-container">
+        <div class="flow-phase-card active" onclick="scrollToSection('sec-phase1')">
+            <div class="phase-num">๑</div>
+            <div class="phase-name">เตรียมข้อมูล + เช็คตัวตน</div>
+            <div class="phase-steps">ขั้นที่ ๑-๒ • สอบลัคนา • ตนุลัคน์ • ตนุเศษ • ฤกษ์เกิด</div>
+        </div>
+        <div class="flow-phase-card" onclick="scrollToSection('sec-phase2')">
+            <div class="phase-num">๒</div>
+            <div class="phase-name">วัดกำลัง + ศักยภาพดาว</div>
+            <div class="phase-steps">ขั้นที่ ๓-๕ • มาตรฐานดาว ๑๐ ดวง • แรงเอื้อม • ๔๕ คู่ดาว</div>
+        </div>
+        <div class="flow-phase-card" onclick="scrollToSection('sec-phase3')">
+            <div class="phase-num">๓</div>
+            <div class="phase-name">รวบรวม ร้อยเรียงเรื่องราว</div>
+            <div class="phase-steps">ขั้นที่ ๖-๘ • ภพสถิต • สูตร ๑๔๔ ภพ • เกณฑ์พิเศษ • ตรีวัย</div>
+        </div>
+        <div class="flow-phase-card" onclick="scrollToSection('sec-phase4')">
+            <div class="phase-num">๔</div>
+            <div class="phase-name">สังเคราะห์ ออกคำพยากรณ์</div>
+            <div class="phase-steps">ขั้นที่ ๙-๑๐ • วิเคราะห์ ๕ มิติ • ๔ เรือนเกณฑ์ • เสาหลักชีวิต</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+        
+        <!-- Input & Form Card -->
+        <section class="gold-card" id="sec-phase1">
+            <div class="card-header-flex">
+                <div class="card-title"><i class="fas fa-id-card-alt"></i> ระยะที่ ๑: ข้อมูลสำหรับเตรียมผูกดวง (ขั้นตอนที่ ๑ & ๒)</div>
+                <span style="font-size: 0.8rem; color: var(--gold-light);"><i class="fas fa-circle-info"></i> ป้อนข้อมูลเพื่อคำนวณสมผุสดาว</span>
+            </div>
+
+            <form id="horoForm" onsubmit="handleCalculate(event)">
+                <!-- ช่องเลือกสมาชิกจากประวัติ -->
+                <div class="form-group" style="margin-bottom: 16px; background: rgba(243, 186, 47, 0.08); border: 1px solid var(--border-gold); padding: 12px 14px; border-radius: var(--radius-md);">
+                    <label style="color: var(--gold-light); font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between;">
+                        <span><i class="fas fa-users-gear" style="color: var(--gold);"></i> เลือกสมาชิกจากประวัติ / ฐานข้อมูล:</span>
+                        <span id="memberCountBadge" style="font-size: 0.78rem; color: var(--text-muted); font-weight: normal;"></span>
+                    </label>
+                    <select id="siamMemberSelect" class="form-control member-selector-shared" style="border: 1px solid var(--gold); background: #0e172a; color: #ffd700; font-weight: 500;" onchange="onSelectMember(this.value)">
+                        <option value="">-- 👤 เลือกสมาชิกจากประวัติ --</option>
+                    </select>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> ชื่อ-นามสกุล / เจ้าชะตา</label>
+                        <input type="text" id="clientName" class="form-control" value="เจ้าชะตาสยามมงคล" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-day"></i> วัน/เดือน/ปีเกิด (ค.ศ. หรือ พ.ศ.)</label>
+                        <input type="date" id="birthDate" class="form-control" value="1995-08-15" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> เวลาเกิด (น.)</label>
+                        <input type="time" id="birthTime" class="form-control" value="09:30" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> สถานที่เกิด (พิกัด)</label>
+                        <select id="birthPlace" class="form-control">
+                            <option value="13.7563,100.5018">กรุงเทพมหานคร / ภาคกลาง</option>
+                            <option value="18.7883,98.9853">เชียงใหม่ / ภาคเหนือ</option>
+                            <option value="14.9799,102.0978">นครราชสีมา / ภาคอีสาน</option>
+                            <option value="7.0084,100.4767">สงขลา-หาดใหญ่ / ภาคใต้</option>
+                            <option value="12.6114,102.1039">จันทบุรี / ภาคตะวันออก</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Decision Point: เวลาเกิด -->
+                <div class="decision-box">
+                    <div class="decision-header">
+                        <div>
+                            <strong style="color: var(--gold-light); font-size: 0.95rem;"><i class="fas fa-code-branch"></i> Decision Point: ทราบเวลาเกิดแน่นอนหรือไม่?</strong>
+                            <div style="font-size: 0.8rem; color: var(--text-sub);">หากไม่ทราบเวลาเกิด ระบบจะเปิดแบบทดสอบ "สอบลัคนา (Ascendant Rectification)"</div>
+                        </div>
+                        <div class="toggle-btn-group">
+                            <button type="button" class="toggle-btn active" id="btnKnownTime" onclick="setTimeKnownMode(true)">ทราบแน่นอน</button>
+                            <button type="button" class="toggle-btn" id="btnUncertainTime" onclick="setTimeKnownMode(false)">ไม่แน่ใจ / ไม่ทราบ (สอบลัคนา)</button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Area for Rectification -->
+                    <div id="quizBox" class="quiz-container">
+                        <div style="font-weight: 600; color: var(--accent-cyan); margin-bottom: 12px;">
+                            <i class="fas fa-clipboard-check"></i> แบบทดสอบสอบลัคนา (ตอบตามความเป็นจริงของท่านมากที่สุด)
+                        </div>
+                        <div id="quizQuestionsContainer"></div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label><i class="fas fa-question-circle"></i> คำถามหรือเรื่องที่เจ้าชะตาอยากทราบเป็นพิเศษ (ระบุเพื่อสังเคราะห์คำตอบเฉพาะจุด)</label>
+                    <input type="text" id="userQuestion" class="form-control" placeholder="เช่น การงานที่กำลังจะเปลี่ยน, เกณฑ์การเงินปีนี้, หรือเรื่องคู่ครอง...">
+                </div>
+
+                <button type="submit" class="btn-calc">
+                    <i class="fas fa-dharmachakra fa-spin"></i> คำนวณผูกดวงสยามโหรามงคล (ประมวลผล ๑๐ ขั้นตอน)
+                </button>
+            </form>
+        </section>
+
+        <!-- Dynamic Results Section -->
+        <div id="resultSection" style="display: none;">
+
+            <!-- Phase 1: Identity Cards -->
+            <section class="gold-card">
+                <div class="card-header-flex">
+                    <div class="card-title"><i class="fas fa-fingerprint"></i> ผลลัพธ์ระยะที่ ๑: ผูกดวง สมผุสลัคนา & ข้อมูลตัวตน</div>
+                    <span id="rectificationBadge" class="planet-badge badge-info" style="display: none;">ผ่านการสอบลัคนา</span>
+                </div>
+
+                <div class="output-grid">
+                    <!-- Left: Identity Key Pillars -->
+                    <div>
+                        <div class="dim-card" style="border-left-color: #e74c3c;">
+                            <div class="dim-title"><i class="fas fa-sun"></i> ๑. ลัคนา (ภายนอก / หน้ากาก บุคลิกภาพ)</div>
+                            <div class="dim-content" id="ascendantInfo"></div>
+                        </div>
+                        <div class="dim-card" style="border-left-color: #e67e22;">
+                            <div class="dim-title"><i class="fas fa-compass"></i> ๒. ตนุลัคน์ (วิถีชีวิต / ศักยภาพแห่งตน)</div>
+                            <div class="dim-content" id="tanulordInfo"></div>
+                        </div>
+                        <div class="dim-card" style="border-left-color: #a855f7;">
+                            <div class="dim-title"><i class="fas fa-heart"></i> ๓. ตนุเศษ (จิตเบื้องลึก / ความปรารถนาแท้)</div>
+                            <div class="dim-content" id="tanusetInfo"></div>
+                        </div>
+                        <div class="dim-card" style="border-left-color: #10b981;">
+                            <div class="dim-title"><i class="fas fa-seedling"></i> ๔. ฤกษ์เกิด (ต้นทุนวาสนา / พิมพ์เขียวชีวิต)</div>
+                            <div class="dim-content" id="nakshatraInfo"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Zodiac Chart SVG Wheel -->
+                    <div class="zodiac-wheel-box">
+                        <svg id="zodiacChartSvg" class="zodiac-svg" viewBox="0 0 500 500"></svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 2: Planetary Power & Aspects -->
+            <section class="gold-card" id="sec-phase2">
+                <div class="card-header-flex">
+                    <div class="card-title"><i class="fas fa-meteor"></i> ระยะที่ ๒: วัดกำลัง + ศักยภาพของดาว (ขั้นตอนที่ ๓, ๔, ๕)</div>
+                </div>
+
+                <!-- Decision Tree Hierarchy Visual Diagram -->
+                <div style="background: rgba(10, 17, 40, 0.7); border: 1px solid var(--border-gold); border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px;">
+                    <div style="font-weight: 700; color: var(--gold-light); font-size: 0.95rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-sitemap"></i> ขั้นตอนที่ ๓: ผังโครงสร้างการประเมินศักยภาพดาวทั้ง ๑๐ ดวง (Decision Hierarchy Tree)
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+                        <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981; border-radius: 8px; padding: 10px;">
+                            <div style="font-size: 0.85rem; font-weight: 700; color: #34d399;">ขั้นที่ ๑: เกษตร / อุจจ์ / ราชาโชค</div>
+                            <div style="font-size: 0.78rem; color: #e2e8f0; margin-top: 4px;">➔ มั่นคง / สูงส่ง / ราบรื่น (คะแนน 90-100)</div>
+                        </div>
+                        <div style="background: rgba(6, 182, 212, 0.12); border: 1px solid #06b6d4; border-radius: 8px; padding: 10px;">
+                            <div style="font-size: 0.85rem; font-weight: 700; color: #22d3ee;">ขั้นที่ ๒: ประ / นิจ / **มหาจักร**</div>
+                            <div style="font-size: 0.78rem; color: #e2e8f0; margin-top: 4px;">➔ ไม่มั่นคง / อ่อนแอ / **ฝ่าฟัน** (คะแนน 25-85)</div>
+                        </div>
+                        <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid #ef4444; border-radius: 8px; padding: 10px;">
+                            <div style="font-size: 0.85rem; font-weight: 700; color: #f87171;">ขั้นที่ ๓: ทุสถานภพ (อริ/มรณะ/วินาศ)</div>
+                            <div style="font-size: 0.78rem; color: #e2e8f0; margin-top: 4px;">➔ อุปสรรค / เหน็ดเหนื่อย / เสียหาย (คะแนน ~42)</div>
+                        </div>
+                        <div style="background: rgba(168, 85, 247, 0.12); border: 1px solid #a855f7; border-radius: 8px; padding: 10px;">
+                            <div style="font-size: 0.85rem; font-weight: 700; color: #c084fc;">ขั้นที่ ๔: ดาวปกติ (ตรวจเกณฑ์พิเศษ)</div>
+                            <div style="font-size: 0.78rem; color: #e2e8f0; margin-top: 4px;">➔ ปานกลาง / ตรวจโยค ตรีโกณ สมพล (คะแนน ~65)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View Switcher Tabs -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                    <div style="font-weight: 700; color: var(--gold-light); font-size: 1.05rem;">
+                        <i class="fas fa-layer-group"></i> ผลการประเมินศักยภาพดาว ๑๐ ดวงเชิงลึก
+                    </div>
+                    <div class="toggle-btn-group">
+                        <button type="button" class="toggle-btn active" id="btnViewCards" onclick="switchPlanetView('cards')"><i class="fas fa-th-large"></i> การ์ดเจาะลึก ๑๐ ดวง</button>
+                        <button type="button" class="toggle-btn" id="btnViewTrace" onclick="switchPlanetView('trace')"><i class="fas fa-project-diagram"></i> ผังการตัดสินใจ ๔ ขั้น</button>
+                        <button type="button" class="toggle-btn" id="btnViewTable" onclick="switchPlanetView('table')"><i class="fas fa-table"></i> ตารางเปรียบเทียบ</button>
+                    </div>
+                </div>
+
+                <!-- 1. Deep Dive Cards Container -->
+                <div id="planetCardsView" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-bottom: 20px;"></div>
+
+                <!-- 2. Decision Trace View Container -->
+                <div id="planetTraceView" style="display: none; flex-direction: column; gap: 14px; margin-bottom: 20px;"></div>
+
+                <!-- 3. Summary Table View Container -->
+                <div id="planetTableView" style="display: none; margin-bottom: 20px; overflow-x: auto;">
+                    <table class="planet-table">
+                        <thead>
+                            <tr>
+                                <th>ดาว</th>
+                                <th>ราศีที่สถิต</th>
+                                <th>ภพ</th>
+                                <th>มาตรฐาน / ศักยภาพ</th>
+                                <th>เกรด & พลัง</th>
+                                <th>ความสัมพันธ์ธาตุ</th>
+                                <th>สถานะพลัง</th>
+                            </tr>
+                        </thead>
+                        <tbody id="planetTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="output-grid" style="margin-top: 20px;">
+                    <!-- Aspects to Ascendant + Special Dristi -->
+                    <div class="gold-card" style="background: var(--card-inner); margin: 0; padding: 18px;">
+                        <h4 style="font-size: 0.95rem; color: var(--gold-light); margin-bottom: 12px;">
+                            <i class="fas fa-bullseye"></i> ขั้นตอนที่ ๔: ความสัมพันธ์ ลัคนา + ดาว & แรงเอื้อมพิเศษ
+                        </h4>
+                        <div id="ascendantAspectsList" style="font-size: 0.85rem; color: var(--text-sub); display: flex; flex-direction: column; gap: 8px;"></div>
+                    </div>
+
+                    <!-- 45 Planet Pairs -->
+                    <div class="gold-card" style="background: var(--card-inner); margin: 0; padding: 18px;">
+                        <h4 style="font-size: 0.95rem; color: var(--gold-light); margin-bottom: 12px;">
+                            <i class="fas fa-link"></i> ขั้นตอนที่ ๕: ความสัมพันธ์ ดาว + ดาว (คู่ดาวเด่น)
+                        </h4>
+                        <div id="planetPairsList" style="font-size: 0.85rem; color: var(--text-sub); display: flex; flex-direction: column; gap: 8px;"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 3: Story Weaving & Combinations -->
+            <section class="gold-card" id="sec-phase3">
+                <div class="card-header-flex">
+                    <div class="card-title"><i class="fas fa-layer-group"></i> ระยะที่ ๓: รวบรวม ร้อยเรียงเรื่องราว (ขั้นตอนที่ ๖, ๗, ๘)</div>
+                </div>
+
+                <!-- 144 House Combos -->
+                <div style="margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <h3 style="font-size: 1rem; color: var(--gold-light);">
+                            <i class="fas fa-random"></i> ขั้นตอนที่ ๗: สูตรผสมภพ ๑๔๔ รูปแบบ (ดาวเจ้าเรือน A ➔ ภพ B)
+                        </h3>
+                        <div class="combo-filter-bar">
+                            <select id="houseFilterSelect" class="form-control" style="padding: 4px 10px; font-size: 0.82rem;" onchange="filterHouseCombos()">
+                                <option value="all">แสดงทุกภพ (12 เรือนภพหลัก)</option>
+                                <option value="ตนุ">ภพตนุ (ตัวตน)</option>
+                                <option value="กดุมภะ">ภพกดุมภะ (การเงิน)</option>
+                                <option value="พันธุ">ภพพันธุ (ครอบครัว/บ้าน)</option>
+                                <option value="ปัตนิ">ภพปัตนิ (คู่ครอง)</option>
+                                <option value="กัมมะ">ภพกัมมะ (การงาน)</option>
+                                <option value="ลาภะ">ภพลาภะ (โชคลาภ)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="houseCombosContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;"></div>
+                </div>
+
+                <!-- Step 8: Special Yogas, Taksa, Triwai, 3 Poles -->
+                <div class="output-grid">
+                    <!-- Left: Yogas & Taksa -->
+                    <div>
+                        <div class="dim-card" style="border-left-color: var(--gold);">
+                            <div class="dim-title"><i class="fas fa-award"></i> เกณฑ์พิเศษ (องค์เกณฑ์ / อุดมเกณฑ์ / อยงยศ)</div>
+                            <div class="dim-content" id="specialYogasContent"></div>
+                        </div>
+                        <div class="dim-card" style="border-left-color: var(--accent-cyan);">
+                            <div class="dim-title"><i class="fas fa-crown"></i> ทักษาพยากรณ์ & ตรีวัย (วัยต้น • กลาง • ปลาย)</div>
+                            <div class="dim-content" id="taksaTriwaiContent"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Summary 3 Poles -->
+                    <div>
+                        <div class="dim-card" style="border-left-color: var(--accent-green);">
+                            <div class="dim-title"><i class="fas fa-gem"></i> สูตรเด่น & จุดเด่นในดวงชะตา (เรื่องหลักในชีวิต)</div>
+                            <div class="dim-content" id="highlightsContent"></div>
+                        </div>
+                        <div class="dim-card" style="border-left-color: var(--accent-red);">
+                            <div class="dim-title"><i class="fas fa-shield-alt"></i> จุดด้อย & ภพเสีย (สิ่งที่พึงระวังและแก้ไข)</div>
+                            <div class="dim-content" id="weaknessesContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 4: 5-D Synthesis & Kendra 4 Houses -->
+            <section class="gold-card" id="sec-phase4">
+                <div class="card-header-flex">
+                    <div class="card-title"><i class="fas fa-brain"></i> ระยะที่ ๔: สังเคราะห์ ออกคำพยากรณ์ (ขั้นตอนที่ ๙ & ๑๐)</div>
+                </div>
+
+                <!-- Step 9: 5-D Analysis -->
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 1rem; color: var(--gold-light); margin-bottom: 12px;">
+                        <i class="fas fa-cube"></i> ขั้นตอนที่ ๙: วิเคราะห์ ๕ มิติ
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                        <div class="kendra-box">
+                            <strong style="color: var(--gold);"><i class="fas fa-users"></i> ๑. บุคคล</strong>
+                            <p id="dimPeople" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 6px;"></p>
+                        </div>
+                        <div class="kendra-box">
+                            <strong style="color: var(--accent-cyan);"><i class="fas fa-calendar-check"></i> ๒. เหตุการณ์</strong>
+                            <p id="dimEvents" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 6px;"></p>
+                        </div>
+                        <div class="kendra-box">
+                            <strong style="color: var(--accent-purple);"><i class="fas fa-hourglass-half"></i> ๓. ช่วงเวลา</strong>
+                            <p id="dimTiming" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 6px;"></p>
+                        </div>
+                        <div class="kendra-box">
+                            <strong style="color: var(--accent-green);"><i class="fas fa-map-marked-alt"></i> ๔. สถานที่</strong>
+                            <p id="dimLocation" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 6px;"></p>
+                        </div>
+                        <div class="kendra-box">
+                            <strong style="color: var(--gold-light);"><i class="fas fa-magic"></i> ๕. เทคนิค/คำแนะนำ</strong>
+                            <p id="dimTechnique" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 6px;"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 10: Kendra 4 + Life Pillars -->
+                <div>
+                    <h3 style="font-size: 1rem; color: var(--gold-light); margin-bottom: 12px;">
+                        <i class="fas fa-monument"></i> ขั้นตอนที่ ๑๐: สรุปคำพยากรณ์ ๕ มิติหลัก (๔ เรือนเกณฑ์ + เสาหลักชีวิต)
+                    </h3>
+                    
+                    <div class="kendra-grid">
+                        <div class="kendra-box highlight">
+                            <h4 style="color: var(--gold); font-size: 0.92rem;"><i class="fas fa-user-circle"></i> ภพตนุ (ตัวตน)</h4>
+                            <p id="kendraTanu" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;"></p>
+                        </div>
+                        <div class="kendra-box highlight">
+                            <h4 style="color: var(--gold); font-size: 0.92rem;"><i class="fas fa-home"></i> ภพพันธุ (ครอบครัว/บ้าน)</h4>
+                            <p id="kendraBandhu" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;"></p>
+                        </div>
+                        <div class="kendra-box highlight">
+                            <h4 style="color: var(--gold); font-size: 0.92rem;"><i class="fas fa-heart"></i> ภพปัตนิ (คู่ครอง/หุ้นส่วน)</h4>
+                            <p id="kendraPatni" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;"></p>
+                        </div>
+                        <div class="kendra-box highlight">
+                            <h4 style="color: var(--gold); font-size: 0.92rem;"><i class="fas fa-briefcase"></i> ภพกัมมะ (การงาน/อาชีพ)</h4>
+                            <p id="kendraKamma" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;"></p>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 14px;">
+                        <div class="dim-card" style="border-left-color: #10b981;">
+                            <div class="dim-title"><i class="fas fa-coins"></i> การเงิน & ทรัพย์สิน</div>
+                            <div class="dim-content" id="pillarFinance"></div>
+                        </div>
+                        <div class="dim-card" style="border-left-color: #3b82f6;">
+                            <div class="dim-title"><i class="fas fa-chart-line"></i> การงาน & ความก้าวหน้า</div>
+                            <div class="dim-content" id="pillarCareer"></div>
+                        </div>
+                        <div class="dim-card" style="border-left-color: #ec4899;">
+                            <div class="dim-title"><i class="fas fa-heart-broken"></i> ความรัก & คู่ครอง</div>
+                            <div class="dim-content" id="pillarLove"></div>
+                        </div>
+                        <div class="dim-card" style="border-left-color: #8b5cf6;">
+                            <div class="dim-title"><i class="fas fa-hand-holding-medical"></i> สุขภาพ & โรคภัย</div>
+                            <div class="dim-content" id="pillarHealth"></div>
+                        </div>
+                    </div>
+
+                    <!-- User Question Answer Card -->
+                    <div id="userQuestionBox" class="dim-card" style="border-left-color: var(--gold); background: rgba(243, 186, 47, 0.1); margin-top: 14px; display: none;">
+                        <div class="dim-title"><i class="fas fa-question-circle"></i> คำตอบเจาะลึกตามข้อซักถามของเจ้าชะตา</div>
+                        <div class="dim-content" id="userQuestionAnswer" style="font-weight: 500; color: #fff;"></div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- JavaScript Controller -->
+    <script>
+        let currentHoroscopeResult = null;
+        let isTimeKnownMode = true;
+
+        // Init Rectification Quiz
+        function renderRectificationQuiz() {
+            const container = document.getElementById('quizQuestionsContainer');
+            container.innerHTML = '';
+            
+            SiamHoramongkol.RECTIFICATION_QUESTIONS.forEach((q, qIndex) => {
+                const card = document.createElement('div');
+                card.className = 'quiz-question-card';
+                
+                let optionsHtml = '';
+                q.options.forEach((opt, optIndex) => {
+                    optionsHtml += `
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz_${q.id}" value="${optIndex}" ${optIndex === 0 ? 'checked' : ''}>
+                            ${opt.text}
+                        </label>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="quiz-question-title">${q.question}</div>
+                    ${optionsHtml}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setTimeKnownMode(isKnown) {
+            isTimeKnownMode = isKnown;
+            document.getElementById('btnKnownTime').className = `toggle-btn ${isKnown ? 'active' : ''}`;
+            document.getElementById('btnUncertainTime').className = `toggle-btn ${!isKnown ? 'active' : ''}`;
+            document.getElementById('quizBox').style.display = isKnown ? 'none' : 'block';
+            if (!isKnown) renderRectificationQuiz();
+        }
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function switchPlanetView(mode) {
+            const cards = document.getElementById('planetCardsView');
+            const trace = document.getElementById('planetTraceView');
+            const table = document.getElementById('planetTableView');
+            
+            const btnCards = document.getElementById('btnViewCards');
+            const btnTrace = document.getElementById('btnViewTrace');
+            const btnTable = document.getElementById('btnViewTable');
+
+            if (btnCards) btnCards.className = `toggle-btn ${mode === 'cards' ? 'active' : ''}`;
+            if (btnTrace) btnTrace.className = `toggle-btn ${mode === 'trace' ? 'active' : ''}`;
+            if (btnTable) btnTable.className = `toggle-btn ${mode === 'table' ? 'active' : ''}`;
+
+            if (cards) cards.style.display = (mode === 'cards') ? 'grid' : 'none';
+            if (trace) trace.style.display = (mode === 'trace') ? 'flex' : 'none';
+            if (table) table.style.display = (mode === 'table') ? 'block' : 'none';
+        }
+
+        function handleCalculate(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('clientName').value;
+            const birthDateStr = document.getElementById('birthDate').value;
+            const birthTimeStr = document.getElementById('birthTime').value;
+            const placeCoord = document.getElementById('birthPlace').value.split(',').map(Number);
+            const userQuestion = document.getElementById('userQuestion').value;
+
+            let quizAnswers = null;
+            if (!isTimeKnownMode) {
+                quizAnswers = [];
+                SiamHoramongkol.RECTIFICATION_QUESTIONS.forEach(q => {
+                    const selected = document.querySelector(`input[name="quiz_${q.id}"]:checked`);
+                    const optIndex = selected ? parseInt(selected.value) : 0;
+                    quizAnswers.push(q.options[optIndex]);
+                });
+            }
+
+            // คำนวณผ่าน Engine สยามโหรามงคล
+            const result = SiamHoramongkol.calculateFullHoroscope({
+                name,
+                birthDateStr,
+                birthTimeStr,
+                isTimeKnown: isTimeKnownMode,
+                quizAnswers,
+                lat: placeCoord[0],
+                lng: placeCoord[1],
+                userQuestion
+            });
+
+            currentHoroscopeResult = result;
+            renderAllResults(result);
+
+            // Display Results
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+
+            Swal.fire({
+                icon: 'success',
+                title: 'ผูกดวงสยามโหรามงคลสำเร็จ!',
+                text: `ประมวลผล ๑๐ ขั้นตอนสำหรับคุณ ${name} เรียบร้อยแล้ว`,
+                background: '#162854',
+                color: '#fff',
+                confirmButtonColor: '#d4af37'
+            });
+        }
+
+        function renderAllResults(data) {
+            const { phase1, phase2, phase3, phase4 } = data;
+
+            // Phase 1: Identity
+            const asc = phase1.step2_chart.ascendant;
+            const tanuset = phase1.step2_chart.tanuset;
+            const nakshatra = phase1.step2_chart.nakshatra;
+            const ascLord = SiamHoramongkol.ZODIAC_SIGNS[asc.sign].lordName;
+
+            document.getElementById('ascendantInfo').innerHTML = `
+                <strong>ลัคนาราศี${asc.signName} (${asc.deg}° ${asc.min}')</strong> — ธาตุ${asc.element} (${asc.category})<br>
+                หน้ากากและบุคลิกภายนอก: มีความสง่า มีศักดิ์ศรี มุ่งมั่นในจุดยืนและสร้างความน่าเชื่อถือ
+            `;
+
+            document.getElementById('tanulordInfo').innerHTML = `
+                <strong>ดาวตนุลัคน์: ${ascLord}</strong><br>
+                ตัวแทนวิถีชีวิตและศักยภาพแห่งตน ขับเคลื่อนความสำเร็จด้วยความเป็นผู้นำและการลงมือทำ
+            `;
+
+            document.getElementById('tanusetInfo').innerHTML = `
+                <strong>ดาวตนุเศษ: ดาว${tanuset.planetName} (สถิตราศี${tanuset.signName})</strong><br>
+                ${tanuset.meaning}
+            `;
+
+            document.getElementById('nakshatraInfo').innerHTML = `
+                <strong>${nakshatra.nakshatraName} (ฤกษ์ที่ ${nakshatra.nakshatraNumber}) — หมวด ${nakshatra.groupName}</strong><br>
+                ${nakshatra.groupMeaning} (นวางศ์ที่ ${nakshatra.nawangNumber} / ตรียางศ์ที่ ${nakshatra.triyangNumber})
+            `;
+
+            if (phase1.step1_input.rectificationUsed) {
+                document.getElementById('rectificationBadge').style.display = 'inline-block';
+            } else {
+                document.getElementById('rectificationBadge').style.display = 'none';
+            }
+
+            // Draw Zodiac SVG Wheel
+            drawZodiacWheel(asc.sign, phase1.step2_chart.planets);
+
+            // Phase 2: Planets 10 Deep-Dive Cards, Trace & Table Views
+            const cardsContainer = document.getElementById('planetCardsView');
+            const traceContainer = document.getElementById('planetTraceView');
+            const tbody = document.getElementById('planetTableBody');
+
+            cardsContainer.innerHTML = '';
+            traceContainer.innerHTML = '';
+            tbody.innerHTML = '';
+
+            for (let pNum in phase2.step3_dignityHierarchy) {
+                const p = phase2.step3_dignityHierarchy[pNum];
+
+                // 1. Deep Dive Card
+                const card = document.createElement('div');
+                card.style.background = 'var(--card-inner)';
+                card.style.border = `1px solid ${p.score >= 85 ? 'var(--gold)' : 'var(--border-soft)'}`;
+                card.style.borderRadius = 'var(--radius-md)';
+                card.style.padding = '16px';
+                card.style.position = 'relative';
+                card.style.overflow = 'hidden';
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:38px; height:38px; border-radius:50%; background:${p.color}; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem; box-shadow:0 0 10px ${p.color}88;">
+                                ${p.thNum}
+                            </div>
+                            <div>
+                                <h4 style="color:#fff; font-size:1.05rem; margin:0;">ดาว${p.name}</h4>
+                                <div style="font-size:0.78rem; color:var(--text-muted);">${p.role}</div>
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span class="planet-badge ${p.badgeClass}">${p.dignity}</span>
+                            <div style="font-size:0.75rem; font-weight:700; color:var(--gold-light); margin-top:2px;">เกรด ${p.grade || 'B'} • ${p.score}/100</div>
+                        </div>
+                    </div>
+
+                    <!-- Power Bar -->
+                    <div style="background:rgba(0,0,0,0.4); border-radius:10px; height:7px; width:100%; margin-bottom:12px; overflow:hidden;">
+                        <div style="background:${p.score >= 80 ? 'linear-gradient(90deg, #10b981, #ffd700)' : p.score >= 50 ? '#3b82f6' : '#ef4444'}; width:${p.score}%; height:100%; border-radius:10px; transition:width 0.6s ease;"></div>
+                    </div>
+
+                    <!-- Details Grid -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:0.8rem; background:rgba(0,0,0,0.25); padding:8px 10px; border-radius:6px; margin-bottom:10px;">
+                        <div><strong style="color:var(--gold-light);">สถิต:</strong> ราศี${p.signName} (${p.deg}° ${p.min}')</div>
+                        <div><strong style="color:var(--gold-light);">ภพ:</strong> ${p.houseName} (${p.houseMeaning.split(' ')[0]})</div>
+                        <div style="grid-column: span 2;"><strong style="color:var(--accent-cyan);">ธาตุ:</strong> ${p.elementSynergy || p.element}</div>
+                    </div>
+
+                    <!-- Detailed Interpretation -->
+                    <div style="font-size:0.84rem; color:var(--text-sub); line-height:1.6; margin-bottom:12px; display:flex; flex-direction:column; gap:6px;">
+                        ${(p.detailedAnalysis || p.statusDesc).split('\n').map(line => `
+                            <div style="background:rgba(255,255,255,0.03); border-left:2px solid var(--accent-cyan); padding:5px 8px; border-radius:4px;">
+                                ${line}
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Remedy Advice -->
+                    ${p.remedy ? `
+                    <div style="font-size:0.78rem; background:rgba(243,186,47,0.06); border-left:3px solid var(--gold); padding:6px 10px; border-radius:4px; color:#fde68a;">
+                        <strong><i class="fas fa-hand-holding-heart"></i> เคล็ดเสริมดวง:</strong> ${p.remedy.worship}<br>
+                        <span style="color:var(--text-muted);"><i class="fas fa-palette"></i> สีมงคล: ${p.remedy.color} | อัญมณี: ${p.remedy.gem}</span>
+                    </div>` : ''}
+                `;
+                cardsContainer.appendChild(card);
+
+                // 2. Decision Tree Trace View
+                const traceBox = document.createElement('div');
+                traceBox.style.background = 'rgba(0,0,0,0.3)';
+                traceBox.style.border = '1px solid var(--border-soft)';
+                traceBox.style.borderRadius = 'var(--radius-md)';
+                traceBox.style.padding = '12px 16px';
+
+                let stepsHtml = '';
+                if (p.decisionSteps) {
+                    p.decisionSteps.forEach(st => {
+                        stepsHtml += `
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px; font-size:0.82rem;">
+                                <span style="display:inline-block; width:22px; height:22px; border-radius:50%; background:${st.passed ? '#10b981' : 'rgba(255,255,255,0.1)'}; color:${st.passed ? '#000' : '#cbd5e1'}; font-weight:bold; text-align:center; line-height:22px; font-size:0.75rem;">
+                                    ${st.passed ? '✓' : st.step}
+                                </span>
+                                <div style="flex:1;">
+                                    <strong style="color:${st.passed ? '#34d399' : '#94a3b8'};">${st.name}:</strong> 
+                                    <span style="color:${st.passed ? '#fff' : '#64748b'};">${st.reason}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                traceBox.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <strong style="color:${p.color}; font-size:0.95rem;"><i class="fas fa-circle-dot"></i> ดาว${p.name} (${p.thNum}) ➔ ราศี${p.signName} (ภพ${p.houseName})</strong>
+                        <span class="planet-badge ${p.badgeClass}">สรุปผล: ${p.dignity} (${p.powerLevel})</span>
+                    </div>
+                    <div style="padding-left:8px; border-left:2px dashed rgba(212,175,55,0.3);">
+                        ${stepsHtml}
+                    </div>
+                `;
+                traceContainer.appendChild(traceBox);
+
+                // 3. Table Row
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong style="color:${p.color};">${p.name} (${p.thNum})</strong></td>
+                    <td>ราศี${p.signName} (${p.deg}° ${p.min}')</td>
+                    <td>ภพ${p.houseName}</td>
+                    <td><span class="planet-badge ${p.badgeClass}">${p.dignity}</span></td>
+                    <td><strong style="color:var(--gold-light);">${p.grade || 'B'}</strong> (${p.score}/100)</td>
+                    <td style="font-size:0.8rem;">${p.elementSynergy ? p.elementSynergy.split('➔')[0] : p.element}</td>
+                    <td style="font-size:0.8rem;">${p.statusDesc}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            // Phase 2: Ascendant Aspects
+            const ascAspectsContainer = document.getElementById('ascendantAspectsList');
+            ascAspectsContainer.innerHTML = '';
+            phase2.step4_ascendantAspects.forEach(asp => {
+                const div = document.createElement('div');
+                div.style.padding = '6px 8px';
+                div.style.background = 'rgba(0,0,0,0.2)';
+                div.style.borderRadius = '6px';
+                let specialText = asp.specialAspects.length ? `<div style="color:var(--gold); font-weight:600; margin-top:2px;">✦ ${asp.specialAspects.join(' ')}</div>` : '';
+                div.innerHTML = `<strong>ดาว${asp.planetName} (${asp.houseNumber}):</strong> ${asp.aspectType || 'สถิตภพ'} — ${asp.description} ${specialText}`;
+                ascAspectsContainer.appendChild(div);
+            });
+
+            // Phase 2: Planet Pairs
+            const pairsContainer = document.getElementById('planetPairsList');
+            pairsContainer.innerHTML = '';
+            phase2.step5_planetInteractions.forEach(pair => {
+                const div = document.createElement('div');
+                div.style.padding = '6px 8px';
+                div.style.background = 'rgba(0,0,0,0.2)';
+                div.style.borderRadius = '6px';
+                div.innerHTML = `<strong style="color:var(--gold-light);">${pair.pairName}</strong> (${pair.pairType}): ${pair.desc}`;
+                pairsContainer.appendChild(div);
+            });
+
+            // Phase 3: 144 House Combos
+            renderHouseCombos(phase3.step7_house144Combinations);
+
+            // Phase 3: Yogas, Taksa, Triwai, 3 Poles
+            const yogas = phase3.step8_specialYogasTaksaTriwai.specialYogas;
+            document.getElementById('specialYogasContent').innerHTML = yogas.length ?
+                yogas.map(y => `<div><strong>${y.name} (${y.type}):</strong> ${y.desc}</div>`).join('') :
+                'ดวงชะตามีดาวเรียงรายสัมพันธ์ตามเกณฑ์มาตรฐาน ส่งเสริมวาสนาตามจังหวะชีวิต';
+
+            const taksa = phase3.step8_specialYogasTaksaTriwai.taksa;
+            const triwai = phase3.step8_specialYogasTaksaTriwai.triwai;
+            document.getElementById('taksaTriwaiContent').innerHTML = `
+                <div><strong>ดาวศรี:</strong> ${taksa["ศรี"].planetName} | <strong>ดาวเดช:</strong> ${taksa["เดช"].planetName} | <strong>ดาวมนตรี:</strong> ${taksa["มนตรี"].planetName} | <strong>กาลกิณี:</strong> ${taksa["กาลกิณี"].planetName}</div>
+                <div style="margin-top:6px; font-size:0.82rem; color:var(--text-sub);">
+                    • <strong>${triwai.middleAge.range}:</strong> ครองโดยดาว${triwai.middleAge.ruler} — ${triwai.middleAge.focus}
+                </div>
+            `;
+
+            document.getElementById('highlightsContent').innerHTML = phase3.step8_specialYogasTaksaTriwai.summaryHighlights.length ?
+                phase3.step8_specialYogasTaksaTriwai.summaryHighlights.map(h => `<div style="margin-bottom:4px;">✦ ${h}</div>`).join('') :
+                'มีดาวคู่มิตรและดาวเกื้อหนุนหนุนนำชีวิต';
+
+            document.getElementById('weaknessesContent').innerHTML = phase3.step8_specialYogasTaksaTriwai.summaryWeaknesses.length ?
+                phase3.step8_specialYogasTaksaTriwai.summaryWeaknesses.map(w => `<div style="margin-bottom:4px;">⚠ ${w}</div>`).join('') :
+                'ไม่มีดาวตกทุสถานภพขั้นร้ายแรง มีสติรอบคอบในทุกย่างก้าว';
+
+            // Phase 4: 5-D Synthesis
+            const dim5 = phase4.step9_fiveDimensions;
+            document.getElementById('dimPeople').innerText = dim5.people;
+            document.getElementById('dimEvents').innerText = dim5.events;
+            document.getElementById('dimTiming').innerText = dim5.timing;
+            document.getElementById('dimLocation').innerText = dim5.location;
+            document.getElementById('dimTechnique').innerText = dim5.technique;
+
+            // Phase 4: Kendra 4 Houses & Life Pillars
+            const kendra = phase4.step10_summaryKendraAndLife.kendraHouses;
+            document.getElementById('kendraTanu').innerText = kendra.tanu.interpretation;
+            document.getElementById('kendraBandhu').innerText = kendra.bandhu.interpretation;
+            document.getElementById('kendraPatni').innerText = kendra.patni.interpretation;
+            document.getElementById('kendraKamma').innerText = kendra.kamma.interpretation;
+
+            const pillars = phase4.step10_summaryKendraAndLife.lifePillars;
+            document.getElementById('pillarFinance').innerText = pillars.finance;
+            document.getElementById('pillarCareer').innerText = pillars.career;
+            document.getElementById('pillarLove').innerText = pillars.love;
+            document.getElementById('pillarHealth').innerText = pillars.health;
+
+            if (data.metadata.userQuestionAnswer && data.metadata.userQuestionAnswer !== "ไม่มีคำถามเพิ่มเติมจากเจ้าชะตา") {
+                document.getElementById('userQuestionBox').style.display = 'block';
+                document.getElementById('userQuestionAnswer').innerText = phase4.step10_summaryKendraAndLife.userQuestionAnswer;
+            } else {
+                document.getElementById('userQuestionBox').style.display = 'none';
+            }
+        }
+
+        function renderHouseCombos(combos, filter = 'all') {
+            const container = document.getElementById('houseCombosContainer');
+            container.innerHTML = '';
+
+            combos.filter(c => filter === 'all' || c.sourceHouse === filter).forEach(c => {
+                const card = document.createElement('div');
+                card.style.background = 'rgba(0,0,0,0.25)';
+                card.style.border = '1px solid var(--border-soft)';
+                card.style.borderRadius = '8px';
+                card.style.padding = '10px 12px';
+                card.innerHTML = `
+                    <div style="font-size:0.88rem; font-weight:600; color:var(--gold-light); display:flex; justify-content:space-between;">
+                        <span>${c.sourceHouse} ➔ ${c.targetHouse}</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">(ดาว${c.lordPlanetName})</span>
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--text-sub); margin-top:4px;">${c.interpretation}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterHouseCombos() {
+            const filterVal = document.getElementById('houseFilterSelect').value;
+            if (currentHoroscopeResult) {
+                renderHouseCombos(currentHoroscopeResult.phase3.step7_house144Combinations, filterVal);
+            }
+        }
+
+        function drawZodiacWheel(ascSign, planets) {
+            const svg = document.getElementById('zodiacChartSvg');
+            const cx = 250, cy = 250, rOuter = 230, rInner = 140, rCenter = 70;
+            
+            let svgContent = `
+                <defs>
+                    <radialGradient id="wheelBg" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#162854"/>
+                        <stop offset="100%" stop-color="#0a1128"/>
+                    </radialGradient>
+                </defs>
+                <circle cx="${cx}" cy="${cy}" r="${rOuter}" fill="url(#wheelBg)" stroke="#d4af37" stroke-width="2.5"/>
+                <circle cx="${cx}" cy="${cy}" r="${rInner}" fill="none" stroke="rgba(212,175,55,0.4)" stroke-width="1.5"/>
+                <circle cx="${cx}" cy="${cy}" r="${rCenter}" fill="#0d1b3e" stroke="#d4af37" stroke-width="1.5"/>
+                <text x="${cx}" y="${cy - 8}" text-anchor="middle" fill="#d4af37" font-size="14" font-weight="bold">สยามโหรา</text>
+                <text x="${cx}" y="${cy + 12}" text-anchor="middle" fill="#cbd5e1" font-size="10">มงคล</text>
+            `;
+
+            // Draw 12 Sectors
+            for (let i = 0; i < 12; i++) {
+                const angle1 = (i * 30 - 90) * Math.PI / 180;
+                const angle2 = ((i + 1) * 30 - 90) * Math.PI / 180;
+                const x1 = cx + rOuter * Math.cos(angle1);
+                const y1 = cy + rOuter * Math.sin(angle1);
+                const x2 = cx + rCenter * Math.cos(angle1);
+                const y2 = cy + rCenter * Math.sin(angle1);
+
+                svgContent += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(212,175,55,0.3)" stroke-width="1"/>`;
+
+                // Zodiac Label
+                const midAngle = (i * 30 + 15 - 90) * Math.PI / 180;
+                const labelR = (rOuter + rInner) / 2;
+                const lx = cx + labelR * Math.cos(midAngle);
+                const ly = cy + labelR * Math.sin(midAngle) + 4;
+
+                const zName = SiamHoramongkol.ZODIAC_SIGNS[i].name;
+                const isAsc = (i === ascSign);
+
+                svgContent += `
+                    <text x="${lx}" y="${ly}" text-anchor="middle" fill="${isAsc ? '#ffd700' : '#94a3b8'}" font-size="${isAsc ? '13' : '11'}" font-weight="${isAsc ? 'bold' : 'normal'}">
+                        ${zName} ${isAsc ? '(ลั)' : ''}
+                    </text>
+                `;
+            }
+
+            // Draw Planets inside houses
+            const planetR = (rInner + rCenter) / 2;
+            const signPlanets = {};
+            for (let pNum in planets) {
+                const p = planets[pNum];
+                if (!signPlanets[p.sign]) signPlanets[p.sign] = [];
+                signPlanets[p.sign].push(p.thNum);
+            }
+
+            for (let s in signPlanets) {
+                const sign = parseInt(s);
+                const pList = signPlanets[sign].join(' ');
+                const midAngle = (sign * 30 + 15 - 90) * Math.PI / 180;
+                const px = cx + planetR * Math.cos(midAngle);
+                const py = cy + planetR * Math.sin(midAngle) + 5;
+
+                svgContent += `
+                    <text x="${px}" y="${py}" text-anchor="middle" fill="#ffd700" font-size="13" font-weight="bold" filter="drop-shadow(0 0 3px rgba(0,0,0,0.8))">
+                        ${pList}
+                    </text>
+                `;
+            }
+
+            svg.innerHTML = svgContent;
+        }
+
+        // ─── ระบบจัดการและเลือกสมาชิก (Member Management) ──────────────────────
+        let globalMembersList = [];
+
+        function loadAllAvailableMembers() {
+            const list = [];
+            const seen = new Set();
+
+            function addMember(m) {
+                if (!m) return;
+                const name = (m.name || '').trim();
+                const lastName = (m.lastName || '').trim();
+                const fullName = (name + ' ' + lastName).trim() || 'สมาชิกไม่มีชื่อ';
+                const key = (m.memberId || '') + '|' + fullName + '|' + (m.birthdate || '');
+                if (seen.has(key)) return;
+                seen.add(key);
+
+                // แปลงวันเกิดให้เป็น YYYY-MM-DD เสมอ
+                let bdate = m.birthdate || '';
+                if (bdate.includes('/')) {
+                    const p = bdate.split('/');
+                    if (p.length === 3) {
+                        let y = parseInt(p[2]);
+                        if (y > 2400) y -= 543;
+                        bdate = `${y}-${String(p[1]).padStart(2, '0')}-${String(p[0]).padStart(2, '0')}`;
+                    }
+                } else if (bdate.includes('-')) {
+                    const p = bdate.split('-');
+                    if (p.length === 3) {
+                        let y = parseInt(p[0]);
+                        if (y > 2400) y -= 543;
+                        bdate = `${y}-${String(p[1]).padStart(2, '0')}-${String(p[2]).padStart(2, '0')}`;
+                    }
+                }
+
+                // เวลาเกิด
+                let btime = m.birthtime || m.birthTime || '09:30';
+                if (btime.length === 8) btime = btime.substring(0, 5);
+
+                list.push({
+                    memberId: m.memberId || `MEM-${list.length + 1}`,
+                    name: name,
+                    lastName: lastName,
+                    fullName: fullName,
+                    birthdate: bdate,
+                    birthtime: btime,
+                    place: m.place || m.birthplace || '13.7563,100.5018',
+                    gender: m.gender || ''
+                });
+            }
+
+            try {
+                const history = JSON.parse(localStorage.getItem('horo_history')) || [];
+                if (Array.isArray(history)) history.forEach(addMember);
+            } catch(e) {}
+
+            try {
+                const sm = JSON.parse(localStorage.getItem('siamhora_members')) || [];
+                if (Array.isArray(sm)) sm.forEach(addMember);
+            } catch(e) {}
+
+            try {
+                const p = JSON.parse(localStorage.getItem('thaiHoroProfile'));
+                if (p) addMember(p);
+            } catch(e) {}
+
+            // Demo default data if empty
+            if (list.length === 0) {
+                const demo = [
+                    { memberId: "MEM-001", name: "พิกุรห์", lastName: "บุญเพ็ชร์", birthdate: "1995-03-02", birthtime: "14:26" },
+                    { memberId: "MEM-002", name: "สมชาย", lastName: "มั่นคง", birthdate: "1988-08-15", birthtime: "08:30" },
+                    { memberId: "MEM-003", name: "ศิริพร", lastName: "เจริญสุข", birthdate: "2000-12-24", birthtime: "19:15" },
+                    { memberId: "MEM-004", name: "กฤษณะ", lastName: "มหาลาภ", birthdate: "1983-05-20", birthtime: "20:05" }
+                ];
+                demo.forEach(addMember);
+            }
+
+            return list;
+        }
+
+        function initMemberDropdown() {
+            globalMembersList = loadAllAvailableMembers();
+            const sel = document.getElementById('siamMemberSelect');
+            const badge = document.getElementById('memberCountBadge');
+            if (!sel) return;
+
+            sel.innerHTML = '<option value="">-- 👤 เลือกสมาชิกจากประวัติ (' + globalMembersList.length + ' รายชื่อ) --</option>';
+            globalMembersList.forEach((m, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.textContent = `[${m.memberId}] ${m.fullName} (เกิด ${m.birthdate} เวลา ${m.birthtime || 'ไม่ระบุ'} น.)`;
+                sel.appendChild(opt);
+            });
+
+            if (badge) badge.textContent = `(พบ ${globalMembersList.length} รายชื่อในระบบ)`;
+        }
+
+        function onSelectMember(val) {
+            if (val === "" || val === null) return;
+            const idx = parseInt(val);
+            const m = globalMembersList[idx];
+            if (!m) return;
+
+            document.getElementById('clientName').value = m.fullName;
+            if (m.birthdate) document.getElementById('birthDate').value = m.birthdate;
+            
+            if (m.birthtime && m.birthtime.trim() !== "") {
+                document.getElementById('birthTime').value = m.birthtime;
+                setTimeKnownMode(true);
+            } else {
+                setTimeKnownMode(false);
+            }
+
+            const provTarget = m.province || m.place || '';
+            if (provTarget && document.getElementById('birthPlace')) {
+                const optList = Array.from(document.getElementById('birthPlace').options);
+                const matched = optList.find(o => o.textContent.includes(provTarget) || o.value === provTarget);
+                if (matched) document.getElementById('birthPlace').value = matched.value;
+            }
+
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'info',
+                title: `โหลดข้อมูลคุณ ${m.fullName} สำเร็จ!`,
+                showConfirmButton: false,
+                timer: 2000,
+                background: '#162854',
+                color: '#ffd700'
+            });
+        }
+
+        // ─── ฐานข้อมูล ๗๗ จังหวัดทั่วประเทศไทย (พิกัด ละติจูด/ลองจิจูด) ────────
+        const THAILAND_77_PROVINCES = [
+            { region: "กรุงเทพฯ และปริมณฑล", list: [
+                { name: "กรุงเทพมหานคร", lat: 13.7563, lng: 100.5018 },
+                { name: "นนทบุรี", lat: 13.8591, lng: 100.5216 },
+                { name: "ปทุมธานี", lat: 14.0208, lng: 100.5250 },
+                { name: "สมุทรปราการ", lat: 13.5990, lng: 100.5998 },
+                { name: "สมุทรสาคร", lat: 13.5475, lng: 100.2745 },
+                { name: "นครปฐม", lat: 13.8199, lng: 100.0621 }
+            ]},
+            { region: "ภาคกลาง", list: [
+                { name: "พระนครศรีอยุธยา", lat: 14.3532, lng: 100.5686 },
+                { name: "อ่างทอง", lat: 14.5896, lng: 100.4549 },
+                { name: "ลพบุรี", lat: 14.7995, lng: 100.6534 },
+                { name: "สิงห์บุรี", lat: 14.8907, lng: 100.3968 },
+                { name: "ชัยนาท", lat: 15.1851, lng: 100.1251 },
+                { name: "สระบุรี", lat: 14.5289, lng: 100.9106 },
+                { name: "นครนายก", lat: 14.2069, lng: 101.2130 },
+                { name: "สุพรรณบุรี", lat: 14.4744, lng: 100.1177 },
+                { name: "สมุทรสงคราม", lat: 13.4098, lng: 100.0022 },
+                { name: "ราชบุรี", lat: 13.5282, lng: 99.8134 },
+                { name: "กาญจนบุรี", lat: 14.0227, lng: 99.5328 },
+                { name: "เพชรบุรี", lat: 13.1119, lng: 99.9412 },
+                { name: "ประจวบคีรีขันธ์", lat: 11.8126, lng: 99.7957 },
+                { name: "นครสวรรค์", lat: 15.7047, lng: 100.1372 },
+                { name: "อุทัยธานี", lat: 15.3835, lng: 100.0245 },
+                { name: "พิจิตร", lat: 16.4423, lng: 100.3487 }
+            ]},
+            { region: "ภาคเหนือ", list: [
+                { name: "เชียงใหม่", lat: 18.7883, lng: 98.9853 },
+                { name: "เชียงราย", lat: 19.9105, lng: 99.8406 },
+                { name: "ลำปาง", lat: 18.2888, lng: 99.4909 },
+                { name: "ลำพูน", lat: 18.5744, lng: 99.0087 },
+                { name: "แม่ฮ่องสอน", lat: 19.3020, lng: 97.9654 },
+                { name: "น่าน", lat: 18.7756, lng: 100.7730 },
+                { name: "พะเยา", lat: 19.1664, lng: 99.9018 },
+                { name: "แพร่", lat: 18.1445, lng: 100.1405 },
+                { name: "พิษณุโลก", lat: 16.8211, lng: 100.2659 },
+                { name: "สุโขทัย", lat: 17.0072, lng: 99.8265 },
+                { name: "อุตรดิตถ์", lat: 17.6200, lng: 100.0990 },
+                { name: "ตาก", lat: 16.8840, lng: 99.1258 },
+                { name: "กำแพงเพชร", lat: 16.4827, lng: 99.5226 },
+                { name: "เพชรบูรณ์", lat: 16.4189, lng: 101.1591 }
+            ]},
+            { region: "ภาคตะวันออกเฉียงเหนือ (อีสาน)", list: [
+                { name: "นครราชสีมา", lat: 14.9799, lng: 102.0977 },
+                { name: "ขอนแก่น", lat: 16.4419, lng: 102.8360 },
+                { name: "อุดรธานี", lat: 17.4139, lng: 102.7873 },
+                { name: "อุบลราชธานี", lat: 15.2287, lng: 104.8594 },
+                { name: "บุรีรัมย์", lat: 14.9930, lng: 103.1029 },
+                { name: "สุรินทร์", lat: 14.8828, lng: 103.4936 },
+                { name: "ศรีสะเกษ", lat: 15.1186, lng: 104.3220 },
+                { name: "ร้อยเอ็ด", lat: 16.0538, lng: 103.6520 },
+                { name: "กาฬสินธุ์", lat: 16.4315, lng: 103.5060 },
+                { name: "มหาสารคาม", lat: 16.1852, lng: 103.3007 },
+                { name: "สกลนคร", lat: 17.1545, lng: 104.1348 },
+                { name: "นครพนม", lat: 17.4032, lng: 104.7693 },
+                { name: "มุกดาหาร", lat: 16.5449, lng: 104.7241 },
+                { name: "ยโสธร", lat: 15.7920, lng: 104.1451 },
+                { name: "อำนาจเจริญ", lat: 15.8656, lng: 104.6255 },
+                { name: "หนองคาย", lat: 17.8783, lng: 102.7420 },
+                { name: "หนองบัวลำภู", lat: 17.2043, lng: 102.4262 },
+                { name: "เลย", lat: 17.4860, lng: 101.7223 },
+                { name: "บึงกาฬ", lat: 18.3609, lng: 103.6465 },
+                { name: "ชัยภูมิ", lat: 15.8069, lng: 102.0317 }
+            ]},
+            { region: "ภาคตะวันออก", list: [
+                { name: "ชลบุรี", lat: 13.3611, lng: 100.9847 },
+                { name: "ระยอง", lat: 12.6814, lng: 101.2816 },
+                { name: "จันทบุรี", lat: 12.6113, lng: 102.1036 },
+                { name: "ตราด", lat: 12.2428, lng: 102.5178 },
+                { name: "ฉะเชิงเทรา", lat: 13.6904, lng: 101.0779 },
+                { name: "ปราจีนบุรี", lat: 14.0509, lng: 101.3720 },
+                { name: "สระแก้ว", lat: 13.8244, lng: 102.0645 }
+            ]},
+            { region: "ภาคใต้", list: [
+                { name: "สุราษฎร์ธานี", lat: 9.1382, lng: 99.3215 },
+                { name: "นครศรีธรรมราช", lat: 8.4324, lng: 99.9631 },
+                { name: "ภูเก็ต", lat: 7.8804, lng: 98.3923 },
+                { name: "สงขลา", lat: 7.1892, lng: 100.5951 },
+                { name: "กระบี่", lat: 8.0863, lng: 98.9063 },
+                { name: "พังงา", lat: 8.4510, lng: 98.5251 },
+                { name: "ตรัง", lat: 7.5645, lng: 99.6240 },
+                { name: "พัทลุง", lat: 7.6167, lng: 100.0741 },
+                { name: "ชุมพร", lat: 10.4930, lng: 99.1800 },
+                { name: "ระนอง", lat: 9.9658, lng: 98.6348 },
+                { name: "สตูล", lat: 6.6238, lng: 100.0674 },
+                { name: "ปัตตานี", lat: 6.8695, lng: 101.2500 },
+                { name: "ยะลา", lat: 6.5410, lng: 101.2800 },
+                { name: "นราธิวาส", lat: 6.4264, lng: 101.8230 }
+            ]}
+        ];
+
+        function initProvincesDropdown() {
+            const select = document.getElementById('birthPlace');
+            if (!select) return;
+            select.innerHTML = '';
+
+            THAILAND_77_PROVINCES.forEach(grp => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = `📍 ${grp.region}`;
+                grp.list.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = `${p.lat},${p.lng}`;
+                    opt.textContent = `${p.name} (ละติจูด ${p.lat}, ลองจิจูด ${p.lng})`;
+                    if (p.name === "กรุงเทพมหานคร") opt.selected = true;
+                    optgroup.appendChild(opt);
+                });
+                select.appendChild(optgroup);
+            });
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderRectificationQuiz();
+            initMemberDropdown();
+            initProvincesDropdown();
+        });
+    </script>
+</body>
+</html>

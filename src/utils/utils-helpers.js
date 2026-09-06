@@ -179,6 +179,46 @@ function toBE(year) {
     return year < 2400 ? year + 543 : year;
 }
 
+// 9. ฟังก์ชันคำนวณปีนักษัตรไทยแท้ (ตัดปีใหม่แบบโหราศาสตร์ไทย: ๑๓ เม.ย. วันสงกรานต์ หรือ ๑ ค่ำเดือน ๕)
+function getThaiZodiacYear(dateObj) {
+    if (!dateObj) return new Date().getFullYear();
+    const d = (dateObj instanceof Date) ? dateObj : new Date(dateObj);
+    if (isNaN(d.getTime())) return new Date().getFullYear();
+    
+    let year = d.getFullYear();
+    if (year > 2400) year -= 543;
+    
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    
+    // หากเกิดก่อน ๑๓ เมษายน ให้นับปีนักษัตรเป็นของปีก่อนหน้าตามคัมภีร์สุริยยาตร์/พรหมชาติ
+    if (month < 4 || (month === 4 && day < 13)) {
+        return year - 1;
+    }
+    return year;
+}
+
+// 10. ฟังก์ชันคำนวณชื่อปีนักษัตรมาตรฐาน (ชวด-กุน)
+function getThaiZodiacAnimal(yearOrDate) {
+    const ZODIACS = ["ชวด", "ฉลู", "ขาล", "เถาะ", "มะโรง", "มะเส็ง", "มะเมีย", "มะแม", "วอก", "ระกา", "จอ", "กุน"];
+    let yr = yearOrDate;
+    if (yearOrDate instanceof Date || (typeof yearOrDate === 'string' && yearOrDate.includes('-'))) {
+        yr = getThaiZodiacYear(yearOrDate);
+    } else {
+        yr = toCE(parseInt(yearOrDate, 10));
+    }
+    const idx = ((yr - 1900) % 12 + 12) % 12;
+    return ZODIACS[idx] || "ชวด";
+}
+
+// 11. ฟังก์ชันคำนวณจุลศักราช (จ.ศ.) มาตรฐาน
+function getChulaSakarat(yearOrDate) {
+    let yr = yearOrDate;
+    if (yearOrDate instanceof Date) yr = yearOrDate.getFullYear();
+    yr = toBE(yr);
+    return yr - 1181;
+}
+
 // 🌐 Export to window for global access across scripts and modules
 if (typeof window !== 'undefined') {
     window.parseBirthdate = parseBirthdate;
@@ -189,6 +229,58 @@ if (typeof window !== 'undefined') {
     window.calculateRunningAge = calculateRunningAge;
     window.toCE = toCE;
     window.toBE = toBE;
+    window.getThaiZodiacYear = getThaiZodiacYear;
+    window.getThaiZodiacAnimal = getThaiZodiacAnimal;
+    window.getChulaSakarat = getChulaSakarat;
+
+    // ------------------------------------------------------------
+    // calculateAndShowTaksa: Handles UI input, validation, calculation, and rendering for Taksa.
+    // ------------------------------------------------------------
+    function calculateAndShowTaksa() {
+        // Grab UI elements
+        const genderEl = document.getElementById('taksagender');
+        const ageEl = document.getElementById('userAge');
+        const birthEl = document.getElementById('birthDaySelect');
+        const errorEl = document.getElementById('taksaAgeError');
+        const resultDiv = document.getElementById('taksaResult');
+
+        if (!genderEl || !ageEl || !birthEl) {
+            console.warn('Taksa inputs not found in DOM');
+            return;
+        }
+
+        const gender = genderEl.value;
+        const age = parseInt(ageEl.value, 10);
+        const birthDay = parseInt(birthEl.value, 10);
+
+        // Validate age
+        if (isNaN(age) || age <= 0) {
+            if (errorEl) errorEl.style.display = 'block';
+            return;
+        } else {
+            if (errorEl) errorEl.style.display = 'none';
+        }
+
+        // Compute Taksa using existing helper (global function from taksa-page.js)
+        const taksa = typeof computeTaksa === 'function' ? computeTaksa(birthDay, age, gender) : null;
+        if (!taksa) {
+            console.error('computeTaksa function not available');
+            return;
+        }
+
+        // Render result (global function defined in taksa-page.js)
+        if (typeof renderTaksaResult === 'function') {
+            renderTaksaResult(taksa, age, gender);
+        }
+
+        // Show result container if hidden
+        if (resultDiv) {
+            resultDiv.style.display = '';
+        }
+    }
+
+    // Expose globally for inline onclick handlers
+    window.calculateAndShowTaksa = calculateAndShowTaksa;
 }
 
 // ==========================================================================

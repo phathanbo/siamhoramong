@@ -1,70 +1,75 @@
 "use strict";
 
 const APP_MENU = [
-    { id: 'todayDashboard', title: '✨ สรุปดวงวันนี้<br>(Dashboard)', icon: 'fa-sun', color: '#f1c40f', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'promchartsection', title: 'วงล้อพยากรณ์', icon: 'fa-chart-pie', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'zodiacdetailsection', title: 'ตำราพรหมชาติ', icon: 'fa-smile', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'daily-horoscope', title: 'ลักษณะผู้เกิดทั้ง 7 วัน', icon: 'fa-calendar-alt', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'showdaylife', title: 'คำนวณวันเกิด', icon: 'fa-birthday-cake', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'businessFortune', title: '💼 พยากรณ์ธุรกิจ<br>/การเงิน', icon: 'fa-chart-line', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'zodiacFortunePage', title: '⭐ พยากรณ์ดวง<br>ตามราศี', icon: 'fa-star', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'dreamPage', title: 'ทำนายฝัน', icon: 'fa-moon', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'tarotPage', title: 'ไพ่ยิปซี<br>เซลติกครอส', icon: 'fa-layer-group', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'cartomancyPage', title: 'ไพ่ป๊อกรายวัน', icon: 'fa-heart', color: '#e74c3c', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'siamsiPage', title: 'เซียมซีเสี่ยงทาย', icon: 'fa-drum', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'lottoPage', title: 'เลขเด็ด', icon: 'fa-dice', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'weeklyColorSection', title: 'สีมงคลประจำปี', icon: 'fa-palette', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'elementManualPage', title: 'ธาตุประจำวันเกิด', icon: 'fa-fire-alt', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'patient-prognosis', title: 'ทำนายชะตาผู้ป่วย', icon: 'fa-procedures', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'lifeExtensionPage',title: 'ต่อชะตา', icon:'fa-candle-holder', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'chantPage', title: '🕉️ บทสวดมนต์<br>เสริมดวงชะตา', icon: 'fa-praying-hands', color: '#ffd700', category: '⭐ ดูดวงและพยากรณ์ทั่วไป', action: 'showChantPage()' },
-    { id: 'chantLibraryPage', title: '📚 คลังบทสวดมนต์<br>(บาลี/แปลไทย)', icon: 'fa-book-open', color: '#f1c40f', category: '⭐ ดูดวงและพยากรณ์ทั่วไป', url: 'pages/chant-library.html' },
-    { id: 'yearClashPage', title: '🐉 ปีชง–ปีเสริม', icon: 'fa-dragon', color: '#e74c3c', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
-    { id: 'ascendantPage', title: 'คำนวณลัคนา', icon: 'fa-star-and-crescent', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'ayanamsaPage', title: 'ผูกดวงนิรายนะ', icon: 'fa-star', color: '#f1c40f', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/ayanamsa.html' },
-    { id: 'monthlyTransitPage', title: 'ดาวจรรายเดือน', icon: 'fa-globe', color: '#03a9f4', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/monthly-transit.html' },
-    { id: 'taksaPage', title: 'ทักษาพยากรณ์<br>(ภูมิพยากรณ์)', icon: 'fa-chart-line', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'thaksaninesection', title: 'ทักษาพยากรณ์<br>(พยากรณ์รายปี)', icon: 'fa-chart-line', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'planetRelationPage', title: 'คู่มิตร-ศัตรู', icon: 'fa-user-friends', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'chatraPage', title: 'ฉัตร 3 ชั้น', icon: 'fa-tree', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'chatninePage', title: 'ฉัตร 9 ชั้น', icon: 'fa-tree', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'birthfortune', title: 'พยากรณ์วันเกิด', icon: 'fa-birthday-cake', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'climate-section', title: 'เกณฑ์พิรุณศาสตร์<br>และชะตาโลก', icon: 'fa-cloud-showers-heavy', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'sevenDigitsPage', title: 'เลข 7 ตัว ฐาน 4', icon: 'fa-layer-group', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'horoscopeseven', title: 'เลข 7 ตัว ฐาน 4<br>(ตำราโบราณ)', icon: 'fa-layer-group', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'thaiAstrology', title: '🔮 โหราศาสตร์ไทย<br>(ดาวเกิด)', icon: 'fa-stars', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },   
-    { id: 'thaiHoroscopeProPage', title: '☸️ ราศีจักร-ทักษา-ตรีวัย<br>(ผูกดวงมืออาชีพ)', icon: 'fa-dharmachakra', color: '#ffb703', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/thai-horoscope-pro.html' },
-    { id: 'thaiAstrologyEngine', title: '🔮 วิเคราะห์ดวงชะตา<br>(ระบบสมบูรณ์)', icon: 'fa-sun', color: '#F9E596', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/thai-astrology-engine.html' },
-    { id: 'thaiHoraBookPage', title: '📘 ตำราโหราศาสตร์<br>(สิงห์โต สุริยาอารักษ์)', icon: 'fa-book', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/horasat.html' },
-    { id: 'thaiHoraPage', title: 'โหราศาสตร์ไทย', icon: 'fa-star-and-crescent', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'twelveHousesPage', title: '🏛️ 12 ภพ<br>(ลัคนาราศี)', icon: 'fa-th', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'dashaPage', title: '🪐 ทศาดาว<br>(ช่วงอายุดาว)', icon: 'fa-satellite', color: '#ce93d8', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'todayDashboard', title: '✨ สรุปดวงวันนี้<br>(Dashboard)', desc: 'รวมผลทำนายดวงชะตารายวันของคุณ', icon: 'fa-sun', color: '#f1c40f', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'promchartsection', title: 'วงล้อพยากรณ์', desc: 'ทำนายดวงชะตารอบทิศ ๑๒ ราศี', icon: 'fa-chart-pie', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'zodiacdetailsection', title: 'ตำราพรหมชาติ', desc: 'พยากรณ์ตามตำราพรหมชาติโบราณ', icon: 'fa-smile', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'daily-horoscope', title: 'ลักษณะผู้เกิดทั้ง 7 วัน', desc: 'วิเคราะห์อุปนิสัยและชะตาตามวันเกิด', icon: 'fa-calendar-alt', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'showdaylife', title: 'คำนวณวันเกิด', desc: 'คำนวณวัน-เวลาเกิดและอายุย่าง', icon: 'fa-birthday-cake', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'businessFortune', title: '💼 พยากรณ์ธุรกิจ<br>/การเงิน', desc: 'ชี้ทิศทางการค้า การลงทุน และโชคลาภ', icon: 'fa-chart-line', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'zodiacFortunePage', title: '⭐ พยากรณ์ดวง<br>ตามราศี', desc: 'ดูดวง ๑๒ ราศีประจำสัปดาห์/เดือน', icon: 'fa-star', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'twelveZodiacFortunePage', title: '♈ คำพยากรณ์<br>๑๒ ราศีเจาะลึก', desc: 'วิเคราะห์พื้นดวง การงาน การเงิน ความรัก สุขภาพ และเคล็ดเสริมดวง', icon: 'fa-star-and-crescent', color: '#ffd700', category: '⭐ ดูดวงและพยากรณ์ทั่วไป', url: 'pages/twelve-zodiac-fortune.html' },
+    { id: 'dreamPage', title: 'ทำนายฝัน', desc: 'ตีความหมายความฝันและเลขนำโชค', icon: 'fa-moon', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'tarotPage', title: 'ไพ่ยิปซี<br>เซลติกครอส', desc: 'เปิดไพ่ทาโรต์ ๑๐ ใบ วิเคราะห์ลึกซึ้ง', icon: 'fa-layer-group', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'cartomancyPage', title: 'ไพ่ป๊อกรายวัน', desc: 'เสี่ยงทายดวงรายวันด้วยศาสตร์ไพ่ป๊อก', icon: 'fa-heart', color: '#e74c3c', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'siamsiPage', title: 'เซียมซีเสี่ยงทาย', desc: 'เซียมซีศักดิ์สิทธิ์ ๒๘ ใบพยากรณ์', icon: 'fa-drum', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'lottoPage', title: 'เลขเด็ด', desc: 'เลขมงคลและเลขเด่นประจำวัน', icon: 'fa-dice', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'weeklyColorSection', title: 'สีมงคลประจำปี', desc: 'ตารางสีเสื้อมงคลเสริมเสน่ห์/โชคลาภ', icon: 'fa-palette', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'elementManualPage', title: 'ธาตุประจำวันเกิด', desc: 'คู่มือธาตุกำเนิดและการเสริมธาตุ', icon: 'fa-fire-alt', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'patient-prognosis', title: 'ทำนายชะตาผู้ป่วย', desc: 'ดูเกณฑ์โรคภัยและทิศทางสุขภาพ', icon: 'fa-procedures', color: '#d4af37', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'lifeExtensionPage', title: 'ต่อชะตา', desc: 'พิธีต่ออายุและสะเดาะเคราะห์ตามตำรา', icon: 'fa-fire', color: '#ff9800', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
+    { id: 'chantPage', title: '🕉️ บทสวดมนต์<br>เสริมดวงชะตา', desc: 'บทสวดบูชาเทวดานพเคราะห์ประจำวัน', icon: 'fa-praying-hands', color: '#ffd700', category: '⭐ ดูดวงและพยากรณ์ทั่วไป', action: 'showChantPage()' },
+    { id: 'chantLibraryPage', title: '📚 คลังบทสวดมนต์<br>(บาลี/แปลไทย)', desc: 'รวมบทสวดมนต์มงคลและพระปริตร', icon: 'fa-book-open', color: '#f1c40f', category: '⭐ ดูดวงและพยากรณ์ทั่วไป', url: 'pages/chant-library.html' },
+    { id: 'yearClashPage', title: '🐉 ปีชง–ปีเสริม', desc: 'ตรวจเกณฑ์ปีชงและวิธีแก้ชงเสริมดวง', icon: 'fa-dragon', color: '#e74c3c', category: '⭐ ดูดวงและพยากรณ์ทั่วไป' },
 
-    { id: 'auspiciousPage', title: 'ปฏิทินฤกษ์มงคล', icon: 'fa-calendar-check', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'personalizedAuspiciousPage', title: 'ฤกษ์มงคล<br>เฉพาะบุคคล', icon: 'fa-calendar-alt', color: '#f1c40f', category: '📅 ฤกษ์ยามและวันมงคล', action: 'initPersonalizedAuspicious()' },
-    { id: 'auspicious-day', title: 'วันมงคลประจำเดือน', icon: 'fa-calendar-day', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'ubakong-yarm', title: 'ฤกษ์ดีประจำวัน', icon: 'fa-clock', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'dailyTabooPage', title: 'ข้อห้ามประจำวัน', icon: 'fa-ban', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'kaliyokepage', title: 'คำนวณกาลโยค', icon: 'fa-skull-crossbones', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'reuxpage', title: 'คำนวณฤกษ์อายุ', icon: 'fa-tree', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'dailyHighlightPage',title: 'แผนที่ฤกษ์มงคล<br>รายวัน', icon: 'fa-calendar-alt', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'lunarSection' ,title: 'คำนวณจันทรคติ' ,icon: 'fa-moon', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'fengShuiPage', title: '🧭 ปฏิทินฮวงจุ้ย<br>(ทิศมงคล)', icon: 'fa-compass', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'auspiciousOpening', title: '🏠 วันเปิดร้าน<br>/ลงหลัก', icon: 'fa-store', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'ceremonyDate', title: '💍 กำหนดวัน<br>ประกอบพิธี', icon: 'fa-ring', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'planetaryHoursPage', title: '🌟 ฤกษ์ยาม 7 เจ้า', icon: 'fa-clock', color: '#f1c40f', category: '📅 ฤกษ์ยามและวันมงคล' },
-    { id: 'ditheePage', title: '🌙 ดิถีพยากรณ์<br>(ข้างขึ้น-แรม)', icon: 'fa-moon', color: '#90caf9', category: '📅 ฤกษ์ยามและวันมงคล' },
+    // 📜 โหราศาสตร์ไทยและเลข 7 ตัว
+    { id: 'siamHoramangkolPage', title: '🌟 สยามโหรามงคล<br>(ผังพยากรณ์ ๑๐ ขั้นตอน)', desc: 'ถอดรหัสวาสนา ๑๐ ขั้นตอน ๔ ระยะ สไตล์โหรสยามฯ', icon: 'fa-dharmachakra', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/siam-horamangkol.html' },
+    { id: 'rattanakosinCityPage', title: '🏛️ ดวงชะตากรุงรัตนโกสินทร์<br>(ดวงเมือง ๒๓๒๕)', desc: 'วิเคราะห์ดวงเมือง ดาวจร ๒ ชั้น ชันษาเมือง และตรวจสมพงศ์ดวงชะตากับแผ่นดิน', icon: 'fa-landmark', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/rattanakosin-city-horoscope.html' },
+    { id: 'thaiAstrology', title: '🔮 โหราศาสตร์ไทย<br>(ดาวเกิด & ๑๒ ภพ)', desc: 'วิเคราะห์ดาวประจำตัว ภพเรือน และฤกษ์เกิด', icon: 'fa-star', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },   
+    { id: 'ascendantPage', title: 'คำนวณลัคนา', desc: 'หาลัคนาราศีเกิดตามเวลาตกฟาก', icon: 'fa-star-and-crescent', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'thaiAstrologyEngine', title: '🔮 ผูกดวงสมบูรณ์<br>(สมผุสดาวจริง)', desc: 'คำนวณตำแหน่งดาวจริงตามดาราศาสตร์', icon: 'fa-sun', color: '#F9E596', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/thai-astrology-engine.html' },
+    { id: 'thaiHoroscopeProPage', title: '☸️ ราศีจักร-ทักษา-ตรีวัย<br>(ผูกดวงมืออาชีพ)', desc: 'ระบบผูกดวงโหราศาสตร์ไทยชั้นสูง', icon: 'fa-dharmachakra', color: '#ffb703', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/thai-horoscope-pro.html' },
+    { id: 'ayanamsaPage', title: 'ผูกดวงนิรายนะ', desc: 'คำนวณอายนางศะ ลาหิรี/สุริยยาตร์', icon: 'fa-star', color: '#f1c40f', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/ayanamsa.html' },
+    { id: 'monthlyTransitPage', title: 'ดาวจรรายเดือน', desc: 'การโคจรย้ายราศีของดวงดาวประจำเดือน', icon: 'fa-globe', color: '#03a9f4', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/monthly-transit.html' },
+    { id: 'taksaPage', title: 'ทักษาพยากรณ์<br>(ภูมิพยากรณ์ ๘ ทิศ)', desc: 'วิเคราะห์บริวาร-กาลกิณี ๘ ทิศ', icon: 'fa-compass', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'thaksaninesection', title: 'ทักษาพยากรณ์<br>(๙ ภูมิรายปี)', desc: 'ทักษาจร ๙ ภูมิ พร้อมพระเกตุคุ้มดวง', icon: 'fa-chart-line', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'planetRelationPage', title: 'คู่มิตร-คู่ศัตรู', desc: 'คัมภีร์คู่มิตร คู่ธาตุ คู่สมพล คู่ศัตรู', icon: 'fa-user-friends', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'chatraPage', title: 'ฉัตร ๓ ชั้น', desc: 'พยากรณ์เกณฑ์ดวงชะตาฉัตร ๓ ชั้นจร', icon: 'fa-tree', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'chatninePage', title: 'ฉัตร ๙ ชั้น', desc: 'ยันต์มหาฉัตร ๙ ชั้น คุ้มครองเกณฑ์อายุ', icon: 'fa-shield-alt', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'birthfortune', title: 'พยากรณ์วันเกิด', desc: 'โชคกำเนิด ๓ ตำรา และอาชีพถูกโฉลก', icon: 'fa-birthday-cake', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'climate-section', title: 'เกณฑ์พิรุณศาสตร์<br>และชะตาโลก', desc: 'อธิบดีฝน ห่าฝน ๔ ภูมิภพ และนาคให้น้ำ', icon: 'fa-cloud-showers-heavy', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'sevenDigitsPage', title: '🔢 เลข ๗ ตัว ๔ ฐาน<br>(มหาคัมภีร์สัตตเลข)', desc: 'รวมผังตารางเลข ๗ ตัว ฐาน ๑-๔ และคำทำนายตำราโบราณครบวงจร', icon: 'fa-layer-group', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'taksaSattalekPage', title: '📜 คัมภีร์มหาทักษาสัตตเลข<br>(ฐาน ๔ ฐาน ๙)', desc: 'วิเคราะห์โครงดวงชะตาสัตตเลข ฐาน ๔ ฐาน ๙ และคำนวณกำลังดาวแบบบูรณาการ', icon: 'fa-gem', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/taksasattalek.html' },
+    { id: 'thaiHoraBookPage', title: '📘 ตำราโหราศาสตร์<br>(สิงห์โต สุริยาอารักษ์)', desc: 'คัมภีร์แม่บทโหราศาสตร์ไทยดั้งเดิม', icon: 'fa-book', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/horasat.html' },
+    { id: 'twelveHousesPage', title: '🏛️ ๑๒ ภพเรือนชะตา', desc: 'ความหมายและดาวครองภพ ตนุ ถึง วินาศ', icon: 'fa-th', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
+    { id: 'dashaPage', title: '🪐 ทศาดาว', desc: 'ช่วงเวลาที่ดาวแต่ละดวงเสวยอายุ', icon: 'fa-satellite', color: '#ce93d8', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
 
-    { id: 'deepSynastryPage', title: 'VIP ผูกดวงคู่สมพงษ์', icon: 'fa-heartbeat', color: '#e74c3c', category: '💖 ความรักและสมพงศ์' },
-    { id: 'compatibilityPage', title: 'เช็คดวงสมพงษ์', icon: 'fa-heart', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
-    { id: 'marriage-compatibility', title: 'หาคู่รักหรือคู่สมรส', icon: 'fa-heart', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
-    { id: 'soulmate-direction', title: 'ทิศเนื้อคู่', icon: 'fa-compass', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
-    { id: 'sompong-wealth', title: 'สมพงศ์มหาสมบัติ', icon: 'fa-coins', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
+    // 📅 ฤกษ์ยามและวันมงคล
+    { id: 'auspiciousPage', title: '📅 ปฏิทิน 100 ปี<br>& บันทึกดวง', desc: 'ปฏิทินสากล 100 ปี บันทึกโน้ต & ทำนายเฉพาะบุคคล', icon: 'fa-calendar-alt', color: '#f1c40f', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'personalizedAuspiciousPage', title: 'ฤกษ์มงคล<br>เฉพาะบุคคล', desc: 'คำนวณฤกษ์เฉพาะดวงชะตาบุคคล', icon: 'fa-calendar-alt', color: '#f1c40f', category: '📅 ฤกษ์ยามและวันมงคล', action: 'initPersonalizedAuspicious()' },
+    { id: 'auspicious-day', title: 'วันมงคลประจำเดือน', desc: 'วันธงชัย วันอธิบดี และดิถีมงคล', icon: 'fa-calendar-day', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'ubakong-yarm', title: 'ยามอุบากอง', desc: 'ยามเดินทางและกาลโยคปลอดภัย', icon: 'fa-clock', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'dailyTabooPage', title: 'ข้อห้ามประจำวัน', desc: 'วันอุบาทว์ วันโลกาวินาศ และข้อพึงระวัง', icon: 'fa-ban', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'kaliyokepage', title: 'คำนวณกาลโยค', desc: 'เกณฑ์กาลโยคประจำปีตามคัมภีร์สุริยยาตร์', icon: 'fa-hourglass-half', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'reuxpage', title: 'คำนวณฤกษ์อายุ', desc: 'วิเคราะห์เกณฑ์ฤกษ์ตามช่วงอายุย่าง', icon: 'fa-tree', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'dailyHighlightPage', title: 'แผนที่ฤกษ์มงคล<br>รายวัน', desc: 'สรุปเวลาฤกษ์ดีรายชั่วโมงตลอดวัน', icon: 'fa-calendar-alt', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'lunarSection', title: 'คำนวณจันทรคติ', desc: 'ปฏิทินข้างขึ้น ข้างแรม และวันพระ', icon: 'fa-moon', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'fengShuiPage', title: '🧭 ปฏิทินฮวงจุ้ย<br>(ทิศมงคล)', desc: 'ทิศโชคลาภ ทิศอสูร และทิศมงคลประจำวัน', icon: 'fa-compass', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'auspiciousOpening', title: '🏠 วันเปิดร้าน<br>/ลงหลัก', desc: 'ฤกษ์เปิดกิจการ ขึ้นบ้านใหม่ ลงเสาเอก', icon: 'fa-store', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'ceremonyDate', title: '💍 กำหนดวัน<br>ประกอบพิธี', desc: 'ฤกษ์มงคลสมรส บวช และพิธีกรรม', icon: 'fa-ring', color: '#d4af37', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'planetaryHoursPage', title: '🌟 ฤกษ์ยาม ๗ เจ้า', desc: 'ยามดาวครองชั่วโมงประจำวัน', icon: 'fa-clock', color: '#f1c40f', category: '📅 ฤกษ์ยามและวันมงคล' },
+    { id: 'ditheePage', title: '🌙 ดิถีพยากรณ์', desc: 'พยากรณ์ความสำเร็จตามดิถีพระจันทร์', icon: 'fa-moon', color: '#90caf9', category: '📅 ฤกษ์ยามและวันมงคล' },
 
-    { id: 'nameAnalysisPage', title: 'วิเคราะห์ชื่อ', icon: 'fa-signature', color: '#d4af37', category: '🔤 ชื่อและเลขศาสตร์' },
-    { id: 'numerologyPage', title: 'เบอร์มงคล', icon: 'fa-mobile-alt', color: '#d4af37', category: '🔤 ชื่อและเลขศาสตร์' },
+    // 💖 ความรักและสมพงศ์
+    { id: 'deepSynastryPage', title: 'VIP ผูกดวงคู่สมพงษ์', desc: 'เปรียบเทียบองศาดาว ๒ ชะตาแบบละเอียด', icon: 'fa-heartbeat', color: '#e74c3c', category: '💖 ความรักและสมพงศ์' },
+    { id: 'compatibilityPage', title: 'เช็คดวงสมพงษ์', desc: 'ตรวจสมพงศ์ธาตุและปีนักษัตรคู่ครอง', icon: 'fa-heart', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
+    { id: 'marriage-compatibility', title: 'หาคู่รักหรือคู่สมรส', desc: 'เกณฑ์สมพงศ์นาคราชและคู่ครองเนื้อแท้', icon: 'fa-ring', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
+    { id: 'soulmate-direction', title: 'ทิศเนื้อคู่', desc: 'ทิศมงคลที่พบคู่ครองและคนอุปถัมภ์', icon: 'fa-compass', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
+    { id: 'sompong-wealth', title: 'สมพงศ์มหาสมบัติ', desc: 'ตรวจสมพงศ์ด้านการทำธุรกิจและสร้างทรัพย์', icon: 'fa-coins', color: '#d4af37', category: '💖 ความรักและสมพงศ์' },
 
-    { id: 'package', title: 'ระดับสมาชิก', icon: 'fa-file-import', color: '#d4af37', category: '⚙️ ระบบและอื่นๆ' }
+    // 🔤 ชื่อและเลขศาสตร์
+    { id: 'nameAnalysisPage', title: 'วิเคราะห์ชื่อ', desc: 'ถอดรหัสชื่อตามหลักทักษาและเลขศาสตร์', icon: 'fa-signature', color: '#d4af37', category: '🔤 ชื่อและเลขศาสตร์' },
+    { id: 'numerologyPage', title: 'เบอร์มงคล', desc: 'ทำนายคู่เลขเบอร์โทรศัพท์และทะเบียนรถ', icon: 'fa-mobile-alt', color: '#d4af37', category: '🔤 ชื่อและเลขศาสตร์' }
 ];
 
 const UserProfile = {
@@ -135,13 +140,8 @@ function buildDashboard() {
         items.forEach((item) => {
             const hasAccess = (typeof window.hasPackagePermission === 'function') ? window.hasPackagePermission(item.id) : true;
             
-            let clickHandler = '';
             let lockedOverlay = '';
-            
-            if (hasAccess) {
-                clickHandler = item.url ? `window.location.href='${item.url}'` : `navigateTo('${item.id}')`;
-            } else {
-                clickHandler = `navigateTo('package')`; // Go to package page if locked
+            if (!hasAccess) {
                 lockedOverlay = `
                     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; transition: all 0.3s ease;">
                         <i class="fas fa-lock" style="color: #d4af37; font-size: 2rem; margin-bottom: 5px;"></i>
@@ -150,11 +150,15 @@ function buildDashboard() {
                 `;
             }
             
+            const targetAction = hasAccess ? (item.url || '') : 'package';
+            
             html += `
                 <div class="col-6 col-md-4 col-lg-3 mb-4" style="animation: fadeIn 0.5s ease ${globalDelay * 0.05}s both; position: relative;">
                     <div class="dashboard-card"
+                         id="menu-card-${item.id}"
+                         data-menu-id="${item.id}"
                          style="cursor:pointer; position: relative; height: 100%;"
-                         onclick="${clickHandler}">
+                         onclick="handleMenuCardClick('${item.id}', '${targetAction}')">
                         
                         ${lockedOverlay}
 
@@ -162,8 +166,9 @@ function buildDashboard() {
                             <i class="fas ${item.icon}" style="color: ${item.color};"></i>
                         </div>
 
-                        <div class="card-body text-center px-3 py-4" style="${!hasAccess ? 'opacity:0.4;' : ''}">
-                            <h6 class="card-title">${item.title}</h6>
+                        <div class="card-body text-center px-2 py-3" style="${!hasAccess ? 'opacity:0.4;' : ''}">
+                            <h6 class="card-title fw-bold mb-1" style="font-size: 1.02rem; color: #f1d06e;">${item.title}</h6>
+                            ${item.desc ? `<p class="text-white-50 small mb-0" style="font-size: 0.78rem; line-height: 1.3;">${item.desc}</p>` : ''}
                         </div>
 
                         <div class="card-shine"></div>
@@ -256,6 +261,15 @@ function buildDashboard() {
             'from { opacity: 0; transform: translateY(20px); }' +
             'to { opacity: 1; transform: translateY(0); }' +
             '}' +
+            '@keyframes cardGlowPulse {' +
+            '0% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 215, 0, 0); border-color: rgba(241, 208, 110, 0.35); }' +
+            '50% { transform: scale(1.04); box-shadow: 0 0 25px rgba(255, 215, 0, 0.9), inset 0 0 15px rgba(255, 215, 0, 0.4); border-color: #ffd700; }' +
+            '100% { transform: scale(1); box-shadow: 0 14px 35px rgba(0, 0, 0, 0.3); border-color: rgba(241, 208, 110, 0.35); }' +
+            '}' +
+            '.menu-card-highlight {' +
+            'animation: cardGlowPulse 1.8s ease-out !important;' +
+            'z-index: 10 !important;' +
+            '}' +
             '@media (max-width: 767px) {' +
             '.dashboard-card { padding: 15px 12px; }' +
             '.card-icon-wrapper { font-size: 2.2rem; height: 60px; }' +
@@ -265,14 +279,63 @@ function buildDashboard() {
     }
 }
 
-$(document).ready(function () {
-    buildDashboard();
+// 📌 ฟังก์ชันจัดการเมื่อคลิกเลือกการ์ดในห้องพยากรณ์
+window.handleMenuCardClick = function(menuId, targetAction) {
+    // บันทึก ID การ์ดล่าสุดและตำแหน่ง Scroll ลงใน SessionStorage
+    sessionStorage.setItem('lastSelectedMenuId', menuId);
+    sessionStorage.setItem('lastMainpageScrollY', window.scrollY.toString());
 
-    // แสดงหน้าหลักทันทีที่โหลดเสร็จ
-    $('#mainpage').fadeIn();
-
-    if (typeof updateNavYarm === 'function') {
-        updateNavYarm();
-        setInterval(updateNavYarm, 60000);
+    // 🔒 ตรวจสอบสิทธิ์ซ้ำเพื่อความปลอดภัย 100%
+    const hasAccess = (typeof window.hasPackagePermission === 'function') ? window.hasPackagePermission(menuId) : true;
+    if (!hasAccess || targetAction === 'package') {
+        navigateTo('package');
+        return;
     }
-});
+
+    if (targetAction && targetAction.length > 0) {
+        window.location.href = targetAction;
+    } else {
+        navigateTo(menuId);
+    }
+};
+
+// 🎯 ฟังก์ชันเลื่อนหน้าจอกลับมาที่การ์ดที่เลือกล่าสุด
+window.restoreMainpageLastPosition = function() {
+    const lastId = sessionStorage.getItem('lastSelectedMenuId');
+    if (!lastId) return;
+
+    setTimeout(() => {
+        const targetCard = document.getElementById('menu-card-' + lastId);
+        if (targetCard && targetCard.offsetParent !== null) {
+            targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            targetCard.classList.remove('menu-card-highlight');
+            void targetCard.offsetWidth; // Trigger reflow
+            targetCard.classList.add('menu-card-highlight');
+            setTimeout(() => targetCard.classList.remove('menu-card-highlight'), 2200);
+        } else {
+            const scrollY = parseInt(sessionStorage.getItem('lastMainpageScrollY') || '0');
+            if (scrollY > 0) {
+                window.scrollTo({ top: scrollY, behavior: 'smooth' });
+            }
+        }
+    }, 150);
+};
+
+if (typeof $ !== 'undefined') {
+    $(document).ready(function () {
+        buildDashboard();
+
+        // แสดงหน้าหลักทันทีที่โหลดเสร็จ
+        $('#mainpage').fadeIn();
+
+        // ตรวจสอบว่ามีย้อนกลับมาหน้าหลักหรือไม่
+        if (sessionStorage.getItem('lastSelectedMenuId')) {
+            restoreMainpageLastPosition();
+        }
+
+        if (typeof updateNavYarm === 'function') {
+            updateNavYarm();
+            setInterval(updateNavYarm, 60000);
+        }
+    });
+}

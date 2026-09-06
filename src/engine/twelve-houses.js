@@ -227,7 +227,7 @@ function renderTwelveHouses() {
     </div>`;
 
   // แสดง 12 ภพ
-  html += `<div class="row">`;
+  html += `<div class="row g-3">`;
   for (let i = 0; i < 12; i++) {
     const houseSignIdx = (lagnaIdx + i) % 12;
     const sign  = TH_SIGNS[houseSignIdx];
@@ -235,35 +235,39 @@ function renderTwelveHouses() {
     const pred  = TH_HOUSE_PRED[house.num]?.[sign.planet] || "ดาวในภพนี้ส่งผลตามธรรมชาติของดาวและราศี";
 
     html += `
-      <div class="col-md-6 mb-3">
-        <div class="card h-100" style="background:#111;border:1px solid rgba(212,175,55,0.25);border-radius:12px;">
-          <div class="card-body">
-            <div class="d-flex align-items-center mb-2">
-              <span style="font-size:1.5rem;margin-right:10px;">${house.icon}</span>
-              <div>
-                <h6 class="text-gold mb-0">ภพที่ ${house.num} — ${house.name}</h6>
-                <small style="color:#888;">${house.area}</small>
+      <div class="col-md-6 col-12">
+        <div class="card h-100 border-0 shadow-sm" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212,175,55,0.2) !important; border-radius: 16px;">
+          <div class="card-body p-3 p-md-4">
+            <div class="d-flex align-items-center justify-content-between mb-2 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+              <div class="d-flex align-items-center gap-2">
+                <span style="font-size: 1.6rem;">${house.icon}</span>
+                <div>
+                  <h5 class="text-gold mb-0 fw-bold" style="font-size: 1.05rem;">ภพที่ ${house.num} — ${house.name}</h5>
+                  <small style="color: #94a3b8;">${house.area}</small>
+                </div>
               </div>
-              <span class="ml-auto" style="font-size:1.3rem;">${sign.icon}</span>
+              <div class="text-end">
+                <span style="font-size: 1.4rem;">${sign.icon}</span>
+                <div class="small fw-semibold" style="color: #ffd700;">ราศี${sign.name}</div>
+              </div>
             </div>
-            <div class="d-flex align-items-center mb-2">
-              <span style="color:#aaa;font-size:0.82rem;">ราศี${sign.name} • เจ้าราศี: ดาว${sign.planet}</span>
+            <div class="mb-2">
+              <span class="badge py-1 px-2" style="background: rgba(212,175,55,0.15); color: #ffd700; border: 1px solid rgba(212,175,55,0.3); font-size: 0.78rem;">
+                เจ้าราศี: ดาว${sign.planet}
+              </span>
             </div>
-            <p class="mb-0" style="color:#ccc;font-size:0.85rem;line-height:1.6;">${pred}</p>
+            <p class="mb-0 text-light small" style="line-height: 1.6; opacity: 0.9;">${pred}</p>
           </div>
         </div>
       </div>`;
   }
   html += `</div>
-
-    <div class="card mt-3" style="background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.25);border-radius:12px;">
-      <div class="card-body">
-        <h6 class="text-gold">📖 เกี่ยวกับ 12 ภพ</h6>
-        <p style="color:#ccc;font-size:0.88rem;margin:0;line-height:1.7;">
-          ระบบ 12 ภพ (Bhava) มาจากโหราศาสตร์อินเดีย (Jyotish) ที่โหราศาสตร์ไทยรับมา
-          ภพที่ 1 (ชาตา) คือลัคนาราศีที่ขึ้นทางทิศตะวันออก ณ เวลาเกิด
-          ภพถัดไปเรียงตามลำดับราศีทวนเข็มนาฬิกา
-          เจ้าของแต่ละภพ (เจ้าราศีที่ปรากฏในภพ) กำหนดคุณสมบัติและผลของภพนั้น
+ 
+    <div class="card mt-4 border-0 shadow-lg" style="background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.3) !important; border-radius: 16px;">
+      <div class="card-body p-4">
+        <h5 class="text-gold fw-bold mb-2"><i class="fas fa-book-reader me-2"></i> เกี่ยวกับระบบ ๑๒ ภพเรือนชะตา</h5>
+        <p class="text-light mb-0" style="font-size: 0.92rem; line-height: 1.8; opacity: 0.9;">
+          ระบบ ๑๒ ภพ (Bhava) สถิตตามลัคนาเกิด โดยภพที่ ๑ (ตนุ) คือจุดตัดขอบฟ้าตะวันออก ณ เวลาตกฟาก และภพถัดไปเรียงตามลำดับราศีทวนเข็มนาฬิกา อิทธิพลของดาวเจ้าเรือนจะทำหน้าที่เป็นผู้ส่งผ่านชะตาชีวิตในแต่ละด้านให้ปรากฏผลอย่างแม่นยำ
         </p>
       </div>
     </div>`;
@@ -306,44 +310,74 @@ function showTwelveHousesPage() {
   let dispDate = isoDate ? formatToISODate(isoDate) : "";
 
   c.innerHTML = `
-    <div class="headpage">
-      <h1>🏛️ 12 ภพ</h1>
-      <p class="text">วิเคราะห์ชีวิต 12 ด้านจากลัคนาราศี ตามหลักโหราศาสตร์ไทย</p>
-    </div>
-    <div class="container">
-      <div class="card shadow-lg" style="background:#1a1a1a;border:1px solid rgba(212,175,55,0.4);border-radius:16px;">
-        <div class="card-body p-4">
-          <div class="row justify-content-center mb-4">
-            <div class="col-md-12 mb-3">
-              <label style="display:block;color:#d4af37;font-size:0.82rem;margin-bottom:6px;">👥 เลือกสมาชิกจากประวัติ</label>
-              <select id="twhMemberSelect" onchange="fillTWHFromMember(this.value)" class="member-selector-shared form-control bg-dark text-white border-gold"
-                      style="border-radius:10px;">
-                <option value="">— เลือกสมาชิก —</option>
+    <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px;">
+      
+      <!-- Main Hero Card -->
+      <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
+        
+        <!-- Header -->
+        <div class="card-header text-center py-4 py-md-5 position-relative" style="background: linear-gradient(180deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+          <div style="display: inline-flex; align-items: center; justify-content: center; width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(21, 25, 53, 0.8) 100%); border: 2px solid rgba(232, 200, 118, 0.6); box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);" class="mb-2 animate__animated animate__rotateIn">
+            <i class="fas fa-th-large fa-2x" style="color: #ffd700; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6));"></i>
+          </div>
+          <h1 class="fw-bold mb-2" style="font-family: 'Chonburi', 'Sarabun', serif; color: #ffd700; text-shadow: 0 2px 10px rgba(255,215,0,0.3); font-size: clamp(1.8rem, 4vw, 2.4rem);">🏛️ ๑๒ ภพเรือนชะตา</h1>
+          <p class="text-light mb-0" style="font-size: 1rem; opacity: 0.85; letter-spacing: 0.5px;">วิเคราะห์ชีวิต ๑๒ ด้านจากลัคนาราศีและดาวครองภพ ตามหลักโหราศาสตร์ไทย</p>
+        </div>
+
+        <div class="card-body p-3 p-md-4">
+          <div style="max-width: 900px; margin: 0 auto;" class="mb-4">
+            
+            <!-- Member Selector Box -->
+            <div class="p-3 mb-4 rounded-3" style="background: rgba(35, 42, 86, 0.5); border: 1px dashed rgba(201, 164, 92, 0.45);">
+              <label class="form-label fw-bold d-flex align-items-center gap-2 mb-2" style="color: #e8c876;">
+                <i class="fas fa-user-circle"></i> ดึงข้อมูลจากสมาชิก (ตัวเลือกเสริม):
+              </label>
+              <select id="twhMemberSelect" onchange="fillTWHFromMember(this.value)" class="member-selector-shared form-select bg-dark text-white border-gold"
+                      style="border-color: rgba(212, 175, 55, 0.5); border-radius: 10px; padding: 10px 14px;">
+                <option value="">-- เลือกจากฐานข้อมูลสมาชิก --</option>
               </select>
             </div>
-            <div class="col-md-5 mb-2">
-              <label class="text-gold mb-1">วันเกิด</label>
-              <input type="date" id="twhBirthDate" class="form-control bg-dark text-white border-gold"
-                value="${dispDate}"
-                style="border-radius:10px;">
+
+            <!-- Form Row -->
+            <div class="row g-3 align-items-end justify-content-center">
+              <div class="col-md-5 col-12">
+                <label class="form-label fw-semibold" style="color: #e8c876;"><i class="fas fa-calendar-day me-1"></i> วันเกิด (ค.ศ.):</label>
+                <input type="date" id="twhBirthDate" class="form-control bg-dark text-white border-gold text-center"
+                  value="${dispDate}"
+                  style="border-radius: 12px; height: 48px; border-color: rgba(212, 175, 55, 0.4); font-weight: bold;">
+              </div>
+              <div class="col-md-4 col-12">
+                <label class="form-label fw-semibold" style="color: #e8c876;"><i class="fas fa-clock me-1"></i> เวลาเกิด (24 ชม.):</label>
+                <input type="time" id="twhBirthTime" class="form-control bg-dark text-white border-gold text-center"
+                  value="${birthTime}" style="border-radius: 12px; height: 48px; border-color: rgba(212, 175, 55, 0.4); font-weight: bold;">
+              </div>
+              <div class="col-md-3 col-12">
+                <button class="btn btn-gold w-100 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-lg" onclick="renderTwelveHouses()" style="border-radius: 12px; height: 48px;">
+                  <i class="fas fa-calculator"></i> คำนวณ
+                </button>
+              </div>
             </div>
-            <div class="col-md-4 mb-2">
-              <label class="text-gold mb-1">เวลาเกิด</label>
-              <input type="time" id="twhBirthTime" class="form-control bg-dark text-white border-gold"
-                value="${birthTime}" style="border-radius:10px;">
-            </div>
-            <div class="col-md-3 mb-2 d-flex align-items-end">
-              <button class="btn btn-gold btn-block" onclick="renderTwelveHouses()" style="border-radius:10px;">
-                <i class="fas fa-calculator mr-1"></i> คำนวณ
-              </button>
-            </div>
+
           </div>
+
+          <!-- Content Result Area -->
           <div id="twHContent"></div>
+
         </div>
       </div>
-      <div class="row mt-3">
-        <div class="col-6"><button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')"><i class="fas fa-chevron-left"></i> ห้องพยากรณ์</button></div>
-        <div class="col-6"><button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()"><i class="fas fa-home"></i> หน้าหลัก</button></div>
+
+      <!-- Bottom Navigation -->
+      <div class="row mt-4 g-2">
+        <div class="col-6">
+          <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="navigateTo('mainpage')">
+            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+          </button>
+        </div>
+        <div class="col-6">
+          <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="goBack()">
+            <i class="fas fa-home"></i> กลับหน้าหลัก
+          </button>
+        </div>
       </div>
     </div>`;
 

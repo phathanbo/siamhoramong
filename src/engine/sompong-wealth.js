@@ -182,4 +182,52 @@ function calculateWealth() {
     document.getElementById('marriage-result-box').classList.remove('d-none');
 }
 
+function autoFillWealthMember(personNum, memberId) {
+    if (!memberId) return;
+    const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
+    const member = allHistory.find(m => m.memberId === memberId || m.id === memberId || m.birthdate === memberId);
+    if (member) {
+        if (member.gender) {
+            const isMale = (member.gender === 'm' || member.gender === 'male' || member.gender === 'ชาย');
+            if (personNum === 1) {
+                const rMale = document.getElementById('userGenderMale');
+                const rFemale = document.getElementById('userGenderFemale');
+                if (rMale && rFemale) {
+                    if (isMale) rMale.checked = true;
+                    else rFemale.checked = true;
+                }
+            } else {
+                const rMale = document.getElementById('partnerGenderMale');
+                const rFemale = document.getElementById('partnerGenderFemale');
+                if (rMale && rFemale) {
+                    if (isMale) rMale.checked = true;
+                    else rFemale.checked = true;
+                }
+            }
+        }
+        if (member.birthdate) {
+            let year = 0;
+            if (member.birthdate.includes('/')) {
+                const parts = member.birthdate.split('/');
+                year = parseInt(parts[2]);
+            } else if (member.birthdate.includes('-')) {
+                const parts = member.birthdate.split('-');
+                year = parseInt(parts[0]);
+            }
+            if (year > 2400) year -= 543;
+            if (year > 1900) {
+                const zodiacKeys = ['rat', 'ox', 'tiger', 'rabbit', 'dragon', 'snake', 'horse', 'goat', 'monkey', 'rooster', 'dog', 'pig'];
+                const idx = (year - 1900) % 12;
+                const zKey = zodiacKeys[idx < 0 ? idx + 12 : idx];
+                const selectEl = document.getElementById(personNum === 1 ? 'userYear' : 'partnerYear');
+                if (selectEl) {
+                    selectEl.value = zKey;
+                }
+            }
+        }
+        calculateWealth();
+    }
+}
+
+window.autoFillWealthMember = autoFillWealthMember;
 window.calculateWealth = calculateWealth;

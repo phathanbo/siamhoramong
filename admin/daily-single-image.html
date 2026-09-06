@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>สร้างภาพดวงรายวัน (แผ่นเดียว) - สยามโหรามงคล</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SweetAlert2 -->
@@ -180,9 +180,10 @@
         }
         #wfPreviewArea {
             width: 100%;
-            max-width: 900px;
             display: flex;
             justify-content: center;
+            align-items: flex-start;
+            min-height: 580px;
         }
         /* Custom loader indicator style */
         .preview-loader {
@@ -198,7 +199,7 @@
 
     <div class="header">
         <h1><i class="fas fa-image"></i> ระบบสร้างภาพดวงรายวัน (แผ่นเดียว)</h1>
-        <a href="../admin.html" class="back-btn"><i class="fas fa-arrow-left"></i> กลับไประบบหลังบ้าน</a>
+        <a href="admin-console.html" class="back-btn"><i class="fas fa-arrow-left"></i> กลับไประบบหลังบ้าน</a>
     </div>
 
     <div class="content">
@@ -237,6 +238,16 @@
                     <option value="sat">วันเสาร์</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label>🎨 สไตล์พื้นหลัง / ธีมภาพ:</label>
+                <select id="wfTheme" onchange="renderWeeklyFortunePreview()">
+                    <option value="royal">✨ สยามมงคลคลาสสิก (Royal Gold & Deep Purple)</option>
+                    <option value="astronomy">🌌 ท้องฟ้าดวงดาว & จักรราศี (Mystic Cosmos)</option>
+                    <option value="modern_dark">🌑 มินิมอลดาร์กทอง (Luxury Obsidian)</option>
+                    <option value="light">☀️ สว่างละมุนหรูหรา (Ivory Gold Light)</option>
+                </select>
+            </div>
             
             <button class="btn-generate" onclick="downloadWeeklyFortuneImage()">
                 <i class="fas fa-download"></i> ดาวน์โหลดภาพดวง (PNG)
@@ -262,9 +273,28 @@
     <script charset="UTF-8" src="../src/engine/auspicious-days.js"></script>
     <script charset="UTF-8" src="../src/utils/colors.js"></script>
     <script charset="UTF-8" src="../src/data/fortune-daily-data.js"></script>
+    <script charset="UTF-8" src="../src/engine/thai-horoscope-engine.js"></script>
     <script charset="UTF-8" src="../src/utils/canvas-helpers.js"></script>
     <script charset="UTF-8" src="js/admin-weekly-fortune.js"></script>
     <script>
+        function resizeCapturePreview() {
+            const previewEl = document.getElementById('wfPreviewArea');
+            const captureArea = document.getElementById('wfCaptureArea');
+            const previewArea = document.getElementById('previewArea');
+            if (!captureArea || !previewArea || !previewEl) return;
+
+            const availableWidth = previewArea.clientWidth - 80;
+            const availableHeight = window.innerHeight - 200;
+            
+            const scaleX = Math.min(1, Math.max(0.4, availableWidth / 1200));
+            const scaleY = Math.min(1, Math.max(0.4, availableHeight / 800));
+            const scale = Math.min(scaleX, scaleY);
+
+            captureArea.style.transformOrigin = 'top center';
+            captureArea.style.transform = `scale(${scale})`;
+            previewEl.style.height = `${800 * scale + 20}px`;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             // Set default date to today
             const dateInput = document.getElementById('wfDate');
@@ -275,20 +305,15 @@
             // Rewrite functions to handle embedded preview inside the page directly instead of modal
             window.closeWeeklyFortuneModal = function() {};
             
-            // Override the trigger to render within the new page wrapper instead of modal
+            // Render on start
             if (typeof renderWeeklyFortunePreview === 'function') {
-                // Adjust scale for screen display fit
-                const previewEl = document.getElementById('wfPreviewArea');
                 setTimeout(() => {
                     renderWeeklyFortunePreview();
-                    const captureArea = document.getElementById('wfCaptureArea');
-                    if (captureArea) {
-                        captureArea.style.transformOrigin = 'top center';
-                        captureArea.style.transform = 'scale(0.7)';
-                        previewEl.style.height = '600px';
-                    }
+                    resizeCapturePreview();
                 }, 100);
             }
+
+            window.addEventListener('resize', resizeCapturePreview);
         });
     </script>
 </body>

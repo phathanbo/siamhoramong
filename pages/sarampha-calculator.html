@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>คำนวณสารัมภ์</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
   <style>
     :root {
       --ink: #17201d;
@@ -30,7 +31,7 @@
       line-height: 1.55;
     }
 
-    header {
+    .sarampha-hero {
       padding: 24px clamp(16px, 4vw, 42px) 16px;
       border-bottom: 1px solid var(--line);
       background: #fffdf8;
@@ -220,10 +221,24 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>คำนวณสารัมภ์</h1>
-    <p class="subhead">โปรแกรมนี้ถอดสูตรจากคัมภีร์สารัมภ์เฉพาะส่วนคำนวณ แล้วตัดคำบรรยายยาวออก เหลืออินพุต ผลลัพธ์ และขั้นตอนที่ตรวจสอบได้</p>
+  <!-- Top Header -->
+  <header class="header-bar no-print">
+    <a href="../index.html" class="header-title">
+      <i class="fas fa-dharmachakra"></i>
+      <div>
+        <h1>สยามโหรามงคล</h1>
+        <div class="header-sub">Siam Horamongkol • โปรแกรมคำนวณสารัมภ์ (สุริยยาตร์ / สารัมภ์)</div>
+      </div>
+    </a>
+    <div class="header-actions">
+      <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าหลัก</a>
+    </div>
   </header>
+
+  <div class="sarampha-hero">
+    <h1>คำนวณสารัมภ์</h1>
+    <p class="subhead">โปรแกรมทดสอบคำนวณตำแหน่งสารัมภ์ตามคัมภีร์สารัมภ์และสุริยยาตร์ไทย</p>
+  </div>
 
   <main>
     <aside class="inputs">

@@ -283,13 +283,43 @@ function renderToday() {
   if (!g) return; // Guard clause ป้องกัน Error ถ้าไม่มี Element
 
   g.innerHTML = `
-    <div>ข้อมูลประจำวัน${info.dayName}</div>
-      <div>ธาตุประจำวัน: ธาตุ${info.element}</div>
-      <div>สีมงคล: สี${info.colors.colors[0]}</div>
-      <div>ทิศเดช (หันหน้า)<span style="color:#5DDBA3">: ทิศ${info.direction.dech}</span></div>
-       <div>ทิศศรี<span class="value" style="color:#F0D080">: ทิศ${info.direction.sri}</div>
-      <div>ราหูจรขณะนี้
-      <span class="value" style="color:#FF9980">ใน ทิศ${info.currentRahu.dir}</span> ณ เวลา <span class="sub">${info.currentRahu.label}</span>
+    <div class="row g-3">
+      <div class="col-md-3 col-6">
+        <div class="p-3 rounded-3 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <small class="text-white-50 d-block mb-1"><i class="fas fa-calendar-alt text-gold me-1"></i> ประจำวัน</small>
+          <strong class="fs-6 text-warning">วัน${info.dayName}</strong>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="p-3 rounded-3 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <small class="text-white-50 d-block mb-1"><i class="fas fa-burn text-danger me-1"></i> ธาตุประจำวัน</small>
+          <strong class="fs-6 text-light">ธาตุ${info.element}</strong>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="p-3 rounded-3 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <small class="text-white-50 d-block mb-1"><i class="fas fa-palette text-info me-1"></i> สีมงคล</small>
+          <strong class="fs-6 text-light">สี${info.colors.colors[0]}</strong>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="p-3 rounded-3 text-center h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <small class="text-white-50 d-block mb-1"><i class="fas fa-compass text-success me-1"></i> ทิศเดช (หันหน้า)</small>
+          <strong class="fs-6" style="color:#4ade80;">ทิศ${info.direction.dech}</strong>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <div class="p-3 rounded-3 text-center h-100" style="background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25);">
+          <small class="text-white-50 d-block mb-1"><i class="fas fa-crown text-gold me-1"></i> ทิศศรี (เสริมสิริมงคล)</small>
+          <strong class="fs-6 text-warning">ทิศ${info.direction.sri}</strong>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <div class="p-3 rounded-3 text-center h-100" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);">
+          <small class="text-white-50 d-block mb-1"><i class="fas fa-dragon text-danger me-1"></i> ราหูจรขณะนี้</small>
+          <strong class="fs-6 text-danger">สถิตทิศ${info.currentRahu.dir}</strong> <small class="text-white-50">(${info.currentRahu.label} น.)</small>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -299,13 +329,13 @@ function renderDithee() {
   const day = A.getDayName(new Date());
   const data = A.getAuspiciousDithee(day);
   const ranks = ['อมฤตโชค','มหาสิทธิโชค','สิทธิโชค','ชัยโชค','ราชาโชค'];
-  const badgeClass = ['high','','low','low',''];
   const tbody = document.getElementById('ditheeBody');
+  if (!tbody) return;
   tbody.innerHTML = data.map((d,i) => `
-    <tr style="background:var(--bg-alt);">
-      <td><span class="badge ${badgeClass[i]||''}">${d.zodiac}</span></td>
-      <td><strong style="color:var(--gold-lt)">${d.dithee}</strong> ค่ำ</td>
-      <td style="color:var(--muted);font-size:.8rem">ใช้ได้ทั้งข้างขึ้นและแรม (ข้างขึ้นดีกว่า)</td>
+    <tr>
+      <td><span class="badge py-1 px-2" style="background: rgba(212,175,55,0.2); color:#ffd700; border:1px solid rgba(212,175,55,0.4); font-size:0.85rem;">${d.zodiac}</span></td>
+      <td><strong style="color:#ffd700; font-size:1.05rem;">${d.dithee}</strong> <span class="small text-white-50">ค่ำ</span></td>
+      <td style="color:#94a3b8; font-size:.85rem;">ใช้ได้ทั้งข้างขึ้นและแรม (ข้างขึ้นผลดีเลิศ)</td>
     </tr>
   `).join('');
 }
@@ -316,28 +346,41 @@ function renderDirection() {
   const dir  = A.DAY_DIRECTION[day];
   const ghost = A.GHOST_DIRECTION[day];
   const sp    = A.SPIRIT_DIRECTION[day];
+  const dirGrid = document.getElementById('dirGrid');
+  if (!dirGrid) return;
 
-  document.getElementById('dirGrid').innerHTML = `
-    <div class="dir-card safe">
-      <div class="dir-label">ทิศเดช — ให้พลังและความสำเร็จ :</div>
-      <div class="dir-value">⬆ ${dir.dech}</div>
-    <br>    
-    </div>
-    <div class="dir-card">
-      <div class="dir-label">ทิศศรี — เสริมบารมี :</div>
-      <div class="dir-value">⬆ ${dir.sri}</div>
-    <br>    
-    <div class="dir-card safe">
-      <div class="dir-label">เทวดาจร - หันหน้าสู่ทิศนี้ได้คุณ:</div>
-      <div class="dir-value">⬆ ${sp.deva}</div>
-    <br>    
-    <div class="dir-card danger">
-      <div class="dir-label">มฤตยูจร — หลีกเลี่ยง :</div>
-      <div class="dir-value">✕ ${sp.mritu}</div>
-    <br>    
-    <div class="dir-card danger">
-      <div class="dir-label">ผีหลวง — โดยเฉพาะการเล่นพนัน</div>
-      <div class="dir-value">✕ ${ghost}</div>
+  dirGrid.innerHTML = `
+    <div class="row g-2">
+      <div class="col-6">
+        <div class="p-2 rounded-3 text-center" style="background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3);">
+          <small class="text-success fw-bold d-block">ทิศเดช (พลัง/สำเร็จ)</small>
+          <strong class="text-white small">⬆ ทิศ${dir.dech}</strong>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="p-2 rounded-3 text-center" style="background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3);">
+          <small class="text-info fw-bold d-block">ทิศศรี (เสริมบารมี)</small>
+          <strong class="text-white small">⬆ ทิศ${dir.sri}</strong>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="p-2 rounded-3 text-center" style="background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3);">
+          <small class="text-success fw-bold d-block">เทวดาจร (หันหน้าสู่ทิศนี้ได้คุณ)</small>
+          <strong class="text-white small">⬆ ทิศ${sp.deva}</strong>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="p-2 rounded-3 text-center" style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3);">
+          <small class="text-danger fw-bold d-block">มฤตยูจร (ควรเลี่ยง)</small>
+          <strong class="text-white small">✕ ทิศ${sp.mritu}</strong>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="p-2 rounded-3 text-center" style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3);">
+          <small class="text-danger fw-bold d-block">ผีหลวง (ทิศร้ายห้ามไป)</small>
+          <strong class="text-white small">✕ ทิศ${ghost}</strong>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -346,59 +389,76 @@ function renderDirection() {
 function renderRahu() {
   const now = new Date();
   const cur  = A.getCurrentRahu(now);
-  document.getElementById('rahuGrid').innerHTML = A.RAHU_DIRECTION.map(r => {
+  const rahuGrid = document.getElementById('rahuGrid');
+  if (!rahuGrid) return;
+  rahuGrid.innerHTML = A.RAHU_DIRECTION.map(r => {
     const active = r.label === cur.label;
+    const activeStyle = active ? 'background: rgba(239, 68, 68, 0.2); border: 1.5px solid #ef4444;' : '';
     return `
-      <div class="rahu-card ${active?'active':''}">
-        <tr>
-        <td>${active ? '<span class="now-tag">ขณะนี้</span>' : ''}</td>        
-        <td><div class="rahu-time">${r.label} น.</div></td>
-        <td><div class="rahu-dir">${r.dir}</div></td>
-        </tr>
-      </div>
+      <tr style="${activeStyle}">
+        <td>${active ? '<span class="badge bg-danger text-light px-2 py-1"><i class="fas fa-exclamation-circle me-1"></i> ขณะนี้</span>' : '<span class="text-white-50">-</span>'}</td>        
+        <td><strong class="text-light">${r.label} น.</strong></td>
+        <td><strong style="color: #f87171;">ทิศ${r.dir}</strong></td>
+      </tr>
     `;
   }).join('');
 }
 
 // ---- SECTION 5: REUX ----
 function renderReux(list) {
-  document.getElementById('reuxGrid').innerHTML = (list || A.REUX_TYPES).map(r => `
-    <div class="reux-card" style="display: block;">
-      <div class="reux-name">${r.name}</div>
-      <div class="reux-info">
-        <span>ดาว${r.planet}</span>
-        ${elemTag(r.element)}
-        ${genderTag(r.gender)}
-      </div>
-      <ul class="reux-uses" style="margin-top: .5rem; padding-left: 1.2rem; font-size: .9rem;">
-        ${r.uses.map(u=>`<li>${u}</li>`).join('')}
-      </ul>
+  const reuxGrid = document.getElementById('reuxGrid');
+  if (!reuxGrid) return;
+  reuxGrid.innerHTML = `
+    <div class="row g-3">
+      ${(list || A.REUX_TYPES).map(r => `
+        <div class="col-md-4 col-sm-6 col-12">
+          <div class="card h-100 border-0 rounded-3 p-3" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.3) !important;">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <h5 class="fw-bold mb-0 text-gold" style="font-size: 1.05rem;">${r.name}</h5>
+              <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25">ดาว${r.planet}</span>
+            </div>
+            <div class="small text-white-50 mb-2">
+              ธาตุ: <strong class="text-light">${r.element}</strong> | เพศ: <strong class="text-light">${r.gender}</strong>
+            </div>
+            <ul class="small text-light ps-3 mb-0" style="line-height: 1.6;">
+              ${r.uses.map(u => `<li>${u}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      `).join('')}
     </div>
-  `).join('');
+  `;
 }
 
 function searchReux() {
-  const kw = document.getElementById('reuxSearch').value.trim();
+  const kw = document.getElementById('reuxSearch')?.value.trim() || "";
   renderReux(A.findReuxByActivity(kw));
+  const rg = document.getElementById('reuxGrid');
+  if (rg) rg.style.display = 'block';
 }
-document.getElementById('reuxSearch').addEventListener('keydown', e => {
-  if (e.key === 'Enter') searchReux();
 
-  document.getElementById('reuxGrid').style.display = 'block';
- // แสดงผลปุ่ม Clear อัตโนมัติเมื่อกด Enter
-});
+const reuxSearchEl = document.getElementById('reuxSearch');
+if (reuxSearchEl) {
+  reuxSearchEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter') searchReux();
+  });
+}
 
 // ---- SECTION 6: MISC ----
 function renderMisc() {
   // กาลกิณีปุ่ม
   const kkRow = document.getElementById('kkButtons');
-  kkRow.innerHTML = A.DAYS.map(d =>
-    `<button class="kk-btn" onclick="showKalakinee('${d}',this)">${d}</button>`
-  ).join('');
+  if (kkRow) {
+    kkRow.innerHTML = A.DAYS.map(d =>
+      `<button class="btn btn-outline-warning btn-sm fw-bold px-3 py-2 rounded-3 kk-btn" onclick="showKalakinee('${d}',this)">วัน${d}</button>`
+    ).join('');
+  }
 
   // ดิถีแต่งงาน
-  document.getElementById('wdUp').innerHTML = A.WEDDING_DITHEE.ขึ้น.map(n=>`<span class="dithee-pill">${n} ค่ำ</span>`).join(' ,');
-  document.getElementById('wdDown').innerHTML = A.WEDDING_DITHEE.แรม.map(n=>`<span class="dithee-pill">${n} ค่ำ</span>`).join(' ,');
+  const wdUp = document.getElementById('wdUp');
+  const wdDown = document.getElementById('wdDown');
+  if (wdUp) wdUp.innerHTML = A.WEDDING_DITHEE.ขึ้น.map(n=>`${n} ค่ำ`).join(', ');
+  if (wdDown) wdDown.innerHTML = A.WEDDING_DITHEE.แรม.map(n=>`${n} ค่ำ`).join(', ');
 
   // ข้อห้ามวันนี้
   const day = A.getDayName(new Date());
@@ -409,18 +469,35 @@ function renderMisc() {
     'ฤกษ์มงคล — ข้างขึ้นดีกว่าข้างแรม',
   ];
   const list = document.getElementById('tabooList');
-  list.innerHTML =
-    taboos.map(t=>`<li>${t}</li>`).join('') +
-    generalOk.map(t=>`<li class="ok">${t}</li>`).join('');
+  if (list) {
+    list.innerHTML =
+      taboos.map(t=>`<li class="text-danger fw-bold"><i class="fas fa-times-circle me-1"></i> ${t}</li>`).join('') +
+      generalOk.map(t=>`<li class="text-success"><i class="fas fa-check-circle me-1"></i> ${t}</li>`).join('');
+  }
 }
 
 function showKalakinee(day, btn) {
-  document.querySelectorAll('.kk-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('.kk-btn').forEach(b => {
+    b.classList.remove('btn-warning', 'text-dark');
+    b.classList.add('btn-outline-warning');
+  });
+  if (btn) {
+    btn.classList.remove('btn-outline-warning');
+    btn.classList.add('btn-warning', 'text-dark');
+  }
   const kk = A.getKalakinee(day);
-  document.getElementById('kk-result').innerHTML =
-    `ผู้เกิดวัน<strong style="color:var(--gold-lt)">${day}</strong> — วันกาลกิณีคือ <span class="kk-highlight">${kk}</span><br>
-     <span style="font-size:.8rem;color:var(--muted)">หลีกเลี่ยงประกอบฤกษ์มงคลในวัน${kk}</span>`;
+  const kkResult = document.getElementById('kk-result');
+  if (kkResult) {
+    kkResult.innerHTML = `
+      <div class="d-flex align-items-center gap-2">
+        <i class="fas fa-exclamation-triangle text-danger fa-2x"></i>
+        <div>
+          <div>ผู้เกิดวัน<strong class="text-warning"> ${day}</strong> ➔ วันกาลกิณีต้องห้ามคือ <span class="badge bg-danger fs-6 px-2 py-1">วัน${kk}</span></div>
+          <small class="text-white-50">ควรหลีกเลี่ยงการประกอบฤกษ์มงคล ทำสัญญา หรือเริ่มต้นการใหญ่ในวัน${kk}</small>
+        </div>
+      </div>
+    `;
+  }
 }
 
 // ---- INIT ----

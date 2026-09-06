@@ -78,9 +78,9 @@ function renderAdminDashboard() {
             <!-- ระบบหลังบ้าน (Admin) -->
             <div class="section-title mt-4" style="text-align: left; margin-bottom: 15px;">⚙️ ระบบหลังบ้าน (Admin)</div>
             <div class="dashboard-tools" style="display: grid; grid-template-columns: 1fr; margin-bottom: 30px;">
-                <button class="btn btn-gold shadow" onclick="window.location.href='admin/index.html'" style="font-size: 1.2rem; padding: 20px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 15px; border: none;">
+                <button class="btn btn-gold shadow" onclick="window.location.href='admin/admin-console.html'" style="font-size: 1.2rem; padding: 20px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 15px; border: none;">
                     <i class="fas fa-cogs" style="font-size: 2rem;"></i> 
-                    <span style="font-weight: bold;">ไปยังระบบจัดการหลังบ้าน (Admin Dashboard) ➡️</span>
+                    <span style="font-weight: bold;">ไปยังระบบจัดการหลังบ้าน (Admin Console) ➡️</span>
                 </button>
             </div>
 

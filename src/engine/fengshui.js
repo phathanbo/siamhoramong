@@ -322,108 +322,143 @@ function showFengShuiPage() {
     if (!container) return;
 
     const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
 
-    // เพิ่มฟิลด์เลือก เดือน และ ปี พ.ศ. เข้ามาในโครงสร้าง เพื่อป้องกันตรรกะในปฏิทินพังเสียหายจาก DOM หาไม่เจอ
     container.innerHTML = `
-        <div class="card shadow-lg border-gold overflow-hidden">
-            <div class="card-header bg-dark text-white text-center py-4">
-                <h2 class="text-gold mb-1">🏠 ฮวงจุ้ยตามหลักแท้</h2>
-                <p class="text-white-50 mb-0 small">✨ อิงจากธาตุ 5 + ดาว 9 ดวง</p>
-            </div>
-
-            <div class="card-body p-4">
-                <form onsubmit="return false;">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="text-gold"><strong>📅 วันเกิด <span class="text-danger">*</span></strong></label>
-                                <input type="date" id="fengshuiBirthday" class="form-control form-control-lg">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="text-gold"><strong>🏠 ทิศบ้านปัจจุบัน <span class="text-danger">*</span></strong></label>
-                                <select id="fengshuiSittingDir" class="form-control form-control-lg">
-                                    <option value="">-- เลือกทิศหลังบ้าน --</option>
-                                    <option value="N">⬆️ เหนือ</option>
-                                    <option value="NE">⬈️ ตะวันออกเฉียงเหนือ</option>
-                                    <option value="E">➡️ ตะวันออก</option>
-                                    <option value="SE">⬉️ ตะวันออกเฉียงใต้</option>
-                                    <option value="S">⬇️ ใต้</option>
-                                    <option value="SW">⬋️ ตะวันตกเฉียงใต้</option>
-                                    <option value="W">⬅️ ตะวันตก</option>
-                                    <option value="NW">⬉️ ตะวันตกเฉียงเหนือ</option>
-                                </select>
-                            </div>
-                        </div>
+        <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
+            
+            <!-- Main Hero Card -->
+            <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
+                
+                <!-- Header -->
+                <div class="card-header text-center py-4 py-md-5 position-relative" style="background: linear-gradient(180deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(21, 25, 53, 0.8) 100%); border: 2px solid rgba(232, 200, 118, 0.6); box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);" class="mb-2 animate__animated animate__rotateIn">
+                        <i class="fas fa-compass fa-2x" style="color: #ffd700; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6));"></i>
                     </div>
+                    <h1 class="fw-bold mb-2" style="font-family: 'Chonburi', 'Sarabun', serif; color: #ffd700; text-shadow: 0 2px 10px rgba(255,215,0,0.3); font-size: clamp(1.8rem, 4vw, 2.4rem);">🏠 ฮวงจุ้ยตามหลักแท้ 🧭</h1>
+                    <p class="text-light mb-0" style="font-size: 1rem; opacity: 0.85; letter-spacing: 0.5px;">วิเคราะห์ทิศมงคล ทิศโชคลาภ ทิศอสูร อิงตามธาตุ ๕ และดาว ๙ ยุค</p>
+                </div>
 
-                    <button type="button" class="btn btn-gold btn-lg btn-block mt-3" onclick="analyzeFengShui()">
-                        <i class="fas fa-compass"></i> วิเคราะห์ฮวงจุ้ยจากวันเกิด
-                    </button>
+                <div class="card-body p-3 p-md-4">
                     
-                    <hr class="my-4 border-gold-30">
-                    <h4 class="text-gold mb-3 text-center">📅 ตรวจสอบปฏิทินฮวงจุ้ยรายเดือน</h4>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="text-gold"><strong>🌙 เลือกเดือน</strong></label>
-                                <select id="fengshuiMonth" class="form-control form-control-lg">
-                                    <option value="">-- เลือกเดือน --</option>
-                                    <option value="1">มกราคม</option>
-                                    <option value="2">กุมภาพันธ์</option>
-                                    <option value="3">มีนาคม</option>
-                                    <option value="4">เมษายน</option>
-                                    <option value="5">พฤษภาคม</option>
-                                    <option value="6">มิถุนายน</option>
-                                    <option value="7">กรกฎาคม</option>
-                                    <option value="8">สิงหาคม</option>
-                                    <option value="9">กันยายน</option>
-                                    <option value="10">ตุลาคม</option>
-                                    <option value="11">พฤศจิกายน</option>
-                                    <option value="12">ธันวาคม</option>
-                                </select>
+                    <div style="max-width: 900px; margin: 0 auto;">
+                        
+                        <!-- Member Selector Box -->
+                        <div class="p-3 mb-4 rounded-3" style="background: rgba(35, 42, 86, 0.5); border: 1px dashed rgba(201, 164, 92, 0.45);">
+                            <label class="form-label fw-bold d-flex align-items-center gap-2 mb-2" style="color: #e8c876;">
+                                <i class="fas fa-user-circle"></i> ดึงข้อมูลจากสมาชิก (ตัวเลือกเสริม):
+                            </label>
+                            <select id="fengshuiMemberSelect" class="form-select bg-dark text-white border-gold member-selector-shared"
+                                onchange="autoFillMemberData(this.value);" style="border-color: rgba(212, 175, 55, 0.5); border-radius: 10px; padding: 10px 14px;">
+                                <option value="">-- เลือกจากฐานข้อมูลสมาชิก --</option>
+                            </select>
+                        </div>
+
+                        <!-- Form 1: วิเคราะห์ฮวงจุ้ยจากวันเกิด -->
+                        <div class="p-3 p-md-4 rounded-4 mb-4" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25);">
+                            <h4 class="fw-bold mb-3" style="color: #ffd700; font-family: 'Chonburi', serif; font-size: 1.2rem;">
+                                <i class="fas fa-user-astronaut me-2"></i> ๑. วิเคราะห์ทิศฮวงจุ้ยเฉพาะบุคคล
+                            </h4>
+                            <div class="row g-3">
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label fw-semibold" style="color: #e8c876;"><i class="fas fa-calendar-day me-1"></i> วันเกิด (ค.ศ.):</label>
+                                    <input type="date" id="fengshuiBirthday" class="form-control bg-dark text-white border-gold text-center py-2 fw-bold" style="border-radius: 12px; height: 48px; border-color: rgba(212, 175, 55, 0.4);">
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label fw-semibold" style="color: #e8c876;"><i class="fas fa-home me-1"></i> ทิศหลังบ้านปัจจุบัน:</label>
+                                    <select id="fengshuiSittingDir" class="form-select bg-dark text-white border-gold text-center py-2 fw-bold" style="border-radius: 12px; height: 48px; border-color: rgba(212, 175, 55, 0.4);">
+                                        <option value="">-- เลือกทิศหลังบ้าน --</option>
+                                        <option value="N">⬆️ เหนือ (ทิศอิงธาตุน้ำ)</option>
+                                        <option value="NE">⬈️ ตะวันออกเฉียงเหนือ (ทิศอิงธาตุดิน)</option>
+                                        <option value="E">➡️ ตะวันออก (ทิศอิงธาตุไม้)</option>
+                                        <option value="SE">⬉️ ตะวันออกเฉียงใต้ (ทิศอิงธาตุไม้)</option>
+                                        <option value="S">⬇️ ใต้ (ทิศอิงธาตุไฟ)</option>
+                                        <option value="SW">⬋️ ตะวันตกเฉียงใต้ (ทิศอิงธาตุดิน)</option>
+                                        <option value="W">⬅️ ตะวันตก (ทิศอิงธาตุทอง)</option>
+                                        <option value="NW">⬉️ ตะวันตกเฉียงเหนือ (ทิศอิงธาตุทอง)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-gold px-5 py-3 shadow-lg fw-bold d-inline-flex align-items-center gap-2" onclick="analyzeFengShui()" style="border-radius: 50px; font-size: 1.1rem;">
+                                    <i class="fas fa-magic"></i> วิเคราะห์ฮวงจุ้ยจากวันเกิด
+                                </button>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="text-gold"><strong>☀️ เลือกปี ค.ศ.</strong></label>
-                                <input type="number" id="fengshuiYear" class="form-control" value="${currentYear}">
+
+                        <!-- Result 1 -->
+                        <div id="fengshuiResult" class="mb-4"></div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6" id="luckyDirection"></div>
+                            <div class="col-md-6" id="unluckyDirection"></div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6" id="importantDays"></div>
+                            <div class="col-md-6" id="fengshuiTips"></div>
+                        </div>
+
+                        <!-- Form 2: ปฏิทินฮวงจุ้ยรายเดือน -->
+                        <div class="p-3 p-md-4 rounded-4 mb-4" style="background: linear-gradient(145deg, #181b38 0%, #101226 100%); border: 1px solid rgba(212, 175, 55, 0.25);">
+                            <h4 class="fw-bold mb-3" style="color: #ffd700; font-family: 'Chonburi', serif; font-size: 1.2rem;">
+                                <i class="fas fa-calendar-alt me-2"></i> ๒. ตรวจสอบปฏิทินฮวงจุ้ยรายเดือน
+                            </h4>
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-5 col-6">
+                                    <label class="form-label fw-semibold" style="color: #e8c876;">เลือกเดือน:</label>
+                                    <select id="fengshuiMonth" class="form-select bg-dark text-white border-gold" style="border-radius: 12px; height: 48px; border-color: rgba(212, 175, 55, 0.4);">
+                                        <option value="1" ${currentMonth === 1 ? 'selected' : ''}>มกราคม</option>
+                                        <option value="2" ${currentMonth === 2 ? 'selected' : ''}>กุมภาพันธ์</option>
+                                        <option value="3" ${currentMonth === 3 ? 'selected' : ''}>มีนาคม</option>
+                                        <option value="4" ${currentMonth === 4 ? 'selected' : ''}>เมษายน</option>
+                                        <option value="5" ${currentMonth === 5 ? 'selected' : ''}>พฤษภาคม</option>
+                                        <option value="6" ${currentMonth === 6 ? 'selected' : ''}>มิถุนายน</option>
+                                        <option value="7" ${currentMonth === 7 ? 'selected' : ''}>กรกฎาคม</option>
+                                        <option value="8" ${currentMonth === 8 ? 'selected' : ''}>สิงหาคม</option>
+                                        <option value="9" ${currentMonth === 9 ? 'selected' : ''}>กันยายน</option>
+                                        <option value="10" ${currentMonth === 10 ? 'selected' : ''}>ตุลาคม</option>
+                                        <option value="11" ${currentMonth === 11 ? 'selected' : ''}>พฤศจิกายน</option>
+                                        <option value="12" ${currentMonth === 12 ? 'selected' : ''}>ธันวาคม</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 col-6">
+                                    <label class="form-label fw-semibold" style="color: #e8c876;">เลือกปี (ค.ศ.):</label>
+                                    <input type="number" id="fengshuiYear" class="form-control bg-dark text-white border-gold text-center fw-bold" value="${currentYear}" style="border-radius: 12px; height: 48px; border-color: rgba(212, 175, 55, 0.4);">
+                                </div>
+                                <div class="col-md-3 col-12">
+                                    <button type="button" class="btn btn-outline-warning w-100 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm" onclick="displayFengShuiCalendar()" style="border-radius: 12px; height: 48px;">
+                                        <i class="fas fa-calendar-check"></i> ดูปฏิทิน
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <button type="button" class="btn btn-outline-gold btn-block" onclick="displayFengShuiCalendar()">
-                        <i class="fas fa-calendar-alt"></i> ดูปฏิทินฤกษ์มงคลของเดือน
-                    </button>
-                </form>
 
-                <div class="row mt-3">
-                    <div class="col-md-6" id="luckyDirection"></div>
-                    <div class="col-md-6" id="unluckyDirection"></div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-md-6" id="importantDays"></div>
-                    <div class="col-md-6" id="fengshuiTips"></div>
-                </div>
-
-                <div id="fengshuiResult" class="mt-4"></div>
-
-                <hr class="my-4">
-                <div class="row">
-                    <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="navigateTo('mainpage')">
-                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
-                        </button>
                     </div>
-                    <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-block border-0" onclick="goBack()">
-                            <i class="fas fa-home"></i> กลับหน้าหลัก
-                        </button>
-                    </div>
+
                 </div>
             </div>
+
+            <!-- Bottom Navigation -->
+            <div class="row mt-4 g-2">
+                <div class="col-6">
+                    <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="navigateTo('mainpage')">
+                        <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-light w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="goBack()">
+                        <i class="fas fa-home"></i> กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+
         </div>
     `;
+
+    // อัปเดตรายชื่อสมาชิกในดรอปดาวน์
+    if (typeof window.updateAllMemberSelectors === "function") {
+        const allHistory = JSON.parse(localStorage.getItem('horo_history') || '[]');
+        window.updateAllMemberSelectors(allHistory);
+    }
 }
 
 /**

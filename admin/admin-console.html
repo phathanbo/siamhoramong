@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ศูนย์ควบคุมระบบหลังบ้าน (Admin Console) - สยามโหรามงคล</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        body { 
+            font-family: 'Prompt', sans-serif !important; 
+            background-color: var(--modern-bg-base, #0c1424);
+            color: #FFFFFF; 
+            min-height: 100vh;
+        }
+        .admin-glass-card { 
+            background: linear-gradient(135deg, rgba(26, 38, 66, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border: 1px solid rgba(241, 208, 110, 0.25); 
+            border-radius: 20px; 
+            padding: 24px; 
+            margin-bottom: 24px; 
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .table-dark-glass {
+            background: rgba(13, 21, 39, 0.6) !important;
+            color: #FFFFFF !important;
+            border-radius: 14px;
+            overflow: hidden;
+            font-size: 0.92rem;
+        }
+        .table-dark-glass th {
+            background: rgba(241, 208, 110, 0.12) !important;
+            color: #FFF0A8 !important;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(241, 208, 110, 0.25) !important;
+            padding: 12px 14px !important;
+            font-size: 0.88rem;
+        }
+        .table-dark-glass td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            padding: 12px 14px !important;
+            vertical-align: middle;
+        }
+        .btn-gold-sm {
+            background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+            color: #0c1424 !important;
+            font-weight: 600;
+            font-size: 0.88rem;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-gold-sm:hover {
+            background: linear-gradient(135deg, #fff0a8 0%, #ffd700 100%);
+            color: #000 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(241, 208, 110, 0.3);
+        }
+        .btn-outline-gold-sm {
+            background: transparent;
+            color: #ffd700 !important;
+            border: 1px solid rgba(241, 208, 110, 0.4);
+            font-weight: 500;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            padding: 6px 14px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-outline-gold-sm:hover {
+            background: rgba(241, 208, 110, 0.15);
+            border-color: #ffd700;
+            color: #fff !important;
+        }
+        .form-control-sleek {
+            background: rgba(15, 23, 42, 0.7) !important;
+            border: 1px solid rgba(241, 208, 110, 0.25) !important;
+            color: #FFFFFF !important;
+            border-radius: 10px !important;
+            padding: 8px 14px !important;
+            font-size: 0.9rem !important;
+        }
+        .form-control-sleek:focus {
+            border-color: #ffd700 !important;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.25) !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header -->
+    <header class="header-bar no-print">
+        <a href="admin-console.html" class="header-title">
+            <i class="fas fa-dharmachakra"></i>
+            <div>
+                <h1>สยามโหรามงคล</h1>
+                <div class="header-sub">Siam Horamongkol • ศูนย์ควบคุมระบบหลังบ้าน (Admin Console)</div>
+            </div>
+        </a>
+        <div class="header-actions">
+            <a href="daily-horoscope-dashboard.html" class="btn-nav"><i class="fas fa-bullhorn" style="color: #ffd700;"></i> ดวงประจำวัน & ดาวจร</a>
+            <a href="package-permissions.html" class="btn-nav"><i class="fas fa-crown"></i> สิทธิ์แพ็กเกจ</a>
+            <a href="member-dashboard.html" class="btn-nav"><i class="fas fa-users-cog"></i> แดชบอร์ดสมาชิก</a>
+            <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าหลัก</a>
+        </div>
+    </header>
+
+    <div class="container py-4" style="max-width: 1200px;">
+        
+        <!-- Header Banner -->
+        <div class="text-center mb-4 p-4 rounded" style="background: linear-gradient(135deg, rgba(241,208,110,0.1) 0%, rgba(20,32,58,0.7) 100%); border: 1px solid rgba(241,208,110,0.25); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(15px);">
+            <div style="font-size: 2.4rem; margin-bottom: 6px; filter: drop-shadow(0 0 12px rgba(241,208,110,0.5));">⚙️</div>
+            <h2 style="font-size: 1.85rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px;">
+                ศูนย์ควบคุมระบบหลังบ้าน (Admin Command Center)
+            </h2>
+            <p style="color: #CBD5E1; font-size: 0.92rem; max-width: 600px; margin: 0 auto;">
+                ศูนย์รวมเครื่องมือสร้างคอนเทนต์ กราฟิกโซเชียล ตรวจสอบรายรับค่าครู มอนิเตอร์ดาวจร และจัดการฐานข้อมูลคำทำนาย
+            </p>
+        </div>
+
+        <!-- Quick Tools Container (ศูนย์รวมเครื่องมือสร้างสื่อ & แดชบอร์ดสมาชิก) -->
+        <div id="adminQuickToolsContainer"></div>
+
+        <!-- 🏛️ Bureau Operations & Revenue Stats (สถิติสำนักพยากรณ์ & ค่าครู) -->
+        <div class="admin-glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="m-0 font-weight-bold" style="color: #FFF0A8;">
+                    <i class="fas fa-landmark mr-2 text-warning"></i> สถิติการดำเนินงานสำนักพยากรณ์ (Bureau Operations)
+                </h5>
+                <a href="../pages/thai-horoscope-pro.html" class="btn-outline-gold-sm">
+                    <i class="fas fa-external-link-alt"></i> เปิดโต๊ะพยากรณ์
+                </a>
+            </div>
+            <p style="color: #CBD5E1; font-size: 0.88rem;">สรุปยอดรายรับค่าครู, ประวัติการให้คำปรึกษา และสมุดบันทึกเคสของอาจารย์</p>
+            
+            <!-- Summary Stats Counters -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-4 mb-2">
+                    <div class="p-3 text-center rounded" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 14px;">
+                        <small class="text-white-50">รายรับค่าครูสะสม</small>
+                        <h3 id="bureauTotalRevenue" class="font-weight-bold my-1 text-success" style="font-size: 1.6rem;">0 ฿</h3>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <div class="p-3 text-center rounded" style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 14px;">
+                        <small class="text-white-50">เคสที่บันทึกคำทำนาย</small>
+                        <h3 id="bureauTotalCases" class="font-weight-bold my-1 text-primary" style="font-size: 1.6rem;">0 เคส</h3>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <div class="p-3 text-center rounded" style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 14px;">
+                        <small class="text-white-50">รายการออกใบเสร็จค่าครู</small>
+                        <h3 id="bureauTotalReceipts" class="font-weight-bold my-1 text-warning" style="font-size: 1.6rem;">0 รายการ</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Bureau Payments Table -->
+            <div class="table-responsive" style="border-radius: 12px; border: 1px solid rgba(241,208,110,0.2);">
+                <table class="table table-dark-glass table-hover m-0">
+                    <thead>
+                        <tr>
+                            <th>รหัสใบเสร็จ</th>
+                            <th>ชื่อลูกดวง (Client)</th>
+                            <th>แพ็กเกจการพยากรณ์</th>
+                            <th>ยอดค่าครู (บาท)</th>
+                            <th>วันที่รับเงิน</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bureauPaymentsTableBody">
+                        <tr><td colspan="6" class="text-center py-3 text-white-50">ยังไม่มีประวัติการรับเงินค่าครู</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ตรวจสอบการชำระเงิน (Payments) -->
+        <div class="admin-glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="m-0 font-weight-bold" style="color: #FFF0A8;">
+                    <i class="fas fa-money-check-alt mr-2 text-warning"></i> ตรวจสอบการชำระเงิน (Pending Payments)
+                </h5>
+                <span class="badge px-3 py-1" style="background: rgba(241,208,110,0.15); color: #FFF0A8; border: 1px solid rgba(241,208,110,0.3); border-radius: 20px; font-size: 0.8rem;">
+                    รายการรอตรวจสอบ
+                </span>
+            </div>
+            <p style="color: #CBD5E1; font-size: 0.88rem;">รายการแจ้งโอนเงินที่รอการอนุมัติเพื่ออัปเกรดสถานะสมาชิก</p>
+            
+            <div class="table-responsive mt-3" style="border-radius: 12px; border: 1px solid rgba(241,208,110,0.2);">
+                <table class="table table-dark-glass table-hover m-0">
+                    <thead>
+                        <tr>
+                            <th>เวลาที่แจ้ง</th>
+                            <th>บัญชีผู้ใช้ (Username)</th>
+                            <th>แพ็กเกจ</th>
+                            <th>ยอดโอน</th>
+                            <th>สถานะ</th>
+                            <th>การจัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsTableBody">
+                        <tr><td colspan="6" class="text-center py-4" style="color: #CBD5E1;">กำลังโหลดข้อมูล...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- จัดการฐานข้อมูลพจนานุกรมตั้งชื่อมงคล -->
+        <div class="admin-glass-card">
+            <h5 class="font-weight-bold mb-2" style="color: #FFF0A8;">
+                <i class="fas fa-book mr-2 text-warning"></i> จัดการพจนานุกรมตั้งชื่อมงคล
+            </h5>
+            <p style="color: #CBD5E1; font-size: 0.88rem;">เพิ่มคำศัพท์ใหม่สำหรับระบบคำนวณและสร้างชื่อมงคล (Name Generator)</p>
+            
+            <form id="addVocabForm" class="row mt-3">
+                <div class="col-md-3 mb-3">
+                    <label for="vocabType" class="text-white-50 small font-weight-bold">ประเภทคำ (Type)</label>
+                    <select id="vocabType" class="form-control form-control-sleek" required>
+                        <option value="prefixes">คำขึ้นต้น (Prefix)</option>
+                        <option value="middles">คำกลาง (Middle)</option>
+                        <option value="suffixes">คำลงท้าย (Suffix)</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="vocabWord" class="text-white-50 small font-weight-bold">คำศัพท์ (Word)</label>
+                    <input type="text" id="vocabWord" class="form-control form-control-sleek" required placeholder="เช่น ธน">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="vocabMeaning" class="text-white-50 small font-weight-bold">ความหมาย (Meaning)</label>
+                    <input type="text" id="vocabMeaning" class="form-control form-control-sleek" required placeholder="เช่น ทรัพย์สมบัติ">
+                </div>
+                <div class="col-md-2 mb-3 d-flex align-items-end">
+                    <button type="submit" class="btn-gold-sm w-100" style="height: 38px;">
+                        <i class="fas fa-plus"></i> เพิ่มคำศัพท์
+                    </button>
+                </div>
+                <div class="col-12">
+                    <span id="vocabStatus" class="text-success font-weight-bold small"></span>
+                </div>
+            </form>
+
+            <hr style="border-color: rgba(241,208,110,0.15); margin: 20px 0;">
+
+            <!-- รายการคำศัพท์ปัจจุบัน -->
+            <h6 class="font-weight-bold mb-3" style="color: #FFF0A8;">
+                <i class="fas fa-list mr-2 text-warning"></i> รายการคำศัพท์ในฐานข้อมูล
+            </h6>
+            <div class="table-responsive" style="border-radius: 12px; border: 1px solid rgba(241,208,110,0.2);">
+                <table class="table table-dark-glass table-hover m-0">
+                    <thead>
+                        <tr>
+                            <th>ประเภท</th>
+                            <th>คำศัพท์</th>
+                            <th>ความหมาย</th>
+                            <th>หมวดหมู่</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vocabTableBody">
+                        <tr><td colspan="5" class="text-center py-3 text-white-50">กำลังโหลด...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SweetAlert2 -->
+    <script charset="UTF-8" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Firebase Scripts -->
+    <script charset="UTF-8" src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script charset="UTF-8" src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script charset="UTF-8" src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
+    <!-- App Scripts -->
+    <script charset="UTF-8" src="../src/utils/firebase-config.js"></script>
+    <script charset="UTF-8" src="js/admin-main.js"></script>
+
+    <!-- Data & Utilities (For Quick Tools) -->
+    <script charset="UTF-8" src="../src/utils/utils-helpers.js"></script>
+    <script charset="UTF-8" src="../src/engine/ascendant.js"></script>
+    <script charset="UTF-8" src="../src/data/thai-astrology-data.js"></script>
+    <script charset="UTF-8" src="../src/engine/thai-astrology-calculator.js"></script>
+    <script charset="UTF-8" src="../src/engine/auspicious-days.js"></script>
+    <script charset="UTF-8" src="../src/utils/colors.js"></script>
+    <script charset="UTF-8" src="../src/data/namesdb.js"></script>
+    <script charset="UTF-8" src="../src/data/namesdb-female-addon.js"></script>
+    <script charset="UTF-8" src="../src/data/namesdb-special-addon.js"></script>
+    <script charset="UTF-8" src="../src/data/namesdb-extended.js"></script>
+    <script charset="UTF-8" src="../src/utils/utils-auspicious.js"></script>
+
+    <!-- Modals Logic (For Quick Tools) -->
+    <script charset="UTF-8" src="js/admin-content-generator.js"></script>
+    <script charset="UTF-8" src="../src/data/tarot-data.js"></script>
+    <script charset="UTF-8" src="../src/data/fortune-daily-data.js"></script>
+    <script charset="UTF-8" src="js/admin-weekly-fortune.js"></script>
+    <script charset="UTF-8" src="js/admin-pdf-generator.js"></script>
+    <script charset="UTF-8" src="../src/data/zodiac-daily-data.js"></script>
+    <script charset="UTF-8" src="js/admin-zodiac-daily.js"></script>
+    
+    <!-- Cartomancy (For Quick Tools) -->
+    <script charset="UTF-8" src="../src/data/cartomancy-data.js"></script>
+    <script charset="UTF-8" src="js/admin-cartomancy.js"></script>
+    
+    <!-- Canvas Helpers -->
+    <script charset="UTF-8" src="../src/utils/canvas-helpers.js"></script>
+    
+    <!-- Page Logic -->
+    <script charset="UTF-8" src="js/admin-quick-tools.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof initAdminQuickTools === 'function') {
+                initAdminQuickTools();
+            }
+        });
+    </script>
+</body>
+</html>
