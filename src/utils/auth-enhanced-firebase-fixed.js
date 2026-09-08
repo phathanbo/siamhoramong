@@ -363,18 +363,44 @@ function setRegisterLoading(isLoading) {
 function switchToRegister() {
     const loginForm = document.getElementById('authLoginForm');
     const registerForm = document.getElementById('authRegisterForm');
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
     
     if (loginForm) loginForm.style.display = 'none';
     if (registerForm) registerForm.style.display = 'block';
+
+    if (loginTab) {
+        loginTab.style.color = 'rgba(203, 213, 225, 0.6)';
+        loginTab.style.background = 'transparent';
+        loginTab.style.borderColor = 'transparent';
+    }
+    if (registerTab) {
+        registerTab.style.color = '#f1d06e';
+        registerTab.style.background = 'linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(212, 175, 55, 0.1) 100%)';
+        registerTab.style.borderColor = 'rgba(212, 175, 55, 0.4)';
+    }
     clearAuthError();
 }
 
 function switchToLogin() {
     const loginForm = document.getElementById('authLoginForm');
     const registerForm = document.getElementById('authRegisterForm');
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
     
     if (registerForm) registerForm.style.display = 'none';
     if (loginForm) loginForm.style.display = 'block';
+
+    if (loginTab) {
+        loginTab.style.color = '#f1d06e';
+        loginTab.style.background = 'linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(212, 175, 55, 0.1) 100%)';
+        loginTab.style.borderColor = 'rgba(212, 175, 55, 0.4)';
+    }
+    if (registerTab) {
+        registerTab.style.color = 'rgba(203, 213, 225, 0.6)';
+        registerTab.style.background = 'transparent';
+        registerTab.style.borderColor = 'transparent';
+    }
     clearAuthError();
 }
 

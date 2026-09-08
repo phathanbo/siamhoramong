@@ -2702,8 +2702,98 @@ const KNOWLEDGE_ARTICLES = {
     link: "knowledgePage",
     badge: "badge-secondary"
 },
+"jakkatheepani_conjunctions": {
+    id: "K029",
+    category: "ตำราโบราณ",
+    title: "🪐 พระเคราะห์อยู่ร่วมราศีเดียวกัน (คัมภีร์จักรทีปนี)",
+    type: "คัมภีร์จักรทีปนี",
+    level: "ทั่วไป",
+    content: `
+    <div class="article-rich-content">
+        <section class="mb-4">
+            <h5 class="text-gold border-bottom-gold pb-2">
+                <i class="fas fa-book-reader mr-2"></i>
+                คัมภีร์จักรทีปนี ว่าด้วยพระเคราะห์ร่วมราศี
+            </h5>
+            <p>
+                ในวิชาโหราศาสตร์ไทยโบราณ ตาม <b>คัมภีร์จักรทีปนี</b> เรียบเรียงโดย <i>พ.ต.หลวงเสนานุกิจการ (ยง บุญนาค)</i> 
+                ได้บันทึกคำทำนายโบราณเมื่อดวงดาวพระเคราะห์โคจรมาสถิตกุมร่วมราศีเดียวกัน 
+                ซึ่งส่งผลต่ออุปนิสัย วาสนาบารมี โชคลาภ และข้อควรระวังในชีวิตของเจ้าชะตาอย่างมีนัยสำคัญ
+            </p>
+        </section>
 
+        <section class="mb-4 p-3 bg-black-25 rounded border-left-gold">
+            <h6 class="text-gold-light mb-3">
+                ● พระเคราะห์กุมร่วมราศีกับพระอาทิตย์ (๑)
+            </h6>
+            <div class="table-responsive">
+                <table class="table table-sm table-dark table-hover text-white-50 border-gold">
+                    <thead>
+                        <tr class="text-gold">
+                            <th style="width: 25%;">คู่ดาวร่วมราศี</th>
+                            <th>คำพยากรณ์ตามคัมภีร์จักรทีปนี</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-warning font-weight-bold">พระ ๑ และ ๒<br><small class="text-muted">(อาทิตย์ + จันทร์)</small></td>
+                            <td>ผู้นั้นใจดี แต่อายุไม่ยืน เพราะเล่นชู้ มักมีลูกหัวปีตาย เมียมาก เพื่อนมาก นัยน์ตาผิดปกติ <span class="badge badge-danger">ถ้าอยู่เรือนพฤหัสบดี แต่งงานแล้วมีแต่จะเดือดร้อน</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-warning font-weight-bold">พระ ๑ และ ๓<br><small class="text-muted">(อาทิตย์ + อังคาร)</small></td>
+                            <td>รู้วิชาการ รู้ธรรมและศิลปศาสตร์ทั้งหลายล้ำลึก มีทรัพย์มาก ไม่กลัวใคร มีกำลังกล้าหาญ มีทิฐิมานะ มีศัตรู ใจร้อนเร็ว มักเกิดเรื่องวุ่นวาย</td>
+                        </tr>
+                        <tr>
+                            <td class="text-warning font-weight-bold">พระ ๑ และ ๔<br><small class="text-muted">(อาทิตย์ + พุธ)</small></td>
+                            <td>มีศิลปศาสตร์ รู้ธรรมดี เจ้าชู้ พูดมาก กระแสเสียงผิดปกติ มีโรคฟัน ฟันไม่ดี</td>
+                        </tr>
+                        <tr>
+                            <td class="text-warning font-weight-bold">พระ ๑ และ ๕<br><small class="text-muted">(อาทิตย์ + พฤหัสบดี)</small></td>
+                            <td>มีเครื่องบริโภคมาก ยำเกรงผู้ใหญ่ พอเรียนอะไรรู้ได้</td>
+                        </tr>
+                        <tr>
+                            <td class="text-warning font-weight-bold">พระ ๑ และ ๖<br><small class="text-muted">(อาทิตย์ + ศุกร์)</small></td>
+                            <td>มักเกิดลาภจะเป็นเจ้าแก่หญิง จะมีของมากแต่บริวารน้อย สึกพระหรือเป็นปาราชิก ตาบอดพิกลหรือตัวพิการสิ่งหนึ่ง</td>
+                        </tr>
+                        <tr>
+                            <td class="text-warning font-weight-bold">พระ ๑ และ ๗<br><small class="text-muted">(อาทิตย์ + เสาร์)</small></td>
+                            <td>มีข้าหญิงชายมาก ทรัพย์โภชนาหารมาก เมื่อเกิดหรือเล็กๆ ไฟไหม้ หรือมิฉะนั้นตกใจไฟ</td>
+                        </tr>
+                        <tr>
+                            <td class="text-warning font-weight-bold">พระ ๑ และ ๘<br><small class="text-muted">(อาทิตย์ + ราหู)</small></td>
+                            <td>ผู้ใหญ่ให้ร้าย มักเดินทาง</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
+        <section class="mb-4">
+            <h5 class="text-gold">
+                <i class="fas fa-fire mr-2"></i>
+                เกณฑ์พิเศษ: พระเคราะห์ ๓ องค์ร่วมราศี
+            </h5>
+            <div class="alert alert-dark border-warning">
+                <b class="text-warning">พระ ๑ ๓ ๗ ร่วมกัน (อาทิตย์ + อังคาร + เสาร์):</b> 
+                พ่อตายก่อนแม่ (บิดามักสิ้นก่อนมารดา) เนื่องจากดาวธาตุไฟและบาปเคราะห์ประชุมรวมกันอย่างเข้มข้น
+            </div>
+        </section>
+
+        <div class="alert alert-gold bg-dark border-gold mt-4">
+            <h6 class="mb-1">
+                <i class="fas fa-info-circle mr-2"></i>
+                เกร็ดโหราจารย์
+            </h6>
+            <small>
+                คำทำนายโบราณสะท้อนพลังธาตุของดวงดาวที่กระทบกันโดยตรงเมื่ออยู่ราศีเดียวกัน 
+                อย่างไรก็ตาม ในการอ่านดวงชะตาจริงต้องพิจารณาภพเรือนและมาตรฐานดาว (เกษตร อุจจ์ นิจ ประ) ประกอบร่วมด้วยเสมอ
+            </small>
+        </div>
+    </div>
+    `,
+    link: "knowledgePage",
+    badge: "badge-warning"
+}
 };
 /**
  * ฟังก์ชันช่วยเหลือ (Helper) เพื่อความเสถียรสูงสุด

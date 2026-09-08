@@ -685,17 +685,61 @@
                 const key2 = `${p2.num}-${p1.num}`;
                 const pairData = PAIR_DATABASE[key1] || PAIR_DATABASE[key2];
 
-                if (pairData || step <= 4) {
+                // คัมภีร์จักรทีปนี (พระเคราะห์อยู่ร่วมราศีเดียวกัน)
+                let jakkatheepaniDesc = null;
+                if (step === 0) {
+                    const jakkaDB = (typeof ThaiAstrologyData !== "undefined" && ThaiAstrologyData.JAKKATHEEPANI_CONJUNCTIONS)
+                        ? ThaiAstrologyData.JAKKATHEEPANI_CONJUNCTIONS
+                        : {
+                            "1-2": { prophecy: "ผู้นั้นใจดี แต่อายุไม่ยืน เพราะเล่นชู้ มักมีลูกหัวปีตาย เมียมาก เพื่อนมาก นัยน์ตาผิดปกติ (ถ้าอยู่เรือนพฤหัสบดี แต่งงานแล้วมีแต่จะเดือดร้อน)" },
+                            "1-3": { prophecy: "รู้วิชาการ รู้ธรรมและศิลปศาสตร์ทั้งหลายล้ำลึก มีทรัพย์มาก ไม่กลัวใคร มีกำลังกล้าหาญ มีทิฐิมานะ มีศัตรู ใจร้อนเร็ว มักเกิดเรื่องวุ่นวาย" },
+                            "1-4": { prophecy: "มีศิลปศาสตร์ รู้ธรรมดี เจ้าชู้ พูดมาก กระแสเสียงผิดปกติ มีโรคฟัน ฟันไม่ดี" },
+                            "1-5": { prophecy: "มีเครื่องบริโภคมาก ยำเกรงผู้ใหญ่ พอเรียนอะไรรู้ได้" },
+                            "1-6": { prophecy: "มักเกิดลาภจะเป็นเจ้าแก่หญิง จะมีของมากแต่บริวารน้อย สึกพระหรือเป็นปาราชิก ตาบอดพิกลหรือตัวพิการสิ่งหนึ่ง" },
+                            "1-7": { prophecy: "มีข้าหญิงชายมาก ทรัพย์โภชนาหารมาก เมื่อเกิดหรือเล็กๆ ไฟไหม้ หรือมิฉะนั้นตกใจไฟ" },
+                            "1-8": { prophecy: "ผู้ใหญ่ให้ร้าย มักเดินทาง" }
+                        };
+                    const jEntry = jakkaDB[key1] || jakkaDB[key2];
+                    if (jEntry) {
+                        let text = jEntry.prophecy;
+                        if (jEntry.specialConditions) {
+                            jEntry.specialConditions.forEach(sc => {
+                                if (sc.check(p1.sign)) text += ` [${sc.note}]`;
+                            });
+                        }
+                        jakkatheepaniDesc = text;
+                    }
+                }
+
+                if (pairData || step <= 4 || jakkatheepaniDesc) {
+                    let descText = pairData ? pairData.desc : `ดาวทั้งสองทำมุม ${aspect} ส่งผลหนุนนำทางอุปนิสัยและจังหวะชีวิต`;
+                    if (jakkatheepaniDesc) {
+                        descText += ` | 📜 คัมภีร์จักรทีปนี: "${jakkatheepaniDesc}"`;
+                    }
                     pairs.push({
                         pairName: `${p1.name} (${p1.thNum}) + ${p2.name} (${p2.thNum})`,
                         p1Num: p1.num,
                         p2Num: p2.num,
                         aspect: aspect,
-                        pairType: pairData ? pairData.type : "คู่ดาวผสมผสาน",
-                        desc: pairData ? pairData.desc : `ดาวทั้งสองทำมุม ${aspect} ส่งผลหนุนนำทางอุปนิสัยและจังหวะชีวิต`
+                        pairType: pairData ? pairData.type : (step === 0 ? "ร่วมราศีกุมกัน" : "คู่ดาวผสมผสาน"),
+                        desc: descText,
+                        jakkatheepani: jakkatheepaniDesc
                     });
                 }
             }
+        }
+
+        // ตรวจสอบกรณีดาว 3 ดวงร่วมราศีตามคัมภีร์จักรทีปนี (เช่น ๑ ๓ ๗ ร่วมกัน)
+        if (planets[1] && planets[3] && planets[7] && planets[1].sign === planets[3].sign && planets[1].sign === planets[7].sign) {
+            pairs.push({
+                pairName: "อาทิตย์ (๑) + อังคาร (๓) + เสาร์ (๗)",
+                p1Num: 1,
+                p2Num: 7,
+                aspect: "กุมร่วมราศี ๓ ดวง (Triple Conjunction)",
+                pairType: "เกณฑ์พิเศษคัมภีร์จักรทีปนี",
+                desc: "พระ ๑ ๓ ๗ ร่วมราศีเดียวกัน: พ่อตายก่อนแม่ (บิดามักสิ้นชีวิตก่อนมารดา) พึงระวังอิทธิพลธาตุไฟแรงกล้าและอุบัติภัยจากเพลิง/ความร้อน",
+                jakkatheepani: "พระ ๑ ๓ ๗ ร่วมกัน พ่อตายก่อนแม่"
+            });
         }
 
         return pairs;

@@ -16,6 +16,12 @@ function getCurrentUsername() {
 }
 
 let previousPage = 'mainContent';
+const pageScrollPositions = {};
+
+// ป้องกัน browser scroll กระตุก และให้แอพจัดการ scroll position เองเมื่อเปลี่ยนหน้า SPA
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
 
 
 function getZodiacName(index) {
@@ -387,11 +393,19 @@ function getYamPrediction(yamIndex, period) {
 }
 
 function goBack() {
-    navigateTo('mainContent');
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        navigateTo(previousPage || 'mainContent');
+    }
 }
 
 function goBackend() {
-    navigateTo('mainContent');
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        navigateTo('mainContent');
+    }
 }
 
 // --- ฟังก์ชันบันทึกรูปภาพ ---
@@ -507,8 +521,18 @@ function getProfileByMemberId(memberId) {
     return null;
 }
 
-function navigateTo(pageId, addHistory = true) {
+function navigateTo(pageId, addHistory = true, targetScrollPos = null) {
     console.log("🚀 กำลังนำทางไปที่หน้า:", pageId);
+
+    // 0. บันทึก scroll position ของหน้าปัจจุบันก่อนที่จะซ่อน
+    const activeSection = document.querySelector('.main-section.active') || document.querySelector('.main-section:not(.hidden)');
+    if (activeSection && activeSection.id) {
+        pageScrollPositions[activeSection.id] = window.scrollY;
+        previousPage = activeSection.id;
+        if (window.history.state) {
+            window.history.replaceState({ ...window.history.state, scrollY: window.scrollY }, "", window.location.hash || ("#" + activeSection.id));
+        }
+    }
 
     // 1. หาหน้าเป้าหมายใน HTML
     let targetPage = document.getElementById(pageId);
@@ -678,8 +702,18 @@ function navigateTo(pageId, addHistory = true) {
     // 6. บันทึกลง LocalStorage (เผื่อผู้ใช้ปิดแอปแล้วเปิดใหม่)
     localStorage.setItem('currentPage', pageId);
 
-    // 7. เลื่อนหน้าจอกลับไปบนสุดแบบนุ่มนวล
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 7. จัดการตำแหน่ง Scroll (ถ้าเป็นการกดย้อนกลับให้คืนค่าตำแหน่งเดิม ถ้าเป็นการเปิดหน้าใหม่ให้เลื่อนขึ้นบนสุด)
+    if (typeof targetScrollPos === 'number') {
+        // ให้เวลา DOM render เล็กน้อยก่อน scroll กลับจุดเดิม
+        requestAnimationFrame(() => {
+            window.scrollTo({ top: targetScrollPos, behavior: 'auto' });
+            setTimeout(() => {
+                window.scrollTo({ top: targetScrollPos, behavior: 'smooth' });
+            }, 60);
+        });
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     // 8. เรียก render function สำหรับหน้าที่ต้องสร้าง HTML แบบ Dynamic
     //    ต้องอยู่หลัง display:'block' เพื่อให้ getElementById เจอ element
@@ -731,7 +765,13 @@ function navigateTo(pageId, addHistory = true) {
 
 // ฟังก์ชันย้อนกลับที่ใช้หน้าที่เก็บไว้
 function goBackCustom() {
-    navigateTo(previousPage);
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        const prevTarget = previousPage || 'mainContent';
+        const savedScroll = typeof pageScrollPositions[prevTarget] === 'number' ? pageScrollPositions[prevTarget] : 0;
+        navigateTo(prevTarget, false, savedScroll);
+    }
 }
 
 // ส่วนที่ทำให้ F5 แล้วอยู่ที่เดิม (ใส่ไว้ใน DOMContentLoaded)
@@ -891,6 +931,9 @@ async function captureCustomArea(element, fileName) {
 window.onpopstate = function(event) {
     // 1. ลองดึงค่าจาก State ก่อน
     let pageId = event.state ? event.state.pageId : null;
+    let savedScrollY = (event.state && typeof event.state.scrollY === 'number') 
+        ? event.state.scrollY 
+        : null;
 
     // 2. ถ้า State ไม่มี ให้ลองดึงจาก Hash (#) บน URL
     if (!pageId) {
@@ -902,8 +945,13 @@ window.onpopstate = function(event) {
         pageId = 'mainContent';
     }
 
-    console.log("Navigation Change to:", pageId);
-    navigateTo(pageId, false); // ส่ง false เพื่อไม่ให้เกิดการบันทึกประวัติซ้ำซ้อน
+    // ถ้าไม่มี savedScrollY จาก event.state ให้ลองดึงจาก memory cache
+    if (savedScrollY === null && typeof pageScrollPositions[pageId] === 'number') {
+        savedScrollY = pageScrollPositions[pageId];
+    }
+
+    console.log("Navigation Change to:", pageId, "Restore Scroll:", savedScrollY);
+    navigateTo(pageId, false, savedScrollY); // ส่ง false เพื่อไม่ให้บันทึกซ้ำ และส่งตำแหน่ง scroll เดิม
 };
 
 // แปลงวันที่ไทย dd/mm/พ.ศ. → Date Object

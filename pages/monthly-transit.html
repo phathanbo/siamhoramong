@@ -26,9 +26,9 @@
     font-family:'Sarabun',sans-serif;
     line-height:1.7;
   }
-  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px;}
+  .wrap{width:100%;max-width:100%;margin:0;padding:24px 24px 80px;}
 
-  header{text-align:center;margin-bottom:8px;}
+  .hero-section{text-align:center;margin-bottom:8px;}
   .eyebrow{
     letter-spacing:.25em;color:var(--gold-bright);font-size:.78rem;
     text-transform:uppercase;margin-bottom:10px;
@@ -150,20 +150,149 @@
   .btn-save:hover {
     background: rgba(201, 164, 92, 0.4);
   }
+  .transit-control-card {
+    background: rgba(35, 42, 86, 0.5);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  }
+
+  .transit-controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .transit-control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .transit-input-control {
+    padding: 9px 14px;
+    border-radius: 8px;
+    border: 1px solid #c9a45c;
+    background: #151935;
+    color: #fff;
+    outline: none;
+    font-family: 'Sarabun';
+    font-size: 0.95rem;
+    transition: all 0.2s;
+  }
+  .transit-input-control:focus {
+    border-color: #ffd88a;
+    box-shadow: 0 0 10px rgba(232, 200, 118, 0.4);
+  }
+
+  .btn-gold-action {
+    padding: 9px 22px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #ffd88a, #d4af37);
+    color: #151935;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: 'Sarabun';
+    font-size: 0.95rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-gold-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.4);
+  }
+
   .personal-box {
-    background: rgba(35, 42, 86, 0.4);
-    border: 1px dashed rgba(201,164,92,0.4);
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 25px;
+    background: rgba(35, 42, 86, 0.35);
+    border: 1px dashed rgba(201, 164, 92, 0.4);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    width: 100%;
     text-align: center;
   }
 
-
-  footer{
-    margin-top:56px;text-align:center;color:#7d83ac;font-size:.8rem;
+  /* wheel section full width */
+  .wheel-section {
+    display: grid;
+    grid-template-columns: minmax(360px, 460px) 1fr;
+    gap: 36px;
+    align-items: center;
+    margin-bottom: 40px;
+    width: 100%;
+    background: rgba(35, 42, 86, 0.35);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 30px;
   }
-  footer a{color:var(--gold-bright);}
+  @media (max-width: 900px) {
+    .wheel-section { grid-template-columns: 1fr; padding: 20px; }
+  }
+
+  .method-note {
+    background: rgba(35, 42, 86, 0.55);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 24px;
+    font-size: .95rem;
+    color: #dfe2f2;
+    margin-bottom: 30px;
+    width: 100%;
+  }
+  .method-note b { color: var(--gold-bright); }
+
+  details {
+    background: rgba(122, 46, 46, 0.18);
+    border: 1px solid rgba(232, 200, 118, 0.25);
+    border-radius: 14px;
+    padding: 16px 22px;
+    margin-bottom: 36px;
+    width: 100%;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    width: 100%;
+  }
+
+  footer {
+    margin-top: 56px;
+    text-align: center;
+    color: #7d83ac;
+    font-size: .85rem;
+    width: 100%;
+  }
+  footer a { color: var(--gold-bright); }
+
+  /* Header-bar Full-Width Left & Right Alignment */
+  .header-bar {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 12px 24px !important;
+  }
+
+  .header-title {
+    margin-right: auto !important;
+    text-align: left !important;
+  }
+
+  .header-actions {
+    margin-left: auto !important;
+    text-align: right !important;
+  }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="../assets/css/style.css">
@@ -185,70 +314,73 @@
 
 <div class="wrap" style="padding-top: 20px;">
 
-  <div style="text-align: center; margin-bottom: 20px;">
+  <div class="hero-section" style="margin-bottom: 24px; width: 100%;">
     <div class="eyebrow">สยามโหรามงคล · ดวงดาวจร</div>
     <h1>คำทำนายดาวจรประจำเดือน</h1>
     <div class="subtitle">คำนวณตำแหน่งดาวจริงระบบนิรายนะ (Lahiri Ayanamsa) แล้วตีความตามหลักโคจรจร 12 ราศี</div>
     
-    
-    <div style="text-align: center; margin-bottom: 15px;">
-        <div class="mode-toggle" style="display: inline-flex; background: rgba(35, 42, 86, 0.6); border-radius: 8px; border: 1px solid rgba(201,164,92,0.35); overflow: hidden;">
-            <button id="btnModeMonthly" class="mode-btn" style="padding: 8px 20px; border: none; background: rgba(201,164,92,0.2); color: #e8c876; cursor: pointer; font-family: 'Sarabun'; font-weight: 600; transition: all 0.3s;">ดูแบบรายเดือน</button>
-            <button id="btnModeDaily" class="mode-btn" style="padding: 8px 20px; border: none; background: transparent; color: #7d83ac; cursor: pointer; font-family: 'Sarabun'; font-weight: 600; transition: all 0.3s;">ดูแบบรายวัน</button>
-        </div>
-    </div>
+    <div class="transit-control-card">
+      <div style="text-align: center; margin-bottom: 18px;">
+          <div class="mode-toggle" style="display: inline-flex; background: rgba(21, 25, 53, 0.8); border-radius: 8px; border: 1px solid rgba(201,164,92,0.35); overflow: hidden;">
+              <button id="btnModeMonthly" class="mode-btn" style="padding: 8px 24px; border: none; background: rgba(201,164,92,0.25); color: #e8c876; cursor: pointer; font-family: 'Sarabun'; font-weight: 600; transition: all 0.3s;">ดูแบบรายเดือน</button>
+              <button id="btnModeDaily" class="mode-btn" style="padding: 8px 24px; border: none; background: transparent; color: #7d83ac; cursor: pointer; font-family: 'Sarabun'; font-weight: 600; transition: all 0.3s;">ดูแบบรายวัน</button>
+          </div>
+      </div>
 
-    <div id="monthlyControls" style="background: rgba(35, 42, 86, 0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(201,164,92,0.35); display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; margin-bottom: 20px;">
-        <label style="color: #e8c876; font-weight: 600;">เลือกเดือน:</label>
-        <select id="selectMonth" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #c9a45c; background: #151935; color: #fff; outline: none; font-family: 'Sarabun';">
-            <option value="1">มกราคม</option>
-            <option value="2">กุมภาพันธ์</option>
-            <option value="3">มีนาคม</option>
-            <option value="4">เมษายน</option>
-            <option value="5">พฤษภาคม</option>
-            <option value="6">มิถุนายน</option>
-            <option value="7">กรกฎาคม</option>
-            <option value="8">สิงหาคม</option>
-            <option value="9">กันยายน</option>
-            <option value="10">ตุลาคม</option>
-            <option value="11">พฤศจิกายน</option>
-            <option value="12">ธันวาคม</option>
-        </select>
-        <label style="color: #e8c876; font-weight: 600; margin-left: 10px;">ปี พ.ศ.:</label>
-        <input type="number" id="selectYear" value="2569" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #c9a45c; background: #151935; color: #fff; width: 100px; outline: none; font-family: 'Sarabun';">
-        <button id="btnCalcTransit" style="padding: 8px 16px; border-radius: 6px; border: none; background: linear-gradient(135deg, #ffd88a, #d4af37); color: #151935; font-weight: bold; cursor: pointer; font-family: 'Sarabun';">คำนวณ</button>
-    
-    </div>
-    <div id="dailyControls" style="display: none; background: rgba(35, 42, 86, 0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(201,164,92,0.35); justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
-        <label style="color: #e8c876; font-weight: 600;">เลือกวันที่:</label>
-        <input type="date" id="selectTransitDate" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #c9a45c; background: #151935; color: #fff; outline: none; font-family: 'Sarabun';">
-        <button id="btnCalcDaily" style="padding: 8px 16px; border-radius: 6px; border: none; background: linear-gradient(135deg, #ffd88a, #d4af37); color: #151935; font-weight: bold; cursor: pointer; font-family: 'Sarabun';">คำนวณรายวัน</button>
-    </div>
+      <div id="monthlyControls" class="transit-controls-row">
+          <div class="transit-control-group">
+              <label style="color: #e8c876; font-weight: 600;">เลือกเดือน:</label>
+              <select id="selectMonth" class="transit-input-control">
+                  <option value="1">มกราคม</option>
+                  <option value="2">กุมภาพันธ์</option>
+                  <option value="3">มีนาคม</option>
+                  <option value="4">เมษายน</option>
+                  <option value="5">พฤษภาคม</option>
+                  <option value="6">มิถุนายน</option>
+                  <option value="7">กรกฎาคม</option>
+                  <option value="8">สิงหาคม</option>
+                  <option value="9">กันยายน</option>
+                  <option value="10">ตุลาคม</option>
+                  <option value="11">พฤศจิกายน</option>
+                  <option value="12">ธันวาคม</option>
+              </select>
+          </div>
+          <div class="transit-control-group">
+              <label style="color: #e8c876; font-weight: 600;">ปี พ.ศ.:</label>
+              <input type="number" id="selectYear" value="2569" class="transit-input-control" style="width: 110px;">
+          </div>
+          <button id="btnCalcTransit" class="btn-gold-action">คำนวณ</button>
+      </div>
 
-    
-    <div class="personal-box">
-        <div style="color: #cfd3ea; font-size: 0.95rem; margin-bottom: 10px;">
-            <i class="fas fa-user-circle"></i> ดูดาวจรเฉพาะคุณ (ผูกดวงจากวันเกิด)
-        </div>
-        <div style="display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center;">
-            <input type="date" id="inpBirthDate" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #c9a45c; background: #151935; color: #fff; outline: none; font-family: 'Sarabun';">
-            <input type="time" id="inpBirthTime" value="12:00" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #c9a45c; background: #151935; color: #fff; outline: none; font-family: 'Sarabun';">
-            
-            <button id="btnPersonal" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #e8c876; background: transparent; color: #e8c876; cursor: pointer; font-family: 'Sarabun'; transition: all 0.2s;">
-                ไปที่ดวงของคุณ
-            </button>
-            
-            <select id="memberSelect" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #7cbf8e; background: rgba(124, 191, 142, 0.1); color: #7cbf8e; outline: none; font-family: 'Sarabun'; margin-left: 5px;">
-                <option value="">-- เลือกจากฐานข้อมูลสมาชิก --</option>
-            </select>
-
-
-        </div>
+      <div id="dailyControls" class="transit-controls-row" style="display: none;">
+          <div class="transit-control-group">
+              <label style="color: #e8c876; font-weight: 600;">เลือกวันที่:</label>
+              <input type="date" id="selectTransitDate" class="transit-input-control">
+          </div>
+          <button id="btnCalcDaily" class="btn-gold-action">คำนวณรายวัน</button>
+      </div>
+      
+      <div class="personal-box">
+          <div style="color: #cfd3ea; font-size: 0.95rem; margin-bottom: 12px;">
+              <i class="fas fa-user-circle" style="color: #e8c876;"></i> ดูดาวจรเฉพาะคุณ (ผูกดวงจากวันเกิด)
+          </div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; align-items: center;">
+              <input type="date" id="inpBirthDate" class="transit-input-control">
+              <input type="time" id="inpBirthTime" value="12:00" class="transit-input-control">
+              
+              <button id="btnPersonal" style="padding: 9px 18px; border-radius: 8px; border: 1px solid #e8c876; background: rgba(232, 200, 118, 0.1); color: #e8c876; cursor: pointer; font-family: 'Sarabun'; font-weight: 600; transition: all 0.2s;">
+                  ไปที่ดวงของคุณ
+              </button>
+              
+              <select id="memberSelect" class="transit-input-control" style="border-color: #7cbf8e; background: rgba(124, 191, 142, 0.15); color: #a7ddb3;">
+                  <option value="">-- เลือกจากฐานข้อมูลสมาชิก --</option>
+              </select>
+          </div>
+      </div>
     </div>
     
-    <h2 id="reportTitle"
- style="font-family: 'Chonburi'; color: #e8c876; font-size: 1.8rem; margin: 10px 0;"></h2>
-  </header>
+    <h2 id="reportTitle" style="font-family: 'Chonburi'; color: #e8c876; font-size: 1.8rem; margin: 15px 0;"></h2>
+  </div>
 
 
   <div class="method-note">

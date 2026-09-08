@@ -319,35 +319,50 @@ if (typeof window !== 'undefined') {
         if (existing) existing.remove();
 
         const btnContainer = document.createElement('div');
-        btnContainer.className = 'admin-fb-post-buttons-container text-center mt-3 p-3 rounded';
-        btnContainer.style.background = 'rgba(212, 175, 55, 0.1)';
-        btnContainer.style.border = '1px dashed #d4af37';
-        btnContainer.style.borderRadius = '12px';
+        btnContainer.className = 'admin-fb-post-buttons-container text-center mt-4 p-3 taksa-glass-card';
+        btnContainer.style.background = 'rgba(255, 255, 255, 0.65)';
+        btnContainer.style.backdropFilter = 'blur(20px) saturate(180%)';
+        btnContainer.style.webkitBackdropFilter = 'blur(20px) saturate(180%)';
+        btnContainer.style.border = '1.5px solid rgba(255, 255, 255, 0.85)';
+        btnContainer.style.borderRadius = '24px';
+        btnContainer.style.boxShadow = '0 15px 35px -5px rgba(0, 0, 0, 0.05), inset 0 1.5px 2px rgba(255, 255, 255, 0.95)';
         btnContainer.style.margin = '20px 0';
         btnContainer.style.display = 'flex';
         btnContainer.style.justifyContent = 'center';
-        btnContainer.style.gap = '15px';
+        btnContainer.style.alignItems = 'center';
+        btnContainer.style.gap = '14px';
         btnContainer.style.flexWrap = 'wrap';
 
-        // ปุ่ม 1: โพสต์ลงเพจเฟซบุ๊กอัตโนมัติ
+        // ปุ่ม 1: โพสต์ลงเพจเฟซบุ๊กอัตโนมัติ (Liquid Glass Pill - Royal Blue)
         const btnDirect = document.createElement('button');
-        btnDirect.className = 'btn btn-primary font-weight-bold';
-        btnDirect.style.background = 'linear-gradient(45deg, #1877F2, #3b5998)';
-        btnDirect.style.border = 'none';
-        btnDirect.style.padding = '12px 24px';
-        btnDirect.style.borderRadius = '8px';
-        btnDirect.innerHTML = '<i class="fab fa-facebook mr-2"></i> โพสต์ลงเพจ Facebook โดยตรง';
+        btnDirect.className = 'taksa-glass-pill';
+        btnDirect.style.background = 'linear-gradient(135deg, #1877f2 0%, #0d6efd 50%, #0a58ca 100%)';
+        btnDirect.style.border = '1px solid rgba(255, 255, 255, 0.65)';
+        btnDirect.style.color = '#ffffff';
+        btnDirect.style.padding = '12px 28px';
+        btnDirect.style.borderRadius = '9999px';
+        btnDirect.style.fontWeight = '600';
+        btnDirect.style.fontSize = '0.94rem';
+        btnDirect.style.boxShadow = '0 12px 26px -4px rgba(24, 119, 242, 0.45), 0 4px 12px rgba(13, 110, 253, 0.25), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.7), inset 0 -2px 3px rgba(0, 0, 0, 0.2)';
+        btnDirect.style.cursor = 'pointer';
+        btnDirect.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        btnDirect.innerHTML = '<i class="fab fa-facebook me-2"></i> โพสต์ลงเพจ Facebook โดยตรง';
         btnDirect.onclick = () => window.postContainerToFacebook(containerId, getSummaryTextFunc, 'direct');
 
-        // ปุ่ม 2: ก๊อปปี้คำทำนายและโหลดรูปสำหรับแชร์เอง
+        // ปุ่ม 2: ก๊อปปี้คำทำนายและโหลดรูปสำหรับแชร์เอง (Liquid Glass Pill - Violet / Deep Indigo)
         const btnManual = document.createElement('button');
-        btnManual.className = 'btn btn-dark font-weight-bold';
-        btnManual.style.background = 'linear-gradient(45deg, #2c3e50, #1a252f)';
-        btnManual.style.border = '1px solid #d4af37';
-        btnManual.style.color = '#fff';
-        btnManual.style.padding = '12px 24px';
-        btnManual.style.borderRadius = '8px';
-        btnManual.innerHTML = '<i class="fas fa-copy mr-2"></i> ดึงรูปภาพ + ก๊อปปี้คำทำนาย';
+        btnManual.className = 'taksa-glass-pill';
+        btnManual.style.background = 'linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #4f46e5 100%)';
+        btnManual.style.border = '1px solid rgba(255, 255, 255, 0.65)';
+        btnManual.style.color = '#ffffff';
+        btnManual.style.padding = '12px 28px';
+        btnManual.style.borderRadius = '9999px';
+        btnManual.style.fontWeight = '600';
+        btnManual.style.fontSize = '0.94rem';
+        btnManual.style.boxShadow = '0 12px 26px -4px rgba(124, 58, 237, 0.45), 0 4px 12px rgba(99, 102, 241, 0.25), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.7), inset 0 -2px 3px rgba(0, 0, 0, 0.2)';
+        btnManual.style.cursor = 'pointer';
+        btnManual.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        btnManual.innerHTML = '<i class="fas fa-copy me-2"></i> ดึงรูปภาพ + ก๊อปปี้คำทำนาย';
         btnManual.onclick = () => window.postContainerToFacebook(containerId, getSummaryTextFunc, 'manual');
 
         btnContainer.appendChild(btnDirect);

@@ -9,9 +9,9 @@
 const CONFIG = {
     // LINE Messaging API
     LINE: {
-        CHANNEL_ID: "YOUR_LINE_CHANNEL_ID",           // https://developers.line.biz/console/
-        CHANNEL_SECRET: "YOUR_LINE_CHANNEL_SECRET",
-        CHANNEL_ACCESS_TOKEN: "YOUR_LINE_CHANNEL_ACCESS_TOKEN"
+        CHANNEL_ID: "2011471468",           // https://developers.line.biz/console/
+        CHANNEL_SECRET: "af744f1156894a20b245a991983004a8",
+        CHANNEL_ACCESS_TOKEN: "cU2qdts0aHY8x8Vz/Q3jnHumGpNk1OFwT/8T1yBiJc4H5GeljkJnd56am4FB2Jk0+YCQxQn/w9W2ZBAFimOlV7hy+FUgcFhWttKnl0nFvist1wl2jKIpX+XfXZWJmE5hJrGLdxAVPAabc98iQ3ORSQdB04t89/1O/w1cDnyilFU="
     },
 
     // Google Apps Script

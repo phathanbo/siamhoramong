@@ -22,256 +22,429 @@
     
     <style>
         :root {
-            --card-bg: linear-gradient(135deg, rgba(18, 26, 46, 0.95) 0%, rgba(10, 15, 29, 0.95) 100%);
-            --gold-glow-strong: 0 0 20px rgba(212, 175, 55, 0.4);
+            --bg-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 40%, #134e4a 100%);
+            --glass-base: rgba(255, 255, 255, 0.08);
+            --glass-card: rgba(255, 255, 255, 0.12);
+            --glass-card-hover: rgba(255, 255, 255, 0.18);
+            --glass-border: rgba(255, 255, 255, 0.22);
+            --glass-border-light: rgba(255, 255, 255, 0.35);
+            --glass-inner-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
+            --glass-box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            --teal-accent: #2dd4bf;
+            --cyan-accent: #38bdf8;
+            --blue-accent: #60a5fa;
+            --purple-accent: #c084fc;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.72);
+            --text-muted: rgba(255, 255, 255, 0.5);
         }
         
         body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: #080b11;
-            background-image: radial-gradient(circle at 50% 0%, #151d30 0%, #080b11 70%);
-            color: var(--text, #F3F4F6);
+            font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #101c2e;
+            background-image: radial-gradient(at 10% 10%, rgba(56, 189, 248, 0.18) 0px, transparent 50%),
+                              radial-gradient(at 90% 20%, rgba(45, 212, 191, 0.18) 0px, transparent 50%),
+                              radial-gradient(at 50% 90%, rgba(99, 102, 241, 0.15) 0px, transparent 60%),
+                              linear-gradient(145deg, #0d1726 0%, #112238 50%, #16324a 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            letter-spacing: -0.01em;
         }
 
-        .header-section {
-            padding: 40px 20px 20px 20px;
-            text-align: center;
+        /* Frosted Master Glass Dashboard Container - Full width */
+        .dashboard-glass-wrapper {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--glass-box-shadow), var(--glass-inner-shadow);
+            padding: 24px 28px;
+            margin: 0 0 24px 0;
+            width: 100%;
+            max-width: 100%;
         }
 
-        .header-title {
+        /* Main Page Title Styling */
+        .dashboard-main-title {
             font-family: 'Outfit', 'Sarabun', sans-serif;
             font-weight: 800;
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #fff 30%, #F9E596 70%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
-            margin-bottom: 5px;
+            font-size: 2.2rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-align: center;
+            color: #ffffff;
+            text-shadow: 0 2px 20px rgba(56, 189, 248, 0.35);
+            margin-bottom: 8px;
         }
 
-        .header-subtitle {
-            color: var(--muted, #94A3B8);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
+        .dashboard-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            font-weight: 400;
+            max-width: 720px;
+            margin: 0 auto 28px auto;
         }
 
+        /* Reusable Frosted Glass Card */
         .premium-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            transition: all 0.3s ease;
-            margin-bottom: 25px;
+            background: var(--glass-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2), var(--glass-inner-shadow);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-bottom: 22px;
+            color: #ffffff;
         }
 
         .premium-card:hover {
-            border-color: rgba(212, 175, 55, 0.5);
-            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15), 0 15px 35px rgba(0, 0, 0, 0.5);
+            background: var(--glass-card-hover);
+            border-color: var(--glass-border-light);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28), var(--glass-inner-shadow);
+            transform: translateY(-2px);
         }
 
         .card-header-gold {
-            border-bottom: 1px dashed rgba(212, 175, 55, 0.25);
-            padding: 18px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 16px 22px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .card-header-gold h4 {
-            color: #F9E596;
+            color: #ffffff;
             margin: 0;
-            font-weight: 600;
-            font-size: 1.25rem;
+            font-weight: 700;
+            font-size: 1.15rem;
             display: flex;
             align-items: center;
             gap: 10px;
+            letter-spacing: 0.02em;
+        }
+
+        /* Top 4 KPI Metrics in Dashboard Reference Style */
+        .kpi-metric-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), var(--glass-inner-shadow);
+            padding: 22px 18px 18px 18px;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-column: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.25s ease;
+        }
+
+        .kpi-metric-card:hover {
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .kpi-metric-val {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 2.1rem;
+            line-height: 1.1;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+
+        .kpi-metric-lbl {
+            font-size: 0.76rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
         }
 
         .text-gold {
-            color: #F9E596 !important;
+            color: #f6d860 !important;
         }
 
-        .btn-gold-premium {
-            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
-            color: #0b0e14 !important;
-            border: none;
-            border-radius: 12px;
+        /* Circular Gauges like in the Reference Image */
+        .gauge-metric-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .gauge-ring-box {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .gauge-ring-val {
+            position: absolute;
+            font-family: 'Outfit', sans-serif;
             font-weight: 700;
-            padding: 12px 25px;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            font-size: 1.55rem;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .gauge-metric-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+        }
+
+        /* Clean Buttons */
+        .btn-gold-premium {
+            background: linear-gradient(135deg, #2dd4bf 0%, #0284c7 100%);
+            color: #ffffff !important;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            padding: 13px 25px;
+            box-shadow: 0 8px 24px rgba(45, 212, 191, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
+            letter-spacing: 0.02em;
         }
 
         .btn-gold-premium:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+            box-shadow: 0 12px 30px rgba(56, 189, 248, 0.4);
             filter: brightness(1.1);
         }
 
         .btn-outline-gold {
-            background: transparent;
-            border: 1px solid #d4af37;
-            color: #F9E596 !important;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff !important;
             border-radius: 12px;
             font-weight: 600;
-            padding: 10px 20px;
+            padding: 8px 18px;
+            backdrop-filter: blur(10px);
             transition: all 0.3s ease;
         }
 
         .btn-outline-gold:hover {
-            background: rgba(212, 175, 55, 0.1);
-            border-color: #F9E596;
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.45);
             transform: translateY(-1px);
         }
 
+        /* Form Controls in Glass Design */
         .form-control-premium {
-            background-color: rgba(10, 15, 28, 0.8) !important;
-            border: 1px solid rgba(212, 175, 55, 0.2) !important;
-            color: #F3F4F6 !important;
-            border-radius: 10px;
-            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.08) !important;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            border-radius: 12px;
+            padding: 10px 14px;
             height: auto;
             transition: all 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .form-control-premium:focus {
-            border-color: #d4af37 !important;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3) !important;
+            background: rgba(255, 255, 255, 0.14) !important;
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.3) !important;
+            outline: none;
+        }
+
+        .form-control-premium option {
+            background-color: #112238;
+            color: #ffffff;
         }
 
         /* SVG Zodiac Wheel styling */
         .zodiac-wheel-container {
             position: relative;
-            max-width: 420px;
-            margin: 0 auto 20px auto;
+            max-width: 400px;
+            margin: 0 auto 15px auto;
+        }
+
+        /* Full-width Top Configuration Bar Styling */
+        .zodiac-grid-horizontal {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+        }
+
+        @media (max-width: 1200px) {
+            .zodiac-grid-horizontal {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .zodiac-grid-horizontal {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .zodiac-wheel-svg {
             width: 100%;
             height: auto;
-            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
+            filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.45));
         }
 
-        /* Tabs styling */
+        /* Frosted Tabs Styling */
         .nav-tabs-premium {
-            border-bottom: 2px solid rgba(212, 175, 55, 0.15);
-            margin-bottom: 25px;
-            gap: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 22px;
+            gap: 8px;
+            overflow-x: auto;
+            flex-wrap: nowrap;
         }
 
         .nav-tabs-premium .nav-link {
-            border: none;
-            color: var(--muted, #94A3B8);
+            border: 1px solid transparent;
+            color: var(--text-secondary);
             font-weight: 600;
-            padding: 12px 20px;
-            border-radius: 10px 10px 0 0;
-            background: transparent;
-            transition: all 0.3s ease;
+            padding: 11px 18px;
+            border-radius: 14px 14px 0 0;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.25s ease;
             position: relative;
+            white-space: nowrap;
+            font-size: 0.92rem;
         }
 
         .nav-tabs-premium .nav-link:hover {
-            color: #F9E596;
-            background: rgba(212, 175, 55, 0.05);
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .nav-tabs-premium .nav-link.active {
-            color: #d4af37;
-            background: transparent;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-bottom-color: transparent;
+            backdrop-filter: blur(12px);
         }
 
         .nav-tabs-premium .nav-link.active::after {
             content: '';
             position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
+            bottom: -1px;
+            left: 10%;
+            width: 80%;
             height: 3px;
-            background: #d4af37;
-            box-shadow: 0 0 8px #d4af37;
+            background: linear-gradient(90deg, #38bdf8, #2dd4bf);
+            border-radius: 3px;
+            box-shadow: 0 0 10px #38bdf8;
         }
 
-        /* Custom badge */
+        /* Glass Badges */
         .badge-standard {
             font-size: 0.8rem;
-            padding: 5px 10px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 10px;
             font-weight: 600;
+            backdrop-filter: blur(8px);
+            letter-spacing: 0.02em;
         }
-        .badge-standard.bg-kaset { background-color: rgba(59, 168, 122, 0.15); color: #3BA87A; border: 1px solid rgba(59, 168, 122, 0.3); }
-        .badge-standard.bg-uch { background-color: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); }
-        .badge-standard.bg-chak { background-color: rgba(142, 68, 173, 0.15); color: #ce93d8; border: 1px solid rgba(142, 68, 173, 0.3); }
-        .badge-standard.bg-chok { background-color: rgba(74, 144, 217, 0.15); color: #4A90D9; border: 1px solid rgba(74, 144, 217, 0.3); }
-        .badge-standard.bg-thewi { background-color: rgba(233, 30, 99, 0.15); color: #f48fb1; border: 1px solid rgba(233, 30, 99, 0.3); }
-        .badge-standard.bg-chula { background-color: rgba(0, 188, 212, 0.15); color: #80deea; border: 1px solid rgba(0, 188, 212, 0.3); }
-        .badge-standard.bg-vilas { background-color: rgba(255, 152, 0, 0.15); color: #ffb74d; border: 1px solid rgba(255, 152, 0, 0.3); }
-        .badge-standard.bg-muk { background-color: rgba(156, 39, 176, 0.15); color: #ba68c8; border: 1px solid rgba(156, 39, 176, 0.3); }
-        .badge-standard.bg-pra { background-color: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
-        .badge-standard.bg-nij { background-color: rgba(149, 165, 166, 0.15); color: #95a5a6; border: 1px solid rgba(149, 165, 166, 0.3); }
-        .badge-standard.bg-vargottama { background-color: rgba(255, 215, 0, 0.25); color: #ffd700; border: 1px solid #ffd700; box-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
-        .badge-standard.bg-normal { background-color: rgba(255, 255, 255, 0.05); color: #F3F4F6; }
+        .badge-standard.bg-kaset { background-color: rgba(52, 211, 153, 0.18); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.4); }
+        .badge-standard.bg-uch { background-color: rgba(250, 204, 21, 0.18); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.4); }
+        .badge-standard.bg-chak { background-color: rgba(192, 132, 252, 0.18); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.4); }
+        .badge-standard.bg-chok { background-color: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+        .badge-standard.bg-thewi { background-color: rgba(244, 114, 182, 0.18); color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.4); }
+        .badge-standard.bg-chula { background-color: rgba(45, 212, 191, 0.18); color: #2dd4bf; border: 1px solid rgba(45, 212, 191, 0.4); }
+        .badge-standard.bg-vilas { background-color: rgba(251, 146, 60, 0.18); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.4); }
+        .badge-standard.bg-muk { background-color: rgba(216, 180, 254, 0.18); color: #d8b4fe; border: 1px solid rgba(216, 180, 254, 0.4); }
+        .badge-standard.bg-pra { background-color: rgba(248, 113, 113, 0.18); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.4); }
+        .badge-standard.bg-nij { background-color: rgba(148, 163, 184, 0.18); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
+        .badge-standard.bg-vargottama { background-color: rgba(253, 224, 71, 0.25); color: #fde047; border: 1px solid #fde047; box-shadow: 0 0 10px rgba(253, 224, 71, 0.4); }
+        .badge-standard.bg-normal { background-color: rgba(255, 255, 255, 0.08); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15); }
 
         .thaksa-role {
             font-weight: 600;
         }
-        .role-sri { color: #3BA87A; }
-        .role-kali { color: #e74c3c; font-weight: bold; }
-        .role-dech { color: #f1c40f; }
-        .role-montri { color: #4A90D9; }
-        .role-ayu { color: #00bcd4; }
-        .role-mula { color: #ab47bc; }
-        .role-utsa { color: #ff9800; }
-        .role-bari { color: #90a4ae; }
+        .role-sri { color: #34d399; }
+        .role-kali { color: #f87171; font-weight: bold; }
+        .role-dech { color: #facc15; }
+        .role-montri { color: #38bdf8; }
+        .role-ayu { color: #2dd4bf; }
+        .role-mula { color: #c084fc; }
+        .role-utsa { color: #fb923c; }
+        .role-bari { color: #94a3b8; }
 
         /* Report item decoration */
         .report-section-title {
-            color: #F9E596;
-            border-left: 4px solid #d4af37;
-            padding-left: 12px;
+            color: #ffffff;
+            border-left: 4px solid #38bdf8;
+            padding-left: 14px;
             margin-bottom: 20px;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.02em;
         }
 
         .geek-item {
-            background: rgba(212, 175, 55, 0.05);
-            border-left: 4px solid #d4af37;
-            border-radius: 0 12px 12px 0;
-            padding: 12px 18px;
-            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            border-left: 4px solid #38bdf8;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 0 16px 16px 0;
+            padding: 14px 20px;
+            margin-bottom: 14px;
             font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .geek-item:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .geek-item-danger {
-            background: rgba(231, 76, 60, 0.05);
-            border-left-color: #E74C3C;
+            background: rgba(239, 68, 68, 0.08);
+            border-left-color: #ef4444;
         }
 
         .prediction-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
             padding: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             transition: all 0.25s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), var(--glass-inner-shadow);
         }
 
         .prediction-card:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(212, 175, 55, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
 
         .prediction-category {
             font-weight: 700;
-            color: #F9E596;
+            color: #38bdf8;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 1.05rem;
         }
         
         .zodiac-grid-input {
@@ -280,9 +453,68 @@
             gap: 12px;
         }
 
-        @media (max-width: 768px) {
-            .header-title {
-                font-size: 2rem;
+        /* Glass Table Styling */
+        .table-glass {
+            color: #ffffff;
+            border-collapse: separate;
+            border-spacing: 0 6px;
+        }
+
+        .table-glass thead th {
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            padding: 10px 14px;
+        }
+
+        .table-glass tbody tr {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.2s ease;
+        }
+
+        .table-glass tbody tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .table-glass tbody td {
+            border: none;
+            padding: 12px 14px;
+            vertical-align: middle;
+        }
+
+        .table-glass tbody tr td:first-child {
+            border-radius: 12px 0 0 12px;
+        }
+
+        .table-glass tbody tr td:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+        /* Designer Signature matching reference footer */
+        .dashboard-designer-footer {
+            text-align: center;
+            padding: 24px 0 10px 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-glass-wrapper {
+                padding: 20px 16px;
+                border-radius: 24px;
+            }
+            .dashboard-main-title {
+                font-size: 1.6rem;
+            }
+            .kpi-metric-val {
+                font-size: 1.7rem;
             }
         }
     </style>
@@ -304,221 +536,285 @@
         </div>
     </header>
 
-    <div class="container-fluid py-4 px-md-5">
-        
-        <!-- Header Info -->
-        <div class="header-section">
-            <h1 class="header-title">🔮 โหราศาสตร์ไทยระบบสมบูรณ์</h1>
-            <p class="header-subtitle">วิเคราะห์เชิงลึกอิงตามลัคนาราศี ตำแหน่งดาวเคราะห์สิบดวง มาตรฐานดาว เกณฑ์พิเศษ และหลักมหาทักษาปกรณ์</p>
-        </div>
-
-        <div class="row">
+    <div class="container-fluid py-3 px-2 px-md-4">
+        <!-- Frosted Glass Dashboard Outer Frame -->
+        <div class="dashboard-glass-wrapper">
             
-            <!-- Left: Configurations / Inputs -->
-            <div class="col-xl-4 col-lg-5 col-md-12">
-                <div class="premium-card">
-                    <div class="card-header-gold">
-                        <h4><i class="fas fa-sliders-h"></i> ข้อมูลดวงชะตา</h4>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-gold btn-sm" onclick="loadSampleData()">ดวงตัวอย่าง</button>
-                        </div>
+            <!-- Dashboard Main Header (Matching reference title style) -->
+            <h1 class="dashboard-main-title">THAI ASTROLOGY &amp; NATAL DESTINY DASHBOARD</h1>
+            <p class="dashboard-subtitle">ระบบวิเคราะห์ดวงชะตาโหราศาสตร์ไทยสมบูรณ์แบบ • คำนวณตำแหน่งดวงดาวจริง ทักษา มาตรฐานดาว ๑๐ ระดับ และเกณฑ์พิเศษ</p>
+
+            <!-- Top 4 KPI Metrics Row (Matching 4 header boxes in reference) -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-6 mb-3 mb-lg-0">
+                    <div class="kpi-metric-card">
+                        <div class="kpi-metric-val" id="summaryLagna">ราศีพฤษภ</div>
+                        <div class="kpi-metric-lbl">ลัคนาราศี (ASCENDANT)</div>
                     </div>
-                    
-                    <div class="card-body p-4">
-                        <!-- Member Database Pull Section -->
-                        <div class="form-group mb-4" style="background: rgba(212, 175, 55, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(212, 175, 55, 0.3);">
-                            <label class="text-gold font-weight-bold"><i class="fas fa-database mr-2"></i>ดึงข้อมูลจากฐานข้อมูลสมาชิก:</label>
-                            <select id="memberSelect" class="form-control form-control-premium" onchange="autoFillFromMember(this.value)">
-                                <option value="">-- เลือกสมาชิก --</option>
-                            </select>
-                            <small class="text-white-50 mt-1 d-block">ระบบจะคำนวณตำแหน่งดาวเคราะห์จริงตามเวลาเกิดให้อัตโนมัติ</small>
-                        </div>
-
-                        <form id="chartConfigForm" onsubmit="event.preventDefault(); return analyzeChart();">
-                            
-                            <!-- Birthday Section -->
-                            <div class="form-group mb-4">
-                                <label class="text-gold font-weight-bold">📅 วันเกิดเจ้าชะตา (ใช้คำนวณทักษา):</label>
-                                <select id="birthDay" class="form-control form-control-premium">
-                                    <option value="1">วันอาทิตย์ (๑)</option>
-                                    <option value="2">วันจันทร์ (๒)</option>
-                                    <option value="3">วันอังคาร (๓)</option>
-                                    <option value="4">วันพุธกลางวัน (๔)</option>
-                                    <option value="8">วันพุธกลางคืน / ราหู (๘)</option>
-                                    <option value="5">วันพฤหัสบดี (๕)</option>
-                                    <option value="6">วันศุกร์ (๖)</option>
-                                    <option value="7">วันเสาร์ (๗)</option>
-                                </select>
-                            </div>
-
-                            <!-- Lagna Section -->
-                            <div class="form-group mb-4">
-                                <label class="text-gold font-weight-bold">♈ ลัคนาสถิตราศี:</label>
-                                <select id="lagna" class="form-control form-control-premium" onchange="analyzeChart()">
-                                    <option value="0">ราศีเมษ (แกะ)</option>
-                                    <option value="1" selected>ราศีพฤษภ (โค)</option>
-                                    <option value="2">ราศีเมถุน (คนคู่)</option>
-                                    <option value="3">ราศีกรกฎ (ปู)</option>
-                                    <option value="4">ราศีสิงห์ (สิงโต)</option>
-                                    <option value="5">ราศีกันย์ (หญิงสาว)</option>
-                                    <option value="6">ราศีตุลย์ (ตราชั่ง)</option>
-                                    <option value="7">ราศีพิจิก (แมงป่อง)</option>
-                                    <option value="8">ราศีธนู (คนโก่งธนู)</option>
-                                    <option value="9">ราศีมังกร (ม้ามังกร)</option>
-                                    <option value="10">ราศีกุมภ์ (คนถือหม้อน้ำ)</option>
-                                    <option value="11">ราศีมีน (ปลาคู่)</option>
-                                </select>
-                            </div>
-
-                            <!-- Planets Placement Grid -->
-                            <h5 class="text-gold border-bottom border-secondary pb-2 mb-3 mt-4">🪐 ตำแหน่งดาวเคราะห์ประจำราศี</h5>
-                            <div class="zodiac-grid-input">
-                                <div class="form-group mb-2">
-                                    <label class="small text-white-50">อาทิตย์ (๑)</label>
-                                    <select id="p1" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label class="small text-white-50">จันทร์ (๒)</label>
-                                    <select id="p2" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label class="small text-white-50">อังคาร (๓)</label>
-                                    <select id="p3" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label class="small text-white-50">พุธ (๔)</label>
-                                    <select id="p4" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label class="small text-white-50">พฤหัสบดี (๕)</label>
-                                    <select id="p5" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label class="small text-white-50">ศุกร์ (๖)</label>
-                                    <select id="p6" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label class="small text-white-50">เสาร์ (๗)</label>
-                                    <select id="p7" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label class="small text-white-50">ราหู (๘)</label>
-                                    <select id="p8" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label class="small text-white-50">เกตุ (๙)</label>
-                                    <select id="p9" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label class="small text-white-50">มฤตยู (๐)</label>
-                                    <select id="p0" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
-                                </div>
-                            </div>
-
-                            <div class="mt-4 pt-2">
-                                <button type="submit" class="btn btn-gold-premium btn-block">
-                                    <i class="fas fa-sync-alt mr-2"></i> ประมวลผลดวงชะตา
-                                </button>
-                            </div>
-                        </form>
+                </div>
+                <div class="col-lg-3 col-6 mb-3 mb-lg-0">
+                    <div class="kpi-metric-card">
+                        <div class="kpi-metric-val" id="kpiBeneficScore" style="color: #38bdf8;">84%</div>
+                        <div class="kpi-metric-lbl">ดัชนีเกณฑ์มงคล (HARMONY)</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6 mb-3 mb-lg-0">
+                    <div class="kpi-metric-card">
+                        <div class="kpi-metric-val" id="summaryTanuset">ดาวพุธ (๔)</div>
+                        <div class="kpi-metric-lbl">ตนุเศษ / บุคลิกจิตใจ (MIND)</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6 mb-3 mb-lg-0">
+                    <div class="kpi-metric-card">
+                        <div class="kpi-metric-val" id="kpiStandardPlanetsCount" style="color: #2dd4bf;">6 ดาว</div>
+                        <div class="kpi-metric-lbl">ดาวได้ตำแหน่งมาตรฐาน (STRONG PLANETS)</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right: Results Dashboard & Wheel -->
-            <div class="col-xl-8 col-lg-7 col-md-12">
-                <div class="row">
-                    
-                    <!-- SVG Zodiac Wheel View -->
-                    <div class="col-lg-6 col-md-12 mb-4 text-center">
-                        <div class="premium-card p-4 h-100 d-flex flex-column justify-content-center">
-                            <h5 class="text-gold mb-3"><i class="fas fa-compass mr-2"></i>วงล้อจักราศี (Zodiac Wheel)</h5>
-                            <div class="zodiac-wheel-container">
-                                <!-- Dynamic SVG will be rendered here -->
-                                <div id="wheelContainer"></div>
-                            </div>
-                            <small class="text-white-50">สัญลักษณ์ <b>ลั</b> แทนตำแหน่งลัคนาของท่าน</small>
-                        </div>
-                    </div>
-
-                    <!-- Quick Overview Summary -->
-                    <div class="col-lg-6 col-md-12 mb-4">
-                        <div class="premium-card p-4 h-100">
-                            <h5 class="text-gold mb-3"><i class="fas fa-info-circle mr-2"></i>ข้อมูลพื้นฐานชะตาชีวิต</h5>
-                            <div class="table-responsive">
-                                <table class="table table-borderless text-white mb-0" style="font-size: 0.95rem;">
-                                    <tbody>
-                                        <tr>
-                                            <td class="text-white-50 py-1" style="width: 45%;">ลัคนาราศี:</td>
-                                            <td class="font-weight-bold py-1 text-gold" id="summaryLagna">-</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-white-50 py-1">ธาตุและทิศราศี:</td>
-                                            <td class="py-1" id="summaryElement">-</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-white-50 py-1">ดาวตนุเศษ (บุคลิกแฝง):</td>
-                                            <td class="py-1 text-gold font-weight-bold" id="summaryTanuset">-</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-white-50 py-1">วันทางทักษา:</td>
-                                            <td class="py-1 text-info font-weight-bold" id="summaryDay">-</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-white-50 py-1">ดาวกาลกิณี:</td>
-                                            <td class="py-1 text-danger font-weight-bold" id="summaryKali">-</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <hr class="border-secondary my-3">
-                            <h6 class="text-gold mb-2"><i class="fas fa-award mr-2"></i>เกณฑ์โยคและเกณฑ์พิเศษเด่น</h6>
-                            <div id="specialGeekQuickList" style="max-height: 120px; overflow-y: auto;">
-                                <div class="text-white-50 small">ไม่มีเกณฑ์พิเศษถูกกระตุ้น</div>
-                            </div>
-                        </div>
+            <!-- Full-Width Top Config Card: ข้อมูลดวงชะตา (Moved to Top) -->
+            <div class="premium-card mb-4">
+                <div class="card-header-gold d-flex justify-content-between align-items-center">
+                    <h4><i class="fas fa-sliders-h text-info"></i> ข้อมูลดวงชะตา</h4>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-gold btn-sm" onclick="loadSampleData()"><i class="fas fa-magic mr-1"></i> โหลดดวงตัวอย่าง</button>
                     </div>
                 </div>
+                
+                <div class="card-body p-4">
+                    <form id="chartConfigForm" onsubmit="event.preventDefault(); return analyzeChart();">
+                        <div class="row">
+                            <!-- Member Database Pull Section -->
+                            <div class="col-lg-4 col-md-12 mb-3 mb-lg-0">
+                                <div class="h-100 p-3" style="background: rgba(255, 255, 255, 0.05); border-radius: 16px; border: 1px dashed rgba(255, 255, 255, 0.2);">
+                                    <label class="font-weight-bold text-white small mb-2"><i class="fas fa-database mr-2 text-info"></i>ดึงข้อมูลจากฐานข้อมูลสมาชิก:</label>
+                                    <select id="memberSelect" class="form-control form-control-premium" onchange="autoFillFromMember(this.value)">
+                                        <option value="">-- เลือกสมาชิก --</option>
+                                    </select>
+                                    <small class="text-white-50 mt-2 d-block" style="font-size: 0.8rem;">คำนวณตำแหน่งดาวเคราะห์จริงตามเวลาเกิดให้อัตโนมัติ</small>
+                                </div>
+                            </div>
 
-                <!-- Tabs navigation for deep information -->
-                <ul class="nav nav-tabs nav-tabs-premium" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="predictions-tab" data-toggle="tab" href="#predictions" role="tab"><i class="fas fa-book-open mr-2"></i>คำทำนายดวงชะตา</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="star-standards-tab" data-toggle="tab" href="#star-standards" role="tab"><i class="fas fa-table mr-2"></i>มาตรฐานดาว ๑๐ ระดับ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="house-lords-tab" data-toggle="tab" href="#house-lords" role="tab"><i class="fas fa-landmark mr-2"></i>ดาวเจ้าเรือน & ศูนย์พาหะ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="special-yogas-tab" data-toggle="tab" href="#special-yogas" role="tab"><i class="fas fa-yin-yang mr-2"></i>เกณฑ์พิเศษ & วรโคตม</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="cautions-tab" data-toggle="tab" href="#cautions" role="tab"><i class="fas fa-biohazard mr-2"></i>ตรียางค์พิษ & เกณฑ์พินทุบาทว์</a>
-                    </li>
-                </ul>
+                            <!-- Birthday Section -->
+                            <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+                                <div class="h-100 p-3" style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <label class="font-weight-bold text-white small mb-2">📅 วันเกิดเจ้าชะตา (ใช้คำนวณทักษา):</label>
+                                    <select id="birthDay" class="form-control form-control-premium" onchange="analyzeChart()">
+                                        <option value="1">วันอาทิตย์ (๑)</option>
+                                        <option value="2">วันจันทร์ (๒)</option>
+                                        <option value="3">วันอังคาร (๓)</option>
+                                        <option value="4">วันพุธกลางวัน (๔)</option>
+                                        <option value="8">วันพุธกลางคืน / ราหู (๘)</option>
+                                        <option value="5">วันพฤหัสบดี (๕)</option>
+                                        <option value="6">วันศุกร์ (๖)</option>
+                                        <option value="7">วันเสาร์ (๗)</option>
+                                    </select>
+                                    <small class="text-white-50 mt-2 d-block" style="font-size: 0.8rem;">กำหนดภูมิบริวาร กาลกิณี และทวาทศเคราะห์</small>
+                                </div>
+                            </div>
 
-                <!-- Tabs Content -->
-                <div class="tab-content">
-                    
-                    <!-- Tab: Predictions -->
-                    <div class="tab-pane fade show active" id="predictions" role="tabpanel">
-                        <div class="premium-card p-4">
-                            <h5 class="report-section-title">คำทำนายแบบละเอียดตามคัมภีร์วิบูลแพทยาคม</h5>
-                            <div id="predictionList">
-                                <!-- Prediction cards will be injected here -->
-                                <div class="text-center py-4 text-white-50">กรุณากดคำนวณเพื่อแสดงผลลัพธ์</div>
+                            <!-- Lagna Section -->
+                            <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+                                <div class="h-100 p-3" style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <label class="font-weight-bold text-white small mb-2">♈ ลัคนาสถิตราศี:</label>
+                                    <select id="lagna" class="form-control form-control-premium" onchange="analyzeChart()">
+                                        <option value="0">ราศีเมษ (แกะ)</option>
+                                        <option value="1" selected>ราศีพฤษภ (โค)</option>
+                                        <option value="2">ราศีเมถุน (คนคู่)</option>
+                                        <option value="3">ราศีกรกฎ (ปู)</option>
+                                        <option value="4">ราศีสิงห์ (สิงโต)</option>
+                                        <option value="5">ราศีกันย์ (หญิงสาว)</option>
+                                        <option value="6">ราศีตุลย์ (ตราชั่ง)</option>
+                                        <option value="7">ราศีพิจิก (แมงป่อง)</option>
+                                        <option value="8">ราศีธนู (คนโก่งธนู)</option>
+                                        <option value="9">ราศีมังกร (ม้ามังกร)</option>
+                                        <option value="10">ราศีกุมภ์ (คนถือหม้อน้ำ)</option>
+                                        <option value="11">ราศีมีน (ปลาคู่)</option>
+                                    </select>
+                                    <small class="text-white-50 mt-2 d-block" style="font-size: 0.8rem;">ราศีกำเนิดจุดเริ่มต้นตนุภพ</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Planets Placement Grid (Full-width row) -->
+                        <div class="mt-4 pt-3 border-top border-secondary">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-white font-weight-bold mb-0"><i class="fas fa-globe mr-2 text-info"></i>ตำแหน่งดาวเคราะห์ประจำราศี (๑๐ ดวงดาว)</h6>
+                                <span class="small text-white-50">เลือกราศีที่ดาวแต่ละดวงสถิตอยู่</span>
+                            </div>
+                            <div class="zodiac-grid-horizontal">
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50 mb-1 d-block text-center">อาทิตย์ (๑)</label>
+                                    <select id="p1" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50 mb-1 d-block text-center">จันทร์ (๒)</label>
+                                    <select id="p2" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50 mb-1 d-block text-center">อังคาร (๓)</label>
+                                    <select id="p3" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50 mb-1 d-block text-center">พุธ (๔)</label>
+                                    <select id="p4" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50 mb-1 d-block text-center">พฤหัสบดี (๕)</label>
+                                    <select id="p5" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50 mb-1 d-block text-center">ศุกร์ (๖)</label>
+                                    <select id="p6" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50 mb-1 d-block text-center">เสาร์ (๗)</label>
+                                    <select id="p7" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50 mb-1 d-block text-center">ราหู (๘)</label>
+                                    <select id="p8" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50 mb-1 d-block text-center">เกตุ (๙)</label>
+                                    <select id="p9" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="small text-white-50 mb-1 d-block text-center">มฤตยู (๐)</label>
+                                    <select id="p0" class="form-control form-control-premium p-1 text-center" onchange="analyzeChart()"></select>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 text-right">
+                                <button type="submit" class="btn btn-gold-premium px-4">
+                                    <i class="fas fa-sync-alt mr-2"></i> ประมวลผลดวงชะตา
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Main Display Sections (Full Width) -->
+            <div class="row">
+                <!-- SVG Zodiac Wheel View (Frosted Glass Container) -->
+                        <div class="col-lg-6 col-md-12 mb-4 text-center">
+                            <div class="premium-card p-4 h-100 d-flex flex-column justify-content-center">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-white font-weight-bold mb-0"><i class="fas fa-compass mr-2 text-info"></i>วงล้อจักราศี (ZODIAC WHEEL)</h5>
+                                    <span class="badge badge-standard bg-normal">LIVE CHART</span>
+                                </div>
+                                <div class="zodiac-wheel-container">
+                                    <!-- Dynamic SVG will be rendered here -->
+                                    <div id="wheelContainer"></div>
+                                </div>
+                                <small class="text-white-50">สัญลักษณ์ <b class="text-danger">ลั</b> แทนตำแหน่งลัคนาของท่าน</small>
+                            </div>
+                        </div>
+
+                        <!-- Overview Summary & Gauges (Matching Middle Right Sections in reference) -->
+                        <div class="col-lg-6 col-md-12 mb-4">
+                            <div class="premium-card p-4 h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="text-white font-weight-bold mb-0"><i class="fas fa-chart-pie mr-2 text-info"></i>สถิติศักยภาพดวงชะตา</h5>
+                                        <span class="badge badge-standard bg-chok" id="summaryElement">ดิน / บูรพา</span>
+                                    </div>
+
+                                    <!-- Circular Progress Gauges (Matching Quality Score & Machine Utilization in Reference) -->
+                                    <div class="row my-2">
+                                        <div class="col-6">
+                                            <div class="gauge-metric-container">
+                                                <div class="gauge-ring-box">
+                                                    <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); width: 100%; height: 100%;">
+                                                        <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none" />
+                                                        <circle id="gaugeScoreCircle" cx="50" cy="50" r="40" stroke="#38bdf8" stroke-width="8" stroke-dasharray="251" stroke-dashoffset="40" stroke-linecap="round" fill="none" style="transition: stroke-dashoffset 0.8s ease;" />
+                                                    </svg>
+                                                    <div class="gauge-ring-val" id="gaugeScoreVal">84</div>
+                                                </div>
+                                                <div class="gauge-metric-title">QUALITY SCORE</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="gauge-metric-container">
+                                                <div class="gauge-ring-box">
+                                                    <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); width: 100%; height: 100%;">
+                                                        <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none" />
+                                                        <circle id="gaugeStrengthCircle" cx="50" cy="50" r="40" stroke="#2dd4bf" stroke-width="8" stroke-dasharray="251" stroke-dashoffset="60" stroke-linecap="round" fill="none" style="transition: stroke-dashoffset 0.8s ease;" />
+                                                    </svg>
+                                                    <div class="gauge-ring-val" id="gaugeStrengthVal">76%</div>
+                                                </div>
+                                                <div class="gauge-metric-title">PLANET POWER</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quick Summary Data Details -->
+                                    <div class="table-responsive mt-1">
+                                        <table class="table table-borderless text-white mb-0" style="font-size: 0.92rem;">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-white-50 py-1" style="width: 45%;">วันทางทักษา:</td>
+                                                    <td class="py-1 text-info font-weight-bold" id="summaryDay">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-white-50 py-1">ดาวกาลกิณี:</td>
+                                                    <td class="py-1 text-danger font-weight-bold" id="summaryKali">-</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 pt-3 border-top border-secondary">
+                                    <div class="small font-weight-bold text-white mb-2"><i class="fas fa-award mr-2 text-warning"></i>เกณฑ์โยคและเกณฑ์พิเศษเด่น:</div>
+                                    <div id="specialGeekQuickList" style="max-height: 95px; overflow-y: auto;">
+                                        <div class="text-white-50 small">ไม่มีเกณฑ์พิเศษถูกกระตุ้น</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tab: Star Standards -->
-                    <div class="tab-pane fade" id="star-standards" role="tabpanel">
-                        <div class="premium-card p-4">
-                            <h5 class="report-section-title">ข้อมูลคุณลักษณะและระดับความแข็งแกร่งดาว (มาตรฐาน ๑๐ ระดับ)</h5>
-                            <div class="table-responsive mb-4">
-                                <table class="table table-dark bg-transparent table-striped text-white mb-0" style="border: 1px solid rgba(212, 175, 55, 0.1);">
+                    <!-- Tabs navigation for deep information -->
+                    <ul class="nav nav-tabs nav-tabs-premium" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="predictions-tab" data-toggle="tab" href="#predictions" role="tab"><i class="fas fa-book-open mr-2"></i>คำทำนายดวงชะตา</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="star-standards-tab" data-toggle="tab" href="#star-standards" role="tab"><i class="fas fa-table mr-2"></i>มาตรฐานดาว ๑๐ ระดับ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="house-lords-tab" data-toggle="tab" href="#house-lords" role="tab"><i class="fas fa-landmark mr-2"></i>ดาวเจ้าเรือน & ศูนย์พาหะ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="special-yogas-tab" data-toggle="tab" href="#special-yogas" role="tab"><i class="fas fa-yin-yang mr-2"></i>เกณฑ์พิเศษ & วรโคตม</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="cautions-tab" data-toggle="tab" href="#cautions" role="tab"><i class="fas fa-biohazard mr-2"></i>ตรียางค์พิษ & เกณฑ์พินทุบาทว์</a>
+                        </li>
+                    </ul>
+
+                    <!-- Tabs Content -->
+                    <div class="tab-content">
+                        
+                        <!-- Tab: Predictions -->
+                        <div class="tab-pane fade show active" id="predictions" role="tabpanel">
+                            <div class="premium-card p-4">
+                                <h5 class="report-section-title">คำทำนายแบบละเอียดตามคัมภีร์วิบูลแพทยาคม</h5>
+                                <div id="predictionList">
+                                    <!-- Prediction cards will be injected here -->
+                                    <div class="text-center py-4 text-white-50">กรุณากดคำนวณเพื่อแสดงผลลัพธ์</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Star Standards -->
+                        <div class="tab-pane fade" id="star-standards" role="tabpanel">
+                            <div class="premium-card p-4">
+                                <h5 class="report-section-title">ข้อมูลคุณลักษณะและระดับความแข็งแกร่งดาว (มาตรฐาน ๑๐ ระดับ)</h5>
+                                <div class="table-responsive mb-4">
+                                    <table class="table table-glass w-100 mb-0">
                                     <thead>
                                         <tr style="border-bottom: 2px solid rgba(212, 175, 55, 0.3);">
                                             <th>ดาวเคราะห์</th>
@@ -603,7 +899,10 @@
 
             </div>
 
-        </div>
+            <!-- Dashboard Designer Signature Footer matching reference -->
+            <div class="dashboard-designer-footer">
+                Designed by SkillsOnDemand • SiamHoramongkol Astrological Engine
+            </div>
 
     </div>
 
@@ -1723,26 +2022,43 @@
             }
         }
 
-        // Render dynamic SVG Zodiac Wheel
+        // Render dynamic SVG Zodiac Wheel (Glassmorphism & Cyan Glow Style)
         function drawZodiacWheel(lagnaIndex, planetsMap) {
             const size = 360;
             const center = size / 2;
-            const rOuter = 160;
+            const rOuter = 162;
             const rInner1 = 120;
             const rInner2 = 80;
-            const rCenter = 25;
+            const rCenter = 28;
 
             let svg = `<svg viewBox="0 0 ${size} ${size}" class="zodiac-wheel-svg" xmlns="http://www.w3.org/2000/svg">`;
             
-            // Background Shadow
-            svg += `<circle cx="${center}" cy="${center}" r="${rOuter}" fill="#0a0f1d" stroke="#d4af37" stroke-width="3" />`;
-            svg += `<circle cx="${center}" cy="${center}" r="${rInner1}" fill="none" stroke="rgba(212,175,55,0.3)" stroke-width="1.5" />`;
-            svg += `<circle cx="${center}" cy="${center}" r="${rInner2}" fill="#0e172a" stroke="rgba(212,175,55,0.4)" stroke-width="2" />`;
-            svg += `<circle cx="${center}" cy="${center}" r="${rCenter}" fill="#090d16" stroke="#d4af37" stroke-width="1" />`;
+            // Definitions for glow and gradients
+            svg += `
+                <defs>
+                    <radialGradient id="wheelBgGrad" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#163452" stop-opacity="0.85" />
+                        <stop offset="60%" stop-color="#0e1f33" stop-opacity="0.9" />
+                        <stop offset="100%" stop-color="#081321" stop-opacity="0.95" />
+                    </radialGradient>
+                    <radialGradient id="centerGlowGrad" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.25" />
+                        <stop offset="100%" stop-color="#0f2136" stop-opacity="0.9" />
+                    </radialGradient>
+                    <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+            `;
+            
+            // Background Circles
+            svg += `<circle cx="${center}" cy="${center}" r="${rOuter}" fill="url(#wheelBgGrad)" stroke="rgba(56, 189, 248, 0.45)" stroke-width="2" />`;
+            svg += `<circle cx="${center}" cy="${center}" r="${rInner1}" fill="none" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1.2" stroke-dasharray="3,3" />`;
+            svg += `<circle cx="${center}" cy="${center}" r="${rInner2}" fill="rgba(15, 33, 54, 0.6)" stroke="rgba(45, 212, 191, 0.4)" stroke-width="1.5" />`;
+            svg += `<circle cx="${center}" cy="${center}" r="${rCenter}" fill="url(#centerGlowGrad)" stroke="#38bdf8" stroke-width="1.5" filter="url(#cyanGlow)" />`;
 
             // Draw 12 Sectors
-            // In standard circular representation, Aries is top or left.
-            // Let's place Aries (0) at 12 o'clock position (270 degrees in SVG coordinates) and go counter-clockwise
             for (let i = 0; i < 12; i++) {
                 const startAngle = 270 - (i * 30);
                 const endAngle = startAngle - 30;
@@ -1754,19 +2070,18 @@
                 const y2 = center + rInner2 * Math.sin(startAngle * Math.PI / 180);
                 
                 // Draw separator line
-                svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(212,175,55,0.3)" stroke-width="1" />`;
+                svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1" />`;
                 
                 // Label Zodiac Name (Middle of sector)
                 const textAngle = startAngle - 15;
                 const rText = rOuter - 20;
                 const tx = center + rText * Math.cos(textAngle * Math.PI / 180);
-                const ty = center + rText * Math.sin(textAngle * Math.PI / 180) + 4; // adjustment for font height
+                const ty = center + rText * Math.sin(textAngle * Math.PI / 180) + 4;
                 
-                svg += `<text x="${tx}" y="${ty}" fill="#f9e596" font-size="9" text-anchor="middle" font-weight="bold" opacity="0.85">${zodiacNames[i]}</text>`;
+                svg += `<text x="${tx}" y="${ty}" fill="#a5f3fc" font-size="9.5" text-anchor="middle" font-weight="600" opacity="0.95">${zodiacNames[i]}</text>`;
             }
 
             // Draw Planets & Lagna in Zodiac cells
-            // We group items by their zodiac sign
             let zodiacGroups = Array.from({length: 12}, () => []);
             
             // Add Lagna
@@ -1786,12 +2101,9 @@
                 const items = zodiacGroups[z];
                 if (items.length === 0) continue;
                 
-                const cellAngle = 270 - (z * 30) - 15; // center of cell
+                const cellAngle = 270 - (z * 30) - 15;
                 
-                // Space items vertically or horizontally within the cell
                 items.forEach((item, index) => {
-                    // Radius variation based on index to avoid overlaying
-                    const radiusOffset = index * 14;
                     const cellRadius = rInner1 - 18 - (index > 1 ? 12 : 0);
                     const angleOffset = (index % 2 === 0 ? 1 : -1) * (index > 0 ? 8 : 0);
                     
@@ -1801,11 +2113,10 @@
                     const py = center + cellRadius * Math.sin(rad * Math.PI / 180) + 4;
                     
                     if (item.type === 'lagna') {
-                        svg += `<text x="${px}" y="${py}" fill="#e74c3c" font-size="13" font-weight="bold" text-anchor="middle">ลั</text>`;
-                        // Small circle indicator for Lagna
-                        svg += `<circle cx="${px}" cy="${py - 2}" r="11" fill="none" stroke="#e74c3c" stroke-width="1" stroke-dasharray="2,2"/>`;
+                        svg += `<text x="${px}" y="${py}" fill="#f87171" font-size="13" font-weight="bold" text-anchor="middle">ลั</text>`;
+                        svg += `<circle cx="${px}" cy="${py - 2}" r="11" fill="rgba(239, 68, 68, 0.15)" stroke="#f87171" stroke-width="1.2" stroke-dasharray="2,2"/>`;
                     } else {
-                        const color = item.id == '0' || item.id == '8' ? '#e74c3c' : '#ffffff';
+                        const color = item.id == '0' || item.id == '8' ? '#f87171' : (item.id == '5' ? '#fde047' : '#ffffff');
                         const weight = item.id == '5' ? 'bold' : 'normal';
                         svg += `<text x="${px}" y="${py}" fill="${color}" font-size="12" font-weight="${weight}" text-anchor="middle">${item.label}</text>`;
                     }
@@ -1813,7 +2124,7 @@
             }
 
             // Draw center decoration
-            svg += `<text x="${center}" y="${center + 5}" fill="#d4af37" font-family="'Outfit', sans-serif" font-size="14" font-weight="800" text-anchor="middle">สยาม</text>`;
+            svg += `<text x="${center}" y="${center + 5}" fill="#38bdf8" font-family="'Outfit', sans-serif" font-size="13.5" font-weight="800" text-anchor="middle" letter-spacing="1">สยาม</text>`;
 
             svg += `</svg>`;
             document.getElementById('wheelContainer').innerHTML = svg;
@@ -1846,13 +2157,13 @@
             });
 
             // Update UI Summary Elements
-            document.getElementById('summaryLagna').innerText = `ราศี${result.lagnaInfo.name} (${result.lagnaInfo.sign})`;
+            document.getElementById('summaryLagna').innerText = `ราศี${result.lagnaInfo.name}`;
             document.getElementById('summaryElement').innerText = `${result.lagnaInfo.element} / ${result.lagnaInfo.dir}`;
             
             // Tanuset Info
             if (result.tanuset) {
                 const tPlanet = ThaiAstrologyEngine.planets[result.tanuset];
-                document.getElementById('summaryTanuset').innerText = `${tPlanet.name} (เลข ${result.tanuset})`;
+                document.getElementById('summaryTanuset').innerText = `${tPlanet.name} (${result.tanuset})`;
             } else {
                 document.getElementById('summaryTanuset').innerText = 'ไม่ระบุ';
             }
@@ -1868,6 +2179,53 @@
                 }
             }
             document.getElementById('summaryKali').innerText = kaliPlanet || 'ไม่มี';
+
+            // Calculate Dynamic KPI Scores (Harmony & Strong Planets)
+            let strongPlanetsCount = 0;
+            let totalPowerSum = 0;
+            for (let p in result.planetPositions) {
+                const pos = result.planetPositions[p];
+                if (pos && pos.status && pos.status !== 'ปกติ') {
+                    strongPlanetsCount++;
+                    if (pos.status.includes('เกษตร') || pos.status.includes('อุจจ์') || pos.status.includes('วรโคตม')) {
+                        totalPowerSum += 10;
+                    } else if (pos.status.includes('มหาจักร') || pos.status.includes('ราชาโชค') || pos.status.includes('เทวีโชค')) {
+                        totalPowerSum += 8;
+                    } else if (pos.status.includes('จุลจักร') || pos.status.includes('อุจจาวิลาส') || pos.status.includes('อุจจาภิมุข')) {
+                        totalPowerSum += 7;
+                    }
+                } else {
+                    totalPowerSum += 5;
+                }
+            }
+            const qualityScore = Math.min(98, Math.max(50, Math.round(55 + (result.goldenYogas.length * 8) + (result.specialGeeks.length * 6) - (result.pinthubats.length * 7) - (result.poisonDecans.length * 5))));
+            const planetPowerPercent = Math.min(99, Math.max(45, Math.round((totalPowerSum / 100) * 100)));
+
+            const kpiBenefic = document.getElementById('kpiBeneficScore');
+            if (kpiBenefic) kpiBenefic.innerText = `${qualityScore}%`;
+            
+            const kpiCount = document.getElementById('kpiStandardPlanetsCount');
+            if (kpiCount) kpiCount.innerText = `${strongPlanetsCount} ดวง`;
+
+            // Update Gauges (Matching Quality Score & Machine Utilization in Reference)
+            const gaugeScoreVal = document.getElementById('gaugeScoreVal');
+            if (gaugeScoreVal) gaugeScoreVal.innerText = qualityScore;
+
+            const gaugeStrengthVal = document.getElementById('gaugeStrengthVal');
+            if (gaugeStrengthVal) gaugeStrengthVal.innerText = `${planetPowerPercent}%`;
+
+            // Circle dashoffset: full circumference = 2 * PI * 40 ≈ 251.3
+            const gaugeScoreCircle = document.getElementById('gaugeScoreCircle');
+            if (gaugeScoreCircle) {
+                const offset = 251.3 - (251.3 * (qualityScore / 100));
+                gaugeScoreCircle.style.strokeDashoffset = offset;
+            }
+
+            const gaugeStrengthCircle = document.getElementById('gaugeStrengthCircle');
+            if (gaugeStrengthCircle) {
+                const offset = 251.3 - (251.3 * (planetPowerPercent / 100));
+                gaugeStrengthCircle.style.strokeDashoffset = offset;
+            }
 
             // Draw Zodiac Wheel
             drawZodiacWheel(lagna, planetsPlacement);

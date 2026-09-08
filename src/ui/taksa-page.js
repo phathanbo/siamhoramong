@@ -481,17 +481,16 @@ function switchTaksaTab(tabName) {
         el.style.display = 'none';
     });
     document.querySelectorAll('.taksa-tab-btn').forEach(el => {
-        el.style.background = '#f8fafc';
-        el.style.color      = '#64748b';
-        el.style.fontWeight = '500';
+        el.classList.remove('active');
+        el.style.background = '';
+        el.style.color      = '';
+        el.style.fontWeight = '';
     });
     const content = document.getElementById(`taksaTab_${tabName}`);
     if (content) content.style.display = 'block';
     const btn = document.getElementById(`taksaTabBtn_${tabName}`);
     if (btn) {
-        btn.style.background = '#3b82f6';
-        btn.style.color      = '#ffffff';
-        btn.style.fontWeight = '700';
+        btn.classList.add('active');
     }
 }
 
@@ -852,13 +851,12 @@ function renderTaksaResult(taksa, age, gender) {
     ];
 
     let html = `
-        <!-- EduNova Tab Navigation -->
-        <div class="d-flex gap-2 p-2 mb-4 rounded-4" style="background:#f1f5f9; overflow-x:auto;">
+        <!-- Liquid Glass Tab Navigation -->
+        <div class="d-flex gap-2 p-2 mb-4 taksa-glass-tab-container" style="overflow-x:auto;">
             ${tabs.map((t,i) => `
             <button id="taksaTabBtn_${t.key}"
-                class="taksa-tab-btn flex-fill py-2 px-3 border-0 d-flex align-items-center justify-content-center gap-2"
-                onclick="switchTaksaTab('${t.key}')"
-                style="border-radius:12px; font-size:0.9rem; transition:all 0.2s; white-space:nowrap; background:${i===0 ? '#3b82f6' : '#f8fafc'}; color:${i===0 ? '#ffffff' : '#64748b'}; font-weight:${i===0 ? '700' : '500'};">
+                class="taksa-tab-btn flex-fill d-flex align-items-center justify-content-center gap-2 ${i===0 ? 'active' : ''}"
+                onclick="switchTaksaTab('${t.key}')">
                 <i class="fas ${t.icon}"></i>
                 ${t.label}
             </button>`).join('')}
@@ -887,16 +885,22 @@ function renderTaksaResult(taksa, age, gender) {
             </div>
         </div>
 
-        <!-- Export & Reset Buttons -->
-        <div class="p-4 rounded-4 mt-4" style="background:#f8fafc; border:1px solid #e2e8f0;">
-            <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
-                <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-outline-primary px-3 py-2 rounded-3 fw-bold" onclick="downloadSpecificPart('taksaPart1','ผังทักษา_1')"><i class="fas fa-download me-1"></i> เซฟทักษา 1</button>
-                    <button class="btn btn-sm btn-outline-primary px-3 py-2 rounded-3 fw-bold" onclick="downloadSpecificPart('taksaPart2','ผังทักษา_2')"><i class="fas fa-download me-1"></i> เซฟทักษา 2</button>
-                    <button class="btn btn-sm btn-outline-success px-3 py-2 rounded-3 fw-bold" onclick="downloadSpecificPart('taksaDetails','สรุปดวงปี')"><i class="fas fa-file-image me-1"></i> เซฟสรุปปี</button>
+        <!-- Export & Reset Buttons (Liquid Glass Style) -->
+        <div class="p-4 mt-4 taksa-glass-card">
+            <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center">
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="taksa-glass-pill" onclick="downloadSpecificPart('taksaPart1','ผังทักษา_1')">
+                        <i class="fas fa-download"></i> เซฟทักษา 1
+                    </button>
+                    <button class="taksa-glass-pill" onclick="downloadSpecificPart('taksaPart2','ผังทักษา_2')">
+                        <i class="fas fa-download"></i> เซฟทักษา 2
+                    </button>
+                    <button class="taksa-glass-pill taksa-glass-pill-emerald" onclick="downloadSpecificPart('taksaDetails','สรุปดวงปี')">
+                        <i class="fas fa-file-image"></i> เซฟสรุปปี
+                    </button>
                 </div>
-                <button class="btn btn-primary px-4 py-2 rounded-3 fw-bold" onclick="resetTaksa()">
-                    <i class="fas fa-redo-alt me-1"></i> ผูกดวงใหม่อีกครั้ง
+                <button class="taksa-glass-pill taksa-glass-pill-primary" onclick="resetTaksa()">
+                    <i class="fas fa-redo-alt"></i> ผูกดวงใหม่อีกครั้ง
                 </button>
             </div>
         </div>
@@ -978,38 +982,197 @@ function showtaksatable(){
             #taksaResult, #taksaResult * {
                 -webkit-text-fill-color: initial;
             }
+            /* =========================================================
+               🔮 LIQUID GLASS KIT STYLING (iOS / VisionOS Ultra Glass)
+               ========================================================= */
+            .taksa-glass-tab-container {
+                background: rgba(255, 255, 255, 0.55) !important;
+                backdrop-filter: blur(20px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+                border: 1px solid rgba(255, 255, 255, 0.8) !important;
+                border-radius: 9999px !important;
+                padding: 6px 8px !important;
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05),
+                            inset 0 1px 2px rgba(255, 255, 255, 0.9),
+                            inset 0 -1px 2px rgba(0, 0, 0, 0.03) !important;
+            }
+
+            .taksa-tab-btn {
+                border: none !important;
+                outline: none !important;
+                background: transparent !important;
+                color: #64748b !important;
+                font-weight: 500 !important;
+                font-size: 0.9rem !important;
+                padding: 9px 20px !important;
+                border-radius: 9999px !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                white-space: nowrap !important;
+                cursor: pointer !important;
+            }
+
+            .taksa-tab-btn:hover {
+                color: #0f172a !important;
+                background: rgba(255, 255, 255, 0.6) !important;
+            }
+
+            .taksa-tab-btn.active {
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)) !important;
+                color: #0f172a !important;
+                font-weight: 700 !important;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
+                            0 1px 3px rgba(0, 0, 0, 0.05),
+                            inset 0 1px 1px #ffffff,
+                            inset 0 -1px 1px rgba(0,0,0,0.06) !important;
+                transform: scale(1.02);
+            }
+
+            /* Liquid Glass Pill Button - Base */
+            .taksa-glass-pill {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 8px !important;
+                padding: 10px 24px !important;
+                border-radius: 9999px !important;
+                font-weight: 600 !important;
+                font-size: 0.92rem !important;
+                text-decoration: none !important;
+                letter-spacing: normal !important;
+                text-transform: none !important;
+                cursor: pointer !important;
+                position: relative !important;
+                overflow: hidden !important;
+                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+                
+                /* Frosted Transparent Liquid Glass */
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.4) 100%) !important;
+                backdrop-filter: blur(16px) saturate(190%) !important;
+                -webkit-backdrop-filter: blur(16px) saturate(190%) !important;
+                border: 1px solid rgba(255, 255, 255, 0.9) !important;
+                color: #1e293b !important;
+                box-shadow: 0 10px 24px -4px rgba(100, 116, 139, 0.16),
+                            0 2px 6px rgba(0, 0, 0, 0.04),
+                            inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95),
+                            inset 0 -1.5px 2px rgba(0, 0, 0, 0.05) !important;
+            }
+
+            .taksa-glass-pill::before {
+                content: '' !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                height: 48% !important;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+                border-radius: 9999px 9999px 0 0 !important;
+                pointer-events: none !important;
+            }
+
+            .taksa-glass-pill:hover {
+                transform: translateY(-2px) scale(1.02) !important;
+                color: #0f172a !important;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.55) 100%) !important;
+                box-shadow: 0 14px 28px -4px rgba(100, 116, 139, 0.25),
+                            0 4px 10px rgba(0, 0, 0, 0.06),
+                            inset 0 2px 2px rgba(255, 255, 255, 1),
+                            inset 0 -1.5px 2px rgba(0, 0, 0, 0.06) !important;
+            }
+
+            .taksa-glass-pill:active {
+                transform: translateY(1px) scale(0.98) !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1),
+                            inset 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+            }
+
+            /* Liquid Glass Pill - Primary Purple / Blue Gradient (Like Liquid Glass Kit "secondary" violet) */
+            .taksa-glass-pill-primary {
+                background: linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #4f46e5 100%) !important;
+                border: 1px solid rgba(255, 255, 255, 0.55) !important;
+                color: #ffffff !important;
+                box-shadow: 0 12px 26px -4px rgba(124, 58, 237, 0.45),
+                            0 4px 12px rgba(99, 102, 241, 0.25),
+                            inset 0 1.5px 1.5px rgba(255, 255, 255, 0.65),
+                            inset 0 -2px 3px rgba(0, 0, 0, 0.2) !important;
+            }
+
+            .taksa-glass-pill-primary:hover {
+                color: #ffffff !important;
+                background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6366f1 100%) !important;
+                box-shadow: 0 16px 32px -4px rgba(124, 58, 237, 0.55),
+                            0 6px 16px rgba(99, 102, 241, 0.35),
+                            inset 0 2px 2px rgba(255, 255, 255, 0.8) !important;
+            }
+
+            /* Liquid Glass Pill - Cyan / Emerald (Like Liquid Glass Kit "Secondary" cyan) */
+            .taksa-glass-pill-cyan {
+                background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 50%, #0284c7 100%) !important;
+                border: 1px solid rgba(255, 255, 255, 0.6) !important;
+                color: #ffffff !important;
+                box-shadow: 0 12px 26px -4px rgba(6, 182, 212, 0.45),
+                            0 4px 12px rgba(14, 165, 233, 0.25),
+                            inset 0 1.5px 1.5px rgba(255, 255, 255, 0.7),
+                            inset 0 -2px 3px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            .taksa-glass-pill-cyan:hover {
+                color: #ffffff !important;
+                background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 50%, #0ea5e9 100%) !important;
+                box-shadow: 0 16px 32px -4px rgba(6, 182, 212, 0.55),
+                            inset 0 2px 2px rgba(255, 255, 255, 0.85) !important;
+            }
+
+            /* Liquid Glass Pill - Emerald Green */
+            .taksa-glass-pill-emerald {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+                border: 1px solid rgba(255, 255, 255, 0.6) !important;
+                color: #ffffff !important;
+                box-shadow: 0 12px 24px -4px rgba(16, 185, 129, 0.4),
+                            inset 0 1.5px 1.5px rgba(255, 255, 255, 0.65),
+                            inset 0 -2px 3px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            .taksa-glass-pill-emerald:hover {
+                color: #ffffff !important;
+                background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+                box-shadow: 0 16px 30px -4px rgba(16, 185, 129, 0.5),
+                            inset 0 2px 2px rgba(255, 255, 255, 0.85) !important;
+            }
+
+            /* Liquid Glass Container Cards */
+            .taksa-glass-card {
+                background: rgba(255, 255, 255, 0.6) !important;
+                backdrop-filter: blur(20px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+                border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+                border-radius: 24px !important;
+                box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.05),
+                            0 0 0 1px rgba(255, 255, 255, 0.5),
+                            inset 0 1.5px 2px rgba(255, 255, 255, 0.95) !important;
+            }
         </style>
         <div style="background: #f8fafc; min-height: 100vh; padding: 24px 16px; font-family: 'Plus Jakarta Sans', 'Prompt', sans-serif; color: #1e293b;">
             <div class="container-fluid" style="max-width: 1360px; margin: 0 auto;">
 
                 <!-- TOP BAR -->
-                <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom" style="border-color: #e2e8f0 !important;">
+                <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom flex-wrap gap-3" style="border-color: #e2e8f0 !important;">
                     <div class="d-flex align-items-center gap-3">
-                        <div style="width: 44px; height: 44px; border-radius: 14px; background: #3b82f6; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(59,130,246,0.3);">
+                        <div style="width: 46px; height: 46px; border-radius: 14px; background: linear-gradient(135deg, #2563eb, #1d4ed8); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 14px rgba(37,99,235,0.28);">
                             <i class="fas fa-dharmachakra fa-lg"></i>
                         </div>
                         <div>
-                            <h4 class="mb-0 fw-bold" style="color: #0f172a; font-size: 1.25rem;">ทักษาพยากรณ์ ERP 2026</h4>
-                            <small class="text-muted">Smart Astrology Management with AI Automation</small>
+                            <h4 class="mb-0 fw-bold" style="color: #0f172a; font-size: 1.3rem;">ทักษาพยากรณ์</h4>
+                            <small class="text-muted"><i class="fas fa-compass me-1 text-primary"></i> ภูมิพยากรณ์ ๘ ทิศ · มหาทักษาจักรหลวง</small>
                         </div>
                     </div>
 
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="d-none d-md-flex align-items-center px-3 py-2 rounded-pill" style="background: #ffffff; border: 1px solid #e2e8f0; width: 280px;">
-                            <i class="fas fa-search text-muted me-2"></i>
-                            <input type="text" placeholder="ค้นหาข้อมูลทักษา, ดาวเสวยอายุ..." style="border: none !important; outline: none; background: transparent !important; font-size: 0.85rem; width: 100%; box-shadow: none !important; min-height: auto !important; padding: 0 !important;">
-                        </div>
-                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; position: relative;">
-                            <i class="fas fa-bell text-muted"></i>
-                            <span style="position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
-                        </div>
-                        <div class="d-flex align-items-center gap-2 ps-2 border-start" style="border-color: #e2e8f0 !important;">
-                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;" alt="Avatar">
-                            <div class="d-none d-sm-block text-start">
-                                <div class="fw-bold" style="font-size: 0.85rem; line-height: 1.2; color: #0f172a;">โหรประจำระบบ</div>
-                                <small class="text-muted" style="font-size: 0.75rem;">Astrologer AI</small>
-                            </div>
-                        </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="taksa-glass-pill" style="padding: 8px 18px !important; font-size: 0.85rem !important;" onclick="navigateTo('mainpage')">
+                            <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+                        </button>
+                        <button class="taksa-glass-pill" style="padding: 8px 18px !important; font-size: 0.85rem !important;" onclick="goBack()">
+                            <i class="fas fa-home"></i> หน้าหลัก
+                        </button>
                     </div>
                 </div>
 
@@ -1019,25 +1182,27 @@ function showtaksatable(){
                     <!-- LEFT / MAIN CONTENT (9 Cols) -->
                     <div class="col-12 col-xl-9">
 
-                        <!-- HERO WELCOME BANNER (EduNova Style) -->
-                        <div class="card border-0 mb-4 overflow-hidden position-relative" style="border-radius: 24px; background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1px solid #dbeafe !important; box-shadow: 0 4px 20px rgba(59,130,246,0.06);">
+                        <!-- HERO WELCOME BANNER -->
+                        <div class="card border-0 mb-4 overflow-hidden position-relative taksa-glass-card" style="border-radius: 24px; background: linear-gradient(135deg, rgba(239, 246, 255, 0.7) 0%, rgba(240, 253, 244, 0.7) 100%) !important;">
                             <div class="card-body p-4 p-md-5 d-flex flex-wrap align-items-center justify-content-between position-relative" style="z-index: 2;">
                                 <div class="col-12 col-md-8 mb-3 mb-md-0">
-                                    <span class="badge px-3 py-1 mb-2 fw-bold" style="background: rgba(59,130,246,0.12); color: #2563eb; border-radius: 20px; font-size: 0.8rem;">
-                                        ✨ คำนวณตามคัมภีร์มหาทักษาหลวง
+                                    <span class="badge px-3 py-1 mb-2 fw-bold" style="background: rgba(124, 58, 237, 0.12); color: #7c3aed; border-radius: 20px; font-size: 0.82rem;">
+                                        ✨ คำนวณตามคัมภีร์มหาทักษาหลวงโบราณ
                                     </span>
-                                    <h2 class="fw-bold mb-2" style="color: #0f172a; font-size: clamp(1.5rem, 3vw, 2.2rem);">
-                                        สวัสดี, ขอต้อนรับสู่ระบบผูกดวงทักษา ☸️
+                                    <h2 class="fw-bold mb-2" style="color: #0f172a; font-size: clamp(1.4rem, 2.8vw, 2rem);">
+                                        ระบบผูกดวงและวิเคราะห์มหาทักษา ☸️
                                     </h2>
                                     <p class="text-muted mb-3" style="font-size: 0.95rem; line-height: 1.6;">
-                                        คำนวณดาวครอง 8 ภูมิพยากรณ์, ดาวเสวยอายุ, ดาวแทรก, ดาวศรี และดาวกาลกิณีประจำช่วงวัยอย่างแม่นยำ
+                                        คำนวณดาวครอง 8 ภูมิพยากรณ์, ดาวเสวยอายุ, ดาวแทรก, ดาวศรี และดาวกาลกิณีประจำช่วงวัย พร้อมคำทำนายเชิงลึก
                                     </p>
-                                    <button class="btn btn-primary px-4 py-2 fw-bold shadow-sm" style="border-radius: 12px;" onclick="document.getElementById('taksaInputConsole').scrollIntoView({behavior:'smooth'})">
-                                        เริ่มผูกดวงชะตาทันที <i class="fas fa-arrow-right ms-1"></i>
+                                    <button class="taksa-glass-pill taksa-glass-pill-cyan" onclick="document.getElementById('taksaInputConsole').scrollIntoView({behavior:'smooth'})">
+                                        เริ่มผูกดวงชะตาทันที <i class="fas fa-arrow-down ms-1"></i>
                                     </button>
                                 </div>
-                                <div class="col-12 col-md-4 text-center">
-                                    <img src="https://illustrations.popertee.com/illustrations/female-teacher-presenting.svg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4712/4712109.png'" style="max-height: 140px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.08));" alt="Teacher AI">
+                                <div class="col-12 col-md-4 text-center d-flex align-items-center justify-content-center">
+                                    <div style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(124, 58, 237, 0.15)); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.2); border: 1px solid rgba(255, 255, 255, 0.8);">
+                                        <i class="fas fa-dharmachakra" style="font-size: 4rem; color: #0284c7; opacity: 0.9;"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1159,10 +1324,10 @@ function showtaksatable(){
                                         </div>
                                     </div>
 
-                                    <div class="d-flex align-items-center justify-content-between mt-4 pt-3 border-top" style="border-color:#f1f5f9 !important;">
+                                    <div class="d-flex align-items-center justify-content-between mt-4 pt-3 border-top flex-wrap gap-2" style="border-color:#f1f5f9 !important;">
                                         <small class="text-muted"><i class="fas fa-info-circle me-1"></i> นับอายุเต็ม + 1 ปี หากยังไม่ถึงวันเกิดปีนี้</small>
-                                        <button class="btn btn-primary px-4 py-2 fw-bold shadow-sm" onclick="calculateAndShowTaksa()" id="taksaBtn" style="border-radius:12px; font-size:0.95rem;">
-                                            <i class="fas fa-bolt me-1"></i> คำนวณผูกดวงทักษา
+                                        <button class="taksa-glass-pill taksa-glass-pill-primary" onclick="calculateAndShowTaksa()" id="taksaBtn">
+                                            <i class="fas fa-bolt"></i> คำนวณผูกดวงทักษา
                                         </button>
                                     </div>
                                 </div>
@@ -1184,43 +1349,37 @@ function showtaksatable(){
                                 <span class="badge" style="background:#eff6ff; color:#3b82f6; font-size:0.75rem;">${thaiDate}</span>
                             </div>
                             
-                            <div class="p-3 rounded-3 text-center mb-3" style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1px solid #a7f3d0;">
-                                <div class="small text-success fw-bold">วันพระ / วันธงชัย สัปดาห์นี้</div>
-                                <div class="fw-bold text-dark mt-1" style="font-size:0.9rem;">ฤกษ์มงคลเปิดทรัพย์สมบูรณ์</div>
-                            </div>
-
                             <div class="d-flex flex-column gap-2">
                                 <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background:#f8fafc;">
                                     <div class="d-flex align-items-center gap-2">
                                         <span style="width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
-                                        <span class="small fw-semibold text-dark">ทิศศรีมงคล</span>
+                                        <span class="small fw-semibold text-dark">วันธงชัย</span>
                                     </div>
-                                    <span class="small fw-bold text-primary">ทิศเหนือ/ใต้</span>
+                                    <span class="badge" style="background:#dcfce7; color:#15803d; font-size:0.7rem;">ฤกษ์ดี</span>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background:#f8fafc;">
                                     <div class="d-flex align-items-center gap-2">
-                                        <span style="width:8px; height:8px; border-radius:50%; background:#f59e0b;"></span>
-                                        <span class="small fw-semibold text-dark">ทิศเดชบารมี</span>
+                                        <span style="width:8px; height:8px; border-radius:50%; background:#3b82f6;"></span>
+                                        <span class="small fw-semibold text-dark">วันอธิบดี</span>
                                     </div>
-                                    <span class="small fw-bold text-warning">ทิศตะวันออก</span>
+                                    <span class="badge" style="background:#dbeafe; color:#1d4ed8; font-size:0.7rem;">เจริญก้าวหน้า</span>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background:#f8fafc;">
                                     <div class="d-flex align-items-center gap-2">
                                         <span style="width:8px; height:8px; border-radius:50%; background:#ef4444;"></span>
-                                        <span class="small fw-semibold text-dark">ทิศกาลกิณี</span>
+                                        <span class="small fw-semibold text-dark">วันอุบาทว์ / โลกาวินาศ</span>
                                     </div>
-                                    <span class="small fw-bold text-danger">ระวังทิศตะวันตก</span>
+                                    <span class="badge" style="background:#fee2e2; color:#b91c1c; font-size:0.7rem;">พึงระวัง</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- QUICK SMART REMINDERS -->
+                        <!-- QUICK TIPS -->
                         <div class="p-4 rounded-4 bg-white mb-4" style="border: 1px solid #f1f5f9; box-shadow: 0 2px 12px rgba(0,0,0,0.03);">
-                            <h6 class="fw-bold mb-3 text-dark d-flex align-items-center justify-content-between">
-                                <span>คำแนะนำประจำวัน</span>
-                                <i class="fas fa-bell text-muted" style="font-size:0.85rem;"></i>
+                            <h6 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
+                                <i class="fas fa-lightbulb text-warning"></i> เคล็ดลับการใช้ทักษา
                             </h6>
-
+                            
                             <div class="d-flex gap-3 mb-3 pb-3 border-bottom" style="border-color:#f1f5f9 !important;">
                                 <div style="width:36px; height:36px; border-radius:10px; background:#eff6ff; display:flex; align-items:center; justify-content:center; color:#3b82f6; flex-shrink:0;">
                                     <i class="fas fa-tshirt"></i>
@@ -1254,10 +1413,10 @@ function showtaksatable(){
 
                         <!-- NAVIGATION BACK -->
                         <div class="d-flex flex-column gap-2">
-                            <button class="btn btn-outline-secondary w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius:12px; background:#ffffff; border:1px solid #cbd5e1; font-size:0.85rem;" onclick="navigateTo('mainpage')">
+                            <button class="taksa-glass-pill w-100" onclick="navigateTo('mainpage')">
                                 <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
                             </button>
-                            <button class="btn btn-outline-secondary w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius:12px; background:#ffffff; border:1px solid #cbd5e1; font-size:0.85rem;" onclick="goBack()">
+                            <button class="taksa-glass-pill w-100" onclick="goBack()">
                                 <i class="fas fa-home"></i> กลับหน้าหลัก
                             </button>
                         </div>
