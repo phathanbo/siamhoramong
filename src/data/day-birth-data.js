@@ -511,7 +511,20 @@ function showdaybirth(){
         if (profileStr) {
             const profile = JSON.parse(profileStr);
             if (profile && profile.birthdate) {
-                const bDate = new Date(profile.birthdate);
+                let bDate;
+                if (typeof parseBirthdate === 'function') {
+                    bDate = parseBirthdate(profile.birthdate);
+                } else if (profile.birthdate.includes('/')) {
+                    const parts = profile.birthdate.split('/');
+                    if (parts.length === 3) {
+                        let y = parseInt(parts[2], 10);
+                        if (y > 2400) y -= 543;
+                        bDate = new Date(y, parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+                    }
+                } else {
+                    bDate = new Date(profile.birthdate);
+                }
+                if (!bDate || isNaN(bDate.getTime())) return;
                 let dayIdx = bDate.getDay(); // 0=Sun, 1=Mon ... 6=Sat
                 
                 // Adjust for Thai day change at 6:00 AM

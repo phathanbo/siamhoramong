@@ -186,12 +186,22 @@ function getMemberFullName(m) {
  */
 function formatThaiBirthdateWithAge(bdateStr, targetDate) {
     if (!bdateStr) return '';
-    const parts = bdateStr.split('/');
-    if (parts.length !== 3) return bdateStr;
-
-    const day = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10);
-    let year = parseInt(parts[2], 10);
+    let day, month, year;
+    if (bdateStr.includes('/')) {
+        const parts = bdateStr.split('/');
+        if (parts.length !== 3) return bdateStr;
+        day = parseInt(parts[0], 10);
+        month = parseInt(parts[1], 10);
+        year = parseInt(parts[2], 10);
+    } else if (bdateStr.includes('-')) {
+        const parts = bdateStr.split('-');
+        if (parts.length !== 3) return bdateStr;
+        year = parseInt(parts[0], 10);
+        month = parseInt(parts[1], 10);
+        day = parseInt(parts[2], 10);
+    } else {
+        return bdateStr;
+    }
 
     const monthNames = [
         "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
@@ -417,12 +427,29 @@ function getMemberFortuneForDay(date, member) {
     
     // คำนวณวันเกิดของเจ้าชะตา
     let bDayIdx = -1;
-    const parts = member.birthdate.split('/');
-    if (parts.length === 3) {
-        let bYear = parseInt(parts[2], 10);
+    let bYear, bMonth, bDay;
+    if (member.birthdate.includes('/')) {
+        const parts = member.birthdate.split('/');
+        if (parts.length === 3) {
+            bDay = parseInt(parts[0], 10);
+            bMonth = parseInt(parts[1], 10);
+            bYear = parseInt(parts[2], 10);
+        }
+    } else if (member.birthdate.includes('-')) {
+        const parts = member.birthdate.split('-');
+        if (parts.length === 3) {
+            bYear = parseInt(parts[0], 10);
+            bMonth = parseInt(parts[1], 10);
+            bDay = parseInt(parts[2], 10);
+        }
+    }
+
+    if (bYear && bMonth && bDay) {
         if (bYear > 2400) bYear -= 543;
-        const bDate = new Date(bYear, parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
-        bDayIdx = bDate.getDay();
+        const bDate = new Date(bYear, bMonth - 1, bDay);
+        if (!isNaN(bDate.getTime())) {
+            bDayIdx = bDate.getDay();
+        }
     }
     if (bDayIdx === -1) return null;
 
@@ -1821,10 +1848,20 @@ function generateDailyPrintHtml(year, month, day, memberProfile, allNotes) {
             <!-- พระจันทร์เสวยภพประจำวันในใบพิมพ์ -->
             ${(typeof ThaiHoroProEngine !== 'undefined' && memberProfile && memberProfile.birthdate) ? (() => {
                 try {
-                    let bPart = memberProfile.birthdate.split('/');
-                    let bY = parseInt(bPart[2], 10);
+                    let bY, bM, bD;
+                    if (memberProfile.birthdate.includes('/')) {
+                        let bPart = memberProfile.birthdate.split('/');
+                        bD = bPart[0].padStart(2, '0');
+                        bM = bPart[1].padStart(2, '0');
+                        bY = parseInt(bPart[2], 10);
+                    } else if (memberProfile.birthdate.includes('-')) {
+                        let bPart = memberProfile.birthdate.split('-');
+                        bY = parseInt(bPart[0], 10);
+                        bM = bPart[1].padStart(2, '0');
+                        bD = bPart[2].padStart(2, '0');
+                    }
                     if (bY > 2400) bY -= 543;
-                    let bDateIso = `${bY}-${bPart[1].padStart(2,'0')}-${bPart[0].padStart(2,'0')}`;
+                    let bDateIso = `${bY}-${bM}-${bD}`;
                     let bHoro = ThaiHoroProEngine.calculateFullHoroscope(bDateIso, memberProfile.birthTime || '12:00');
                     let dHoro = ThaiHoroProEngine.calculateDailyPrediction(bHoro.asc.rasiIndex, bHoro.birthPlanetNum, date);
                     return `

@@ -37,10 +37,10 @@ const APP_MENU = [
     { id: 'chatraPage', title: 'ฉัตร ๓ ชั้น', desc: 'พยากรณ์เกณฑ์ดวงชะตาฉัตร ๓ ชั้นจร', icon: 'fa-tree', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
     { id: 'chatninePage', title: 'ฉัตร ๙ ชั้น', desc: 'ยันต์มหาฉัตร ๙ ชั้น คุ้มครองเกณฑ์อายุ', icon: 'fa-shield-alt', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
     { id: 'birthfortune', title: 'พยากรณ์วันเกิด', desc: 'โชคกำเนิด ๓ ตำรา และอาชีพถูกโฉลก', icon: 'fa-birthday-cake', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
-    { id: 'climate-section', title: 'เกณฑ์พิรุณศาสตร์<br>และชะตาโลก', desc: 'อธิบดีฝน ห่าฝน ๔ ภูมิภพ และนาคให้น้ำ', icon: 'fa-cloud-showers-heavy', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
     { id: 'sevenDigitsPage', title: '🔢 เลข ๗ ตัว ๔ ฐาน<br>(มหาคัมภีร์สัตตเลข)', desc: 'รวมผังตารางเลข ๗ ตัว ฐาน ๑-๔ และคำทำนายตำราโบราณครบวงจร', icon: 'fa-layer-group', color: '#d4af37', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
     { id: 'taksaSattalekPage', title: '📜 คัมภีร์มหาทักษาสัตตเลข<br>(ฐาน ๔ ฐาน ๙)', desc: 'วิเคราะห์โครงดวงชะตาสัตตเลข ฐาน ๔ ฐาน ๙ และคำนวณกำลังดาวแบบบูรณาการ', icon: 'fa-gem', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/taksasattalek.html' },
     { id: 'thaiHoraBookPage', title: '📘 ตำราโหราศาสตร์<br>(สิงห์โต สุริยาอารักษ์)', desc: 'คัมภีร์แม่บทโหราศาสตร์ไทยดั้งเดิม', icon: 'fa-book', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/horasat.html' },
+    { id: 'waentaHoraPage', title: '🔮 คัมภีร์แว่นตาโหร<br>(พยากรณ์ชะตาชีวิต)', desc: 'ตำราแว่นตาโหรโบราณ วัน-เดือน-ปีเกิด มหาทักษาเสวยอายุ ยามตรีเนตร์ และพิธีสะเดาะเคราะห์', icon: 'fa-glasses', color: '#67e8f9', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', url: 'pages/waenta-hora.html' },
     { id: 'twelveHousesPage', title: '🏛️ ๑๒ ภพเรือนชะตา', desc: 'ความหมายและดาวครองภพ ตนุ ถึง วินาศ', icon: 'fa-th', color: '#ffd700', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
     { id: 'dashaPage', title: '🪐 ทศาดาว', desc: 'ช่วงเวลาที่ดาวแต่ละดวงเสวยอายุ', icon: 'fa-satellite', color: '#ce93d8', category: '📜 โหราศาสตร์ไทยและเลข 7 ตัว' },
 

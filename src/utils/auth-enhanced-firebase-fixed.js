@@ -27,6 +27,7 @@ async function saveUserToFirestore(user) {
         const docRef = await addDoc(usersCol, {
             username: user.username,
             displayName: user.displayName,
+            phone: user.phone || '',
             passwordHash: user.passwordHash,
             role: user.role || 'user',
             registeredAt: new Date(),
@@ -193,10 +194,7 @@ function saveSession(user) {
 
 function clearSession() {
     localStorage.removeItem(AUTH_CONFIG.storageKey);
-    // 🔐 ลบข้อมูลการยินยอม PDPA
     localStorage.removeItem('userId');
-    localStorage.removeItem('pdpaConsent');
-    localStorage.removeItem('pdpaConsentDate');
 }
 
 // ===================================================
@@ -280,6 +278,19 @@ function validateDisplayName(displayName) {
     return errors;
 }
 
+function validatePhone(phone) {
+    const errors = [];
+    phone = (phone || '').trim().replace(/[-\s]/g, '');
+    
+    if (!phone) {
+        errors.push('กรุณาระบุหมายเลขโทรศัพท์');
+    } else if (!/^0[689]\d{8}$|^0[2-57]\d{7,8}$/.test(phone)) {
+        errors.push('รูปแบบหมายเลขโทรศัพท์ไม่ถูกต้อง (เช่น 0812345678)');
+    }
+    
+    return errors;
+}
+
 // ===================================================
 // UI FUNCTIONS
 // ===================================================
@@ -306,6 +317,10 @@ function hideLoginOverlay() {
 }
 
 function getActiveAuthErrorEl() {
+    const resetForm = document.getElementById('authResetForm');
+    if (resetForm && resetForm.style.display !== 'none') {
+        return document.getElementById('authResetError');
+    }
     const registerForm = document.getElementById('authRegisterForm');
     if (registerForm && registerForm.style.display !== 'none') {
         return document.getElementById('authRegisterError');
@@ -325,7 +340,7 @@ function showAuthError(message) {
 }
 
 function clearAuthError() {
-    ['authError', 'authRegisterError'].forEach(id => {
+    ['authError', 'authRegisterError', 'authResetError'].forEach(id => {
         const el = document.getElementById(id);
         if (el) { el.style.display = 'none'; el.textContent = ''; }
     });
@@ -360,13 +375,26 @@ function setRegisterLoading(isLoading) {
     if (btnText) btnText.textContent = isLoading ? 'กำลังสมัครสมาชิก...' : 'สมัครสมาชิก';
 }
 
+function setResetLoading(isLoading) {
+    const btn = document.getElementById('authResetBtn');
+    const spinner = document.getElementById('authResetSpinner');
+    const btnText = document.getElementById('authResetBtnText');
+    if (btn) btn.disabled = isLoading;
+    if (spinner) spinner.style.display = isLoading ? 'inline-block' : 'none';
+    if (btnText) btnText.textContent = isLoading ? 'กำลังบันทึกรหัสผ่านใหม่...' : 'ยืนยันตั้งรหัสผ่านใหม่';
+}
+
 function switchToRegister() {
     const loginForm = document.getElementById('authLoginForm');
     const registerForm = document.getElementById('authRegisterForm');
+    const resetForm = document.getElementById('authResetForm');
+    const authNavTabs = document.getElementById('authNavTabs');
     const loginTab = document.getElementById('loginTab');
     const registerTab = document.getElementById('registerTab');
     
+    if (authNavTabs) authNavTabs.style.display = 'flex';
     if (loginForm) loginForm.style.display = 'none';
+    if (resetForm) resetForm.style.display = 'none';
     if (registerForm) registerForm.style.display = 'block';
 
     if (loginTab) {
@@ -385,10 +413,14 @@ function switchToRegister() {
 function switchToLogin() {
     const loginForm = document.getElementById('authLoginForm');
     const registerForm = document.getElementById('authRegisterForm');
+    const resetForm = document.getElementById('authResetForm');
+    const authNavTabs = document.getElementById('authNavTabs');
     const loginTab = document.getElementById('loginTab');
     const registerTab = document.getElementById('registerTab');
     
+    if (authNavTabs) authNavTabs.style.display = 'flex';
     if (registerForm) registerForm.style.display = 'none';
+    if (resetForm) resetForm.style.display = 'none';
     if (loginForm) loginForm.style.display = 'block';
 
     if (loginTab) {
@@ -401,6 +433,20 @@ function switchToLogin() {
         registerTab.style.background = 'transparent';
         registerTab.style.borderColor = 'transparent';
     }
+    clearAuthError();
+}
+
+function switchToReset() {
+    const loginForm = document.getElementById('authLoginForm');
+    const registerForm = document.getElementById('authRegisterForm');
+    const resetForm = document.getElementById('authResetForm');
+    const authNavTabs = document.getElementById('authNavTabs');
+    
+    if (authNavTabs) authNavTabs.style.display = 'none';
+    if (loginForm) loginForm.style.display = 'none';
+    if (registerForm) registerForm.style.display = 'none';
+    if (resetForm) resetForm.style.display = 'block';
+
     clearAuthError();
 }
 
@@ -495,7 +541,11 @@ async function doLogin() {
             setTimeout(() => {
                 hideLoginOverlay();
                 updateUserBadge(session);
-                // 🔐 ตรวจสอบการยินยอม PDPA
+                // 🔐 ตรวจสอบและกู้คืนการยินยอม PDPA
+                const userConsent = localStorage.getItem('pdpaConsent_' + user.username.toLowerCase());
+                if (userConsent && !localStorage.getItem('pdpaConsent')) {
+                    localStorage.setItem('pdpaConsent', userConsent);
+                }
                 if (typeof checkConsentStatus === 'function') {
                     checkConsentStatus();
                 }
@@ -529,20 +579,23 @@ async function doRegister() {
     clearAuthError();
 
     const usernameInput = document.getElementById('authRegUsername');
+    const phoneInput = document.getElementById('authRegPhone');
     const passwordInput = document.getElementById('authRegPassword');
     const passwordConfirmInput = document.getElementById('authRegPasswordConfirm');
     const displayNameInput = document.getElementById('authRegDisplayName');
 
     const username = (usernameInput?.value || '').trim();
+    const phone = (phoneInput?.value || '').trim().replace(/[-\s]/g, '');
     const password = passwordInput?.value || '';
     const passwordConfirm = passwordConfirmInput?.value || '';
     const displayName = displayNameInput?.value || '';
 
     const usernameErrors = validateUsername(username);
+    const phoneErrors = validatePhone(phone);
     const passwordErrors = validatePassword(password);
     const displayNameErrors = validateDisplayName(displayName);
 
-    const allErrors = [...usernameErrors, ...passwordErrors, ...displayNameErrors];
+    const allErrors = [...displayNameErrors, ...usernameErrors, ...phoneErrors, ...passwordErrors];
 
     if (password !== passwordConfirm) {
         allErrors.push('รหัสผ่านไม่ตรงกัน');
@@ -560,8 +613,9 @@ async function doRegister() {
 
         const newUser = {
             username: username.toLowerCase(),
-            passwordHash: passwordHash,
             displayName: displayName,
+            phone: phone,
+            passwordHash: passwordHash,
             role: 'user',
             registeredAt: new Date().toISOString()
         };
@@ -573,6 +627,7 @@ async function doRegister() {
             
             setTimeout(() => {
                 if (usernameInput) usernameInput.value = '';
+                if (phoneInput) phoneInput.value = '';
                 if (passwordInput) passwordInput.value = '';
                 if (passwordConfirmInput) passwordConfirmInput.value = '';
                 if (displayNameInput) displayNameInput.value = '';
@@ -587,6 +642,140 @@ async function doRegister() {
         showAuthError('เกิดข้อผิดพลาด กรุณาลองใหม่');
     } finally {
         setRegisterLoading(false);
+    }
+}
+
+async function doResetPassword() {
+    clearAuthError();
+
+    const usernameInput = document.getElementById('authResetUsername');
+    const phoneInput = document.getElementById('authResetPhone');
+    const passwordInput = document.getElementById('authResetPassword');
+    const passwordConfirmInput = document.getElementById('authResetPasswordConfirm');
+
+    const username = (usernameInput?.value || '').trim().toLowerCase();
+    const phone = (phoneInput?.value || '').trim().replace(/[-\s]/g, '');
+    const password = passwordInput?.value || '';
+    const passwordConfirm = passwordConfirmInput?.value || '';
+
+    if (!username) {
+        showAuthError('กรุณากรอกชื่อผู้ใช้');
+        return;
+    }
+
+    if (!phone) {
+        showAuthError('กรุณากรอกเบอร์โทรศัพท์ที่ลงทะเบียนไว้');
+        return;
+    }
+
+    const passwordErrors = validatePassword(password);
+    if (passwordErrors.length > 0) {
+        showAuthError(passwordErrors.join('\n'));
+        return;
+    }
+
+    if (password !== passwordConfirm) {
+        showAuthError('รหัสผ่านยืนยันไม่ตรงกัน');
+        return;
+    }
+
+    setResetLoading(true);
+
+    try {
+        // 1. ค้นหาผู้ใช้จาก Firestore ก่อน
+        let matchedUser = null;
+        let firestoreDocId = null;
+
+        try {
+            const { getFirestore, collection, getDocs, query, where, doc, updateDoc } = await import(
+                "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+            );
+            const db = (typeof window.firebaseDb !== 'undefined' && window.firebaseDb) ? window.firebaseDb : getFirestore();
+            const usersCol = collection(db, "registered_users");
+            const q = query(usersCol, where("username", "==", username));
+            const snap = await getDocs(q);
+
+            if (!snap.empty) {
+                for (const docSnap of snap.docs) {
+                    const data = docSnap.data();
+                    const userPhone = (data.phone || '').toString().trim().replace(/[-\s]/g, '');
+                    if (userPhone === phone) {
+                        matchedUser = { id: docSnap.id, ...data };
+                        firestoreDocId = docSnap.id;
+                        break;
+                    }
+                }
+            }
+        } catch (fsErr) {
+            console.warn("⚠️ Firestore query fallback during reset:", fsErr);
+        }
+
+        // 2. ถ้าไม่พบใน Firestore หรือออฟไลน์ ให้ตรวจสอบจาก LocalStorage
+        const localUsers = getRegisteredUsers();
+        const localIndex = localUsers.findIndex(u => u.username.toLowerCase() === username);
+        
+        if (!matchedUser && localIndex !== -1) {
+            const localUser = localUsers[localIndex];
+            const localPhone = (localUser.phone || '').toString().trim().replace(/[-\s]/g, '');
+            if (localPhone && localPhone === phone) {
+                matchedUser = localUser;
+            }
+        }
+
+        // ถ้าค้นหาไม่พบ หรือเบอร์โทรศัพท์ไม่ตรงกัน
+        if (!matchedUser) {
+            showAuthError('❌ ไม่พบชื่อผู้ใช้ หรือเบอร์โทรศัพท์ไม่ถูกต้องตรงกับที่ลงทะเบียนไว้');
+            return;
+        }
+
+        // 3. ทำการ Hash รหัสผ่านใหม่
+        const newPasswordHash = await sha256(password);
+
+        // 4. บันทึกลง LocalStorage
+        if (localIndex !== -1) {
+            localUsers[localIndex].passwordHash = newPasswordHash;
+            localUsers[localIndex].resetAt = new Date().toISOString();
+            localStorage.setItem(AUTH_CONFIG.usersStorageKey, JSON.stringify(localUsers));
+        } else {
+            // ถ้าอยู่ใน Firestore แต่ยังไม่เคยแคชลง Local ให้แคชลง
+            matchedUser.passwordHash = newPasswordHash;
+            matchedUser.resetAt = new Date().toISOString();
+            localUsers.push(matchedUser);
+            localStorage.setItem(AUTH_CONFIG.usersStorageKey, JSON.stringify(localUsers));
+        }
+
+        // 5. บันทึกลง Firestore (ถ้าต่อเน็ตได้)
+        if (firestoreDocId) {
+            try {
+                const { getFirestore, doc, updateDoc } = await import(
+                    "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+                );
+                const db = (typeof window.firebaseDb !== 'undefined' && window.firebaseDb) ? window.firebaseDb : getFirestore();
+                await updateDoc(doc(db, "registered_users", firestoreDocId), {
+                    passwordHash: newPasswordHash,
+                    resetAt: new Date().toISOString()
+                });
+                console.log("✅ อัปเดตรหัสผ่านใหม่ลง Firestore สำเร็จ");
+            } catch (upErr) {
+                console.warn("⚠️ ไม่สามารถอัปเดตลง Firestore ได้ทันที:", upErr.message);
+            }
+        }
+
+        showAuthSuccess('🎉 เปลี่ยนรหัสผ่านใหม่สำเร็จ! กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่');
+
+        setTimeout(() => {
+            if (usernameInput) usernameInput.value = '';
+            if (phoneInput) phoneInput.value = '';
+            if (passwordInput) passwordInput.value = '';
+            if (passwordConfirmInput) passwordConfirmInput.value = '';
+            switchToLogin();
+        }, 1800);
+
+    } catch (err) {
+        console.error('Reset password error:', err);
+        showAuthError('เกิดข้อผิดพลาดในการรีเซ็ตรหัสผ่าน กรุณาลองใหม่อีกครั้ง');
+    } finally {
+        setResetLoading(false);
     }
 }
 
@@ -606,22 +795,44 @@ function showWelcomeMessage(name) {
 function updateUserBadge(session) {
     const badge = document.getElementById('authUserBadge');
     if (badge) {
+        const isAdminUser = session && session.role === 'admin';
+        const isSimulating = Boolean(localStorage.getItem('siamhora_simulate_package') || session.simulatePackage);
+        const currentSimPkg = localStorage.getItem('siamhora_simulate_package') || session.simulatePackage;
+
         badge.innerHTML = `
         <div class="Usename" style="display: flex; justify-content: space-between; width: 100%; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <span id="userProfileLink" style="font-weight:bold; font-size:16px; cursor: pointer; padding: 4px; border-radius: 4px;"
-                  title="คลิกเพื่อไปหน้าโปรไฟล์">
-                    <i class="fas fa-user-circle" style="color: #d4af37;"></i>
-                    ${escapeHtml(session.displayName)} 
-                    ${session.role === 'admin' ? '<span class="text-danger ml-1" style="font-size: 0.8em;"><i class="fas fa-crown"></i> ผู้ดูแลระบบ</span>' : ''}
-                    <span id="packageBadge" style="margin-left:8px; padding:2px 8px; border-radius:12px; font-size:0.85em; background:rgba(212,175,55,0.2); border:1px solid #d4af37; color:#d4af37; ${session.role === 'admin' ? 'box-shadow: 0 0 10px rgba(212,175,55,0.5);' : ''}">
-                        👑 ${session.role === 'admin' ? 'วิมาน (ผู้ดูแลระบบ)' : (session.package || 'ทดลองใช้')} <span id="packageCountdownText" style="font-weight:normal; font-size:0.9em;"></span>
-                    </span>
-            </span>
+            <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
+                <span id="userProfileLink" style="font-weight:bold; font-size:16px; cursor: pointer; padding: 4px; border-radius: 4px; display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px;"
+                      title="คลิกเพื่อไปหน้าโปรไฟล์">
+                        <i class="fas fa-user-circle" style="color: #d4af37;"></i>
+                        ${escapeHtml(session.displayName)} 
+                        ${session.role === 'admin' ? '<span class="text-danger ml-1" style="font-size: 0.8em;"><i class="fas fa-crown"></i> ผู้ดูแลระบบ</span>' : ''}
+                        <span id="packageBadge" style="margin-left:4px; padding:2px 8px; border-radius:12px; font-size:0.82em; background:rgba(212,175,55,0.2); border:1px solid #d4af37; color:#d4af37; display:inline-flex; align-items:center; gap:6px; ${session.role === 'admin' ? 'box-shadow: 0 0 10px rgba(212,175,55,0.5);' : ''}">
+                            <span>👑 ${session.role === 'admin' ? (isSimulating ? `ทดสอบ: ${currentSimPkg}` : 'วิมาน (ผู้ดูแลระบบ)') : (session.package || 'ทดลองใช้')}</span>
+                            <span id="packageCountdownText" style="font-weight:normal; font-size:0.9em;"></span>
+                            ${isAdminUser ? `
+                            <button type="button" id="adminSimulateTierBtn" class="btn btn-sm" style="background: rgba(245, 158, 11, 0.25); color: #ffe082; font-weight: 600; font-size: 0.65rem; line-height: 1; border-radius: 4px; padding: 2px 6px; border: 1px solid rgba(245, 158, 11, 0.6); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 3px;" title="คลิกเพื่อจำลองสิทธิ์หรือเลือกระดับแพ็กเกจทดสอบระบบ" onmouseover="this.style.background='rgba(245, 158, 11, 0.45)';" onmouseout="this.style.background='rgba(245, 158, 11, 0.25)';">
+                                <i class="fas fa-flask" style="font-size: 0.62rem;"></i> <span>${isSimulating ? `${currentSimPkg}` : 'ทดสอบ'}</span>
+                            </button>
+                            ` : ''}
+                        </span>
+                </span>
+            </div>
             <span id="logoutBtn" class="btn-eixt btn-link btn-sm p-0 ml-2" style="cursor: pointer; color: #ff6b6b;">
                 <i class="fas fa-sign-out-alt mr-1"></i> ออกจากระบบ
             </span>
         </div>
         `;
+
+        // เพิ่ม event listener ให้กับปุ่มจำลองระดับสมาชิกของแอดมิน
+        const simBtn = document.getElementById('adminSimulateTierBtn');
+        if (simBtn) {
+            simBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openAdminTierSimulatorModal();
+            });
+        }
 
         // เพิ่ม event listener ให้กับปุ่มโปรไฟล์
         const profileLink = document.getElementById('userProfileLink');
@@ -724,7 +935,7 @@ function navigateToProfile() {
     const session = getSession();
 
     // ถ้าเป็น Admin ให้ไปหน้าระบบจัดการหลังบ้าน (Admin Console)
-    if (session && typeof isAdmin === 'function' && isAdmin()) {
+    if (session && (session.role === 'admin' || (typeof isAdmin === 'function' && isAdmin()))) {
         window.location.href = 'admin/admin-console.html';
         return;
     }
@@ -752,6 +963,24 @@ function doLogout() {
 }
 
 function checkAuth() {
+    // 🛠️ โหมดนักพัฒนา / ทดสอบบนมือถือ: ถ้า URL มี ?dev=true ให้จำลองสิทธิ์เป็น Admin ทันที
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('dev') === 'true') {
+        const devSession = {
+            username: 'admin',
+            displayName: 'ผู้ดูแลระบบ (Dev Preview)',
+            role: 'admin',
+            package: 'วิมาน',
+            loginTime: Date.now(),
+            expiry: Date.now() + (24 * 60 * 60 * 1000)
+        };
+        localStorage.setItem(AUTH_CONFIG.storageKey, JSON.stringify(devSession));
+        localStorage.setItem('userId', 'admin');
+        hideLoginOverlay();
+        updateUserBadge(devSession);
+        return;
+    }
+
     const session = getSession();
     if (session) {
         hideLoginOverlay();
@@ -767,6 +996,9 @@ function checkAuth() {
 
 document.addEventListener('DOMContentLoaded', function () {
     checkAuth();
+    if (typeof checkLineLoginCallback === 'function') {
+        checkLineLoginCallback();
+    }
 
     const passInput = document.getElementById('authPassword');
     const userInput = document.getElementById('authUsername');
@@ -789,6 +1021,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (regPassConfirmInput) {
         regPassConfirmInput.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') doRegister();
+        });
+    }
+
+    const resetPassConfirmInput = document.getElementById('authResetPasswordConfirm');
+    if (resetPassConfirmInput) {
+        resetPassConfirmInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') doResetPassword();
         });
     }
 
@@ -1000,6 +1239,173 @@ async function updateUserRole(username, newRole) {
     }
 }
 
+// 🧪 Modal จำลองและสลับระดับสมาชิก (Package Tier Simulator) สำหรับ Admin ทดสอบระบบ
+function openAdminTierSimulatorModal() {
+    const session = getSession();
+    if (!session || (session.role !== 'admin' && (typeof isAdmin !== 'function' || !isAdmin()))) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('ไม่มีสิทธิ์', 'เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถใช้เครื่องมือจำลองระดับสมาชิกเพื่อทดสอบระบบได้', 'warning');
+        }
+        return;
+    }
+
+    const currentSimulated = localStorage.getItem('siamhora_simulate_package') || session.simulatePackage || '';
+    const currentActivePkg = currentSimulated || session.package || 'วิมาน';
+
+    const allPackages = [
+        { name: "ทดลองใช้", desc: "ระดับฟรี (มีฟังก์ชันล็อกหลายส่วน)", icon: "👤" },
+        { name: "ธรรมดา", desc: "ระดับเริ่มต้น 60 บ./เดือน", icon: "⭐" },
+        { name: "ทองแดง", desc: "ระดับ 90 บ./เดือน", icon: "🥉" },
+        { name: "เงิน", desc: "ระดับ 150 บ./เดือน", icon: "🥈" },
+        { name: "ทองคำ", desc: "ระดับ 300 บ./เดือน (ปลดล็อกกราฟชีวิต, วิเคราะห์ชื่อ)", icon: "🥇" },
+        { name: "ทองคำขาว", desc: "ระดับ 600 บ./เดือน (ปลดล็อกมหาทักษา)", icon: "✨" },
+        { name: "ไข่มุก", desc: "ระดับ 900 บ./เดือน", icon: "🦪" },
+        { name: "ทับทิม", desc: "ระดับ 1,200 บ./เดือน", icon: "💎" },
+        { name: "ไพฑูรย์", desc: "ระดับ 1,500 บ./เดือน", icon: "🔮" },
+        { name: "มรกต", desc: "ระดับ 3,000 บ./เดือน", icon: "❇️" },
+        { name: "เพชร", desc: "ระดับ 6,000 บ./เดือน", icon: "🔷" },
+        { name: "มงกุฎ", desc: "ระดับ 9,000 บ./เดือน", icon: "👑" },
+        { name: "มงกุฎเพชร", desc: "ระดับ 18,000 บ./เดือน", icon: "👑💎" },
+        { name: "ไตรมงกุฎ", desc: "ระดับ 27,000 บ./เดือน", icon: "👑👑👑" },
+        { name: "เพชรยอดมงกุฎ", desc: "ระดับ 36,000 บ./เดือน", icon: "🏆" },
+        { name: "วิมาน", desc: "ระดับสูงสุด (ผู้ดูแลระบบ)", icon: "🏰" }
+    ];
+
+    let optionsHtml = '';
+    allPackages.forEach(p => {
+        const isSelected = p.name === currentActivePkg ? 'selected' : '';
+        optionsHtml += `<option value="${p.name}" ${isSelected}>${p.icon} ${p.name} - ${p.desc}</option>`;
+    });
+
+    const isSimulationActive = Boolean(currentSimulated);
+
+    const htmlContent = `
+        <div class="text-left p-2" style="font-family: 'Prompt', sans-serif;">
+            <div class="mb-3 text-center p-3 rounded" style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3); border-radius: 12px;">
+                <div style="font-size: 1.1rem; font-weight: 700; color: #ffd700;">
+                    🧪 แผงทดสอบระดับสมาชิก (Admin Sandbox)
+                </div>
+                <div class="small mt-1 text-light">
+                    ผู้ดูแลระบบ: <b>${escapeHtml(session.displayName || session.username)}</b>
+                </div>
+                <div class="mt-2" style="font-size: 0.88rem;">
+                    สถานะการจำลองปัจจุบัน: 
+                    ${isSimulationActive 
+                        ? `<span class="badge badge-warning" style="background:#ff9800; color:#fff; font-size:0.85rem; padding: 4px 10px; border-radius: 12px;"><i class="fas fa-flask mr-1"></i>จำลองระดับ ${currentSimulated} (เสมือนผู้ใช้จริง)</span>` 
+                        : `<span class="badge badge-success" style="background:#28a745; color:#fff; font-size:0.85rem; padding: 4px 10px; border-radius: 12px;"><i class="fas fa-crown mr-1"></i>สิทธิ์แอดมินเต็ม (วิมาน)</span>`}
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="text-warning small font-weight-bold mb-1">
+                    <i class="fas fa-crown mr-1"></i> เลือกระดับแพ็กเกจที่ต้องการทดสอบ:
+                </label>
+                <select id="swalSimulatePackageSelect" class="form-control bg-dark text-warning border-warning w-100" style="height: 48px; font-size: 0.95rem; border-radius: 10px;">
+                    ${optionsHtml}
+                </select>
+            </div>
+
+            <div class="form-group mb-3 p-3 rounded" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.1);">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="swalSimulateEnforceLock" ${isSimulationActive ? 'checked' : ''}>
+                    <label class="custom-control-label text-light" for="swalSimulateEnforceLock" style="cursor: pointer; font-size: 0.88rem;">
+                        <b>เปิดโหมดจำลองสิทธิ์เสมือนจริง</b> (บังคับบล็อก/ล็อกฟีเจอร์ตามเงื่อนไขแพ็กเกจนั้นจริง ๆ เพื่อทดสอบปุ่มล็อกและการแจ้งเตือน)
+                    </label>
+                </div>
+            </div>
+
+            <div class="small text-muted" style="line-height: 1.5;">
+                <i class="fas fa-info-circle text-info mr-1"></i> ท่านสามารถกดสลับเปลี่ยนระดับหรือรีเซ็ตกลับเป็นสิทธิ์แอดมินเต็มได้ตลอดเวลา โดยไม่กระทบฐานข้อมูลจริง
+            </div>
+        </div>
+    `;
+
+    Swal.fire({
+        title: '👑 เลือกระดับสมาชิกสำหรับทดสอบ',
+        html: htmlContent,
+        showCancelButton: true,
+        showDenyButton: isSimulationActive,
+        confirmButtonText: '<i class="fas fa-check mr-1"></i> ใช้งานระดับนี้',
+        denyButtonText: '<i class="fas fa-undo mr-1"></i> รีเซ็ตกลับเป็นแอดมินเต็ม',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#d4af37',
+        denyButtonColor: '#4a5568',
+        cancelButtonColor: '#2d3748',
+        background: '#0f172a',
+        color: '#f8fafc',
+        customClass: { popup: 'border-gold shadow-lg' },
+        preConfirm: () => {
+            const selectEl = document.getElementById('swalSimulatePackageSelect');
+            const enforceCheck = document.getElementById('swalSimulateEnforceLock');
+            return {
+                package: selectEl ? selectEl.value : 'วิมาน',
+                enforce: enforceCheck ? enforceCheck.checked : false
+            };
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            applySimulatedPackage(result.value.package, result.value.enforce);
+        } else if (result.isDenied) {
+            resetSimulatedPackage();
+        }
+    });
+}
+
+function applySimulatedPackage(targetPackage, enforceLock) {
+    const session = getSession();
+    if (!session) return;
+
+    if (enforceLock) {
+        localStorage.setItem('siamhora_simulate_package', targetPackage);
+        session.simulatePackage = targetPackage;
+    } else {
+        localStorage.removeItem('siamhora_simulate_package');
+        delete session.simulatePackage;
+    }
+
+    session.package = targetPackage;
+    localStorage.setItem(AUTH_CONFIG.storageKey, JSON.stringify(session));
+
+    // อัปเดต UI ทันที
+    updateUserBadge(session);
+    if (typeof window.updateProfileSidebarTierAccess === 'function') {
+        window.updateProfileSidebarTierAccess();
+    }
+
+    Swal.fire({
+        icon: 'success',
+        title: 'สลับระดับสมาชิกสำเร็จ',
+        html: `กำลังจำลองระบบในระดับ <b>「${targetPackage}」</b> ${enforceLock ? '<br><span class="text-warning" style="font-size:0.85em;">(เปิดโหมดจำลองสิทธิ์เสมือนจริง: ระบบจะล็อกฟีเจอร์ตามสิทธิ์แพ็กเกจนี้)</span>' : ''}`,
+        confirmButtonColor: '#d4af37',
+        timer: 2000,
+        timerProgressBar: true
+    });
+}
+
+function resetSimulatedPackage() {
+    localStorage.removeItem('siamhora_simulate_package');
+    const session = getSession();
+    if (session) {
+        delete session.simulatePackage;
+        session.package = 'วิมาน';
+        session.role = 'admin';
+        localStorage.setItem(AUTH_CONFIG.storageKey, JSON.stringify(session));
+        updateUserBadge(session);
+    }
+    if (typeof window.updateProfileSidebarTierAccess === 'function') {
+        window.updateProfileSidebarTierAccess();
+    }
+
+    Swal.fire({
+        icon: 'info',
+        title: 'รีเซ็ตเรียบร้อย',
+        text: 'คืนค่าสิทธิ์ผู้ดูแลระบบสูงสุด (วิมาน) เรียบร้อยแล้วครับ',
+        confirmButtonColor: '#d4af37',
+        timer: 1800,
+        timerProgressBar: true
+    });
+}
+
 // ===================================================
 // UTILITY FUNCTIONS
 // ===================================================
@@ -1075,8 +1481,14 @@ window.checkAdminAccess = checkAdminAccess;
 window.getRegisteredUsersList = getRegisteredUsersList;
 window.deleteRegisteredUser = deleteRegisteredUser;
 window.resetUserPassword = resetUserPassword;
+window.doResetPassword = doResetPassword;
+window.switchToReset = switchToReset;
+window.validatePhone = validatePhone;
 window.syncUsersFromFirestore = syncUsersFromFirestore;
 window.saveUserToFirestore = saveUserToFirestore;
+window.openAdminTierSimulatorModal = openAdminTierSimulatorModal;
+window.applySimulatedPackage = applySimulatedPackage;
+window.resetSimulatedPackage = resetSimulatedPackage;
 
 // ===================================================
 // GOOGLE SIGN-IN FUNCTIONS
@@ -1181,4 +1593,146 @@ async function doGoogleLogin() {
         Swal.fire('เกิดข้อผิดพลาด', errorMsg, 'error');
     }
 }
+
+// ===================================================
+// LINE SIGN-IN FUNCTIONS
+// ===================================================
+
+function doLineLogin() {
+    const channelId = (typeof CONFIG !== 'undefined' && CONFIG?.LINE?.CHANNEL_ID) ? CONFIG.LINE.CHANNEL_ID : "2011471468";
+    const redirectUri = window.location.origin + window.location.pathname;
+    const state = 'line_' + Math.random().toString(36).substring(2, 9);
+    sessionStorage.setItem('line_oauth_state', state);
+
+    const lineAuthUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${channelId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=openid%20profile`;
+    window.location.href = lineAuthUrl;
+}
+
+async function checkLineLoginCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has('code') || !urlParams.has('state')) return;
+
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
+    const savedState = sessionStorage.getItem('line_oauth_state');
+
+    // ลบ query parameters ออกจาก URL เพื่อความสะอาดสวยงาม
+    window.history.replaceState({}, document.title, window.location.pathname);
+
+    if (savedState && state !== savedState) {
+        console.warn("LINE state mismatch");
+        return;
+    }
+    sessionStorage.removeItem('line_oauth_state');
+
+    Swal.fire({
+        title: 'กำลังเชื่อมต่อกับ LINE...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    const appsScriptUrl = (typeof CONFIG !== 'undefined' && CONFIG?.GOOGLE_APPS_SCRIPT?.DEPLOYMENT_URL)
+        ? CONFIG.GOOGLE_APPS_SCRIPT.DEPLOYMENT_URL
+        : "";
+
+    let lineUserId = 'line_user_' + Math.random().toString(36).substring(2, 8);
+    let displayName = 'สมาชิก LINE';
+
+    try {
+        if (appsScriptUrl && !appsScriptUrl.includes('YOUR_DEPLOYMENT_ID')) {
+            const redirectUri = window.location.origin + window.location.pathname;
+            const res = await fetch(appsScriptUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'verifyLineLogin', code: code, redirectUri: redirectUri })
+            });
+            const data = await res.json();
+            if (data.success) {
+                lineUserId = data.userId || lineUserId;
+                displayName = data.displayName || displayName;
+            }
+        }
+    } catch (apiErr) {
+        console.warn("LINE Apps Script token verification fallback:", apiErr);
+    }
+
+    // ซิงก์ข้อมูลผู้ใช้และระดับสมาชิก (Tier)
+    let userPackage = 'ทดลองใช้';
+    let packageExpiry = null;
+    let userRole = 'user';
+    const cleanUsername = ('line_' + lineUserId.replace(/[^a-zA-Z0-9_]/g, '')).toLowerCase().substring(0, 20);
+
+    // ตรวจสอบจาก Firestore ถ้ามี
+    try {
+        if (window.firebaseDb) {
+            const { collection, getDocs, query, where, updateDoc, doc, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+            const usersRef = collection(window.firebaseDb, "users");
+            const q = query(usersRef, where("lineUserId", "==", lineUserId));
+            const snapshot = await getDocs(q);
+
+            if (snapshot.empty) {
+                await addDoc(usersRef, {
+                    username: cleanUsername,
+                    displayName: displayName,
+                    lineUserId: lineUserId,
+                    role: userRole,
+                    package: userPackage,
+                    provider: 'line',
+                    createdAt: new Date().toISOString(),
+                    lastLogin: new Date().toISOString()
+                });
+            } else {
+                const userDoc = snapshot.docs[0];
+                const data = userDoc.data();
+                if (data.package) userPackage = data.package;
+                if (data.packageExpiry) packageExpiry = data.packageExpiry;
+                if (data.role) userRole = data.role;
+                await updateDoc(doc(window.firebaseDb, "users", userDoc.id), {
+                    lastLogin: new Date().toISOString()
+                });
+            }
+        }
+    } catch (dbErr) {
+        console.warn("Firestore sync fallback for LINE user:", dbErr);
+    }
+
+    // ตรวจสอบแพ็กเกจในเครื่องจาก horo_history ถ้ามี
+    try {
+        const history = JSON.parse(localStorage.getItem('horo_history') || '[]');
+        const matched = history.find(m => m.username === cleanUsername || (m.lineUserId && m.lineUserId === lineUserId));
+        if (matched && matched.package) {
+            userPackage = matched.package;
+            if (matched.packageExpiry) packageExpiry = matched.packageExpiry;
+        }
+    } catch (e) {}
+
+    const sessionUser = {
+        username: cleanUsername,
+        displayName: displayName,
+        role: userRole,
+        package: userPackage,
+        packageExpiry: packageExpiry,
+        provider: 'line'
+    };
+
+    const session = saveSession(sessionUser);
+
+    Swal.fire({
+        icon: 'success',
+        title: 'เข้าสู่ระบบด้วย LINE สำเร็จ',
+        text: `ยินดีต้อนรับ ${displayName} (ระดับ: ${userPackage})`,
+        timer: 1500,
+        showConfirmButton: false
+    }).then(() => {
+        hideLoginOverlay();
+        updateUserBadge(session);
+        if (typeof checkConsentStatus === 'function') {
+            checkConsentStatus();
+        }
+        location.reload();
+    });
+}
+
+window.doLineLogin = doLineLogin;
+window.checkLineLoginCallback = checkLineLoginCallback;
 

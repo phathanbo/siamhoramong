@@ -54,9 +54,9 @@ function showmainpage() {
             <h1 id="userGreeting" style="font-size: 2.6rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 25px rgba(241,208,110,0.4); margin-bottom: 8px;">
                 ✨ ยินดีต้อนรับสู่ สยามโหรามงคล ✨
             </h1>
-            <p style="color: #CBD5E1; font-size: 1.05rem; font-weight: 400; max-width: 600px; margin: 0 auto 20px auto;">ระบบพยากรณ์โหราศาสตร์ไทยชั้นสูง คำนวณชะตาชีวิตและฤกษ์ยามแม่นยำตามตำราโบราณ</p>
+            <p style="color: #CBD5E1; font-size: 1.05rem; font-weight: 400; max-width: 600px; margin: 0 auto 15px auto;">ระบบพยากรณ์โหราศาสตร์ไทยชั้นสูง คำนวณชะตาชีวิตและฤกษ์ยามแม่นยำตามตำราโบราณ</p>
         </div>
-        
+
         <section id="form" class="card shadow-lg mb-5 border-0" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%); backdrop-filter: blur(28px) saturate(190%); -webkit-backdrop-filter: blur(28px) saturate(190%); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px rgba(241,208,110,0.12), inset 0 1px 0 rgba(255,255,255,0.3) !important; border: 1px solid rgba(241, 208, 110, 0.35) !important; overflow: hidden; animation: fadeIn 0.8s ease;">
             
             <div class="card-header text-center py-4" style="background: linear-gradient(90deg, rgba(241,208,110,0.05) 0%, rgba(241,208,110,0.2) 50%, rgba(241,208,110,0.05) 100%); border-bottom: 1px solid rgba(241, 208, 110, 0.35);">
@@ -195,3 +195,4 @@ function showmainpage() {
 document.addEventListener("DOMContentLoaded", () =>{
     showmainpage();
 });
+

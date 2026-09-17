@@ -1091,3 +1091,97 @@ if (typeof window !== 'undefined') {
         }, 1500);
     });
 }
+
+// ========================================================
+// 📱 User Social Share & Card Image Generator (สำหรับผู้ใช้ทั่วไป)
+// ========================================================
+if (typeof window !== 'undefined') {
+    window.sharePredictionCard = async function(targetContainerId, customTitle = "ผลพยากรณ์ดวงชะตา") {
+        const el = document.getElementById(targetContainerId);
+        if (!el) {
+            if (typeof Swal !== 'undefined') Swal.fire('ไม่พบผลลัพธ์', 'กรุณากดทำนายดวงก่อนแชร์', 'info');
+            return;
+        }
+
+    const loadHtml2Canvas = () => {
+        return new Promise((resolve, reject) => {
+            if (window.html2canvas) return resolve(window.html2canvas);
+            const s = document.createElement('script');
+            s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+            s.onload = () => resolve(window.html2canvas);
+            s.onerror = reject;
+            document.head.appendChild(s);
+        });
+    };
+
+    try {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'กำลังสร้างการ์ดคำทำนาย...',
+                text: 'กรุณารอสักครู่ ระบบกำลังจัดรูปภาพมงคลสำหรับบันทึกและแชร์',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+        }
+
+        const h2c = await loadHtml2Canvas();
+
+        // สร้างการ์ด Wrapper สวยงามสำหรับ Export
+        const cardBox = document.createElement('div');
+        cardBox.style.width = '640px';
+        cardBox.style.padding = '30px';
+        cardBox.style.background = 'radial-gradient(circle at 50% 20%, #1e293b 0%, #0b1120 100%)';
+        cardBox.style.border = '2px solid #d4af37';
+        cardBox.style.borderRadius = '20px';
+        cardBox.style.color = '#ffffff';
+        cardBox.style.fontFamily = "'Prompt', 'Sarabun', sans-serif";
+        cardBox.style.position = 'fixed';
+        cardBox.style.left = '-9999px';
+        cardBox.style.top = '0';
+        cardBox.style.zIndex = '99999';
+
+        cardBox.innerHTML = `
+            <div style="text-align:center; border-bottom:1px solid rgba(212,175,55,0.4); padding-bottom:15px; margin-bottom:20px;">
+                <div style="font-size:32px;">🔮</div>
+                <h2 style="color:#f1d06e; margin:5px 0 0 0; font-size:22px;">สยามโหรามงคล</h2>
+                <div style="color:#94a3b8; font-size:13px;">${customTitle} • พยากรณ์ตามหลักโหราศาสตร์ไทยโบราณ</div>
+            </div>
+            <div style="font-size:14px; line-height:1.7; max-height:480px; overflow:hidden; color:#e2e8f0;">
+                ${el.innerHTML.replace(/<button[\s\S]*?<\/button>/gi, '')}
+            </div>
+            <div style="margin-top:20px; border-top:1px solid rgba(212,175,55,0.3); padding-top:12px; display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#cbd5e1;">
+                <span>✨ สยามโหรามงคล Siam Horamongkol</span>
+                <span>📅 ${new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+            </div>
+        `;
+        document.body.appendChild(cardBox);
+
+        const canvas = await h2c(cardBox, { scale: 2, useCORS: true, backgroundColor: '#0b1120' });
+        cardBox.remove();
+        const imgUrl = canvas.toDataURL('image/png');
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: '✨ การ์ดคำทำนายของคุณพร้อมแล้ว!',
+                html: `
+                    <div style="max-height:360px; overflow-y:auto; margin-bottom:15px; border-radius:10px; border:1px solid rgba(212,175,55,0.3);">
+                        <img src="${imgUrl}" style="width:100%; border-radius:10px; display:block;" alt="คำทำนาย">
+                    </div>
+                    <div class="d-flex justify-content-center gap-2" style="gap:10px;">
+                        <a href="${imgUrl}" download="siamhora-fortune.png" class="btn btn-warning font-weight-bold px-4 py-2" style="border-radius:25px;">
+                            <i class="fas fa-download mr-1"></i> บันทึกรูปลงเครื่อง
+                        </a>
+                    </div>
+                `,
+                showCloseButton: true,
+                showConfirmButton: false
+            });
+        }
+    } catch (e) {
+        console.error("Error creating prediction card:", e);
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างรูปภาพคำทำนายได้ในขณะนี้', 'error');
+        }
+    }
+};
+}

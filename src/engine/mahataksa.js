@@ -1111,6 +1111,24 @@ window.saveCard = async function (cardId) {
 /* หมายเหตุ: ฟังก์ชัน parseBirthdate ถูกย้ายไปที่ utils-helpers.js แล้ว */
 
 window.calculatemahataksa = function () {
+    // 🔒 ตรวจสอบสิทธิ์แพ็กเกจ
+    if (typeof window.hasPackagePermission === 'function' && !window.hasPackagePermission('mahathaksaPage')) {
+        if (typeof window.showTierUpgradePrompt === 'function') {
+            window.showTierUpgradePrompt('วิเคราะห์มหาทักษาพยากรณ์', 'mahathaksaPage');
+        } else if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: '🔒 สิทธิพิเศษเฉพาะสมาชิก',
+                text: 'ระบบวิเคราะห์มหาทักษาพยากรณ์สงวนสิทธิ์สำหรับสมาชิกที่อัปเกรดแพ็กเกจเท่านั้น',
+                confirmButtonText: 'ดูแพ็กเกจ',
+                confirmButtonColor: '#d4af37'
+            }).then(r => { if (r.isConfirmed && typeof navigateTo === 'function') navigateTo('package'); });
+        } else {
+            alert('ระบบวิเคราะห์มหาทักษาพยากรณ์สงวนสิทธิ์สำหรับสมาชิกที่อัปเกรดแพ็กเกจเท่านั้น');
+        }
+        return;
+    }
+
     // 1️⃣ ดึงจากฟอร์ม
     let input = document.getElementById('birthdate')?.value;
 

@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 คัมภีร์แว่นตาโหร (พยากรณ์ชะตาชีวิตโบราณ) - สยามโหรามงคล</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;900&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & SweetAlert2 & html2canvas -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/modern-theme.css">
+
+    <style>
+        :root {
+            --wh-gold: #f5d77f;
+            --wh-gold-light: #fff8db;
+            --wh-gold-dark: #c99326;
+            --wh-gold-gradient: linear-gradient(135deg, #ffffff 0%, #fef3c7 30%, #f5d77f 65%, #d97706 100%);
+            --wh-cyan: #38bdf8;
+            --wh-cyan-glow: rgba(56, 189, 248, 0.35);
+            --wh-purple: #c084fc;
+            --wh-bg-dark: #070c1a;
+            --wh-card-bg: linear-gradient(135deg, rgba(17, 27, 49, 0.88) 0%, rgba(10, 16, 32, 0.94) 100%);
+            --wh-card-border: rgba(245, 215, 127, 0.28);
+            --wh-radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Prompt', 'Sarabun', sans-serif;
+        }
+
+        body {
+            background-color: var(--wh-bg-dark);
+            color: #f1f5f9;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0 0 80px 0;
+            background-image: 
+                radial-gradient(circle at 12% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 88% 85%, rgba(217, 119, 6, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(192, 132, 252, 0.08) 0%, transparent 60%),
+                linear-gradient(180deg, #060a17 0%, #0c1428 50%, #060914 100%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        .wh-wrapper {
+            max-width: 1420px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* Top Nav Bar */
+        .wh-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-back-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #e2e8f0;
+            border: 1px solid rgba(245, 215, 127, 0.35);
+            padding: 9px 24px;
+            border-radius: 40px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .btn-back-main:hover {
+            color: #ffffff;
+            background: rgba(245, 215, 127, 0.18);
+            border-color: var(--wh-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 215, 127, 0.25);
+        }
+
+        /* Hero Banner */
+        .wh-hero {
+            position: relative;
+            background: linear-gradient(135deg, rgba(26, 38, 68, 0.8) 0%, rgba(13, 21, 41, 0.95) 100%);
+            border: 1px solid rgba(245, 215, 127, 0.38);
+            border-radius: 26px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 0 40px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(25px);
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+        .wh-hero::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: -30%;
+            width: 160%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(245, 215, 127, 0.1) 0%, transparent 60%);
+            pointer-events: none;
+            animation: pulseGlow 8s infinite alternate;
+        }
+        @keyframes pulseGlow {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.15); opacity: 1; }
+        }
+
+        .wh-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(192, 132, 252, 0.22));
+            border: 1px solid #38bdf8;
+            color: #bae6fd;
+            padding: 6px 20px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            margin-bottom: 14px;
+        }
+
+        .wh-hero-title {
+            font-size: clamp(2rem, 3.8vw, 3rem);
+            font-weight: 800;
+            background: var(--wh-gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 4px 30px rgba(245, 215, 127, 0.35);
+        }
+
+        .wh-hero-subtitle {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            max-width: 820px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+
+        /* Glass Cards */
+        .wh-card {
+            background: var(--wh-card-bg);
+            border: 1px solid var(--wh-card-border);
+            border-radius: var(--wh-radius);
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Form Grid */
+        .wh-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .wh-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .wh-input-label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #f5d77f;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .wh-input {
+            width: 100%;
+            height: 48px;
+            background: rgba(8, 14, 28, 0.85);
+            border: 1.5px solid rgba(245, 215, 127, 0.3);
+            border-radius: 12px;
+            color: #ffffff;
+            padding: 0 16px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+        .wh-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+            background: rgba(11, 20, 42, 0.95);
+        }
+        select.wh-input option {
+            background: #0d152a;
+            color: #ffffff;
+        }
+
+        .btn-calc-gold {
+            background: linear-gradient(135deg, #f5d77f 0%, #eab308 50%, #ca8a04 100%);
+            color: #0b1120;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            padding: 13px 36px;
+            cursor: pointer;
+            box-shadow: 0 6px 25px rgba(234, 179, 8, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.5);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            height: 48px;
+        }
+        .btn-calc-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(234, 179, 8, 0.65);
+            color: #000000;
+        }
+
+        /* Navigation Tabs */
+        .wh-tabs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .wh-tab-btn {
+            background: rgba(14, 23, 45, 0.75);
+            border: 1.5px solid rgba(245, 215, 127, 0.25);
+            color: #cbd5e1;
+            padding: 14px 16px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .wh-tab-btn .tab-icon {
+            font-size: 1.35rem;
+            color: #f5d77f;
+            transition: transform 0.3s ease;
+        }
+        .wh-tab-btn:hover {
+            background: rgba(245, 215, 127, 0.12);
+            border-color: var(--wh-gold);
+            color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(245, 215, 127, 0.2);
+        }
+        .wh-tab-btn:hover .tab-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+        .wh-tab-btn.active {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.25) 0%, rgba(202, 138, 4, 0.15) 100%);
+            border-color: #f5d77f;
+            color: #ffffff;
+            box-shadow: 0 8px 30px rgba(234, 179, 8, 0.35), inset 0 0 20px rgba(245, 215, 127, 0.15);
+        }
+        .wh-tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 15%;
+            width: 70%;
+            height: 3px;
+            background: var(--wh-gold-gradient);
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* Information Panels & Glass Containers */
+        .wh-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(245, 215, 127, 0.25);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .wh-section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff8db;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .wh-badge-pill {
+            background: rgba(245, 215, 127, 0.15);
+            border: 1px solid rgba(245, 215, 127, 0.4);
+            color: #fef08a;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .wh-stat-card {
+            background: linear-gradient(135deg, rgba(20, 31, 56, 0.75) 0%, rgba(13, 20, 38, 0.85) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .wh-stat-card:hover {
+            border-color: rgba(245, 215, 127, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+        }
+        .wh-stat-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--wh-gold-gradient);
+            border-radius: 4px 0 0 4px;
+        }
+        .wh-stat-title {
+            font-size: 1.02rem;
+            font-weight: 600;
+            color: #f5d77f;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .wh-stat-body {
+            font-size: 0.94rem;
+            color: #e2e8f0;
+            line-height: 1.7;
+        }
+
+        /* Highlight Metric Box */
+        .wh-metric-box {
+            background: linear-gradient(135deg, rgba(245, 215, 127, 0.15) 0%, rgba(56, 189, 248, 0.08) 100%);
+            border: 1.5px solid rgba(245, 215, 127, 0.4);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        /* Modern Table */
+        .wh-table-wrap {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(245, 215, 127, 0.25);
+            background: rgba(9, 15, 30, 0.65);
+        }
+        .wh-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .wh-table th {
+            background: rgba(245, 215, 127, 0.15);
+            color: #fef08a;
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid rgba(245, 215, 127, 0.3);
+        }
+        .wh-table td {
+            padding: 14px 18px;
+            font-size: 0.92rem;
+            color: #f1f5f9;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .wh-table tr:last-child td {
+            border-bottom: none;
+        }
+        .wh-table tr:hover td {
+            background: rgba(245, 215, 127, 0.06);
+        }
+
+        /* Tier Lock Modal */
+        #tierLockOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(4, 8, 19, 0.95);
+            z-index: 99999;
+            backdrop-filter: blur(20px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .wh-lock-box {
+            background: linear-gradient(135deg, rgba(23, 33, 58, 0.96) 0%, rgba(13, 20, 39, 0.98) 100%);
+            border: 2px solid rgba(56, 189, 248, 0.5);
+            border-radius: 28px;
+            max-width: 550px;
+            width: 100%;
+            padding: 44px 34px;
+            text-align: center;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 50px rgba(56, 189, 248, 0.3);
+            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .wh-hero { padding: 28px 18px; }
+            .wh-card { padding: 20px 16px; }
+            .wh-tabs-container { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .wh-tabs-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🔒 Modal ล็อกสิทธิ์เฉพาะสมาชิกระดับเพชรขึ้นไป -->
+    <div id="tierLockOverlay">
+        <div class="wh-lock-box">
+            <div style="font-size: 4rem; margin-bottom: 16px; filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.9));">💎</div>
+            <div class="wh-hero-badge mb-3"><i class="fas fa-gem"></i> เฉพาะสมาชิกระดับเพชรขึ้นไป (Diamond Tier)</div>
+            <h2 style="font-weight: 700; color: #fff8db; margin-bottom: 12px; font-size: 1.6rem;">คัมภีร์แว่นตาโหรโบราณ</h2>
+            <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.7; margin-bottom: 28px;">
+                ระบบนี้เป็นภูมิปัญญาโหราศาสตร์ชั้นสูง ถอดความจากคัมภีร์โบราณแท้ ๕๑ หน้า ประกอบด้วยเกณฑ์ ๗ วัน ๑๒ เดือน ๑๒ นักษัตร มหาทักษา ๑๐๘ ปี ยามตรีเนตร์ และพิธีสะเดาะพระเคราะห์<br>
+                <span style="color: #f87171; font-weight: 600; font-size: 0.9rem;">⚠️ ระดับสมาชิกปัจจุบันของคุณยังไม่ถึงระดับเพชร</span>
+            </p>
+            <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" class="btn-back-main" onclick="window.location.href='../index.html#mainpage'">
+                    <i class="fas fa-arrow-left"></i> กลับห้องพยากรณ์
+                </button>
+                <button type="button" class="btn-calc-gold" style="width: auto;" onclick="window.location.href='../index.html#package'">
+                    <i class="fas fa-crown"></i> อัปเกรดระดับเพชร
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="wh-wrapper">
+        <!-- Top Nav -->
+        <div class="wh-top-bar">
+            <a href="../index.html#mainpage" class="btn-back-main">
+                <i class="fas fa-chevron-left"></i> ย้อนกลับห้องพยากรณ์
+            </a>
+            <div id="currentUserBadge"></div>
+        </div>
+
+        <!-- Hero Header -->
+        <div class="wh-hero">
+            <div class="wh-hero-badge">
+                <i class="fas fa-gem"></i> สิทธิพิเศษระดับเพชรขึ้นไป • Diamond & Above
+            </div>
+            <h1 class="wh-hero-title">🔮 คัมภีร์แว่นตาโหร (ฉบับบูรณาการ)</h1>
+            <p class="wh-hero-subtitle">
+                สุดยอดคลังวิชาพยากรณ์โหราศาสตร์ไทยโบราณ ถอดรหัสชะตาชีวิต ๗ วัน ๑๒ เดือน ๑๒ นักษัตร ระบบมหาทักษาเสวยอายุ ๑๐๘ ปี ยามตรีเนตร์ และพระคาถาสะเดาะเคราะห์นพเคราะห์
+            </p>
+        </div>
+
+        <!-- Input Form & Member Auto-Sync -->
+        <div class="wh-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 18px;">
+                <div style="flex: 1; min-width: 280px;">
+                    <label class="wh-input-label">
+                        <i class="fas fa-user-circle"></i> เลือกสมาชิกจากประวัติ:
+                    </label>
+                    <select id="memberSelector" class="wh-input" onchange="onMemberSelected(this.value)">
+                        <option value="">-- เลือกสมาชิกเพื่อเติมข้อมูลอัตโนมัติ --</option>
+                    </select>
+                </div>
+                <div style="flex: 1; min-width: 280px; font-size: 0.88rem; color: #94a3b8; background: rgba(56, 189, 248, 0.08); padding: 12px 16px; border-radius: 12px; border-left: 3px solid #38bdf8;">
+                    <i class="fas fa-info-circle text-info mr-1"></i> <strong>ระบบซิงค์อัจฉริยะ:</strong> ดึงข้อมูล วัน เดือน ปีเกิด คำนวณอายุย่างและดิถีจันทรคติไทยให้อัตโนมัติทันที
+                </div>
+            </div>
+
+            <div class="wh-form-grid">
+                <div class="wh-input-group">
+                    <label class="wh-input-label"><i class="fas fa-id-badge"></i> ชื่อ-นามสกุล:</label>
+                    <input type="text" id="personName" class="wh-input" value="เจ้าชะตา" placeholder="ระบุชื่อ">
+                </div>
+                <div class="wh-input-group">
+                    <label class="wh-input-label"><i class="fas fa-calendar-alt"></i> วันเกิด (สากล):</label>
+                    <input type="date" id="birthDate" class="wh-input" value="1995-03-02" onchange="recalculateAll()">
+                </div>
+                <div class="wh-input-group">
+                    <label class="wh-input-label"><i class="fas fa-sun"></i> วันเกิด (ประจำสัปดาห์):</label>
+                    <select id="birthDayOfWeek" class="wh-input" onchange="recalculateAll()">
+                        <option value="0">วันอาทิตย์</option>
+                        <option value="1">วันจันทร์</option>
+                        <option value="2">วันอังคาร</option>
+                        <option value="3">วันพุธ</option>
+                        <option value="4">วันพฤหัสบดี</option>
+                        <option value="5">วันศุกร์</option>
+                        <option value="6">วันเสาร์</option>
+                    </select>
+                </div>
+                <div class="wh-input-group">
+                    <label class="wh-input-label"><i class="fas fa-moon"></i> เดือนเกิด (ทางจันทรคติไทย):</label>
+                    <select id="birthMonthThai" class="wh-input" onchange="recalculateAll()">
+                        <option value="1">เดือนอ้าย (๑)</option>
+                        <option value="2">เดือนยี่ (๒)</option>
+                        <option value="3">เดือนสาม (๓)</option>
+                        <option value="4" selected>เดือนสี่ (๔)</option>
+                        <option value="5">เดือนห้า (๕)</option>
+                        <option value="6">เดือนหก (๖)</option>
+                        <option value="7">เดือนเจ็ด (๗)</option>
+                        <option value="8">เดือนแปด (๘)</option>
+                        <option value="9">เดือนเก้า (๙)</option>
+                        <option value="10">เดือนสิบ (๑๐)</option>
+                        <option value="11">เดือนสิบเอ็ด (๑๑)</option>
+                        <option value="12">เดือนสิบสอง (๑๒)</option>
+                    </select>
+                </div>
+                <div class="wh-input-group">
+                    <label class="wh-input-label"><i class="fas fa-dragon"></i> ปีนักษัตร:</label>
+                    <select id="birthZodiac" class="wh-input" onchange="recalculateAll()">
+                        <option value="ชวด">ชวด (หนู)</option>
+                        <option value="ฉลู">ฉลู (วัว)</option>
+                        <option value="ขาล">ขาล (เสือ)</option>
+                        <option value="เถาะ">เถาะ (กระต่าย)</option>
+                        <option value="มะโรง">มะโรง (งูใหญ่)</option>
+                        <option value="มะเส็ง">มะเส็ง (งูเล็ก)</option>
+                        <option value="มะเมีย">มะเมีย (ม้า)</option>
+                        <option value="มะแม">มะแม (แพะ)</option>
+                        <option value="วอก">วอก (ลิง)</option>
+                        <option value="ระกา">ระกา (ไก่)</option>
+                        <option value="จอ">จอ (สุนัข)</option>
+                        <option value="กุน" selected>กุน (หมู)</option>
+                    </select>
+                </div>
+                <div class="wh-input-group">
+                    <label class="wh-input-label"><i class="fas fa-clock"></i> เวลาเกิด (ถ้าทราบ):</label>
+                    <input type="time" id="birthTime" class="wh-input" value="14:26" onchange="recalculateAll()">
+                </div>
+                <div class="wh-input-group">
+                    <label class="wh-input-label"><i class="fas fa-birthday-cake"></i> อายุเต็มรอบ (ปี):</label>
+                    <input type="number" id="currentAge" class="wh-input" value="31" min="1" max="120" onchange="recalculateAll()">
+                </div>
+                <div class="wh-input-group" style="justify-content: flex-end;">
+                    <button type="button" class="btn-calc-gold" onclick="recalculateAll()">
+                        <i class="fas fa-search"></i> ส่องพยากรณ์แว่นตาโหร
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📑 Navigation Tabs (6 หมวดวิชาตามเอกสารตำราแว่นตาโหร) -->
+        <div class="wh-tabs-container">
+            <button class="wh-tab-btn active" onclick="switchWaentaTab('dayTab', this)">
+                <i class="fas fa-sun tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">หมวดที่ ๑</div>
+                    <div>วาสนาประจำวันเกิด</div>
+                </div>
+            </button>
+            <button class="wh-tab-btn" onclick="switchWaentaTab('monthTab', this)">
+                <i class="fas fa-moon tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">หมวดที่ ๒</div>
+                    <div>ชะตาประจำเดือนเกิด</div>
+                </div>
+            </button>
+            <button class="wh-tab-btn" onclick="switchWaentaTab('zodiacTab', this)">
+                <i class="fas fa-dragon tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">หมวดที่ ๓</div>
+                    <div>จำแนก ๑๒ นักษัตร</div>
+                </div>
+            </button>
+            <button class="wh-tab-btn" onclick="switchWaentaTab('mahataksaTab', this)">
+                <i class="fas fa-ring tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">หมวดที่ ๔</div>
+                    <div>มหาทักษา ๑๐๘ ปี</div>
+                </div>
+            </button>
+            <button class="wh-tab-btn" onclick="switchWaentaTab('yarmTab', this)">
+                <i class="fas fa-eye tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">หมวดที่ ๕</div>
+                    <div>ยามตรีเนตร์ & ยาม ๓ ตา</div>
+                </div>
+            </button>
+            <button class="wh-tab-btn" onclick="switchWaentaTab('ritualTab', this)">
+                <i class="fas fa-praying-hands tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">หมวดที่ ๖</div>
+                    <div>สะเดาะเคราะห์ & คาถา</div>
+                </div>
+            </button>
+        </div>
+
+        <!-- Tab Content Areas -->
+        <div id="dayTab" class="tab-content-area">
+            <div class="wh-card" id="dayContentCard"></div>
+        </div>
+
+        <div id="monthTab" class="tab-content-area" style="display: none;">
+            <div class="wh-card" id="monthContentCard"></div>
+        </div>
+
+        <div id="zodiacTab" class="tab-content-area" style="display: none;">
+            <div class="wh-card" id="zodiacContentCard"></div>
+        </div>
+
+        <div id="mahataksaTab" class="tab-content-area" style="display: none;">
+            <div class="wh-card" id="mahataksaContentCard"></div>
+        </div>
+
+        <div id="yarmTab" class="tab-content-area" style="display: none;">
+            <div class="wh-card" id="yarmContentCard"></div>
+        </div>
+
+        <div id="ritualTab" class="tab-content-area" style="display: none;">
+            <div class="wh-card" id="ritualContentCard"></div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="../src/data/waenta-hora-data.js"></script>
+    <script src="../src/engine/waenta-hora-engine.js"></script>
+    <script src="../src/utils/tiers.js"></script>
+
+    <script>
+        "use strict";
+
+        // 🛡️ ตรวจสอบสิทธิ์ระดับเพชรขึ้นไป (Tier Index >= 10)
+        function checkDiamondTierAccess() {
+            let hasAccess = false;
+            if (typeof window.hasPackagePermission === 'function') {
+                hasAccess = window.hasPackagePermission('waentaHoraPage');
+            } else {
+                try {
+                    const raw = localStorage.getItem('siamhora_auth_session');
+                    const isSimulating = localStorage.getItem('siamhora_simulate_package');
+                    if (raw) {
+                        const sess = JSON.parse(raw);
+                        if (sess && sess.role === 'admin' && !isSimulating) {
+                            hasAccess = true;
+                        } else {
+                            const pkg = isSimulating || sess.simulatePackage || sess.package || 'ทดลองใช้';
+                            const pkgIdx = packages.findIndex(p => p.name === pkg);
+                            hasAccess = (pkgIdx >= 10);
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            const overlay = document.getElementById('tierLockOverlay');
+            if (!hasAccess) {
+                if (overlay) overlay.style.display = 'flex';
+                return false;
+            } else {
+                if (overlay) overlay.style.display = 'none';
+                return true;
+            }
+        }
+
+        // สลับแท็บ
+        function switchWaentaTab(tabId, btn) {
+            document.querySelectorAll('.tab-content-area').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.wh-tab-btn').forEach(b => b.classList.remove('active'));
+            
+            const target = document.getElementById(tabId);
+            if (target) target.style.display = 'block';
+            if (btn) btn.classList.add('active');
+        }
+
+        // โหลดข้อมูลสมาชิกจาก localStorage (horo_history)
+        function initMemberPicker() {
+            const sel = document.getElementById('memberSelector');
+            if (!sel) return;
+
+            try {
+                const raw = localStorage.getItem('horo_history');
+                if (raw) {
+                    const list = JSON.parse(raw);
+                    if (Array.isArray(list) && list.length > 0) {
+                        sel.innerHTML = '<option value="">-- เลือกสมาชิกจากประวัติ --</option>';
+                        list.forEach((m, idx) => {
+                            const opt = document.createElement('option');
+                            opt.value = idx;
+                            const fullName = `${m.name || 'ไม่มีชื่อ'} ${m.lastName || ''}`.trim();
+                            opt.textContent = `👤 ${m.memberId ? `[${m.memberId}] ` : ''}${fullName} (${m.birthdate || 'ไม่ระบุวันเกิด'})`;
+                            sel.appendChild(opt);
+                        });
+
+                        sel.selectedIndex = 1;
+                        onMemberSelected(0);
+                        return;
+                    }
+                }
+            } catch(e) {
+                console.warn("Member load error:", e);
+            }
+            recalculateAll();
+        }
+
+        function onMemberSelected(idx) {
+            if (idx === "" || idx === undefined) return;
+            try {
+                const list = JSON.parse(localStorage.getItem('horo_history') || '[]');
+                const m = list[idx];
+                if (!m) return;
+
+                document.getElementById('personName').value = `${m.name || ''} ${m.lastName || ''}`.trim() || 'เจ้าชะตา';
+                if (m.birthdate) {
+                    let bDate = m.birthdate;
+                    if (bDate.includes('/')) {
+                        const parts = bDate.split('/');
+                        if (parts.length === 3) {
+                            let y = parseInt(parts[2]);
+                            if (y > 2400) y -= 543;
+                            bDate = `${y}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                        }
+                    }
+                    document.getElementById('birthDate').value = bDate;
+                }
+                if (m.birthtime) {
+                    document.getElementById('birthTime').value = m.birthtime.substring(0, 5);
+                }
+                if (m.zodiac) {
+                    const zSel = document.getElementById('birthZodiac');
+                    for (let i = 0; i < zSel.options.length; i++) {
+                        if (zSel.options[i].value.includes(m.zodiac) || m.zodiac.includes(zSel.options[i].value)) {
+                            zSel.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+                if (m.birthMonththai) {
+                    document.getElementById('birthMonthThai').value = parseInt(m.birthMonththai) || 1;
+                }
+            } catch(e) {}
+            recalculateAll();
+        }
+
+        // คำนวณและอัปเดตทุกหมวด
+        function recalculateAll() {
+            const bDateStr = document.getElementById('birthDate').value;
+            const bDaySel = document.getElementById('birthDayOfWeek');
+            let dayOfWeek = parseInt(bDaySel.value);
+            let age = parseInt(document.getElementById('currentAge').value) || 30;
+
+            if (bDateStr) {
+                const d = new Date(bDateStr);
+                if (!isNaN(d.getTime())) {
+                    dayOfWeek = d.getDay();
+                    bDaySel.value = dayOfWeek;
+
+                    const now = new Date();
+                    let calcAge = now.getFullYear() - d.getFullYear();
+                    const mDiff = now.getMonth() - d.getMonth();
+                    if (mDiff < 0 || (mDiff === 0 && now.getDate() < d.getDate())) {
+                        calcAge--;
+                    }
+                    if (calcAge > 0) {
+                        age = calcAge;
+                        document.getElementById('currentAge').value = age;
+                    }
+                }
+            }
+
+            const monthThai = parseInt(document.getElementById('birthMonthThai').value) || 1;
+            const zodiac = document.getElementById('birthZodiac').value || "ชวด";
+
+            renderDayTab(dayOfWeek);
+            renderMonthTab(monthThai);
+            renderZodiacTab(zodiac, monthThai);
+            renderMahataksaTab(dayOfWeek, age);
+            renderYarmTab();
+            renderRitualTab(dayOfWeek);
+        }
+
+        // 1. Render หมวดวันเกิด
+        function renderDayTab(dayOfWeek) {
+            const data = WAENTA_HORA_DATA.birthDays[dayOfWeek];
+            if (!data) return;
+
+            const card = document.getElementById('dayContentCard');
+            card.innerHTML = `
+                <div class="wh-section-header">
+                    <h3 class="wh-section-title">
+                        <i class="fas fa-sun text-warning"></i> คำทำนายวาสนา: ${data.dayName} (${data.element})
+                    </h3>
+                    <span class="wh-badge-pill"><i class="fas fa-star mr-1"></i> ดาวประจำตัว: ${data.planetSymbol}</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 24px;">
+                    <div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-heart text-danger"></i> อุปนิสัยใจคอ & ธาตุกำเนิด</div>
+                            <div class="wh-stat-body">${data.character.trait}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-child text-info"></i> การเลี้ยงดูในวัยเยาว์</div>
+                            <div class="wh-stat-body">${data.character.upbringing}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-fire text-warning"></i> อารมณ์และโทสะ</div>
+                            <div class="wh-stat-body">${data.character.temperament}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-users text-success"></i> มิตรสหายและการทำคุณคน</div>
+                            <div class="wh-stat-body">${data.character.friendsAndDeeds}</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-comments text-primary"></i> อิทธิพลดาวเฉพาะด้าน (เรือนบิดา - การเจรจา)</div>
+                            <div class="wh-stat-body">${data.houses.speech}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-brain text-purple"></i> ด้านสภาพจิตใจ (เรือนพันธุ)</div>
+                            <div class="wh-stat-body">${data.houses.mind}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-ring text-danger"></i> ลักษณะเนื้อคู่ (เรือนปัตตนิ)</div>
+                            <div class="wh-stat-body">${data.houses.soulmate}</div>
+                        </div>
+                        <div class="wh-stat-card" style="border-left-color: #ef4444;">
+                            <div class="wh-stat-title" style="color: #f87171;"><i class="fas fa-ban"></i> วันต้องห้าม (วันชั่วประจำวันเกิด)</div>
+                            <div class="wh-stat-body">${data.directions.tabooDay}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 28px;">
+                    <div style="background: rgba(34, 197, 94, 0.12); border: 1.5px solid #22c55e; border-radius: 16px; padding: 18px;">
+                        <strong style="color: #86efac; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-compass"></i> ทิศให้โชคลาภสวัสดี:
+                        </strong>
+                        <div style="color: #f0fdf4; margin-top: 6px; font-size: 0.95rem;">${data.directions.auspicious}</div>
+                    </div>
+                    <div style="background: rgba(239, 68, 68, 0.12); border: 1.5px solid #ef4444; border-radius: 16px; padding: 18px;">
+                        <strong style="color: #fca5a5; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-times-circle"></i> ทิศอัปมงคลพึงระวัง:
+                        </strong>
+                        <div style="color: #fef2f2; margin-top: 6px; font-size: 0.95rem;">${data.directions.inauspicious}</div>
+                    </div>
+                </div>
+
+                <h4 style="color: #f5d77f; font-weight: 700; margin-bottom: 14px; font-size: 1.15rem;">
+                    <i class="fas fa-font"></i> ภูมิพยากรณ์ทักษาปกรณ์ (นามมงคลและการตั้งชื่อ)
+                </h4>
+                <div class="wh-table-wrap">
+                    <table class="wh-table">
+                        <thead>
+                            <tr>
+                                <th>ภูมิ</th>
+                                <th>ดาวประจำภูมิ</th>
+                                <th>หมวดอักษรที่ใช้</th>
+                                <th>ข้อกำหนดและอิทธิพลตำรา</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.values(data.taksa).map(t => `
+                                <tr>
+                                    <td><strong style="color: #f5d77f;">${t.name}</strong></td>
+                                    <td>${t.star}</td>
+                                    <td><strong style="color: #38bdf8; font-size: 1.05rem;">${t.letters}</strong></td>
+                                    <td>${t.note || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 2. Render หมวดเดือนเกิด
+        function renderMonthTab(monthNum) {
+            const data = WAENTA_HORA_DATA.birthMonths[monthNum];
+            if (!data) return;
+
+            const card = document.getElementById('monthContentCard');
+            card.innerHTML = `
+                <div class="wh-section-header">
+                    <h3 class="wh-section-title">
+                        <i class="fas fa-moon text-info"></i> เกณฑ์พยากรณ์ประจำเดือนเกิด: ${data.monthName} (${data.element})
+                    </h3>
+                    <span class="wh-badge-pill"><i class="fas fa-crosshairs mr-1"></i> ตั้งต้นภพตะนุ: เลข ${data.tanuNumber}</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 24px;">
+                    <div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-user-tag text-warning"></i> พื้นฐานอุปนิสัยตามเดือนเกิด</div>
+                            <div class="wh-stat-body">${data.character}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-baby text-info"></i> เคล็ดโบราณการฝังรกเด็ก</div>
+                            <div class="wh-stat-body">ให้ฝังไว้ทาง: <strong style="color: #67e8f9;">${data.childBurialDirection}</strong> จึงจะเจริญวัฒนา</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-home text-success"></i> เกณฑ์ฤกษ์มงคลและการปลูกเรือน</div>
+                            <div class="wh-stat-body">${data.houseAuspiciousMonth}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-handshake text-primary"></i> เดือนมิตรที่สมพงศ์กัน</div>
+                            <div class="wh-stat-body">${data.friendlyMonth}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="color: #f5d77f; font-weight: 700; margin-bottom: 14px; font-size: 1.15rem;">
+                    <i class="fas fa-sitemap"></i> ลำดับภพพยากรณ์ประจำเดือนเกิด (${data.housesAlign})
+                </h4>
+                <div class="wh-table-wrap">
+                    <table class="wh-table">
+                        <thead>
+                            <tr>
+                                <th>ลำดับภพ</th>
+                                <th>ดาวครองภพตามเกณฑ์แว่นตาโหร</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.housesList.map(h => `
+                                <tr>
+                                    <td><strong style="color: #e2e8f0;">${h.house}</strong></td>
+                                    <td><strong style="color: #38bdf8;">${h.star}</strong></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 3. Render 12 นักษัตร
+        function renderZodiacTab(zodiacKey, monthNum) {
+            const data = WAENTA_HORA_DATA.zodiacs[zodiacKey];
+            if (!data) return;
+
+            const card = document.getElementById('zodiacContentCard');
+            card.innerHTML = `
+                <div class="wh-section-header">
+                    <h3 class="wh-section-title">
+                        <i class="fas fa-dragon text-warning"></i> ชะตากำเนิดปีนักษัตร: ปี${data.name} (${data.animal} - ${data.element})
+                    </h3>
+                    <span class="wh-badge-pill"><i class="fas fa-tree mr-1"></i> ต้นไม้มงคลฝังรก: ${data.burialTree}</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 24px;">
+                    <div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-brain text-purple"></i> อุปนิสัยและจิตใจ</div>
+                            <div class="wh-stat-body">${data.character.mind}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-coins text-warning"></i> การเงินและการหาทรัพย์</div>
+                            <div class="wh-stat-body">${data.character.wealth}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-users text-info"></i> มิตรและศัตรู</div>
+                            <div class="wh-stat-body">${data.character.friendsAndFoes}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-house-user text-success"></i> วาสนาและถิ่นที่อยู่อาศัย</div>
+                            <div class="wh-stat-body">${data.character.fortuneAndResidence}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="color: #38bdf8; font-weight: 700; margin-bottom: 14px; font-size: 1.15rem;">
+                    <i class="fas fa-layer-group"></i> จำแนกลักษณะตามกลุ่มเดือนเกิด (๔ จำพวกตามคัมภีร์แว่นตาโหร)
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 24px;">
+                    ${data.seasonalTypes.map((st, idx) => `
+                        <div style="background: rgba(14, 23, 45, 0.7); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 18px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <strong style="color: #38bdf8; font-size: 0.98rem;">${idx + 1}. ${st.title}</strong>
+                                <span style="background: rgba(255,255,255,0.1); color: #cbd5e1; font-size: 0.75rem; padding: 3px 8px; border-radius: 10px;">${st.months}</span>
+                            </div>
+                            <div style="color: #e2e8f0; font-size: 0.88rem; line-height: 1.6;">${st.desc}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+                    <div class="wh-stat-card" style="border-left-color: #f43f5e;">
+                        <div class="wh-stat-title" style="color: #fda4af;"><i class="fas fa-heart"></i> เกณฑ์ปีสมพงศ์ (มิตรที่ถูกกัน)</div>
+                        <div class="wh-stat-body">ประกอบการมงคลหรือร่วมงานได้ดีกับ: <strong style="color: #fef08a; font-size: 1.05rem;">ปี${data.compatibleYears.join(', ปี')}</strong></div>
+                    </div>
+                    <div class="wh-stat-card" style="border-left-color: #38bdf8;">
+                        <div class="wh-stat-title" style="color: #38bdf8;"><i class="fas fa-chart-line"></i> เกณฑ์การตั้งดวงพยากรณ์ชะตา (วิธีตั้งปี)</div>
+                        <div class="wh-stat-body">${data.horoSetup}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 4. Render มหาทักษาเสวยอายุ
+        function renderMahataksaTab(dayOfWeek, age) {
+            const res = WaentaHoraEngine.calculateMahataksa(dayOfWeek, age);
+            const taKlang = WaentaHoraEngine.calculateTaksaJorTaKlang(dayOfWeek, age);
+
+            const card = document.getElementById('mahataksaContentCard');
+            card.innerHTML = `
+                <div class="wh-section-header">
+                    <h3 class="wh-section-title">
+                        <i class="fas fa-ring text-warning"></i> ระบบมหาทักษาเสวยอายุและพระแทรก (คำนวณที่อายุ ${age} ปี)
+                    </h3>
+                    <span class="wh-badge-pill"><i class="fas fa-infinity mr-1"></i> วงรอบมหาทักษา ๑๐๘ ปี</span>
+                </div>
+
+                <div class="wh-metric-box">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; text-align: center;">
+                        <div>
+                            <div style="font-size: 0.85rem; color: #94a3b8;">ดาวหลักที่กำลังเสวยอายุ:</div>
+                            <h3 style="color: #f5d77f; font-weight: 800; margin: 6px 0; font-size: 1.4rem;">👑 ${res.rulingPlanet.name}</h3>
+                            <div style="color: #fef08a; font-size: 0.85rem;">มีกำลัง ${res.rulingPlanet.power} ปี (เสวยมาแล้ว ${res.rulingPlanet.yearsIntoRuling} ปี)</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: #94a3b8;">ดาวที่เข้าแทรกชะตาขณะนี้:</div>
+                            <h3 style="color: #38bdf8; font-weight: 800; margin: 6px 0; font-size: 1.4rem;">⚡ ${res.interceptPlanet.name}</h3>
+                            <div style="color: #bae6fd; font-size: 0.85rem;">มีกำลัง ${res.interceptPlanet.power} ปี</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: #94a3b8;">ทักษาจร (กฎตากลางแว่นตาโหร):</div>
+                            <h3 style="color: #c084fc; font-weight: 800; margin: 6px 0; font-size: 1.4rem;">🎯 ${taKlang.planetName}</h3>
+                            <div style="color: #e9d5ff; font-size: 0.85rem;">${taKlang.isTaKlang ? '⚠️ พักในตากลาง ๑ ปี' : 'เวียนรอบ ๘ ภูมิ'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wh-stat-card" style="border-left-color: #f59e0b; margin-bottom: 28px; background: rgba(245, 158, 11, 0.08);">
+                    <div class="wh-stat-title" style="color: #fbbf24; font-size: 1.1rem;"><i class="fas fa-scroll"></i> คำทำนายมหาทักษา (ผลของดาวเสวยและดาวแทรกตามตำราแว่นตาโหร)</div>
+                    <div style="font-size: 1.05rem; color: #ffffff; line-height: 1.8; margin-top: 6px;">
+                        ${res.prediction}
+                    </div>
+                </div>
+
+                <h4 style="color: #f5d77f; font-weight: 700; margin-bottom: 14px; font-size: 1.15rem;">
+                    <i class="fas fa-list-ol"></i> ตารางคำนวณช่วงเวลาดาวแทรกทั้ง ๘ องค์ ในรอบเสวยอายุของ ${res.rulingPlanet.name}
+                </h4>
+                <div class="wh-table-wrap">
+                    <table class="wh-table">
+                        <thead>
+                            <tr>
+                                <th>ลำดับดาวแทรก</th>
+                                <th>กำลังดาว</th>
+                                <th>ระยะเวลาเสวยแทรก (ปี/เดือน/วัน)</th>
+                                <th>สูตรการคำนวณโบราณ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${res.interceptList.map(item => `
+                                <tr style="${item.minorId === res.interceptPlanet.id ? 'background: rgba(245, 215, 127, 0.22); font-weight: 600;' : ''}">
+                                    <td>${item.minorName} ${item.minorId === res.interceptPlanet.id ? '⭐ <span style="color: #f5d77f;">(ช่วงปัจจุบัน)</span>' : ''}</td>
+                                    <td>${item.powerMinor}</td>
+                                    <td><strong style="color: #38bdf8;">${item.durationText}</strong></td>
+                                    <td>(${res.rulingPlanet.power} × ${item.powerMinor}) ÷ ๑๒</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 5. Render ยามตรีเนตร์ & ยาม 3 ตา
+        function renderYarmTab() {
+            const timeVal = document.getElementById('birthTime').value || "12:00";
+            const [h, m] = timeVal.split(':').map(Number);
+            const yarm = WaentaHoraEngine.calculateYarmTriNetr(h, m);
+
+            const card = document.getElementById('yarmContentCard');
+            card.innerHTML = `
+                <div class="wh-section-header">
+                    <h3 class="wh-section-title">
+                        <i class="fas fa-eye text-info"></i> การพยากรณ์ยามตรีเนตร์ & ยาม ๓ ตา (เวลา ${yarm.timeStr} น.)
+                    </h3>
+                    <span class="wh-badge-pill"><i class="fas fa-hourglass-start mr-1"></i> ยามที่ ${yarm.yarmSlot} (นับจากย่ำรุ่ง ๐๖:๐๐)</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 24px;">
+                    <div style="background: rgba(56, 189, 248, 0.12); border: 1.5px solid #38bdf8; border-radius: 18px; padding: 22px;">
+                        <div style="font-size: 0.88rem; color: #bae6fd;">ตำแหน่งยามตรีเนตร์:</div>
+                        <h2 style="color: #38bdf8; font-weight: 800; margin: 8px 0; font-size: 1.8rem;">✨ ยาม "${yarm.triNetr}"</h2>
+                        <div style="color: #f1f5f9; font-size: 0.94rem; line-height: 1.7; margin-top: 10px;">
+                            <div><strong style="color: #bae6fd;">ลักษณะบุคคลที่ทาย:</strong> ${yarm.netrDetail.person}</div>
+                            <div><strong style="color: #bae6fd;">เรื่องความรัก/ผู้ใหญ่:</strong> ${yarm.netrDetail.love}</div>
+                            <div><strong style="color: #bae6fd;">เรื่องคนไข้/สุขภาพ:</strong> ${yarm.netrDetail.illness}</div>
+                            <div><strong style="color: #bae6fd;">เรื่องของหาย:</strong> ${yarm.netrDetail.lostItem}</div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(192, 132, 252, 0.12); border: 1.5px solid #c084fc; border-radius: 18px; padding: 22px;">
+                        <div style="font-size: 0.88rem; color: #e9d5ff;">การพยากรณ์ยาม ๓ ตา:</div>
+                        <h2 style="color: #c084fc; font-weight: 800; margin: 8px 0; font-size: 1.8rem;">🎯 ${yarm.samTaText.split(':')[0]}</h2>
+                        <div style="color: #f1f5f9; font-size: 0.95rem; line-height: 1.7; margin-top: 10px;">
+                            ${yarm.samTaText}
+                            <div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 8px;">
+                                *(สูตรโบราณ: นำเลขยาม ${yarm.yarmSlot} × ๒ เอา ๓ หาร พิจารณาเศษ)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="color: #f5d77f; font-weight: 700; margin-bottom: 14px; font-size: 1.15rem;">
+                    <i class="fas fa-info-circle"></i> ความหมายสารัตถะยามตรีเนตร์ทั้ง ๓ (ก่ำ / ใส / ปลอด)
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+                    <div class="wh-stat-card" style="border-left-color: #ef4444;">
+                        <strong style="color: #f87171; font-size: 1.05rem;">ก่ำ:</strong>
+                        <div style="color: #cbd5e1; margin-top: 4px; font-size: 0.92rem;">เพศชาย / คนแก่ / ตัวสูงใหญ่ / ผิวดำ / ถามรักท่านรักมาก / คนไข้ร้ายนัก / ของหายได้คืนเร็ว</div>
+                    </div>
+                    <div class="wh-stat-card" style="border-left-color: #38bdf8;">
+                        <strong style="color: #38bdf8; font-size: 1.05rem;">ใส:</strong>
+                        <div style="color: #cbd5e1; margin-top: 4px; font-size: 0.92rem;">บัณฑิต / ไม่แก่ / รูปงาม / ผิวดำแดง / ถามรักรักชังพอประมาณ / คนไข้อาการมาก / ของหายได้คืนช้า</div>
+                    </div>
+                    <div class="wh-stat-card" style="border-left-color: #22c55e;">
+                        <strong style="color: #4ade80; font-size: 1.05rem;">ปลอด:</strong>
+                        <div style="color: #cbd5e1; margin-top: 4px; font-size: 0.92rem;">เพศหญิง / เด็ก / ตัวเตี้ยผอม / ผิวขาวผ่อง / ถามรักไม่ดี / คนไข้หายเร็ว / ของหายสูญไม่ได้คืน</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 6. Render พิธีสะเดาะเคราะห์ & ฤกษ์มงคล
+        function renderRitualTab(dayOfWeek) {
+            const data = WAENTA_HORA_DATA.birthDays[dayOfWeek];
+            if (!data) return;
+
+            const card = document.getElementById('ritualContentCard');
+            card.innerHTML = `
+                <div class="wh-section-header">
+                    <h3 class="wh-section-title">
+                        <i class="fas fa-praying-hands text-warning"></i> พิธีสะเดาะพระเคราะห์ & คาถามงคลโบราณ (สำหรับผู้เกิด: ${data.dayName})
+                    </h3>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 24px;">
+                    <div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-vihara text-warning"></i> พระพุทธรูปบูชาสะเดาะเคราะห์</div>
+                            <div class="wh-stat-body" style="font-size: 1.05rem; color: #f5d77f; font-weight: 700;">${data.sadawkhro.buddhaPosture}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-leaf text-success"></i> ใบไม้มงคลรองบัดพลี</div>
+                            <div class="wh-stat-body">${data.sadawkhro.offeringLeaf}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-sign-in-alt text-info"></i> ทิศทางเข้า-ออกของพระเคราะห์</div>
+                            <div class="wh-stat-body">${data.sadawkhro.remedyDirection}</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-horse text-primary"></i> พาหนะและเครื่องทรงเทวดา</div>
+                            <div class="wh-stat-body">${data.sadawkhro.vehicle}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-hourglass-half text-danger"></i> กำลังดาวเสวยอายุ</div>
+                            <div class="wh-stat-body">${data.sadawkhro.powerYears}</div>
+                        </div>
+                        <div class="wh-stat-card">
+                            <div class="wh-stat-title"><i class="fas fa-book-reader text-warning"></i> พระคาถาสวดสะเดาะเคราะห์ประจำวัน</div>
+                            <div class="wh-stat-body" style="color: #67e8f9; font-weight: 600;">${data.sadawkhro.chant}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="color: #f5d77f; font-weight: 700; margin-bottom: 14px; font-size: 1.15rem;">
+                    <i class="fas fa-om"></i> พระคาถาศักดิ์สิทธิ์ประจำคัมภีร์แว่นตาโหร
+                </h4>
+                
+                <div class="wh-stat-card" style="border-left-color: #f5d77f; margin-bottom: 16px; background: rgba(245, 215, 127, 0.08);">
+                    <div class="wh-stat-title" style="color: #f5d77f;"><i class="fas fa-pray"></i> ๑. พระคาถาสวดบูชาบัดพลีรวม (ปัดเป่าเคราะห์ภัยนพเคราะห์ทั้งปวง)</div>
+                    <div style="font-size: 1.05rem; line-height: 1.8; color: #fef08a; padding-top: 6px;">
+                        "${WAENTA_HORA_DATA.sacredMantras.allPlanetsOffering}"
+                    </div>
+                </div>
+
+                <div class="wh-stat-card" style="border-left-color: #38bdf8; background: rgba(56, 189, 248, 0.08);">
+                    <div class="wh-stat-title" style="color: #38bdf8;"><i class="fas fa-route"></i> ๒. คาถาเสกก่อนเดินทางไปหาลาภ (สวด ๓ จบ)</div>
+                    <div style="font-size: 1.08rem; line-height: 1.8; color: #e0f2fe; padding-top: 6px;">
+                        "${WAENTA_HORA_DATA.sacredMantras.travelFortune}"
+                    </div>
+                </div>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkDiamondTierAccess();
+            initMemberPicker();
+        });
+    </script>
+</body>
+</html>

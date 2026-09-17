@@ -76,6 +76,24 @@
     }
 
     function calculateLifeGraph(passedMemberId) {
+        // 🔒 ตรวจสอบสิทธิ์แพ็กเกจ
+        if (typeof window.hasPackagePermission === 'function' && !window.hasPackagePermission('lifeGraphPage')) {
+            if (typeof window.showTierUpgradePrompt === 'function') {
+                window.showTierUpgradePrompt('วิเคราะห์กราฟชีวิต', 'lifeGraphPage');
+            } else if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '🔒 สิทธิพิเศษเฉพาะสมาชิก',
+                    text: 'ระบบวิเคราะห์กราฟชีวิตสงวนสิทธิ์สำหรับสมาชิกที่อัปเกรดแพ็กเกจเท่านั้น',
+                    confirmButtonText: 'ดูแพ็กเกจ',
+                    confirmButtonColor: '#d4af37'
+                }).then(r => { if (r.isConfirmed && typeof navigateTo === 'function') navigateTo('package'); });
+            } else {
+                alert('ระบบวิเคราะห์กราฟชีวิตสงวนสิทธิ์สำหรับสมาชิกที่อัปเกรดแพ็กเกจเท่านั้น');
+            }
+            return;
+        }
+
         let input = null;
         
         // 1️⃣ ลองดึงจาก currentMemberId ก่อน

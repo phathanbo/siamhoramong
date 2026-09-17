@@ -869,7 +869,9 @@ function showascen() {
   }, 100);
 }
 
-document.addEventListener('DOMContentLoaded', () => { showascen(); });
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => { showascen(); });
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 // ฟังก์ชันคำนวณ (เรียกจากปุ่ม)
@@ -1328,7 +1330,23 @@ async function saveAscendantImg() {
 }
 
 // ─── Event listener ─────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const calcBtn = document.getElementById('btnCalculateAsc');
-  if (calcBtn) calcBtn.addEventListener('click', calculateAscendant);
-});
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const calcBtn = document.getElementById('btnCalculateAsc');
+    if (calcBtn) calcBtn.addEventListener('click', calculateAscendant);
+  });
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    ascCalcLagna,
+    ascJD,
+    ascGST,
+    ascNorm,
+    ascObliquity,
+    ascAyanamsha,
+    ascTropical,
+    ASC_CITY_LIST,
+    ZODIAC_DATA
+  };
+}

@@ -254,11 +254,65 @@ const ThaiHoroProEngine = (function() {
         return 1;
     }
 
-    function calculateAscendant(birthDate, birthTimeStr) {
+    function calculateAscendant(birthDate, birthTimeStr, options = {}) {
+        const method = (options && options.calculationMethod) ? options.calculationMethod : 'anto';
         const [hh, mm] = (birthTimeStr || "06:00").split(":").map(Number);
+        const y = birthDate.getFullYear();
         const month = birthDate.getMonth() + 1;
         const day = birthDate.getDate();
 
+        if (method === 'lahiri') {
+            let lat = 13.7563; // Default Bangkok
+            let lng = 100.5018;
+            if (options.latitude !== undefined && options.longitude !== undefined) {
+                lat = Number(options.latitude);
+                lng = Number(options.longitude);
+            }
+
+            let lahResult = null;
+            if (typeof ascCalcLagna === 'function') {
+                const dateStr = `${y}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const timeStr = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+                lahResult = ascCalcLagna(dateStr, timeStr, lat, lng);
+            } else if (typeof window !== 'undefined' && typeof window.ascCalcLagna === 'function') {
+                const dateStr = `${y}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const timeStr = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+                lahResult = window.ascCalcLagna(dateStr, timeStr, lat, lng);
+            } else {
+                try {
+                    const ascMod = require('./ascendant.js');
+                    if (ascMod && typeof ascMod.ascCalcLagna === 'function') {
+                        const dateStr = `${y}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                        const timeStr = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+                        lahResult = ascMod.ascCalcLagna(dateStr, timeStr, lat, lng);
+                    }
+                } catch (e) {}
+            }
+
+            if (lahResult && typeof lahResult.rasi === 'number') {
+                const lahRasi = lahResult.rasi;
+                const lahDeg = lahResult.deg;
+                const lahMin = lahResult.min;
+                const nav = calculateNavamsha(lahRasi, lahDeg, lahMin);
+                const drek = calculateDrekkana(lahRasi, lahDeg, lahMin);
+
+                return {
+                    rasiIndex: lahRasi,
+                    rasiName: ZODIAC_SIGNS[lahRasi].th,
+                    symbol: ZODIAC_SIGNS[lahRasi].symbol,
+                    deg: lahDeg,
+                    min: lahMin,
+                    method: 'lahiri',
+                    methodName: 'ดาราศาสตร์สากล ลาหิริ (Lahiri Sidereal)',
+                    sunRasi: lahRasi,
+                    navamsha: nav,
+                    drekkana: drek,
+                    astronomy: lahResult
+                };
+            }
+        }
+
+        // คัมภีร์อันโตนาที (Anto-Natee Traditional Thai System)
         let sunRasi = 0;
         if ((month === 4 && day >= 14) || (month === 5 && day <= 14)) sunRasi = 0;
         else if ((month === 5 && day >= 15) || (month === 6 && day <= 14)) sunRasi = 1;
@@ -299,6 +353,8 @@ const ThaiHoroProEngine = (function() {
             symbol: ZODIAC_SIGNS[currRasi].symbol,
             deg: ascDeg,
             min: ascMin,
+            method: 'anto',
+            methodName: 'อันโตนาที ตำราไทยโบราณ (Anto-Natee)',
             sunRasi: sunRasi,
             navamsha: nav,
             drekkana: drek
@@ -1435,7 +1491,7 @@ const ThaiHoroProEngine = (function() {
         };
     }
 
-    function calculateFullHoroscope(birthDateStr, birthTimeStr) {
+    function calculateFullHoroscope(birthDateStr, birthTimeStr, options = {}) {
         const bDate = new Date(birthDateStr);
         const now = new Date();
         let age = now.getFullYear() - bDate.getFullYear();
@@ -1446,7 +1502,7 @@ const ThaiHoroProEngine = (function() {
 
         const birthDayOfWeek = getThaiDayOfWeek(bDate, birthTimeStr);
         const birthPlanetNum = getBirthPlanetNumber(bDate, birthTimeStr);
-        const asc = calculateAscendant(bDate, birthTimeStr);
+        const asc = calculateAscendant(bDate, birthTimeStr, options);
         const birthPlanets = calculatePlanets(bDate, false);
         const transitPlanets = calculatePlanets(now, true);
         const thaksa = calculateThaksa(birthPlanetNum, age);

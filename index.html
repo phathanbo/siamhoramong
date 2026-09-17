@@ -237,7 +237,7 @@
             " id="authFormBox">
 
                 <!-- ✨ Tab Navigation (Login/Register) ✨ -->
-                <div style="
+                <div id="authNavTabs" style="
                     display: flex;
                     background: rgba(15, 23, 42, 0.6);
                     padding: 4px;
@@ -362,6 +362,20 @@
                             <i id="togglePwIcon" class="fas fa-eye"></i>
                         </button>
                     </div>
+                    <!-- Forgot Password Link -->
+                    <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                        <a href="javascript:void(0)" id="authForgotPwLink" onclick="switchToReset()" style="
+                            color: #cbd5e1;
+                            font-size: 0.82rem;
+                            text-decoration: none;
+                            transition: color 0.2s ease;
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                        " onmouseover="this.style.color='#f1d06e'" onmouseout="this.style.color='#cbd5e1'">
+                            <i class="fas fa-question-circle" style="font-size: 0.8rem; opacity: 0.8;"></i> ลืมรหัสผ่าน? / รีเซ็ตรหัสผ่าน
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Error Message -->
@@ -408,6 +422,73 @@
                     <i class="fas fa-sign-in-alt"></i>
                     <span id="authBtnText">เข้าสู่ระบบ</span>
                 </button>
+
+                <!-- Divider -->
+                <div style="display: flex; align-items: center; margin: 18px 0 14px 0; color: #64748b; font-size: 0.8rem;">
+                    <div style="flex: 1; height: 1px; background: rgba(212, 175, 55, 0.2);"></div>
+                    <span style="padding: 0 12px; color: #94a3b8; font-size: 0.78rem;">หรือเข้าสู่ระบบด้วย</span>
+                    <div style="flex: 1; height: 1px; background: rgba(212, 175, 55, 0.2);"></div>
+                </div>
+
+                <!-- Social Login Buttons: LINE & Google -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <!-- LINE Login Button -->
+                    <button
+                        type="button"
+                        id="authLineLoginBtn"
+                        onclick="doLineLogin()"
+                        style="
+                            width: 100%;
+                            padding: 10px 12px;
+                            background: #06C755;
+                            border: 1px solid rgba(255, 255, 255, 0.2);
+                            border-radius: 10px;
+                            color: #ffffff;
+                            font-size: 0.88rem;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 6px;
+                            box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3);
+                        "
+                        onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(6, 199, 85, 0.45)';"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(6, 199, 85, 0.3)';"
+                    >
+                        <i class="fab fa-line" style="font-size: 1.15rem;"></i>
+                        <span>LINE</span>
+                    </button>
+
+                    <!-- Google Login Button -->
+                    <button
+                        type="button"
+                        id="authGoogleLoginBtn"
+                        onclick="doGoogleLogin()"
+                        style="
+                            width: 100%;
+                            padding: 10px 12px;
+                            background: rgba(255, 255, 255, 0.08);
+                            border: 1px solid rgba(255, 255, 255, 0.2);
+                            border-radius: 10px;
+                            color: #ffffff;
+                            font-size: 0.88rem;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 6px;
+                        "
+                        onmouseover="this.style.background='rgba(255, 255, 255, 0.15)'; this.style.transform='translateY(-1px)';"
+                        onmouseout="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.transform='translateY(0)';"
+                    >
+                        <i class="fab fa-google" style="color: #ea4335;"></i>
+                        <span>Google</span>
+                    </button>
+                </div>
 
                 <!-- Footer hint -->
                 <p style="
@@ -488,6 +569,32 @@
                             id="authRegUsername"
                             class="auth-glass-input"
                             placeholder="3-20 ตัวอักษร (a-z, 0-9, _)"
+                            style="padding-left: 54px !important; padding-right: 20px !important;"
+                        />
+                    </div>
+                </div>
+
+                <!-- Phone Number -->
+                <div style="margin-bottom: 16px;">
+                    <label for="authRegPhone" style="
+                        display: block;
+                        color: #cbd5e1;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        margin-bottom: 8px;
+                        letter-spacing: 0.3px;
+                    ">
+                        <i class="fas fa-phone-alt" style="color: #d4af37; margin-right: 5px; opacity: 0.85;"></i>
+                        เบอร์โทรศัพท์มือถือ (สำหรับกู้คืนรหัสผ่าน)
+                    </label>
+                    <div class="auth-input-group" style="position: relative; width: 100%;">
+                        <i class="fas fa-phone auth-input-icon"></i>
+                        <input
+                            type="tel"
+                            id="authRegPhone"
+                            class="auth-glass-input"
+                            placeholder="เช่น 0812345678"
+                            maxlength="12"
                             style="padding-left: 54px !important; padding-right: 20px !important;"
                         />
                     </div>
@@ -602,6 +709,191 @@
                     justify-content: center;
                     gap: 6px;
                 ">✨ สมัครสมาชิกเพื่อเข้าถึงฟีเจอร์พยากรณ์ทั้งหมด</p>
+                </form>
+
+                <!-- ===== RESET PASSWORD FORM ===== -->
+                <form id="authResetForm" style="display: none;" onsubmit="event.preventDefault(); doResetPassword();">
+                <div style="text-align: center; margin-bottom: 22px;">
+                    <h3 style="
+                        color: #f1d06e;
+                        margin-bottom: 4px;
+                        font-size: 1.15rem;
+                        font-weight: 700;
+                        letter-spacing: 0.5px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+                    ">
+                        <i class="fas fa-unlock-alt" style="opacity: 0.9;"></i>
+                        รีเซ็ตรหัสผ่านใหม่
+                    </h3>
+                    <p style="color: #94a3b8; font-size: 0.82rem; margin: 0;">ยืนยันชื่อผู้ใช้และเบอร์โทรศัพท์ที่ลงทะเบียนเพื่อตั้งรหัสผ่านใหม่</p>
+                </div>
+
+                <!-- Username -->
+                <div style="margin-bottom: 16px;">
+                    <label for="authResetUsername" style="
+                        display: block;
+                        color: #cbd5e1;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        margin-bottom: 8px;
+                        letter-spacing: 0.3px;
+                    ">
+                        <i class="fas fa-user-circle" style="color: #d4af37; margin-right: 5px; opacity: 0.85;"></i>
+                        ชื่อผู้ใช้ (Username)
+                    </label>
+                    <div class="auth-input-group" style="position: relative; width: 100%;">
+                        <i class="fas fa-user auth-input-icon"></i>
+                        <input
+                            type="text"
+                            id="authResetUsername"
+                            class="auth-glass-input"
+                            placeholder="กรอกชื่อผู้ใช้ของคุณ"
+                            autocomplete="username"
+                            style="padding-left: 54px !important; padding-right: 20px !important;"
+                        />
+                    </div>
+                </div>
+
+                <!-- Registered Phone -->
+                <div style="margin-bottom: 16px;">
+                    <label for="authResetPhone" style="
+                        display: block;
+                        color: #cbd5e1;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        margin-bottom: 8px;
+                        letter-spacing: 0.3px;
+                    ">
+                        <i class="fas fa-phone-alt" style="color: #d4af37; margin-right: 5px; opacity: 0.85;"></i>
+                        เบอร์โทรศัพท์ที่ลงทะเบียนไว้
+                    </label>
+                    <div class="auth-input-group" style="position: relative; width: 100%;">
+                        <i class="fas fa-phone auth-input-icon"></i>
+                        <input
+                            type="tel"
+                            id="authResetPhone"
+                            class="auth-glass-input"
+                            placeholder="เช่น 0812345678"
+                            maxlength="12"
+                            style="padding-left: 54px !important; padding-right: 20px !important;"
+                        />
+                    </div>
+                </div>
+
+                <!-- New Password -->
+                <div style="margin-bottom: 16px;">
+                    <label for="authResetPassword" style="
+                        display: block;
+                        color: #cbd5e1;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        margin-bottom: 8px;
+                        letter-spacing: 0.3px;
+                    ">
+                        <i class="fas fa-key" style="color: #d4af37; margin-right: 5px; opacity: 0.85;"></i>
+                        รหัสผ่านใหม่
+                    </label>
+                    <div class="auth-input-group" style="position: relative; width: 100%;">
+                        <i class="fas fa-lock auth-input-icon"></i>
+                        <input
+                            type="password"
+                            id="authResetPassword"
+                            class="auth-glass-input"
+                            placeholder="อย่างน้อย 6 ตัวอักษร"
+                            style="padding-left: 54px !important; padding-right: 20px !important;"
+                        />
+                    </div>
+                </div>
+
+                <!-- Confirm New Password -->
+                <div style="margin-bottom: 22px;">
+                    <label for="authResetPasswordConfirm" style="
+                        display: block;
+                        color: #cbd5e1;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        margin-bottom: 8px;
+                        letter-spacing: 0.3px;
+                    ">
+                        <i class="fas fa-check-circle" style="color: #d4af37; margin-right: 5px; opacity: 0.85;"></i>
+                        ยืนยันรหัสผ่านใหม่
+                    </label>
+                    <div class="auth-input-group" style="position: relative; width: 100%;">
+                        <i class="fas fa-lock auth-input-icon"></i>
+                        <input
+                            type="password"
+                            id="authResetPasswordConfirm"
+                            class="auth-glass-input"
+                            placeholder="ยืนยันรหัสผ่านใหม่อีกครั้ง"
+                            style="padding-left: 54px !important; padding-right: 20px !important;"
+                        />
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="authResetError" style="
+                    display: none;
+                    background: rgba(220, 38, 38, 0.15);
+                    border: 1px solid rgba(239, 68, 68, 0.4);
+                    color: #fca5a5;
+                    border-radius: 10px;
+                    padding: 10px 14px;
+                    font-size: 0.85rem;
+                    margin-bottom: 18px;
+                    text-align: center;
+                    white-space: pre-wrap;
+                    word-wrap: break-word;
+                    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+                "></div>
+
+                <!-- Submit Button -->
+                <button
+                    type="submit"
+                    id="authResetBtn"
+                    onclick="doResetPassword()"
+                    style="
+                        width: 100%;
+                        padding: 13px 20px;
+                        background: linear-gradient(135deg, #f1d06e 0%, #c99727 50%, #9a7318 100%);
+                        border: 1px solid rgba(255, 255, 255, 0.25);
+                        border-radius: 12px;
+                        color: #0b1120;
+                        font-size: 1rem;
+                        font-weight: 700;
+                        cursor: pointer;
+                        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                        letter-spacing: 0.5px;
+                        box-shadow: 0 6px 20px rgba(201, 151, 39, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+                    "
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(241, 208, 110, 0.55)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(201, 151, 39, 0.4)';"
+                >
+                    <span id="authResetSpinner" style="display:none;" class="spinner-border spinner-border-sm mr-2"></span>
+                    <i class="fas fa-key"></i>
+                    <span id="authResetBtnText">ยืนยันตั้งรหัสผ่านใหม่</span>
+                </button>
+
+                <!-- Back to Login -->
+                <div style="text-align: center; margin-top: 18px;">
+                    <a href="javascript:void(0)" onclick="switchToLogin()" style="
+                        color: #94a3b8;
+                        font-size: 0.88rem;
+                        text-decoration: none;
+                        transition: color 0.2s ease;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                    " onmouseover="this.style.color='#f1d06e'" onmouseout="this.style.color='#94a3b8'">
+                        <i class="fas fa-arrow-left"></i> ย้อนกลับไปหน้าเข้าสู่ระบบ
+                    </a>
+                </div>
                 </form>
             </div>
         </div>
@@ -816,54 +1108,158 @@
 
     <!-- 3. หน้าโปรไฟล์ (profilePage) -->
     <section id="profilePage" class="main-section" style="display: none;">
+        <style>
+            .prof-luxury-card {
+                background: linear-gradient(165deg, rgba(28, 24, 48, 0.95) 0%, rgba(16, 14, 28, 0.98) 100%);
+                border-radius: 24px;
+                border: 1.5px solid rgba(212, 175, 55, 0.35);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 215, 0, 0.2);
+                backdrop-filter: blur(12px);
+                position: relative;
+                overflow: hidden;
+            }
+            .prof-luxury-card::before {
+                content: '';
+                position: absolute;
+                top: -50px;
+                right: -50px;
+                width: 140px;
+                height: 140px;
+                background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+                border-radius: 50%;
+                pointer-events: none;
+            }
+            .prof-avatar-ring {
+                width: 104px;
+                height: 104px;
+                margin: 0 auto 14px;
+                border-radius: 50%;
+                padding: 4px;
+                background: linear-gradient(135deg, #d4af37, #fef08a, #aa771c);
+                box-shadow: 0 8px 24px rgba(212, 175, 55, 0.35);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .prof-avatar-img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                background: #1e1b2e;
+                object-fit: cover;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+            }
+            .prof-info-pill {
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 12px;
+                padding: 8px 12px;
+                margin-bottom: 8px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: all 0.2s ease;
+            }
+            .prof-info-pill:hover {
+                background: rgba(212, 175, 55, 0.08);
+                border-color: rgba(212, 175, 55, 0.3);
+            }
+            .prof-side-btn {
+                border-radius: 14px;
+                font-weight: 600;
+                letter-spacing: 0.3px;
+                padding: 10px 14px;
+                transition: all 0.25s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+            .prof-side-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            }
+            .prof-btn-daily {
+                background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.3));
+                border: 1.5px solid #f59e0b;
+                color: #fbbf24;
+            }
+            .prof-btn-daily:hover {
+                background: linear-gradient(135deg, #f59e0b, #d97706);
+                color: #ffffff;
+            }
+        </style>
+
         <div class="row">
+            <!-- Left Sidebar Card -->
             <div class="col-md-4 mb-4">
-                <div class="card bg-dark text-white border-gold shadow-lg">
-                    <div class="card-body text-center">
-                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="100"
-                            class="rounded-circle mb-3 border-gold p-1" alt="รูปโปรไฟล์">
-                        <h3 id="profullname" class="text-gold font-weight-bold">-</h3>
-                        <hr class="border-gold">
-                        <div class="text-left px-2" style="font-size: 0.95rem; line-height: 1.8;">
-                            <p class="mb-1"><strong><i class="fas fa-id-badge text-gold mr-2"></i>รหัสสมาชิก:</strong> <span id="profId" class="text-white">-</span></p>
-                            <p class="mb-1"><strong><i class="fas fa-calendar-alt text-gold mr-2"></i>วันเกิด:</strong> <span id="profBirth" class="text-white">-</span></p>
-                            <p class="mb-1"><strong><i class="fas fa-clock text-gold mr-2"></i>เวลาเกิด:</strong> <span id="profTime" class="text-white">-</span></p>
-                            <p class="mb-1"><strong><i class="fas fa-dragon text-gold mr-2"></i>ปีนักษัตร:</strong> <span id="profZodiac" class="text-white">-</span></p>
-                            <p class="mb-1"><strong><i class="fas fa-hourglass-half text-gold mr-2"></i>ยามเกิด:</strong> <span id="profYam" class="text-white">-</span></p>
+                <div class="prof-luxury-card p-4 text-white">
+                    <div class="text-center">
+                        <div class="prof-avatar-ring">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="prof-avatar-img" alt="รูปโปรไฟล์">
                         </div>
-                        <hr class="border-secondary my-3">
-                        <button type="button" class="btn btn-sm btn-outline-warning btn-block" onclick="navigateTo('daily-horoscope')">
-                            <i class="fas fa-star mr-1"></i> ตรวจดวงประจำวันเกิด
-                        </button>
+                        <h3 id="profullname" class="text-gold font-weight-bold mb-1" style="font-size: 1.35rem; letter-spacing: 0.5px;">-</h3>
+                        <div class="d-inline-flex align-items-center mb-3">
+                            <span class="badge" style="background: rgba(212, 175, 55, 0.15); color: #f6d365; border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 20px; padding: 4px 12px; font-size: 0.78rem;">
+                                <i class="fas fa-crown text-warning mr-1"></i> <span id="profId">ID: -</span>
+                            </span>
+                        </div>
+
+                        <div class="text-left mt-2">
+                            <div class="prof-info-pill">
+                                <span style="font-size: 0.88rem; color: #d1d5db;"><i class="fas fa-calendar-alt text-gold mr-2"></i>วันเกิด</span>
+                                <span id="profBirth" class="text-white font-weight-bold" style="font-size: 0.9rem;">-</span>
+                            </div>
+                            <div class="prof-info-pill">
+                                <span style="font-size: 0.88rem; color: #d1d5db;"><i class="fas fa-clock text-gold mr-2"></i>เวลาเกิด</span>
+                                <span id="profTime" class="text-white font-weight-bold" style="font-size: 0.9rem;">-</span>
+                            </div>
+                            <div class="prof-info-pill">
+                                <span style="font-size: 0.88rem; color: #d1d5db;"><i class="fas fa-dragon text-gold mr-2"></i>ปีนักษัตร</span>
+                                <span id="profZodiac" class="text-white font-weight-bold" style="font-size: 0.9rem;">-</span>
+                            </div>
+                            <div class="prof-info-pill">
+                                <span style="font-size: 0.88rem; color: #d1d5db;"><i class="fas fa-hourglass-half text-gold mr-2"></i>ยามเกิด</span>
+                                <span id="profYam" class="text-white font-weight-bold" style="font-size: 0.9rem;">-</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-block prof-side-btn prof-btn-daily" onclick="navigateTo('daily-horoscope')">
+                                <i class="fas fa-star mr-2"></i> ตรวจดวงประจำวันเกิด
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <div id="personalFortuneArea" class="mt-3"></div>
 
                 <div class="mt-3">
-                    <button type="button" class="btn btn-outline-primary btn-block mb-2" onclick="calculateLifeGraph()">
+                    <button type="button" class="btn btn-outline-primary btn-block mb-2 prof-side-btn position-relative" id="profBtnLifeGraph" onclick="calculateLifeGraph()" style="background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.5);">
                         ✨ วิเคราะห์กราฟชีวิต
                     </button>
-                    <button type="button" class="btn btn-outline-gold btn-block mb-2" onclick="navigateTo('nameAnalysisPage'); analyzeName(window.currentMemberId);">
+                    <button type="button" class="btn btn-outline-gold btn-block mb-2 prof-side-btn position-relative" id="profBtnNameAnalysis" onclick="if (typeof window.hasPackagePermission === 'function' && !window.hasPackagePermission('nameAnalysisPage')) { if (typeof window.showTierUpgradePrompt === 'function') window.showTierUpgradePrompt('วิเคราะห์ชื่อ-นามสกุลมงคล', 'nameAnalysisPage'); else navigateTo('package'); } else { navigateTo('nameAnalysisPage'); analyzeName(window.currentMemberId); }" style="background: rgba(212, 175, 55, 0.08);">
                         🔮 วิเคราะห์ชื่อ-นามสกุลมงคล
                     </button>
-                    <button type="button" class="btn btn-outline-warning btn-block mb-2" onclick="calculatemahataksa()">
+                    <button type="button" class="btn btn-outline-warning btn-block mb-2 prof-side-btn position-relative" id="profBtnMahataksa" onclick="calculatemahataksa()" style="background: rgba(245, 158, 11, 0.08);">
                         <i class="fas fa-dharmachakra mr-2"></i> วิเคราะห์มหาทักษาพยากรณ์
                     </button>
-                    <button type="button" class="btn btn-info btn-block mb-2" id="memberRegBtn" onclick="checkAdminAccessAndNavigate('historySection', event)">
+                    <button type="button" class="btn btn-info btn-block mb-2 prof-side-btn" id="memberRegBtn" onclick="checkAdminAccessAndNavigate('historySection', event)" style="border-radius: 14px;">
                         <i class="fas fa-address-book mr-2"></i> ทะเบียนสมาชิก
                     </button>
-                    <button type="button" class="btn btn-secondary btn-block mt-3" onclick="navigateTo('mainpage')">
+                    <button type="button" class="btn btn-secondary btn-block mt-3 prof-side-btn" onclick="navigateTo('mainpage')" style="border-radius: 14px; background: rgba(108, 117, 125, 0.35); border-color: rgba(255,255,255,0.15);">
                         <i class="fas fa-chevron-left mr-2"></i> กลับหน้าห้องพยากรณ์
                     </button>
                 </div>
             </div>
+
+            <!-- Right Main Area -->
             <div class="col-md-8">
-                <div class="card shadow-lg border-gold">
-                    <div class="card-body book-page" id="profPredictionArea"></div>
+                <div class="card shadow-lg border-gold" style="border-radius: 24px; overflow: hidden; border: 1.5px solid rgba(212, 175, 55, 0.4); box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);">
+                    <div class="card-body book-page" id="profPredictionArea" style="border-radius: 24px;"></div>
                 </div>
                 <div class="text-center mt-3">
-                    <button class="btn btn-success" onclick="downloadImageFromProfile()">
+                    <button class="btn btn-success px-4 py-2" onclick="downloadImageFromProfile()" style="border-radius: 50px; font-weight: 700; box-shadow: 0 6px 18px rgba(40, 167, 69, 0.35);">
                         📸 บันทึกคำทำนายเป็นรูปภาพ
                     </button>
                 </div>
@@ -3436,7 +3832,7 @@
     <script charset="UTF-8" src="src/utils/canvas-helpers.js"></script>
     <script charset="UTF-8" src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
     <script charset="UTF-8" type="module" src="src/ui/membermanager.js"></script>
-    <script charset="UTF-8" src="src/utils/auth-enhanced-firebase-fixed.js"></script>
+    <script charset="UTF-8" src="src/utils/auth-enhanced-firebase-fixed.js?v=2.2"></script>
     <script charset="UTF-8" src="src/ui/consent-form.js"></script>
     <script charset="UTF-8" src="src/ui/main-content.js"></script>
     <script charset="UTF-8" src="src/data/day-birth-data.js"></script>

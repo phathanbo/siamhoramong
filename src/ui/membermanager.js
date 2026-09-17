@@ -154,13 +154,25 @@ function updateAllMemberSelectors(allHistory) {
     let history = filterHistoryByCurrentUser(allHistory);
     if (!Array.isArray(history)) history = [];
 
+    const canViewAll = typeof canViewAllMembers === 'function' ? canViewAllMembers() : (typeof isAdmin === 'function' && isAdmin());
+
     // ดึง Select ทุกตัวที่มี id หรือ class ที่เรากำหนดไว้
     const selectors = document.querySelectorAll('#nameMemberSelect, #memberSelect, .member-selector-shared, .member-selector, #dsMemberSelect1, #dsMemberSelect2');
+
+    // สำหรับสมาชิกทั่วไป: ดึงข้อมูลสมาชิกของตนเองมาเป็นค่าเริ่มต้น
+    const defaultMember = (!canViewAll && history.length > 0) ? history[0] : null;
+    const defaultMemberVal = defaultMember ? (defaultMember.memberId || defaultMember.birthdate || "") : "";
 
     selectors.forEach(select => {
         if (select.id === 'profileMemberSelect') return; // หน้า profile มีระบบ initStandaloneProfile ของตนเอง
         const currentVal = select.value; // เก็บค่าที่เลือกค้างไว้ก่อนหน้า (ถ้ามี)
-        select.innerHTML = '<option value="">-- เลือกสมาชิกจากประวัติ --</option>';
+        
+        // ถ้าเป็น User ทั่วไป และมีข้อมูลตนเอง ไม่จำเป็นต้องขึ้น '-- เลือกสมาชิกจากประวัติ --' เป็นตัวเลือกบังคับ
+        if (!canViewAll && history.length === 1) {
+            select.innerHTML = '';
+        } else {
+            select.innerHTML = '<option value="">-- เลือกสมาชิกจากประวัติ --</option>';
+        }
 
         history.forEach(member => {
             if (!member) return;
@@ -172,8 +184,25 @@ function updateAllMemberSelectors(allHistory) {
             select.appendChild(option);
         });
 
-        select.value = currentVal; // คืนค่าที่เลือกไว้
+        // กำหนดค่ากลับ: ถ้ามี currentVal เดิมให้คงไว้ ถ้าไม่มีและเป็นสมาชิกทั่วไปให้เลือก defaultMemberVal อัตโนมัติ
+        if (currentVal) {
+            select.value = currentVal;
+        } else if (defaultMemberVal) {
+            select.value = defaultMemberVal;
+        }
     });
+
+    // หากเป็น User ทั่วไป และมีค่า defaultMemberVal ให้อัปเดต window.currentMemberId และเรียก autoFillMemberData อัตโนมัติ
+    if (!canViewAll && defaultMemberVal) {
+        window.currentMemberId = defaultMember.memberId || defaultMemberVal;
+        if (typeof autoFillMemberData === 'function') {
+            try {
+                autoFillMemberData(defaultMemberVal);
+            } catch (err) {
+                console.warn("Auto-fill member data error:", err);
+            }
+        }
+    }
 }
 
 // ส่งฟังก์ชันออกไปให้โลกภายนอกรู้จัก (เพราะไฟล์นี้เป็น Module)
@@ -382,7 +411,31 @@ const SingleProfileManager = {
 };
 
 function loadLastProfileFromStorage() {
-    return SingleProfileManager.load();
+    let profile = SingleProfileManager.load();
+    if (profile && profile.birthdate) return profile;
+
+    // Fallback 1: ตรวจสอบจาก currentMemberId ถ้ามี
+    if (window.currentMemberId && typeof getProfileByMemberId === 'function') {
+        profile = getProfileByMemberId(window.currentMemberId);
+        if (profile && profile.birthdate) return profile;
+    }
+
+    // Fallback 2: ตรวจสอบจากประวัติ horo_history หรือ loadAllAvailableProfiles
+    if (typeof window.loadAllAvailableProfiles === 'function') {
+        const all = window.loadAllAvailableProfiles();
+        if (Array.isArray(all) && all.length > 0) {
+            return all[0];
+        }
+    }
+
+    try {
+        const history = JSON.parse(localStorage.getItem('horo_history')) || [];
+        if (history.length > 0) {
+            return history[0];
+        }
+    } catch (e) {}
+
+    return null;
 }
 
 function getYarmFromTime(timeStr) {
@@ -1340,7 +1393,12 @@ function showProfilePage(data, memberId) {
                     <i class="fas fa-certificate text-warning"></i> แผ่นดวงชะตาฉบับเต็ม
                 </span>
             </div>
-            <div class="d-flex align-items-center" style="gap: 10px;">
+            <div class="d-flex align-items-center flex-wrap" style="gap: 10px;">
+                ${(typeof isAdmin === 'function' && isAdmin()) || role === 'admin' ? `
+                <button class="btn-cute-action" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);" onclick="if(typeof openAdminTierSimulatorModal === 'function') openAdminTierSimulatorModal();" title="แผงจำลองระดับสมาชิกสำหรับทดสอบระบบ">
+                    <i class="fas fa-flask"></i> 🧪 ทดสอบระดับสมาชิก
+                </button>
+                ` : ''}
                 ${role !== 'admin' ? `
                 <button class="btn-cute-action" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);" onclick="if(typeof navigateTo === 'function') navigateTo('package');">
                     <i class="fas fa-crown"></i> อัปเกรด VIP
@@ -1510,7 +1568,38 @@ function showProfilePage(data, memberId) {
     if (typeof window.updateCuteProfileUI === 'function') {
         window.updateCuteProfileUI(data);
     }
+
+    // 🔒 อัปเดตสถานะการล็อกและ badge บนปุ่ม Sidebar ซ้ายของหน้าโปรไฟล์
+    if (typeof window.updateProfileSidebarTierAccess === 'function') {
+        window.updateProfileSidebarTierAccess();
+    }
 }
+
+// 🔒 ฟังก์ชันตรวจสอบและอัปเดตสถานะปุ่ม Sidebar ในหน้าโปรไฟล์ตามแพ็กเกจของผู้ใช้
+window.updateProfileSidebarTierAccess = function() {
+    const sidebarConfigs = [
+        { id: 'profBtnLifeGraph', menuId: 'lifeGraphPage', title: '✨ วิเคราะห์กราฟชีวิต' },
+        { id: 'profBtnNameAnalysis', menuId: 'nameAnalysisPage', title: '🔮 วิเคราะห์ชื่อ-นามสกุลมงคล' },
+        { id: 'profBtnMahataksa', menuId: 'mahathaksaPage', title: '🕉️ วิเคราะห์มหาทักษาพยากรณ์' }
+    ];
+
+    sidebarConfigs.forEach(item => {
+        const btn = document.getElementById(item.id);
+        if (!btn) return;
+
+        const hasAccess = (typeof window.hasPackagePermission === 'function') ? window.hasPackagePermission(item.menuId) : true;
+        if (!hasAccess) {
+            const reqInfo = (typeof window.getRequiredTierInfo === 'function') ? window.getRequiredTierInfo(item.menuId) : { packageName: 'พรีเมียม' };
+            btn.innerHTML = `${item.title} <span class="badge badge-warning ml-1" style="font-size: 0.72rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4);"><i class="fas fa-lock mr-1"></i>${reqInfo.packageName}</span>`;
+            btn.style.opacity = '0.85';
+            btn.title = `ฟีเจอร์นี้สงวนสิทธิ์สำหรับสมาชิกแพ็กเกจระดับ ${reqInfo.packageName} ขึ้นไป (คลิกเพื่ออัปเกรด)`;
+        } else {
+            btn.innerHTML = item.title;
+            btn.style.opacity = '1';
+            btn.title = '';
+        }
+    });
+};
 
 function initProfileOnPageLoad() {
     const lastData = loadLastProfileFromStorage();
@@ -2217,22 +2306,40 @@ if (istaksapage && finalMember) {
         }
     }
 
-const promchartsection = isPageVisible('promchartsection');
+    const promchartsection = isPageVisible('promchartsection');
 
-if (promchartsection) {
-    const gender = document.getElementById('userGender');
-    const age = document.getElementById('userAgeprom');
+    if (promchartsection) {
+        const gender = document.getElementById('userGender');
+        const age = document.getElementById('userAgeprom');
+        const activeMember = finalMember || member;
 
-    if (gender && member.gender) {
-        gender.value = member.gender;
+        if (gender && activeMember && activeMember.gender) {
+            gender.value = activeMember.gender;
+        }
+
+        if (age && activeMember && (activeMember.birthdate || formattedDate)) {
+            let birthYear = null;
+            if (formattedDate) {
+                const parts = formattedDate.split('-');
+                if (parts.length >= 1) birthYear = parseInt(parts[0], 10);
+            }
+            if (!birthYear || isNaN(birthYear)) {
+                const d = safeParseThaiDate(activeMember.birthdate);
+                if (d && !isNaN(d.getFullYear())) {
+                    birthYear = d.getFullYear();
+                    if (birthYear > 2400) birthYear -= 543;
+                }
+            }
+            if (birthYear && !isNaN(birthYear)) {
+                const currentYear = new Date().getFullYear();
+                age.value = (currentYear - birthYear) + 1;
+            }
+        }
+
+        setTimeout(() => {
+            if (typeof calculatePromchart === 'function') calculatePromchart();
+        }, 150);
     }
-
-    if (age && member.birthdate) {
-        const birthYear = new Date(member.birthdate).getFullYear();
-        const currentYear = new Date().getFullYear();
-        age.value = (currentYear - birthYear) + 1;
-    }
-}
 
 const isBusinessFortune = isPageVisible('businessFortune');
 
@@ -2432,10 +2539,24 @@ if (sevenPage) {
         year.value = zodiacIdx !== undefined ? zodiacIdx : "ไม่ระบุ";
     }   
 
-    if (age && member.birthdate) {
-        const birthYear = new Date(member.birthdate).getFullYear();
-        const currentYear = new Date().getFullYear();
-        age.value = (currentYear - birthYear) + 1;
+    const activeSevenMember = finalMember || member;
+    if (age && activeSevenMember && (activeSevenMember.birthdate || formattedDate)) {
+        let birthYear = null;
+        if (formattedDate) {
+            const parts = formattedDate.split('-');
+            if (parts.length >= 1) birthYear = parseInt(parts[0], 10);
+        }
+        if (!birthYear || isNaN(birthYear)) {
+            const d = safeParseThaiDate(activeSevenMember.birthdate);
+            if (d && !isNaN(d.getFullYear())) {
+                birthYear = d.getFullYear();
+                if (birthYear > 2400) birthYear -= 543;
+            }
+        }
+        if (birthYear && !isNaN(birthYear)) {
+            const currentYear = new Date().getFullYear();
+            age.value = (currentYear - birthYear) + 1;
+        }
     }
 }
 
@@ -2462,29 +2583,43 @@ if (horoseven) {
     const year = document.getElementById('input-zodiac');
     const time = document.getElementById('input-birthtime');
     const age = document.getElementById('input-age');
+    const activeHoroSevenMember = finalMember || member;
 
-    if (day && member.birthdate) {
+    if (day && activeHoroSevenMember && activeHoroSevenMember.birthdate) {
         const birthDay = new Date(formattedDate).getDay();
         day.value = birthDay;        
     }
 
-    if (month && member.birthMonththai) {
-        month.value = member.birthMonththai;
+    if (month && activeHoroSevenMember && activeHoroSevenMember.birthMonththai) {
+        month.value = activeHoroSevenMember.birthMonththai;
     }
 
-    if (year && member.zodiac) {
-        const zodiacIdx = thaiyearname[member.zodiac];
+    if (year && activeHoroSevenMember && activeHoroSevenMember.zodiac) {
+        const zodiacIdx = thaiyearname[activeHoroSevenMember.zodiac];
         year.value = zodiacIdx !== undefined ? zodiacIdx : "ไม่ระบุ";
     }
 
-    if (time && member.birthtime) {
-        time.value = member.birthtime;
+    if (time && activeHoroSevenMember && activeHoroSevenMember.birthtime) {
+        time.value = activeHoroSevenMember.birthtime;
     }
 
-    if (age && member.birthdate) {
-        const birthYear = new Date(member.birthdate).getFullYear();
-        const currentYear = new Date().getFullYear();
-        age.value = (currentYear - birthYear) + 1;
+    if (age && activeHoroSevenMember && (activeHoroSevenMember.birthdate || formattedDate)) {
+        let birthYear = null;
+        if (formattedDate) {
+            const parts = formattedDate.split('-');
+            if (parts.length >= 1) birthYear = parseInt(parts[0], 10);
+        }
+        if (!birthYear || isNaN(birthYear)) {
+            const d = safeParseThaiDate(activeHoroSevenMember.birthdate);
+            if (d && !isNaN(d.getFullYear())) {
+                birthYear = d.getFullYear();
+                if (birthYear > 2400) birthYear -= 543;
+            }
+        }
+        if (birthYear && !isNaN(birthYear)) {
+            const currentYear = new Date().getFullYear();
+            age.value = (currentYear - birthYear) + 1;
+        }
     }
 }
 

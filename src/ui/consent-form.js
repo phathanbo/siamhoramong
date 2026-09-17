@@ -5,16 +5,18 @@
 
 // ตรวจสอบการยินยอมเมื่อโหลดหน้า
 function checkConsentStatus() {
-    const consentGiven = localStorage.getItem('pdpaConsent');
+    let consentGiven = localStorage.getItem('pdpaConsent');
     const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
     const authSession = localStorage.getItem('siamhora_auth_session');
     
     // ตรวจสอบว่า user เป็น admin หรือไม่
     let userRole = 'user';
+    let username = '';
     if (authSession) {
         try {
             const session = JSON.parse(authSession);
             userRole = session.role || 'user';
+            username = session.username || '';
         } catch (e) {
             console.error('Error parsing auth session:', e);
         }
@@ -25,8 +27,20 @@ function checkConsentStatus() {
         return;
     }
     
+    const targetUserId = userId || username;
+    if (targetUserId) {
+        const userSpecificConsent = localStorage.getItem('pdpaConsent_' + targetUserId.toLowerCase());
+        if (userSpecificConsent) {
+            consentGiven = userSpecificConsent;
+            // Restore ลง pdpaConsent ให้ระบบอื่นใช้งานร่วมกันได้
+            if (!localStorage.getItem('pdpaConsent')) {
+                localStorage.setItem('pdpaConsent', userSpecificConsent);
+            }
+        }
+    }
+    
     // ถ้ายังไม่ได้ยินยอมและเข้าสู่ระบบแล้ว ให้แสดงฟอร์มยินยอม
-    if (!consentGiven && userId) {
+    if (!consentGiven && targetUserId) {
         showConsentOverlay();
     }
 }
@@ -455,6 +469,9 @@ function acceptConsent() {
 
     localStorage.setItem('pdpaConsent', JSON.stringify(consentData));
     localStorage.setItem('pdpaConsentDate', new Date().toISOString());
+    if (userId) {
+        localStorage.setItem('pdpaConsent_' + userId.toLowerCase(), JSON.stringify(consentData));
+    }
 
     sendConsentToServer(consentData);
 

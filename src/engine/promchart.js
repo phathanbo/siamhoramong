@@ -253,11 +253,32 @@ function calculatePromchart() {
     if (ageEl && ageEl.value) {
         age = parseInt(ageEl.value, 10);
     } else if (birthDateEl && birthDateEl.value) {
-        const birthDate = new Date(birthDateEl.value);
-        const birthYear = birthDate.getFullYear();
-        const currentYear = new Date().getFullYear();
-        age = (currentYear - birthYear) + 1;
-        if (ageEl) ageEl.value = age;
+        let bYear = null;
+        if (typeof safeParseThaiDate === 'function') {
+            const parsed = safeParseThaiDate(birthDateEl.value);
+            if (parsed && !isNaN(parsed.getFullYear())) {
+                bYear = parsed.getFullYear();
+                if (bYear > 2400) bYear -= 543;
+            }
+        } else if (typeof parseBirthdate === 'function') {
+            const parsed = parseBirthdate(birthDateEl.value);
+            if (parsed && !isNaN(parsed.getFullYear())) {
+                bYear = parsed.getFullYear();
+                if (bYear > 2400) bYear -= 543;
+            }
+        }
+        if (!bYear) {
+            const birthDate = new Date(birthDateEl.value);
+            if (!isNaN(birthDate.getTime())) {
+                bYear = birthDate.getFullYear();
+                if (bYear > 2400) bYear -= 543;
+            }
+        }
+        if (bYear) {
+            const currentYear = new Date().getFullYear();
+            age = (currentYear - bYear) + 1;
+            if (ageEl) ageEl.value = age;
+        }
     }
 
     if (!age || isNaN(age) || age <= 0) {

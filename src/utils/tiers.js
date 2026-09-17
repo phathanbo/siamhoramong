@@ -91,10 +91,10 @@ const systemMinTier = {
 
     // 🟣 ทองคำ (index 4) — ศาสตร์เฉพาะทาง ซับซ้อนขึ้น
     'marriage-compatibility': 4, 'nameAnalysisPage': 4, 'numerologyPage': 4,
-    'fengShuiPage': 4, 'dailyHighlightPage': 4,
+    'fengShuiPage': 4, 'dailyHighlightPage': 4, 'lifeGraphPage': 4,
 
     // 🔴 ทองคำขาว (index 5) — คัมภีร์และระบบบันทึกดวง
-    'planetRelationPage': 5, 'taksaPage': 5, 'chatraPage': 5,
+    'planetRelationPage': 5, 'taksaPage': 5, 'mahathaksaPage': 5, 'chatraPage': 5,
     'auspiciousPage': 5, 'sompong-wealth': 5,
 
     // 🔴 ไข่มุก (index 6) — ศาสตร์ละเอียดอ่อน ฤกษ์เฉพาะกิจ
@@ -111,8 +111,8 @@ const systemMinTier = {
     // 👑 มรกต (index 9) — ภพเรือนชะตา ทศาดาว
     'twelveHousesPage': 9, 'dashaPage': 9,
 
-    // 👑 เพชร (index 10) — ผูกดวงสมบูรณ์
-    'thaiAstrologyEngine': 10,
+    // 👑 เพชร (index 10) — ผูกดวงสมบูรณ์ & คัมภีร์แว่นตาโหร
+    'thaiAstrologyEngine': 10, 'waentaHoraPage': 10,
 
     // 👑 มงกุฎ (index 11) — ผูกดวงมืออาชีพ นิรายนะ
     'thaiHoroscopeProPage': 11, 'ayanamsaPage': 11,
@@ -183,21 +183,28 @@ window.hasPackagePermission = function(menuId) {
     const alwaysAllow = ['mainpage', 'mainContent', 'package', 'historySection', 'profilePage', 'knowledgePage'];
     if (alwaysAllow.includes(menuId)) return true;
 
-    // 1. ถ้าเป็น Admin หรือ Data Manager ให้ผ่านได้ทุกเมนู
-    if (checkIsAdminUser()) return true;
+    // 1. ถ้าเป็น Admin หรือ Data Manager ให้ผ่านได้ทุกเมนู (ยกเว้นกรณี Admin กำลังเปิดโหมดทดสอบจำลองระดับ simulatePackage)
+    const isSimulating = localStorage.getItem('siamhora_simulate_package');
+    if (checkIsAdminUser() && !isSimulating) return true;
 
     // 2. ดึงข้อมูล Session ของผู้ใช้
-    let userPkg = 'ทดลองใช้';
+    let userPkg = isSimulating || 'ทดลองใช้';
     try {
         const raw = localStorage.getItem('siamhora_auth_session');
         if (raw) {
             const session = JSON.parse(raw);
             if (session) {
-                if (session.role === 'admin' || session.role === 'data_manager') return true;
-                if (session.package) userPkg = session.package;
+                if ((session.role === 'admin' || session.role === 'data_manager') && !isSimulating && !session.simulatePackage) return true;
+                if (isSimulating) {
+                    userPkg = isSimulating;
+                } else if (session.simulatePackage) {
+                    userPkg = session.simulatePackage;
+                } else if (session.package) {
+                    userPkg = session.package;
+                }
                 
-                // ตรวจสอบวันหมดอายุแพ็กเกจ
-                if (session.packageExpiry && session.package !== 'ทดลองใช้') {
+                // ตรวจสอบวันหมดอายุแพ็กเกจ (ถ้าไม่ได้อยู่ในโหมดจำลอง)
+                if (!isSimulating && !session.simulatePackage && session.packageExpiry && session.package !== 'ทดลองใช้') {
                     const expiry = new Date(session.packageExpiry).getTime();
                     if (Date.now() > expiry) {
                         userPkg = 'ทดลองใช้'; // หมดอายุแล้ว ลดระดับกลับเป็นทดลองใช้
@@ -214,6 +221,63 @@ window.hasPackagePermission = function(menuId) {
 
     const menuIdx = getMenuDepthIndex(menuId);
     return checkPermissionDefault(userPkg, menuIdx, menuId);
+};
+
+// 📌 ฟังก์ชันดึงข้อมูลระดับแพ็กเกจขั้นต่ำที่ต้องการสำหรับระบบนั้นๆ
+window.getRequiredTierInfo = function(menuId) {
+    const minTierIdx = (menuId && systemMinTier[menuId] !== undefined) ? systemMinTier[menuId] : 0;
+    const targetPkg = packages[minTierIdx] || packages[0];
+    return {
+        minTierIndex: minTierIdx,
+        packageName: targetPkg.name,
+        priceMonth: targetPkg.m,
+        priceYear: targetPkg.y
+    };
+};
+
+// 🔒 ฟังก์ชันแจ้งเตือนอัปเกรดแพ็กเกจเมื่อผู้ใช้ไม่มีสิทธิ์เข้าถึงฟีเจอร์
+window.showTierUpgradePrompt = function(featureTitle, menuId) {
+    const tierInfo = window.getRequiredTierInfo(menuId);
+    const titleText = featureTitle ? `ระบบ ${featureTitle}` : 'ระบบนี้';
+    
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: 'warning',
+            title: '🔒 สิทธิพิเศษเฉพาะสมาชิก',
+            html: `
+                <div class="text-left px-2" style="font-size: 0.95rem; line-height: 1.6;">
+                    <p class="mb-2"><strong>${titleText}</strong> สงวนสิทธิ์สำหรับสมาชิกแพ็กเกจระดับ <strong>「${tierInfo.packageName}」</strong> ขึ้นไปครับ</p>
+                    <p class="mb-2 text-muted" style="font-size: 0.88rem;">ผู้ใช้ในระดับ <strong>ทดลองใช้</strong> ยังไม่สามารถเข้าใช้งานฟีเจอร์นี้ได้</p>
+                    <div class="p-3 rounded my-2" style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3);">
+                        <i class="fas fa-crown text-warning mr-1"></i> ปลดล็อกเริ่มต้นที่ระดับ: <strong class="text-warning">${tierInfo.packageName}</strong> 
+                        ${tierInfo.priceMonth !== 'ฟรี' && tierInfo.priceMonth !== 'ติดต่อ' ? `(฿${Number(tierInfo.priceMonth).toLocaleString()}/เดือน)` : ''}
+                    </div>
+                </div>
+            `,
+            confirmButtonText: '👑 ดูและเลือกแพ็กเกจ',
+            confirmButtonColor: '#d4af37',
+            showCancelButton: true,
+            cancelButtonText: 'ไว้คราวหน้า',
+            cancelButtonColor: '#6c757d',
+            customClass: { popup: 'rounded-4 shadow-lg' }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (typeof navigateTo === 'function') {
+                    navigateTo('package');
+                } else {
+                    window.location.hash = '#package';
+                }
+            }
+        });
+    } else {
+        if (confirm(`${titleText} สงวนสิทธิ์สำหรับสมาชิกระดับ ${tierInfo.packageName} ขึ้นไป\nคุณต้องการดูรายละเอียดแพ็กเกจเพื่ออัปเกรดหรือไม่?`)) {
+            if (typeof navigateTo === 'function') {
+                navigateTo('package');
+            } else {
+                window.location.hash = '#package';
+            }
+        }
+    }
 };
 
 function checkIsAdminUser() {

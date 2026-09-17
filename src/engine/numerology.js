@@ -171,8 +171,16 @@ function loadTaksaMembers() {
                 if (dateStr.includes('/')) {
                     const parts = dateStr.split('/');
                     if (parts.length === 3) {
-                        // DD/MM/YYYY -> YYYY-MM-DD
-                        dateObj = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                        let y = parseInt(parts[2], 10);
+                        if (y > 2400) y -= 543;
+                        dateObj = new Date(y, parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+                    }
+                } else if (dateStr.includes('-')) {
+                    const parts = dateStr.split('-');
+                    if (parts.length === 3) {
+                        let y = parseInt(parts[0], 10);
+                        if (y > 2400) y -= 543;
+                        dateObj = new Date(y, parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
                     }
                 } else {
                     dateObj = new Date(dateStr);

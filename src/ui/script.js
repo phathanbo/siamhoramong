@@ -501,7 +501,8 @@ const PAGE_TITLES = {
     'reuxpage': '✨ การให้ฤกษ์ - สยามโหรามงคล',
     'package': '📦 Package - สยามโหรามงคล',
     'promchartsection': '🎡 วงล้อพยากรณ์ - สยามโหรามงคล',
-    'TaksaSattalek': '🧿 ทักษา 7 - สยามโหรามงคล'
+    'TaksaSattalek': '🧿 ทักษา 7 - สยามโหรามงคล',
+    'waentaHoraPage': '🔮 คัมภีร์แว่นตาโหร - สยามโหรามงคล'
 };
 
 function getProfileByMemberId(memberId) {
@@ -546,6 +547,30 @@ function navigateTo(pageId, addHistory = true, targetScrollPos = null) {
         if (pageId !== 'mainpage' && pageId !== 'mainContent' && (document.getElementById('mainpage') || document.getElementById('mainContent'))) {
             const defaultMain = document.getElementById('mainpage') ? 'mainpage' : 'mainContent';
             navigateTo(defaultMain, false);
+        }
+        return;
+    }
+
+    // 🔒 ตรวจสอบสิทธิ์การเข้าถึงแพ็กเกจ (Package Permission Check)
+    if (typeof window.hasPackagePermission === 'function' && !window.hasPackagePermission(pageId)) {
+        console.warn(`🔒 สิทธิ์ไม่เพียงพอสำหรับหน้า: ${pageId}`);
+        const featureTitle = PAGE_TITLES[pageId] ? PAGE_TITLES[pageId].replace(' - สยามโหรามงคล', '').trim() : pageId;
+        if (typeof window.showTierUpgradePrompt === 'function') {
+            window.showTierUpgradePrompt(featureTitle, pageId);
+        } else if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: '🔒 สิทธิพิเศษเฉพาะสมาชิก',
+                text: `ระบบ "${featureTitle}" สงวนสิทธิ์สำหรับสมาชิกที่อัปเกรดแพ็กเกจเท่านั้น กรุณาอัปเกรดเพื่อเข้าใช้งาน`,
+                confirmButtonText: 'ดูแพ็กเกจ',
+                confirmButtonColor: '#d4af37',
+                showCancelButton: true,
+                cancelButtonText: 'ยกเลิก'
+            }).then(r => {
+                if (r.isConfirmed) navigateTo('package');
+            });
+        } else {
+            alert(`ระบบ ${featureTitle} สงวนสิทธิ์สำหรับสมาชิกที่อัปเกรดแพ็กเกจเท่านั้น`);
         }
         return;
     }
@@ -753,9 +778,49 @@ function navigateTo(pageId, addHistory = true, targetScrollPos = null) {
         }, 50);
     }
 
+    if (pageId === 'promchartsection') {
+        setTimeout(() => {
+            if (typeof updateAllMemberSelectors === 'function') {
+                updateAllMemberSelectors();
+            }
+            if (window.currentMemberId && typeof autoFillMemberData === 'function') {
+                autoFillMemberData(window.currentMemberId);
+            }
+        }, 50);
+    }
+
     if (pageId === 'package') {
         if (typeof renderAllPackageCards === 'function') {
             renderAllPackageCards();
+        }
+    }
+
+    if (pageId === 'profilePage') {
+        setTimeout(() => {
+            if (typeof window.updateProfileSidebarTierAccess === 'function') {
+                window.updateProfileSidebarTierAccess();
+            }
+            // ตรวจสอบว่ามีเนื้อหาคำทำนายหรือยัง ถ้ายังให้โหลดข้อมูลมาแสดงผลอัตโนมัติ
+            const predArea = document.getElementById('profPredictionArea');
+            if (predArea && (!predArea.innerHTML.trim() || predArea.children.length === 0)) {
+                if (typeof showProfilePage === 'function') {
+                    showProfilePage();
+                } else if (typeof window.showProfilePage === 'function') {
+                    window.showProfilePage();
+                }
+            }
+        }, 50);
+    }
+
+    // ตรวจสอบและอัปเดต Member Selector + Auto-fill ข้อมูลสมาชิกอัตโนมัติสำหรับสมาชิกทั่วไป
+    const canViewAll = typeof canViewAllMembers === 'function' ? canViewAllMembers() : (typeof isAdmin === 'function' && isAdmin());
+    if (typeof updateAllMemberSelectors === 'function') {
+        updateAllMemberSelectors();
+    }
+    if (!canViewAll && typeof autoFillMemberData === 'function') {
+        const currentTargetId = window.currentMemberId || (typeof loadLastProfileFromStorage === 'function' ? (loadLastProfileFromStorage()?.memberId || loadLastProfileFromStorage()?.birthdate) : null);
+        if (currentTargetId) {
+            autoFillMemberData(currentTargetId);
         }
     }
 
@@ -789,7 +854,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!initialPage) {
             const lastPage = localStorage.getItem('currentPage');
-            const tempPages = ['lifeGraphPage', 'nameAnalysisPage', 'profilePage'];
+            const tempPages = ['lifeGraphPage', 'nameAnalysisPage'];
             if (lastPage && document.getElementById(lastPage) && !tempPages.includes(lastPage)) {
                 initialPage = lastPage;
             }

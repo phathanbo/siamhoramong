@@ -20,101 +20,81 @@
 
     <style>
         :root {
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --primary: #1e293b;
-            --accent-gold: #d97706;
-            --accent-blue: #2563eb;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --radius: 12px;
+            --bg-color: #0c1424;
+            --card-bg: linear-gradient(135deg, rgba(20, 32, 58, 0.75) 0%, rgba(13, 21, 39, 0.85) 100%);
+            --primary: #9F7AEA;
+            --accent-gold: #F1D06E;
+            --accent-gold-lt: #FFF5C0;
+            --accent-blue: #60a5fa;
+            --text-main: #FFFFFF;
+            --text-muted: #CBD5E1;
+            --border-color: rgba(241, 208, 110, 0.35);
+            --radius: 20px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Sarabun', sans-serif;
+            font-family: 'Prompt', 'Sarabun', sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: #0c1424;
+            color: #FFFFFF;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(159, 122, 234, 0.22) 0%, transparent 50%),
+                radial-gradient(circle at 85% 85%, rgba(241, 208, 110, 0.25) 0%, transparent 50%),
+                linear-gradient(180deg, #0d1527 0%, #15223c 50%, #0f182d 100%);
+            background-attachment: fixed;
             padding-bottom: 60px;
+            font-family: 'Prompt', 'Sarabun', sans-serif !important;
         }
 
-        /* 🌟 Reset & Modernize .btn styles for this page (prevent 100% full-width yellow stretch) */
+        /* 🌟 Reset & Modernize .btn styles */
         .btn {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
             width: auto !important;
-            padding: 8px 18px !important;
-            border-radius: 25px !important;
-            font-size: 0.92rem !important;
+            padding: 9px 22px !important;
+            border-radius: 30px !important;
+            font-size: 0.95rem !important;
             font-weight: 600 !important;
             letter-spacing: normal !important;
             text-transform: none !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.12) !important;
-            transition: all 0.2s ease !important;
-            border: 1px solid transparent !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+            transition: all 0.25s ease !important;
+            border: 1px solid rgba(241, 208, 110, 0.4) !important;
         }
         .btn:hover {
             transform: translateY(-2px) !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+            box-shadow: 0 6px 20px rgba(241, 208, 110, 0.3) !important;
         }
         .btn-sm {
-            padding: 6px 14px !important;
-            font-size: 0.84rem !important;
-            border-radius: 8px !important;
-        }
-
-        .top-navbar {
-            background: linear-gradient(135deg, #1e1b4b, #0f172a);
-            color: #ffffff;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .top-navbar h1 {
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .top-navbar a {
-            color: #f1f5f9;
-            text-decoration: none;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255,255,255,0.1);
-            padding: 6px 14px;
-            border-radius: 20px;
-            transition: all 0.2s;
-        }
-        .top-navbar a:hover {
-            background: rgba(255,255,255,0.25);
+            padding: 6px 16px !important;
+            font-size: 0.85rem !important;
+            border-radius: 20px !important;
         }
 
         .container {
-            max-width: 100% !important;
+            max-width: 1400px !important;
             width: 100% !important;
-            margin: 16px auto !important;
-            padding: 0 24px !important;
+            margin: 20px auto !important;
+            padding: 0 20px !important;
         }
 
+        /* 🌟 Glass Card Styling consistent with main page */
         .glass-card {
-            background: var(--card-bg);
+            background: linear-gradient(135deg, rgba(20, 32, 58, 0.8) 0%, rgba(13, 21, 39, 0.9) 100%) !important;
             border-radius: var(--radius);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
-            padding: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 30px rgba(241,208,110,0.12), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+            border: 1px solid rgba(241, 208, 110, 0.35) !important;
+            backdrop-filter: blur(25px) !important;
+            -webkit-backdrop-filter: blur(25px) !important;
+            padding: 26px;
             margin-bottom: 24px;
+            color: #FFFFFF;
         }
 
         .form-grid {
@@ -129,56 +109,74 @@
             gap: 6px;
         }
         .form-group label {
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: #FFF0A8;
         }
         .form-control {
-            padding: 10px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
+            padding: 11px 16px;
+            border: 1px solid rgba(241, 208, 110, 0.35);
+            background: rgba(13, 21, 39, 0.85);
+            color: #FFFFFF;
+            border-radius: 12px;
             font-size: 0.95rem;
             outline: none;
+            transition: all 0.2s ease;
         }
         .form-control:focus {
-            border-color: var(--accent-blue);
+            border-color: #F1D06E;
+            box-shadow: 0 0 12px rgba(241, 208, 110, 0.4);
+            background: rgba(10, 17, 34, 0.95);
+        }
+        select.form-control option {
+            background: #0d1527 !important;
+            color: #FFFFFF !important;
         }
 
         .btn-calc {
-            background: linear-gradient(135deg, #d97706, #b45309);
-            color: white;
-            padding: 11px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+            background: linear-gradient(135deg, #f1c40f 0%, #d4af37 100%) !important;
+            color: #0b1120 !important;
+            padding: 12px 28px !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 30px !important;
+            font-size: 1.05rem !important;
+            font-weight: 700 !important;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4) !important;
+            transition: all 0.25s ease;
         }
         .btn-calc:hover {
-            opacity: 0.95;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(241, 208, 110, 0.6) !important;
         }
         .btn-member-picker {
-            background: #475569;
-            color: white;
-            padding: 11px 18px;
-            border: none;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(241, 208, 110, 0.35) !important;
+            color: #FFF0A8 !important;
+            padding: 11px 20px !important;
+            border-radius: 30px !important;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.25s ease;
+        }
+        .btn-member-picker:hover {
+            background: rgba(241, 208, 110, 0.2) !important;
+            color: #FFFFFF !important;
         }
 
         /* Charts Layout */
         .chart-main-wrapper {
-            background: #ffffff;
+            background: linear-gradient(135deg, rgba(20, 32, 58, 0.85) 0%, rgba(13, 21, 39, 0.95) 100%) !important;
             padding: 30px 20px;
             border-radius: var(--radius);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+            border: 1px solid rgba(241, 208, 110, 0.35) !important;
             position: relative;
+            color: #FFFFFF;
         }
 
         .chart-header {
@@ -192,16 +190,19 @@
             font-size: 1.5rem;
             font-weight: 700;
             flex-grow: 1;
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         .chart-actions {
             display: flex;
             gap: 12px;
-            color: #64748b;
+            color: #F1D06E;
             font-size: 1.2rem;
             cursor: pointer;
         }
         .chart-actions i:hover {
-            color: var(--accent-blue);
+            color: #FFF0A8;
         }
 
         .chart-options {
@@ -213,6 +214,7 @@
             left: 30px;
             font-size: 0.9rem;
             z-index: 10;
+            color: #CBD5E1;
         }
         .option-item {
             display: flex;
@@ -229,14 +231,14 @@
             margin: 10px 0 30px 0;
         }
 
-        /* Navamsha & Drekkana Section (ภาพที่ 2) */
+        /* Navamsha & Drekkana Section */
         .harmonic-wheels-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
             margin: 20px 0;
             padding-top: 20px;
-            border-top: 1px dashed #cbd5e1;
+            border-top: 1px dashed rgba(241, 208, 110, 0.3);
         }
         @media (max-width: 860px) {
             .harmonic-wheels-grid {
@@ -244,11 +246,13 @@
             }
         }
         .harmonic-card {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(20, 32, 58, 0.8) 0%, rgba(13, 21, 39, 0.9) 100%) !important;
+            border: 1px solid rgba(241, 208, 110, 0.3) !important;
             border-radius: var(--radius);
-            padding: 16px;
+            padding: 18px;
             text-align: center;
+            color: #FFFFFF;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .harmonic-title {
             font-size: 1.2rem;
@@ -258,6 +262,7 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
+            color: #FFF0A8;
         }
 
         /* Bottom Section: Thaksa & Trivai */
@@ -266,7 +271,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-top: 20px;
-            border-top: 1px dashed #cbd5e1;
+            border-top: 1px dashed rgba(241, 208, 110, 0.3);
             padding-top: 30px;
         }
         @media (max-width: 860px) {
@@ -290,19 +295,23 @@
             font-weight: 700;
             text-align: center;
             width: 100%;
+            color: #FFF0A8;
         }
 
         /* Thaksa Grid 3x3 */
         .thaksa-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            border: 1px solid #64748b;
-            background: #ffffff;
+            border: 1px solid rgba(241, 208, 110, 0.4) !important;
+            background: rgba(13, 21, 39, 0.9) !important;
             max-width: 320px;
             margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
         .thaksa-cell {
-            border: 1px solid #cbd5e1;
+            border: 1px solid rgba(241, 208, 110, 0.25) !important;
             padding: 8px 4px;
             text-align: center;
             min-height: 84px;
@@ -310,15 +319,17 @@
             flex-direction: column;
             justify-content: space-between;
             position: relative;
+            background: rgba(20, 32, 58, 0.6);
+            color: #FFFFFF;
         }
         .thaksa-top-label {
             font-size: 0.8rem;
-            color: #64748b;
+            color: #F1D06E;
         }
         .thaksa-num {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #1e293b;
+            color: #FFF0A8;
         }
         .thaksa-bot-label {
             font-size: 0.75rem;
@@ -332,24 +343,29 @@
             transform: translate(-50%, -50%);
             width: 44px;
             height: 44px;
-            border: 2px solid #ea580c;
+            border: 2px solid #F1D06E;
             border-radius: 50%;
             pointer-events: none;
+            box-shadow: 0 0 10px rgba(241, 208, 110, 0.6);
         }
         .center-cell {
-            background-color: #fafafa;
+            background-color: rgba(10, 17, 34, 0.8) !important;
         }
 
         /* Trivai Grid 3x4 */
         .trivai-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            border: 1px solid #64748b;
+            border: 1px solid rgba(241, 208, 110, 0.4) !important;
+            background: rgba(13, 21, 39, 0.9) !important;
             max-width: 420px;
             margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
         .trivai-cell {
-            border: 1px solid #cbd5e1;
+            border: 1px solid rgba(241, 208, 110, 0.25) !important;
             padding: 6px 2px;
             text-align: center;
             min-height: 72px;
@@ -357,18 +373,21 @@
             flex-direction: column;
             justify-content: space-between;
             position: relative;
+            background: rgba(20, 32, 58, 0.6);
+            color: #FFFFFF;
         }
         .trivai-house {
             font-size: 0.8rem;
-            color: #475569;
+            color: #CBD5E1;
         }
         .trivai-num {
             font-size: 1.25rem;
             font-weight: 700;
+            color: #FFF0A8;
         }
         .trivai-age {
             font-size: 0.7rem;
-            color: #64748b;
+            color: #94a3b8;
         }
         .trivai-active-circle::after {
             content: '';
@@ -378,9 +397,10 @@
             transform: translate(-50%, -50%);
             width: 40px;
             height: 40px;
-            border: 2px solid #ea580c;
+            border: 2px solid #F1D06E;
             border-radius: 50%;
             pointer-events: none;
+            box-shadow: 0 0 10px rgba(241, 208, 110, 0.6);
         }
         .trivai-footer-labels {
             display: grid;
@@ -389,7 +409,7 @@
             margin: 8px auto 0 auto;
             text-align: center;
             font-size: 0.8rem;
-            color: #475569;
+            color: #CBD5E1;
         }
 
         /* Reading styles */
@@ -397,18 +417,19 @@
             margin-top: 30px;
         }
         .reading-section {
-            background: #ffffff;
+            background: linear-gradient(135deg, rgba(20, 32, 58, 0.8) 0%, rgba(13, 21, 39, 0.9) 100%) !important;
             border-radius: var(--radius);
             padding: 24px;
             margin-bottom: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border: 1px solid rgba(241, 208, 110, 0.35) !important;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.4) !important;
+            color: #FFFFFF;
         }
         .reading-title {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            color: #1e1b4b;
-            border-bottom: 2px solid #f1f5f9;
+            color: #FFF0A8 !important;
+            border-bottom: 2px solid rgba(241, 208, 110, 0.25) !important;
             padding-bottom: 10px;
             margin-bottom: 16px;
             display: flex;
@@ -419,55 +440,65 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 12px;
+            background: rgba(13, 21, 39, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
         }
         .house-table th, .house-table td {
             padding: 10px 12px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid rgba(241, 208, 110, 0.25) !important;
             text-align: left;
             font-size: 0.95rem;
+            color: #FFFFFF;
         }
         .house-table th {
-            background-color: #f8fafc;
+            background: rgba(20, 32, 58, 0.9) !important;
+            color: #FFF0A8 !important;
             font-weight: 600;
         }
 
         .period-card {
-            border-left: 4px solid #2563eb;
-            background: #f8fafc;
+            border-left: 4px solid #60a5fa !important;
+            background: rgba(20, 32, 58, 0.6) !important;
+            border-radius: 10px;
             padding: 14px 18px;
-            border-radius: 6px;
             margin-bottom: 12px;
             line-height: 1.7;
+            color: #CBD5E1;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .period-card.current {
-            border-left-color: #d97706;
-            background: #fffbeb;
+            border-left-color: #F1D06E !important;
+            background: rgba(241, 208, 110, 0.12) !important;
+            border-color: rgba(241, 208, 110, 0.3) !important;
+            color: #FFFFFF;
         }
 
         .btn-export-full {
-            background: #0f172a;
-            color: white;
+            background: linear-gradient(135deg, #f1c40f 0%, #d4af37 100%) !important;
+            color: #0b1120 !important;
             padding: 12px 28px;
             border: none;
             border-radius: 30px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 10px;
             margin: 20px auto;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
         .btn-export-full:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(15,23,42,0.3);
+            box-shadow: 0 8px 25px rgba(241, 208, 110, 0.6);
         }
 
         /* 🌟 Pro Quick Navigation Bar */
         .pro-quick-nav {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             overflow-x: auto;
             padding: 10px 0;
             margin-bottom: 20px;
@@ -477,16 +508,16 @@
             height: 6px;
         }
         .pro-quick-nav::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: rgba(241, 208, 110, 0.3);
             border-radius: 4px;
         }
         .pro-nav-pill {
-            background: #ffffff;
-            border: 1.5px solid #e2e8f0;
-            color: #334155;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            background: rgba(20, 32, 58, 0.7) !important;
+            border: 1.5px solid rgba(241, 208, 110, 0.3) !important;
+            color: #CBD5E1 !important;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 0.92rem;
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
@@ -494,47 +525,49 @@
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             text-decoration: none;
         }
         .pro-nav-pill:hover, .pro-nav-pill.active {
-            background: #1e1b4b;
-            color: #ffffff;
-            border-color: #1e1b4b;
-            transform: translateY(-1px);
+            background: linear-gradient(135deg, #f1c40f 0%, #d4af37 100%) !important;
+            color: #0b1120 !important;
+            border-color: #FFF0A8 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(241, 208, 110, 0.4) !important;
         }
 
         /* 🌟 VIP Dossier Modal & Print Styling */
         .vip-modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(8px);
+            background: rgba(10, 17, 34, 0.88);
+            backdrop-filter: blur(10px);
             z-index: 9999;
             display: none;
             overflow-y: auto;
             padding: 30px 16px;
         }
         .vip-modal-content {
-            background: #ffffff;
+            background: #0d1527;
             max-width: 960px;
             margin: 0 auto;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            border: 2px solid #d97706;
+            border-radius: 20px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.6);
+            border: 2px solid #d4af37;
             overflow: hidden;
+            color: #FFFFFF;
         }
         .vip-dossier-header {
-            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            background: linear-gradient(135deg, #14203a 0%, #0d1527 100%);
             color: #ffffff;
             padding: 30px;
             text-align: center;
             position: relative;
-            border-bottom: 4px solid #f59e0b;
+            border-bottom: 3px solid #f1d06e;
         }
         .vip-dossier-body {
             padding: 32px;
-            color: #1e293b;
+            color: #e2e8f0;
             line-height: 1.8;
         }
 
@@ -662,17 +695,17 @@
     <div class="container">
         <!-- Main Mode Tabs -->
         <div style="display:flex; justify-content:center; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
-            <button id="tabBtnPersonal" class="btn" style="background:#2563eb; color:white; padding:12px 24px; border-radius:30px; font-weight:700; font-size:1rem; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,0.25); display:inline-flex; align-items:center; gap:8px;" onclick="switchMainTab('personal')">
+            <button id="tabBtnPersonal" class="btn" style="background: linear-gradient(135deg, #d4af37 0%, #aa7c11 100%); color: #0c1424; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 1rem; border: 1px solid #ffd768; cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4); display: inline-flex; align-items: center; gap: 8px; width: auto !important;" onclick="switchMainTab('personal')">
                 <i class="fas fa-user-circle"></i> ผูกดวงชะตาเฉพาะบุคคล & สมาชิก
             </button>
-            <button id="tabBtnCalendarForecast" class="btn" style="background:#f1f5f9; color:#475569; padding:12px 24px; border-radius:30px; font-weight:700; font-size:1rem; border:1px solid #cbd5e1; cursor:pointer; display:inline-flex; align-items:center; gap:8px;" onclick="switchMainTab('calendarForecast')">
+            <button id="tabBtnCalendarForecast" class="btn" style="background: rgba(20, 32, 58, 0.8); color: #cbd5e1; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 1rem; border: 1px solid rgba(241, 208, 110, 0.35); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; width: auto !important;" onclick="switchMainTab('calendarForecast')">
                 <i class="fas fa-calendar-alt text-success"></i> 📅 ปฏิทินพยากรณ์ชะตา (รายวัน • รายเดือน • รายปี)
             </button>
-            <button id="tabBtnPublicDaily" class="btn" style="background:#f1f5f9; color:#475569; padding:12px 24px; border-radius:30px; font-weight:700; font-size:1rem; border:1px solid #cbd5e1; cursor:pointer; display:inline-flex; align-items:center; gap:8px;" onclick="switchMainTab('publicDaily')">
+            <button id="tabBtnPublicDaily" class="btn" style="background: rgba(20, 32, 58, 0.8); color: #cbd5e1; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 1rem; border: 1px solid rgba(241, 208, 110, 0.35); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; width: auto !important;" onclick="switchMainTab('publicDaily')">
                 <i class="fas fa-globe-asia text-warning"></i> ดูดวงประจำวันทั่วไป (12 ราศี • 7 วันเกิด • 12 นักษัตร)
             </button>
-            <button id="tabBtnSuriyayatra" class="btn" style="background:#f1f5f9; color:#475569; padding:12px 24px; border-radius:30px; font-weight:700; font-size:1rem; border:1px solid #cbd5e1; cursor:pointer; display:inline-flex; align-items:center; gap:8px;" onclick="switchMainTab('suriyayatra')">
-                <i class="fas fa-moon text-indigo-600"></i> ปฏิทินดวงดาว & คัมภีร์สุริยยาตร์ฉบับเต็ม
+            <button id="tabBtnSuriyayatra" class="btn" style="background: rgba(20, 32, 58, 0.8); color: #cbd5e1; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 1rem; border: 1px solid rgba(241, 208, 110, 0.35); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; width: auto !important;" onclick="switchMainTab('suriyayatra')">
+                <i class="fas fa-moon text-indigo-400"></i> ปฏิทินดวงดาว & คัมภีร์สุริยยาตร์ฉบับเต็ม
             </button>
         </div>
 
@@ -703,9 +736,25 @@
                     <input type="time" id="targetBirthTime" class="form-control" value="20:05" onchange="processHoroscopeCalculation()">
                 </div>
                 <div class="form-group">
+                    <label style="display:flex; justify-content:space-between; align-items:center;">
+                        <span><i class="fas fa-compass" style="color:#38bdf8;"></i> เกณฑ์การคำนวณลัคนา:</span>
+                        <span style="font-size:0.75rem; color:#94a3b8; font-weight:normal;" title="ดาราศาสตร์สากล Lahiri นิยมใช้ร่วมกับสูติบัตรจริง ส่วนอันโตนาทีเป็นคัมภีร์ปูมโหรดั้งเดิม">ℹ️ อิงดาราศาสตร์ vs คัมภีร์โบราณ</span>
+                    </label>
+                    <select id="ascCalculationMethod" class="form-control" style="border: 1.5px solid #38bdf8; background:#f0f9ff; font-weight:600; color:#0369a1;" onchange="processHoroscopeCalculation()">
+                        <option value="lahiri" selected>🔭 ดาราศาสตร์สากล ลาหิริ (Lahiri Sidereal) - แนะนำตามสูติบัตร</option>
+                        <option value="anto">📜 อันโตนาที ตำราไทยโบราณ (Anto-Natee) - ปูมโหรดั้งเดิม</option>
+                    </select>
+                </div>
+                <div class="form-group" style="display: flex; align-items: flex-end;">
                     <button type="button" class="btn-calc" style="width: 100%;" onclick="processHoroscopeCalculation()">
                         <i class="fas fa-star-and-crescent"></i> คำนวณและผูกดวง
                     </button>
+                </div>
+            </div>
+            <div id="ascMethodInfoBox" style="margin-top: 12px; padding: 10px 14px; background: rgba(56, 189, 248, 0.08); border-left: 3px solid #38bdf8; border-radius: 8px; font-size: 0.85rem; color: #475569; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <div>
+                    <strong style="color:#0284c7;"><i class="fas fa-info-circle"></i> ข้อแนะนำรอยต่อราศี:</strong> 
+                    <span id="ascMethodHint">ระบบดาราศาสตร์สากล (Lahiri) ใช้พิกัดดวงดาวจริงบนท้องฟ้า ละติจูด/ลองจิจูด และสมผุสจริง จึงมีความแม่นยำสูงต่อเวลาเกิดตามสูติบัตร หากเวลาคาบเกี่ยว (เช่น กุมภ์/มีน) สามารถสลับเทียบกับอันโตนาทีเพื่อตรวจดวงชะตาได้ทันที</span>
                 </div>
             </div>
         </div>
@@ -1702,6 +1751,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../src/engine/ascendant.js"></script>
     <script src="../src/engine/thai-horoscope-engine.js"></script>
     <script src="../src/engine/suriyayatra-engine.js"></script>
     <script src="../src/ui/thai-horoscope-chart-canvas.js"></script>
@@ -1866,13 +1916,24 @@
         function processHoroscopeCalculation() {
             const birthDateStr = document.getElementById('targetBirthDate').value;
             const birthTimeStr = document.getElementById('targetBirthTime').value || "20:05";
+            const calculationMethod = document.getElementById('ascCalculationMethod')?.value || 'lahiri';
 
             if (!birthDateStr) {
                 Swal.fire('แจ้งเตือน', 'กรุณาระบุวันเกิด', 'warning');
                 return;
             }
 
-            currentHoroData = ThaiHoroProEngine.calculateFullHoroscope(birthDateStr, birthTimeStr);
+            // Update Hint text according to selection
+            const hintElem = document.getElementById('ascMethodHint');
+            if (hintElem) {
+                if (calculationMethod === 'lahiri') {
+                    hintElem.innerHTML = `<strong>ระบบดาราศาสตร์สากล (Lahiri):</strong> อิงพิกัดลองจิจูด/ละติจูดจริงและเวลาดาราคติ (LST) มีความเที่ยงตรงสูงสากล เหมาะสำหรับเวลาเกิดระบุชัดเจนตามสูติบัตร`;
+                } else {
+                    hintElem.innerHTML = `<strong>ระบบอันโตนาที (Anto-Natee):</strong> อิงคัมภีร์ปูมโหรดั้งเดิมของไทย โดยเฉลี่ยการโคจรของลัคนาผ่านราศีด้วยอัตรานาทีโบราณ เหมาะสำหรับการวิเคราะห์ตามแนวอนุรักษ์นิยม`;
+                }
+            }
+
+            currentHoroData = ThaiHoroProEngine.calculateFullHoroscope(birthDateStr, birthTimeStr, { calculationMethod });
             selectedAgeYang = currentHoroData.ageYang;
 
             const bYear = new Date(birthDateStr).getFullYear();
@@ -1900,6 +1961,9 @@
             if (!currentHoroData || !currentHoroData.reading) return;
             const reading = currentHoroData.reading;
             const targetName = document.getElementById('targetName').value || 'เจ้าชะตา';
+            const methodBadge = currentHoroData.asc?.method === 'lahiri'
+                ? `<span style="background:rgba(56,189,248,0.2); color:#38bdf8; border:1px solid #38bdf8; padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:600;"><i class="fas fa-satellite"></i> ลาหิริ (ดาราศาสตร์)</span>`
+                : `<span style="background:rgba(251,191,36,0.2); color:#fde047; border:1px solid #f59e0b; padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:600;"><i class="fas fa-scroll"></i> อันโตนาที (ตำราโบราณ)</span>`;
 
             // ภาพรวม
             document.getElementById('readBasic').innerHTML = `
@@ -1907,6 +1971,7 @@
                     <span>ดวงชะตาของคุณ:</span> 
                     <span style="color:#fbbf24; background:rgba(251,191,36,0.15); padding:2px 10px; border-radius:6px; border:1px solid rgba(251,191,36,0.4);">${targetName}</span>
                     <span style="color:#94a3b8; font-size:0.95rem; font-weight:normal;">(เกิด ${document.getElementById('targetBirthDate').value} เวลา ${document.getElementById('targetBirthTime').value} น. / อายุย่าง <strong style="color:#38bdf8;">${currentHoroData.ageYang}</strong> ปี)</span>
+                    ${methodBadge}
                 </div>
                 <div style="font-size: 1.05rem; line-height: 1.85; color:#f1f5f9; background:rgba(255,255,255,0.06); padding:16px 18px; border-radius:10px; border-left:4px solid #38bdf8; margin-bottom:14px;">
                     ${reading.basicSummary.character}
@@ -4372,10 +4437,11 @@
             // Reset all buttons
             [btnPersonal, btnCalForecast, btnPublic, btnSuriya].forEach(btn => {
                 if (btn) {
-                    btn.style.background = '#f1f5f9';
-                    btn.style.color = '#475569';
-                    btn.style.border = '1px solid #cbd5e1';
+                    btn.style.background = 'rgba(20, 32, 58, 0.8)';
+                    btn.style.color = '#cbd5e1';
+                    btn.style.border = '1px solid rgba(241, 208, 110, 0.35)';
                     btn.style.boxShadow = 'none';
+                    btn.style.width = 'auto';
                 }
             });
 
@@ -4385,31 +4451,28 @@
             if (publicContainer) publicContainer.style.display = 'none';
             if (suriyaContainer) suriyaContainer.style.display = 'none';
 
+            const activeBtnStyle = (btn) => {
+                if (!btn) return;
+                btn.style.background = 'linear-gradient(135deg, #d4af37 0%, #aa7c11 100%)';
+                btn.style.color = '#0c1424';
+                btn.style.border = '1px solid #ffd768';
+                btn.style.boxShadow = '0 4px 15px rgba(212, 175, 55, 0.4)';
+                btn.style.width = 'auto';
+            };
+
             if (mode === 'personal') {
-                btnPersonal.style.background = '#2563eb';
-                btnPersonal.style.color = '#ffffff';
-                btnPersonal.style.border = 'none';
-                btnPersonal.style.boxShadow = '0 4px 12px rgba(37,99,235,0.25)';
+                activeBtnStyle(btnPersonal);
                 if (personalContainer) personalContainer.style.display = 'block';
             } else if (mode === 'calendarForecast') {
-                btnCalForecast.style.background = '#10b981';
-                btnCalForecast.style.color = '#ffffff';
-                btnCalForecast.style.border = 'none';
-                btnCalForecast.style.boxShadow = '0 4px 12px rgba(16,185,129,0.25)';
+                activeBtnStyle(btnCalForecast);
                 if (calForecastContainer) calForecastContainer.style.display = 'block';
                 initProCalendarSystem();
             } else if (mode === 'publicDaily') {
-                btnPublic.style.background = '#d97706';
-                btnPublic.style.color = '#ffffff';
-                btnPublic.style.border = 'none';
-                btnPublic.style.boxShadow = '0 4px 12px rgba(217,119,6,0.25)';
+                activeBtnStyle(btnPublic);
                 if (publicContainer) publicContainer.style.display = 'block';
                 renderPublicDailyOverview();
             } else if (mode === 'suriyayatra') {
-                btnSuriya.style.background = '#4f46e5';
-                btnSuriya.style.color = '#ffffff';
-                btnSuriya.style.border = 'none';
-                btnSuriya.style.boxShadow = '0 4px 12px rgba(79,70,229,0.25)';
+                activeBtnStyle(btnSuriya);
                 if (suriyaContainer) suriyaContainer.style.display = 'block';
                 renderSuriyayatraEphemeris();
             }
