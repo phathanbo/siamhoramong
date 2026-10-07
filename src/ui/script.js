@@ -465,7 +465,7 @@ const PAGE_TITLES = {
     'mainpage': '🔮 สยามโหรามงคล - ห้องพยากรณ์',
     'historySection': '📜 ประวัติสมาชิก - สยามโหรามงคล',
     'profilePage': '👤 โปรไฟล์สมาชิก - สยามโหรามงคล',
-    'knowledgePage': '📚 คลังความรู้ - สยามโหรามงคล',
+    'knowledgePage': '📚 หอสมุดมหาโหราศาสตร์ - สยามโหรามงคล',
     'ascendantPage': '🌟 คำนวณลัคนา - สยามโหรามงคล',
     'auspiciousPage': '📅 ปฏิทินฤกษ์มงคล - สยามโหรามงคล',
     'sevenDigitsPage': '🔢 เลข 7 ตัว ฐาน 9 - สยามโหรามงคล',
@@ -502,7 +502,12 @@ const PAGE_TITLES = {
     'package': '📦 Package - สยามโหรามงคล',
     'promchartsection': '🎡 วงล้อพยากรณ์ - สยามโหรามงคล',
     'TaksaSattalek': '🧿 ทักษา 7 - สยามโหรามงคล',
-    'waentaHoraPage': '🔮 คัมภีร์แว่นตาโหร - สยามโหรามงคล'
+    'waentaHoraPage': '🔮 คัมภีร์แว่นตาโหร - สยามโหรามงคล',
+    'kalachakraWiphakPage': '📜 ตำรากาลจักรจรวิภาค - สยามโหรามงคล',
+    'sevenDigitsPisadanPage': '✨ วิธีดูหมอเลข ๗ ตัว ภาคพิสดาร - สยามโหรามงคล',
+    'tarotPage': '🃏 ไพ่ยิปซี เซลติกครอส ๑๐ ใบ - สยามโหรามงคล',
+    'cartomancyPage': '🎴 ไพ่ป๊อกทำนายดวง ๕๒ ใบ - สยามโหรามงคล',
+    'siamsiPage': '🎋 เซียมซีเสี่ยงทาย ๒๘ ใบ - สยามโหรามงคล'
 };
 
 function getProfileByMemberId(memberId) {
@@ -629,6 +634,10 @@ function navigateTo(pageId, addHistory = true, targetScrollPos = null) {
 
     if (pageId === 'personalizedAuspiciousPage' && typeof initPersonalizedAuspicious === 'function') {
         initPersonalizedAuspicious();
+    }
+
+    if (pageId === 'cartomancyPage' && typeof initCartomancyUser === 'function') {
+        initCartomancyUser();
     }
 
     if (pageId === 'zodiacdetailsection') {

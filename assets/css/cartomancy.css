@@ -39,25 +39,38 @@
     align-items: center;
 }
 
-/* Back of the card (User) */
+/* Back of the card (User - Modern Royal Siamese) */
 .cartomancy-card .card-back {
-    background-color: #8b0000;
+    background: linear-gradient(135deg, #1c1033 0%, #2e1250 50%, #160829 100%);
+    border: 5px solid #d4af37;
     background-image: 
-        linear-gradient(45deg, #a52a2a 25%, transparent 25%, transparent 75%, #a52a2a 75%, #a52a2a), 
-        linear-gradient(45deg, #a52a2a 25%, transparent 25%, transparent 75%, #a52a2a 75%, #a52a2a);
-    background-size: 20px 20px;
-    background-position: 0 0, 10px 10px;
-    border: 8px solid #fff;
+        radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.25) 0%, transparent 60%),
+        repeating-linear-gradient(45deg, rgba(212, 175, 55, 0.12) 0, rgba(212, 175, 55, 0.12) 2px, transparent 2px, transparent 12px),
+        repeating-linear-gradient(-45deg, rgba(212, 175, 55, 0.12) 0, rgba(212, 175, 55, 0.12) 2px, transparent 2px, transparent 12px);
     transform: rotateY(0deg);
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 8px 25px rgba(0,0,0,0.6);
+}
+.cartomancy-card .card-back::after {
+    content: "สยามโหรา";
+    color: #f1d06e;
+    font-size: 1.15rem;
+    font-family: 'Prompt', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    padding: 6px 14px;
+    border-radius: 30px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 /* Front of the card (User) */
 .cartomancy-card .card-front {
-    background: #fff;
+    background: #ffffff;
     transform: rotateY(180deg);
-    border: 1px solid #ccc;
-    box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+    border: 2px solid #e2e8f0;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.06), 0 10px 25px rgba(0,0,0,0.3);
 }
 
 /* Admin Premium Back */

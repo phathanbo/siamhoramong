@@ -365,14 +365,20 @@ function showseven(){
                 <h2 class="text-gold mb-1">🔢 เลข ๗ ตัว ๔ ฐาน (มหาคัมภีร์สัตตเลขครบวงจร)</h2>
                 <span class="text-white-50 mb-0">รวมผังตารางเลข ๗ ตัว ฐาน ๑-๔ มหาบท ทักษาจร และคำทำนายตำราโบราณในหน้าเดียว</span>
                 
-                <!-- Tab Switching Bar -->
-                <div class="d-flex justify-content-center mt-3 gap-2">
-                    <button id="tabBtnSevenMatrix" class="btn btn-gold btn-sm px-3 py-2 fw-bold" onclick="switchSevenMainTab('matrix')">
+                <!-- 7-Digits Master Suite Switcher Bar -->
+                <div class="hub-nav-bar">
+                    <button type="button" id="tabBtnSevenMatrix" class="hub-nav-item active" onclick="switchSevenMainTab('matrix')">
                         <i class="fas fa-table mr-1"></i> ผังตารางเลข ๗ ตัว ๔ ฐาน
                     </button>
-                    <button id="tabBtnSevenAncient" class="btn btn-outline-gold btn-sm px-3 py-2 fw-bold" onclick="switchSevenMainTab('ancient')">
+                    <button type="button" id="tabBtnSevenAncient" class="hub-nav-item" onclick="switchSevenMainTab('ancient')">
                         <i class="fas fa-book-open mr-1"></i> คำทำนายตามตำราโบราณ
                     </button>
+                    <a href="pages/taksasattalek.html" class="hub-nav-item">
+                        <i class="fas fa-gem mr-1"></i> คัมภีร์มหาทักษาสัตตเลข
+                    </a>
+                    <a href="pages/seven-digits-pisadan.html" class="hub-nav-item">
+                        <i class="fas fa-feather-alt mr-1"></i> วิธีดูหมอ ภาคพิสดาร
+                    </a>
                 </div>
             </div>
             <div class="compatibility-container p-3 p-md-4">
@@ -532,16 +538,16 @@ function switchSevenMainTab(tabName) {
     const btnAncient = document.getElementById('tabBtnSevenAncient');
 
     if (tabName === 'ancient') {
-        if (btnMatrix) { btnMatrix.className = 'btn btn-outline-gold btn-sm px-3 py-2 fw-bold'; }
-        if (btnAncient) { btnAncient.className = 'btn btn-gold btn-sm px-3 py-2 fw-bold'; }
+        if (btnMatrix) { btnMatrix.classList.remove('active'); }
+        if (btnAncient) { btnAncient.classList.add('active'); }
         if (tabMatrix) tabMatrix.style.display = 'none';
         if (tabAncient) {
             tabAncient.style.display = 'block';
             renderAncientInterpretationInSeven();
         }
     } else {
-        if (btnMatrix) { btnMatrix.className = 'btn btn-gold btn-sm px-3 py-2 fw-bold'; }
-        if (btnAncient) { btnAncient.className = 'btn btn-outline-gold btn-sm px-3 py-2 fw-bold'; }
+        if (btnMatrix) { btnMatrix.classList.add('active'); }
+        if (btnAncient) { btnAncient.classList.remove('active'); }
         if (tabAncient) tabAncient.style.display = 'none';
         if (tabMatrix) tabMatrix.style.display = 'block';
     }

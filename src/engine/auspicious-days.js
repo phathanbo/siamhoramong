@@ -282,6 +282,38 @@ function Calenderbody() {
     }
 
     const html = `
+    <!-- Top Navigation & Breadcrumb -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+            <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+        </button>
+        <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+            <i class="fas fa-calendar-alt mr-1"></i> ศูนย์รวมปฏิทินฤกษ์มงคล ๑๐๐ ปี
+        </span>
+    </div>
+
+    <!-- Auspicious & Electional Astrology Hub Switcher Tabs -->
+    <div class="hub-nav-bar">
+        <button type="button" class="hub-nav-item active">
+            📅 ปฏิทิน ๑๐๐ ปี & บันทึกดวง
+        </button>
+        <button type="button" class="hub-nav-item" onclick="navigateTo('ubakong-yarm')">
+            🧭 ยามอุบากอง
+        </button>
+        <button type="button" class="hub-nav-item" onclick="navigateTo('planetaryHoursPage')">
+            🌟 ฤกษ์ยาม ๗ เจ้า
+        </button>
+        <button type="button" class="hub-nav-item" onclick="navigateTo('kaliyokepage')">
+            ⏰ คำนวณกาลโยค
+        </button>
+        <button type="button" class="hub-nav-item" onclick="navigateTo('dailyTabooPage')">
+            🚫 ข้อห้ามประจำวัน
+        </button>
+        <button type="button" class="hub-nav-item" onclick="navigateTo('dailyHighlightPage')">
+            🗺️ แผนที่ฤกษ์รายวัน
+        </button>
+    </div>
+
     <div class="calendar-main-card shadow-lg" style="background: #090e1c; border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 12px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.7);">
         <!-- Top Toolbar -->
         <div class="p-3 px-md-4" style="background: linear-gradient(180deg, #131b2e 0%, #090e1c 100%); border-bottom: 1px solid rgba(212, 175, 55, 0.3);">

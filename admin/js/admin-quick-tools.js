@@ -38,6 +38,21 @@ function initAdminQuickTools() {
                     </div>
                 </div>
 
+                <!-- 0.00 ตำรากาลจักรจรวิภาค (พ.ต. หลวงวุฒิรณพัสดุ์) -->
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"
+                         onclick="window.location.href='${p.includes('admin') ? '../pages/kalachakra-wiphak.html' : 'pages/kalachakra-wiphak.html'}'"
+                         style="background: linear-gradient(135deg, rgba(56,189,248,0.25) 0%, rgba(20,32,58,0.9) 100%); border: 1.5px solid rgba(56,189,248,0.6); border-radius: 16px; cursor: pointer; transition: all 0.25s ease;"
+                         onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='#38BDF8'; this.style.boxShadow='0 8px 20px rgba(56,189,248,0.3)';"
+                         onmouseout="this.style.transform='none'; this.style.borderColor='rgba(56,189,248,0.6)'; this.style.boxShadow='none';">
+                        <div style="font-size: 2rem; margin-bottom: 8px; color: #38BDF8;"><i class="fas fa-scroll"></i></div>
+                        <div>
+                            <div class="font-weight-bold" style="color: #E0F2FE; font-size: 0.95rem;">📜 กาลจักรจรวิภาค</div>
+                            <small class="text-white-50" style="font-size: 0.78rem;">ตัวเสวย-ตัวแทรก & อายุชำระ</small>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 0. แดชบอร์ดสมาชิก (Member Analytics) -->
                 <div class="col-6 col-md-4 col-lg-3 mb-3">
                     <div class="p-3 h-100 d-flex flex-column align-items-center text-center justify-content-between"

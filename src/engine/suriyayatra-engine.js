@@ -29,6 +29,67 @@ const SuriyayatraEngine = (function() {
         "เทวีฤกษ์", "เพชฌฆาตฤกษ์", "ราชาฤกษ์", "สมโณฤกษ์"
     ];
 
+    const SANSKRIT_VARA = [
+        "อาทิตยวาร(อ)", // 0: Sunday
+        "จันทรวาร(จ)",  // 1: Monday
+        "ภุมวาร(ภ)",    // 2: Tuesday
+        "วุธวาร(ว)",    // 3: Wednesday
+        "ชีววาร(ช)",    // 4: Thursday
+        "ศุกรวาร(ศ)",   // 5: Friday
+        "โสรวาร(ส)"     // 6: Saturday
+    ];
+
+    const SANSKRIT_MASA = {
+        1: "มิคสิรมาส",
+        2: "ปุสสมาส",
+        3: "มาฆมาส",
+        4: "ผัคคุณมาส",
+        5: "จิตรมาส",
+        6: "วิสาขมาส",
+        7: "เชษฐมาส",
+        8: "อาสาฬหมาส",
+        "8-1": "ปฐมาสาฬหมาส",
+        "8-2": "ทุติยาสาฬหมาส",
+        9: "สาวนมาส",
+        10: "ภัทรปทมาส",
+        11: "อัศวินมาส",
+        12: "กัตติกมาส"
+    };
+
+    const SOK_NAMES = [
+        "สัมฤทธิศก", "เอกศก", "โทศก", "ตรีศก", "จัตวาศก",
+        "เบญจศก", "ฉศก", "สัปตศก", "อัฐศก", "นพศก"
+    ];
+
+    const STANDARD_ANIMAL_YEARS = [
+        "ชวด", "ฉลู", "ขาล", "เถาะ", "มะโรง", "มะเส็ง", "มะเมีย", "มะแม", "วอก", "ระกา", "จอ", "กุน"
+    ];
+
+    function toThaiNumber(num) {
+        if (num === undefined || num === null) return "";
+        const thaiDigits = ["๐", "๑", "๒", "๓", "๔", "๕", "๖", "๗", "๘", "๙"];
+        return String(num).split("").map(ch => {
+            const n = parseInt(ch, 10);
+            return isNaN(n) ? ch : thaiDigits[n];
+        }).join("");
+    }
+
+    function resolveThaiLunar(dateObj) {
+        if (typeof getThaiLunar === 'function') {
+            return getThaiLunar(dateObj);
+        }
+        if (typeof window !== 'undefined' && typeof window.getThaiLunar === 'function') {
+            return window.getThaiLunar(dateObj);
+        }
+        if (typeof require !== 'undefined') {
+            try {
+                const tl = require('./thai-lunar.js');
+                if (tl && tl.getThaiLunar) return tl.getThaiLunar(dateObj);
+            } catch (e) {}
+        }
+        return null;
+    }
+
     function getEras(yearCE) {
         const yearBE = yearCE + 543;
         const yearCS = yearBE - 1181; // จุลศักราช
@@ -225,31 +286,48 @@ const SuriyayatraEngine = (function() {
         const ingressMM = String(ingressDate.getMinutes()).padStart(2, '0');
         const ingressTimeStr = `${ingressHH}:${ingressMM}น.`;
 
-        // ระบบปฏิทินจันทรคติไทยแท้ (คัมภีร์สุริยยาตร์):
-        // - เดือนคี่ (๑, ๓, ๕, ๗, ๙, ๑๑) เป็น "เดือนขาด" มี ๒๙ วัน: ข้างขึ้น ๑๕ ค่ำ, ข้างแรมสิ้นสุดที่ ๑๔ ค่ำ (ไม่มีแรม ๑๕ ค่ำ)
-        // - เดือนคู่ (๒, ๔, ๖, ๘, ๑๐, ๑๒) เป็น "เดือนเต็ม" มี ๓๐ วัน: ข้างขึ้น ๑๕ ค่ำ, ข้างแรมสิ้นสุดที่ ๑๕ ค่ำ
-        // - ข้อยกเว้น: ปีอธิกวาร (มีวันเพิ่ม) ให้เดือน ๗ มีแรม ๑๕ ค่ำ
+        // ระบบปฏิทินจันทรคติไทยแท้ (คัมภีร์สุริยยาตร์ & ฐานข้อมูลปฏิทินจันทรคติไทย):
         const m = dateObj.getMonth() + 1;
-        const thaiLunarMonthNum = (m + 1 > 12) ? (m + 1 - 12) : (m + 1);
-        const isOddMonth = (thaiLunarMonthNum % 2 !== 0); // เดือนคี่
+        const yearBE = dateObj.getFullYear() + 543;
+        const lunarCalc = resolveThaiLunar(dateObj);
 
-        // ปรับจำนวนวันข้างแรมตามกฎเดือนขาด/เดือนเต็ม
         let displayLunarDay = lunarDay;
         let displayIsWaxing = isWaxing;
+        let thaiLunarMonthNum = (m + 1 > 12) ? (m + 1 - 12) : (m + 1);
+        let animalYear = STANDARD_ANIMAL_YEARS[((yearBE - 2567 + 4) % 12 + 12) % 12];
+        let thaiLunarMonthName = "";
+        let isAthikamatYear = false;
+        let isAthikawanYear = false;
 
-        if (!isWaxing && isOddMonth && lunarDay === 15) {
-            // ในเดือนคี่จะไม่มีแรม ๑๕ ค่ำ โดยจะตัดข้ามเป็นขึ้น ๑ ค่ำของเดือนถัดไปทันที
-            displayLunarDay = 14;
+        if (lunarCalc) {
+            displayIsWaxing = (lunarCalc.phase === "ข้างขึ้น");
+            displayLunarDay = lunarCalc.amount;
+            animalYear = lunarCalc.zodiac;
+            if (String(lunarCalc.month).includes("8-8") || String(lunarCalc.month).includes("แปดหลัง")) {
+                thaiLunarMonthNum = "8-2";
+                thaiLunarMonthName = "แปดหลัง (๘-๘)";
+                isAthikamatYear = true;
+            } else if (String(lunarCalc.month).includes("แปดแรก")) {
+                thaiLunarMonthNum = "8-1";
+                thaiLunarMonthName = "แปดแรก (๘)";
+                isAthikamatYear = true;
+            } else {
+                thaiLunarMonthNum = parseInt(lunarCalc.month, 10) || thaiLunarMonthNum;
+                const MONTH_TITLES = {
+                    1: "อ้าย (๑)", 2: "ยี่ (๒)", 3: "สาม (๓)", 4: "สี่ (๔)",
+                    5: "ห้า (๕)", 6: "หก (๖)", 7: "เจ็ด (๗)", 8: "แปด (๘)",
+                    9: "เก้า (๙)", 10: "สิบ (๑๐)", 11: "สิบเอ็ด (๑๑)", 12: "สิบสอง (๑๒)"
+                };
+                thaiLunarMonthName = MONTH_TITLES[thaiLunarMonthNum] || `เดือน ${thaiLunarMonthNum}`;
+            }
+        } else {
+            const thaiLunarMonthTitles = ["อ้าย (๑)", "ยี่ (๒)", "สาม (๓)", "สี่ (๔)", "ห้า (๕)", "หก (๖)", "เจ็ด (๗)", "แปด (๘)", "เก้า (๙)", "สิบ (๑๐)", "สิบเอ็ด (๑๑)", "สิบสอง (๑๒)"];
+            thaiLunarMonthName = thaiLunarMonthTitles[thaiLunarMonthNum - 1];
         }
 
-        const thaiLunarMonthName = ["อ้าย (๑)", "ยี่ (๒)", "สาม (๓)", "สี่ (๔)", "ห้า (๕)", "หก (๖)", "เจ็ด (๗)", "แปด (๘)", "เก้า (๙)", "สิบ (๑๐)", "สิบเอ็ด (๑๑)", "สิบสอง (๑๒)"][thaiLunarMonthNum - 1];
-
-        // นักษัตรปี (12 ปี)
-        const yearBE = dateObj.getFullYear() + 543;
-        const animalYears = ["มะเส็ง", "มะเมีย", "มะแม", "วอก", "ระกา", "จอ", "กุน", "ชวด", "ฉลู", "ขาล", "เถาะ", "มะโรง"];
-        const animalYear = animalYears[(yearBE - 1) % 12];
-
-        const tithiDesc = `${displayIsWaxing ? 'ขึ้น' : 'แรม'} ${displayLunarDay} ค่ำ เดือน${thaiLunarMonthName} ปี${animalYear}`;
+        const isOddMonth = (typeof thaiLunarMonthNum === 'number') ? (thaiLunarMonthNum % 2 !== 0) : false;
+        const thaiNumDayStr = toThaiNumber(displayLunarDay);
+        const tithiDesc = `${displayIsWaxing ? 'ขึ้น' : 'แรม'} ${thaiNumDayStr} ค่ำ เดือน${thaiLunarMonthName} ปี${animalYear}`;
 
         // คำนวณดิถีเพียร (Nathika)
         const tithiNathi = Math.floor((tithiDecimal % 1) * 60);
@@ -257,6 +335,12 @@ const SuriyayatraEngine = (function() {
         return {
             isWaxing: displayIsWaxing,
             lunarDay: displayLunarDay,
+            thaiNumDayStr: thaiNumDayStr,
+            lunarMonthNum: thaiLunarMonthNum,
+            lunarMonthName: thaiLunarMonthName,
+            animalYear: animalYear,
+            isAthikamat: isAthikamatYear || (yearBE === 2566 || yearBE === 2569 || yearBE === 2572),
+            isAthikawan: isAthikawanYear || (yearBE === 2567 || yearBE === 2571),
             isOddMonth,
             monthTypeName: isOddMonth ? "เดือนขาด (๒๙ วัน: แรมสิ้นสุด ๑๔ ค่ำ)" : "เดือนเต็ม (๓๐ วัน: แรมสิ้นสุด ๑๕ ค่ำ)",
             tithiIndex: tithiIndex + 1,
@@ -367,13 +451,24 @@ const SuriyayatraEngine = (function() {
         const elections = calculateLunarAndElections(dt, planets.sun, planets.moon);
         const solarLunar = calculateSolarLunarEphemeris(dt, locKey, customCoord);
 
+        const varaStr = SANSKRIT_VARA[dayOfWeek];
+        const monthNumKey = elections.lunarMonthNum;
+        const masaStr = SANSKRIT_MASA[monthNumKey] || "ภัทรปทมาส";
+        const sokStr = SOK_NAMES[eras.yearCS % 10] || "อัฐศก";
+
+        const athikamatStr = elections.isAthikamat ? "อธิกมาส" : "ปกติมาส";
+        const athikawanStr = elections.isAthikawan ? "อธิกวาร" : "ปกติวาร";
+
+        const eraLine = `${varaStr} ${masaStr} ${sokStr} จ.ศ. ${eras.yearCS} , ค.ศ. ${dt.getFullYear()} , ม.ศ. ${eras.yearMS} , ร.ศ. ${eras.yearRS}`;
+        const typeLine = `สุริยคติ เป็น ปกติสุรทิน , จันทรคติ เป็น ${athikamatStr} ${athikawanStr}`;
+
         return {
             targetDate: dt,
             location: solarLunar.locationName,
             thaiDateHeader: `วันที่ ${dt.getDate()} ${THAI_MONTHS[dt.getMonth()]} พ.ศ.${eras.yearBE}`,
             lunarHeader: `ตรงกับวัน${dayName} ${elections.tithiDesc}`,
-            eraLine: `วุธวาร(ว) สาวนมาส อัฐศก จ.ศ. ${eras.yearCS} , ค.ศ. ${dt.getFullYear()} , ม.ศ. ${eras.yearMS} , ร.ศ. ${eras.yearRS}`,
-            typeLine: `สุริยคติ เป็น ปกติสุรทิน , จันทรคติ เป็น อธิกมาส ปกติวาร`,
+            eraLine: eraLine,
+            typeLine: typeLine,
             ephemerisTimeHeader: `สมผุส ณ เวลา 24:00น. เวลาท้องถิ่น${solarLunar.locationName} (${solarLunar.utcHoro})`,
             metrics,
             kalaYoga,

@@ -14,9 +14,8 @@
 
     <!-- ===== MANIFEST (สำหรับ PWA) ===== -->
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/1995/1995434.png">
-    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/1995/1995434.png">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1995/1995434.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
 
     <!-- ===== CUSTOM OPTION STYLE ===== -->
     <style>
@@ -936,7 +935,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#knowledgePage" onclick="navigateTo('knowledgePage')">
-                            <i class="fas fa-book-open mr-2"></i> ความรู้พื้นฐาน
+                            <i class="fas fa-book-open mr-2"></i> หอสมุดมหาโหราศาสตร์
                         </a>
                     </li>
 
@@ -952,8 +951,11 @@
                     <span class="mr-3" id="topSolarDate"><i class="far fa-calendar-alt text-warning mr-1"></i> <span id="topSolarText">กำลังโหลดวันที่...</span></span>
                     <span class="mr-3" id="topLunarDate"><i class="fas fa-moon text-warning mr-1"></i> <span id="topLunarText">กำลังคำนวณจันทรคติ...</span></span>
                 </div>
-                <div class="my-1">
+                <div class="my-1 d-flex align-items-center">
                     <span id="topClock"><i class="far fa-clock text-warning mr-1"></i> <span id="topClockText">00:00:00</span></span>
+                    <a href="pages/thai-horoscope-pro.html?tab=suriyayatra" class="btn btn-sm btn-outline-warning ml-3" style="font-size: 0.78rem; padding: 2px 10px; border-radius: 20px; text-decoration: none; border-color: rgba(212,175,55,0.6); color: #ffd700;" title="สร้างภาพปฏิทินโหราศาสตร์ไทยรายวัน (สไตล์สมุดจดดวง)">
+                        <i class="fas fa-image mr-1"></i> แผ่นปฏิทินดวงรายวัน
+                    </a>
                 </div>
             </div>
         </div>
@@ -975,6 +977,32 @@
     <!-- siamsi page -->
     <section id="siamsiPage" class="main-section" style="display: none;">
         <div class="container mt-4">
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-drum mr-1"></i> เซียมซี ๒๘ ใบ
+                </span>
+            </div>
+
+            <!-- Oracle Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <a href="pages/prommayan.html" class="hub-nav-item">
+                    🎴 ไพ่พรหมญาณ (๖๙ ใบ)
+                </a>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('tarotPage')">
+                    🃏 ไพ่ยิปซี เซลติกครอส (๑๐ ใบ)
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('cartomancyPage')">
+                    🂠 ไพ่ป๊อกโบราณ (๕๒ ใบ)
+                </button>
+                <button type="button" class="hub-nav-item active">
+                    🎋 เซียมซี ๒๘ ใบ
+                </button>
+            </div>
+
             <h2 class="text-center mb-4 text-warning"><i class="fas fa-drum"></i> เสี่ยงเซียมซี</h2>
             
             <div class="card bg-dark text-light border-warning shadow-lg mb-4">
@@ -1470,6 +1498,35 @@
     <section id="deepSynastryPage" class="main-section" style="display: none;">
         <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
             
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-crown mr-1"></i> VIP ผูกดวงคู่สมพงษ์
+                </span>
+            </div>
+
+            <!-- Love & Synastry Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <button type="button" class="hub-nav-item" onclick="navigateTo('compatibilityPage')">
+                    💑 สมพงศ์ธาตุ & ปีนักษัตร
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('marriage-compatibility')">
+                    💍 สมพงศ์นาคราช
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('soulmate-direction')">
+                    🧭 ทิศเนื้อคู่
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('sompong-wealth')">
+                    💰 สมพงศ์มหาสมบัติ
+                </button>
+                <button type="button" class="hub-nav-item active">
+                    👑 VIP ผูกดวงคู่สมพงษ์
+                </button>
+            </div>
+
             <!-- Main Hero Card -->
             <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
                 
@@ -1582,78 +1639,137 @@
     </section>
 
     <!-- 18.คลังความรู้มหาโหรา (Grand Royal Library Edition) -->
+    <!-- 18.คลังความรู้มหาโหรา (Wikipedia Portal / Grand Encyclopedia Edition) -->
     <section id="knowledgePage" class="main-section" style="display: none;">
         <div class="container py-4" style="max-width: 1140px; margin: 0 auto;">
             
-            <!-- Library Header Banner -->
-            <div class="text-center mb-5 p-4 rounded" style="background: linear-gradient(135deg, rgba(241,208,110,0.12) 0%, rgba(20,32,58,0.7) 100%); border: 1px solid rgba(241,208,110,0.35); border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); backdrop-filter: blur(20px);">
-                <div style="font-size: 3.5rem; margin-bottom: 8px; filter: drop-shadow(0 0 15px rgba(241,208,110,0.6));">📚</div>
-                <h1 style="font-size: 2.4rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px rgba(241,208,110,0.3); margin-bottom: 8px;">
-                    หอสมุดมหาโหราศาสตร์
-                </h1>
-                <p style="color: #CBD5E1; font-size: 1.05rem; max-width: 650px; margin: 0 auto 20px auto;">
-                    รวบรวมคัมภีร์ พระเวทโบราณ เคล็ดวิชาโหราศาสตร์ไทย และศาสตร์แห่งสิริมงคลชั้นสูง
-                </p>
+            <!-- Wikipedia Portal Welcome Box -->
+            <div class="wiki-portal-box">
+                <div class="wiki-portal-welcome d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                    <div>
+                        <h2>ยินดีต้อนรับสู่หอสมุดมหาโหราศาสตร์</h2>
+                        <p>สารานุกรมเสรีและคลังคัมภีร์ภูมิปัญญาโหราศาสตร์ไทย พระเวทโบราณ และศาสตร์แห่งสิริมงคล</p>
+                    </div>
+                    <div class="mt-3 mt-md-0 text-md-right">
+                        <span class="badge badge-secondary px-3 py-2" style="font-size: 13px; background: #eaecf0; color: #202122; border: 1px solid #a2a9b1;">
+                            <i class="fas fa-book mr-1"></i> สารานุกรมฉบับชำระความสมบูรณ์
+                        </span>
+                    </div>
+                </div>
 
-                <!-- Search Box -->
-                <div class="mx-auto" style="max-width: 580px; position: relative;">
-                    <i class="fas fa-search" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #F1D06E; font-size: 1.1rem; z-index: 2;"></i>
-                    <input type="text" id="knowledgeSearchInput" class="form-control"
-                        placeholder="ค้นหาชื่อคัมภีร์, เคล็ดวิชา, หรือคำทำนาย..." 
-                        onkeyup="searchKnowledge()"
-                        style="padding-left: 50px; height: 54px; border-radius: 50px; font-size: 1.05rem; background: rgba(13,21,39,0.85); border: 1px solid rgba(241,208,110,0.45); color: #fff; box-shadow: 0 8px 25px rgba(0,0,0,0.35);">
+                <!-- Wikipedia Search Bar -->
+                <div class="wiki-search-wrapper">
+                    <i class="fas fa-search wiki-search-icon"></i>
+                    <input type="text" id="knowledgeSearchInput" class="wiki-search-input"
+                        placeholder="ค้นหาในสารานุกรมมหาโหราศาสตร์ (เช่น พรหมชาติ, กาลโยค, ฤกษ์ยาม, อัตตา...)" 
+                        onkeyup="searchKnowledge()">
                 </div>
             </div>
 
-            <!-- Sleek Modern Segmented Category Tab Bar -->
-            <div class="d-flex justify-content-center mb-4">
-                <div id="knowledgeCategoryFilter" style="
-                    display: inline-flex;
-                    background: rgba(13, 21, 39, 0.7);
-                    padding: 5px;
-                    border-radius: 16px;
-                    border: 1px solid rgba(241, 208, 110, 0.25);
-                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-                    backdrop-filter: blur(16px);
-                    max-width: 100%;
-                    overflow-x: auto;
-                    -webkit-overflow-scrolling: touch;
-                ">
-                    <button class="know-tab-btn active" data-cat="all" onclick="filterKnowledge('all')">
-                        <i class="fas fa-layer-group"></i> ทั้งหมด
+            <!-- Wikipedia Featured Section: บทความแนะนำประจำวัน -->
+            <div class="row mb-4">
+                <div class="col-12 col-lg-8 mb-3 mb-lg-0">
+                    <div class="wiki-section-header" style="background:#f8f9fa; border-top: 3px solid #3366cc;">
+                        <span><i class="fas fa-star text-warning mr-2"></i> บทความคัดสรรประจำสารานุกรม</span>
+                        <span class="badge badge-pill badge-primary" style="font-size: 11px;">แนะนำ</span>
+                    </div>
+                    <div class="wiki-section-body" style="height: calc(100% - 45px); display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="font-size: 1.25rem; font-weight: 700; color: #3366cc; margin-bottom: 8px;">
+                                <a href="javascript:void(0)" onclick="viewKnowledgeDetail('promchat')" class="wiki-link">
+                                    📜 ตำราพรหมชาติฉบับมาตรฐาน (สารานุกรมภูมิปัญญาแผ่นดิน)
+                                </a>
+                            </h4>
+                            <p style="color: #202122; font-size: 14px; line-height: 1.7; text-align: justify; margin-bottom: 12px;">
+                                <b>ตำราพรหมชาติ</b> เป็นมรดกภูมิปัญญาการพยากรณ์ที่สืบทอดมาตั้งแต่สมัยอยุธยา รวบรวมหลักวิชาโหราศาสตร์ มอญ และพราหมณ์เข้าด้วยกันเพื่อใช้นำทางชีวิต ประกอบด้วยหัวใจหลัก 3 ประการ: <i>อัตตาชะตา</i> (การรู้จักตนเองตามปีนักษัตร), <i>วิถีหมุนเวียน</i> (รอบเคราะห์และโชคลาภตามวัย), และ <i>สมพงษ์คู่ครอง</i> ตลอดจนเคล็ดวิชาเศษพระจอมเกล้าอันเลื่องชื่อ...
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2" style="border-top: 1px solid #eaecf0;">
+                            <span style="font-size: 12.5px; color: #54595d;">หมวด: ตำราโบราณ • รหัส K001</span>
+                            <a href="javascript:void(0)" onclick="viewKnowledgeDetail('promchat')" class="wiki-link" style="font-weight: 600; font-size: 13.5px;">
+                                อ่านบทความฉบับเต็ม →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                    <div class="wiki-section-header" style="background:#f8f9fa; border-top: 3px solid #047857;">
+                        <span><i class="fas fa-compass text-success mr-2"></i> คำค้นหายอดนิยม / หัวข้อหลัก</span>
+                    </div>
+                    <div class="wiki-section-body" style="font-size: 13.5px; height: calc(100% - 45px);">
+                        <ul class="list-unstyled mb-0" style="line-height: 2;">
+                            <li><i class="fas fa-angle-right text-muted mr-2"></i> <a href="javascript:void(0)" onclick="viewKnowledgeDetail('attakan')" class="wiki-link">อัตตาชะตาและวัฏจักรชีวิต</a></li>
+                            <li><i class="fas fa-angle-right text-muted mr-2"></i> <a href="javascript:void(0)" onclick="viewKnowledgeDetail('kalachakra_wiphak')" class="wiki-link">คัมภีร์กาลจักรจรวิภาค (เกณฑ์ชันษาจร)</a></li>
+                            <li><i class="fas fa-angle-right text-muted mr-2"></i> <a href="javascript:void(0)" onclick="viewKnowledgeDetail('somphong')" class="wiki-link">ตำราสมพงษ์คู่บารมี</a></li>
+                            <li><i class="fas fa-angle-right text-muted mr-2"></i> <a href="javascript:void(0)" onclick="viewKnowledgeDetail('kanlayok_principles')" class="wiki-link">หลักการคำนวณกาลโยคประจำปี</a></li>
+                            <li><i class="fas fa-angle-right text-muted mr-2"></i> <a href="javascript:void(0)" onclick="viewKnowledgeDetail('rueng_sub')" class="wiki-link">ฤกษ์มงคล ๕ ประการ</a></li>
+                            <li><i class="fas fa-angle-right text-muted mr-2"></i> <a href="javascript:void(0)" onclick="viewKnowledgeDetail('fengshui_basics')" class="wiki-link">หลักฮวงจุ้ยและทิศชัยมงคล</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wikipedia Category Portals (หมวดหมู่วิชา) -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                    <h5 id="knowledgeCategoryTitle" style="color: #202122; font-weight: 700; font-size: 1.15rem; margin: 0;">
+                        <i class="fas fa-book-reader text-primary mr-2"></i> คัมภีร์และบทความสารานุกรมทั้งหมด
+                    </h5>
+                    <span id="knowledgeCount" class="badge" style="background: #eaecf0; color: #202122; border: 1px solid #a2a9b1; padding: 6px 14px; border-radius: 4px; font-size: 0.85rem;">
+                        แสดง 0 บทความ
+                    </span>
+                </div>
+
+                <!-- Wikipedia Category Pills -->
+                <div class="wiki-cat-pill-container" id="knowledgeCategoryFilter">
+                    <button class="wiki-cat-pill active" data-cat="all" onclick="filterKnowledge('all')">
+                        <i class="fas fa-th-large"></i> ทั้งหมด
                     </button>
-                    <button class="know-tab-btn" data-cat="ตำราโบราณ" onclick="filterKnowledge('ตำราโบราณ')">
+                    <button class="wiki-cat-pill" data-cat="ตำราโบราณ" onclick="filterKnowledge('ตำราโบราณ')">
                         <i class="fas fa-scroll"></i> ตำราโบราณ
                     </button>
-                    <button class="know-tab-btn" data-cat="โหราศาสตร์" onclick="filterKnowledge('โหราศาสตร์')">
+                    <button class="wiki-cat-pill" data-cat="โหราศาสตร์" onclick="filterKnowledge('โหราศาสตร์')">
                         <i class="fas fa-star"></i> โหราศาสตร์ไทย
                     </button>
-                    <button class="know-tab-btn" data-cat="วิถีสิริมงคล" onclick="filterKnowledge('วิถีสิริมงคล')">
+                    <button class="wiki-cat-pill" data-cat="ฤกษ์ยาม" onclick="filterKnowledge('ฤกษ์ยาม')">
+                        <i class="fas fa-clock"></i> ฤกษ์ยาม
+                    </button>
+                    <button class="wiki-cat-pill" data-cat="กาลโยค" onclick="filterKnowledge('กาลโยค')">
+                        <i class="fas fa-calendar-alt"></i> กาลโยค
+                    </button>
+                    <button class="wiki-cat-pill" data-cat="เลขศาสตร์" onclick="filterKnowledge('เลขศาสตร์')">
+                        <i class="fas fa-calculator"></i> เลขศาสตร์
+                    </button>
+                    <button class="wiki-cat-pill" data-cat="ทักษาพยากรณ์" onclick="filterKnowledge('ทักษาพยากรณ์')">
+                        <i class="fas fa-compass"></i> ทักษาพยากรณ์
+                    </button>
+                    <button class="wiki-cat-pill" data-cat="วิถีสิริมงคล" onclick="filterKnowledge('วิถีสิริมงคล')">
                         <i class="fas fa-gem"></i> วิถีสิริมงคล
                     </button>
-                    <button class="know-tab-btn" data-cat="วิเคราะห์ลักษณะ" onclick="filterKnowledge('วิเคราะห์ลักษณะ')">
-                        <i class="fas fa-user-tag"></i> วิเคราะห์ลักษณะ
+                    <button class="wiki-cat-pill" data-cat="ฮวงจุ้ย" onclick="filterKnowledge('ฮวงจุ้ย')">
+                        <i class="fas fa-wind"></i> ฮวงจุ้ย
+                    </button>
+                    <button class="wiki-cat-pill" data-cat="หัตถศาสตร์" onclick="filterKnowledge('หัตถศาสตร์')">
+                        <i class="fas fa-hand-paper"></i> หัตถศาสตร์
+                    </button>
+                    <button class="wiki-cat-pill" data-cat="นรลักษณ์ศาสตร์" onclick="filterKnowledge('นรลักษณ์ศาสตร์')">
+                        <i class="fas fa-user-astronaut"></i> นรลักษณ์ศาสตร์
+                    </button>
+                    <button class="wiki-cat-pill" data-cat="ปฏิทินจันทรคติ" onclick="filterKnowledge('ปฏิทินจันทรคติ')">
+                        <i class="fas fa-moon"></i> ปฏิทินจันทรคติ
                     </button>
                 </div>
             </div>
 
-            <!-- Category Stats Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4 px-2">
-                <h5 id="knowledgeCategoryTitle" class="text-gold m-0 font-weight-bold">
-                    <i class="fas fa-book-reader mr-2"></i> คัมภีร์และบทความทั้งหมด
-                </h5>
-                <span id="knowledgeCount" class="badge" style="background: rgba(241,208,110,0.2); color: #FFF0A8; border: 1px solid rgba(241,208,110,0.4); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem;">
-                    แสดง 0 รายการ
-                </span>
+            <!-- Wikipedia Encyclopedia Articles Grid -->
+            <div class="row" id="knowledgeGridContainer">
+                <!-- Dynamically rendered by renderKnowledgeLibrary() -->
             </div>
 
-            <!-- Library Books Grid -->
-            <div class="row g-4" id="knowledgeGridContainer">
-                <!-- Cards dynamically rendered by knowledge.js -->
-            </div>
-
-            <div class="text-center mt-5">
-                <button class="btn btn-outline-gold px-4 py-2" onclick="navigateTo('mainpage')" style="border-radius: 50px;">
+            <!-- Portal Footer Navigation -->
+            <div class="text-center mt-4 pt-3" style="border-top: 1px solid #a2a9b1;">
+                <button class="btn btn-outline-secondary px-4 py-2" onclick="navigateTo('mainpage')" style="border-radius: 4px; font-size: 14px;">
                     <i class="fas fa-chevron-left mr-2"></i> กลับหน้าห้องพยากรณ์
                 </button>
             </div>
@@ -1665,7 +1781,7 @@
         <div class="card-body">
             <div class="mb-4">
                 <button class="btn btn-outline-gold btn-sm" onclick="navigateTo('knowledgePage')">
-                    <i class="fas fa-chevron-left"></i> ย้อนกลับไปคลังความรู้
+                    <i class="fas fa-chevron-left"></i> ย้อนกลับไปหอสมุดมหาโหราศาสตร์
                 </button>
             </div>
             <div id="fullContentArea" class="article-container"></div>
@@ -1846,6 +1962,35 @@
     <section id="soulmate-direction" class="main-section" style="display: none;">
         <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
             
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-compass mr-1"></i> ทิศเนื้อคู่
+                </span>
+            </div>
+
+            <!-- Love & Synastry Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <button type="button" class="hub-nav-item" onclick="navigateTo('compatibilityPage')">
+                    💑 สมพงศ์ธาตุ & ปีนักษัตร
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('marriage-compatibility')">
+                    💍 สมพงศ์นาคราช
+                </button>
+                <button type="button" class="hub-nav-item active">
+                    🧭 ทิศเนื้อคู่
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('sompong-wealth')">
+                    💰 สมพงศ์มหาสมบัติ
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('deepSynastryPage')">
+                    👑 VIP ผูกดวงคู่สมพงษ์
+                </button>
+            </div>
+
             <!-- Main Hero Card -->
             <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
                 
@@ -2164,6 +2309,38 @@
     <section id="ubakong-yarm" class="main-section" style="display: none;">
         <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
             
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-compass mr-1"></i> ยามอุบากอง
+                </span>
+            </div>
+
+            <!-- Auspicious & Electional Astrology Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <button type="button" class="hub-nav-item" onclick="navigateTo('auspiciousPage')">
+                    📅 ปฏิทิน ๑๐๐ ปี & บันทึกดวง
+                </button>
+                <button type="button" class="hub-nav-item active">
+                    🧭 ยามอุบากอง
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('planetaryHoursPage')">
+                    🌟 ฤกษ์ยาม ๗ เจ้า
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('kaliyokepage')">
+                    ⏰ คำนวณกาลโยค
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('dailyTabooPage')">
+                    🚫 ข้อห้ามประจำวัน
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('dailyHighlightPage')">
+                    🗺️ แผนที่ฤกษ์รายวัน
+                </button>
+            </div>
+
             <!-- Main Hero Card: ยามอุบากอง -->
             <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
                 
@@ -2577,6 +2754,35 @@
     <section id="sompong-wealth" class="main-section" style="display: none;">
         <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
             
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-coins mr-1"></i> สมพงศ์มหาสมบัติ
+                </span>
+            </div>
+
+            <!-- Love & Synastry Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <button type="button" class="hub-nav-item" onclick="navigateTo('compatibilityPage')">
+                    💑 สมพงศ์ธาตุ & ปีนักษัตร
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('marriage-compatibility')">
+                    💍 สมพงศ์นาคราช
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('soulmate-direction')">
+                    🧭 ทิศเนื้อคู่
+                </button>
+                <button type="button" class="hub-nav-item active">
+                    💰 สมพงศ์มหาสมบัติ
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('deepSynastryPage')">
+                    👑 VIP ผูกดวงคู่สมพงษ์
+                </button>
+            </div>
+
             <!-- Main Hero Card -->
             <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
                 
@@ -2885,6 +3091,38 @@
     <section id="kaliyokepage" class="main-section" style="display: none;">
         <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
             
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-hourglass-half mr-1"></i> คำนวณกาลโยค
+                </span>
+            </div>
+
+            <!-- Auspicious & Electional Astrology Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <button type="button" class="hub-nav-item" onclick="navigateTo('auspiciousPage')">
+                    📅 ปฏิทิน ๑๐๐ ปี & บันทึกดวง
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('ubakong-yarm')">
+                    🧭 ยามอุบากอง
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('planetaryHoursPage')">
+                    🌟 ฤกษ์ยาม ๗ เจ้า
+                </button>
+                <button type="button" class="hub-nav-item active">
+                    ⏰ คำนวณกาลโยค
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('dailyTabooPage')">
+                    🚫 ข้อห้ามประจำวัน
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('dailyHighlightPage')">
+                    🗺️ แผนที่ฤกษ์รายวัน
+                </button>
+            </div>
+
             <!-- Main Hero Card -->
             <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
                 
@@ -3349,17 +3587,43 @@
     <!-- ไพ่ยิปซีเซลติกครอส 10 ใบ (Tarot Celtic Cross) -->
     <section id="tarotPage" class="main-section" style="display: none;">
         <div class="container mt-4">
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-layer-group mr-1"></i> เซลติกครอส ๑๐ ใบ
+                </span>
+            </div>
+
+            <!-- Oracle Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <a href="pages/prommayan.html" class="hub-nav-item">
+                    🎴 ไพ่พรหมญาณ (๖๙ ใบ)
+                </a>
+                <button type="button" class="hub-nav-item active">
+                    🃏 ไพ่ยิปซี เซลติกครอส (๑๐ ใบ)
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('cartomancyPage')">
+                    🂠 ไพ่ป๊อกโบราณ (๕๒ ใบ)
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('siamsiPage')">
+                    🎋 เซียมซี ๒๘ ใบ
+                </button>
+            </div>
+
             <div class="card bg-dark border-gold p-4 shadow-lg" style="border-radius: 20px; background: linear-gradient(135deg, rgba(20,15,35,0.95) 0%, rgba(10,8,20,0.98) 100%);">
                 <h2 class="text-gold mb-2 text-center" style="font-weight: bold;">
                     <i class="fas fa-layer-group mr-2 text-warning"></i> ทำนายไพ่ยิปซีเซลติกครอส (10 ใบ)
                 </h2>
                 <p class="text-center text-light mb-4">ผังพยากรณ์ชั้นสูงระดับสากล 10 ตำแหน่ง เจาะลึกอดีต ปัจจุบัน อนาคต จิตใต้สำนึก และบทสรุปชะตา</p>
                 
-                <div id="tarotPreDraw" class="text-center py-4">
+                <div id="tarotPreDraw" class="text-center py-3">
                     <div class="row justify-content-center mb-4">
                         <div class="col-12 col-md-6">
                             <label class="text-gold font-weight-bold mb-2"><i class="fas fa-compass mr-2 text-warning"></i>เลือกหมวดหมู่เรื่องที่ต้องการถาม:</label>
-                            <select id="tarotQuestionCategory" class="form-control bg-dark text-gold border-gold text-center font-weight-bold" style="height: 48px; border-radius: 12px; font-size: 1.05rem;">
+                            <select id="tarotQuestionCategory" class="form-control bg-dark text-gold border-gold text-center font-weight-bold" style="height: 44px; border-radius: 12px; font-size: 0.95rem;">
                                 <option value="general">⭐ ภาพรวมดวงชะตาและชีวิต (General Life Spread)</option>
                                 <option value="career">💼 การงาน ธุรกิจ และความก้าวหน้า (Career & Ambition)</option>
                                 <option value="finance">💰 การเงิน โชคลาภ และการลงทุน (Wealth & Finance)</option>
@@ -3368,10 +3632,10 @@
                         </div>
                     </div>
 
-                    <p class="text-warning mb-4" style="font-size: 1rem;">
+                    <p class="text-warning mb-3" style="font-size: 0.95rem;">
                         <i class="fas fa-hands-praying mr-1"></i> ตั้งจิตอธิษฐาน ทำสมาธิ นึกถึงคำถามหรือเรื่องที่ต้องการค้นหาคำตอบ แล้วกดปุ่มเพื่อเริ่มสับและวางผังไพ่
                     </p>
-                    <button id="drawCelticCrossBtn" class="btn btn-gold btn-lg px-5 py-3 shadow-lg font-weight-bold" style="border-radius: 50px; font-size: 1.15rem;" onclick="drawCelticCross()">
+                    <button id="drawCelticCrossBtn" class="btn btn-gold px-4 py-2 shadow-lg font-weight-bold" style="border-radius: 50px; font-size: 1rem;" onclick="drawCelticCross()">
                         <i class="fas fa-hand-sparkles mr-2"></i> สับและเปิดผังเซลติกครอส 10 ใบ
                     </button>
                 </div>
@@ -3425,18 +3689,71 @@
 
     <!-- ไพ่ป๊อกรายวัน (Cartomancy 52 Cards) -->
     <section id="cartomancyPage" class="main-section" style="display: none;">
-        <div class="container mt-4">
-            <div class="card shadow-lg" style="background-color: #1a0f2e; border: 1px solid #d4af37; padding: 25px; border-radius: 15px;">
-                <h2 class="text-gold mb-3 text-center" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
-                    <i class="fas fa-heart mr-2"></i> ไพ่ป๊อกทำนายดวง (รายวัน)
-                </h2>
-                <p class="text-center text-light">สุ่มไพ่ 1 ใบ จากสำรับ 52 ใบ เพื่อดูแนวโน้มชะตาชีวิตของคุณในวันนี้</p>
-                <div class="text-center">
-                    <button id="drawCartomancyBtn" class="btn btn-danger btn-lg mt-3" onclick="drawCartomancyUser()" style="border: 2px solid #ff4d4d; box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);">
-                        <i class="fas fa-hand-sparkles mr-2"></i> จั่วไพ่
+        <div class="container py-4" style="max-width: 1180px;">
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-cards-blank mr-1"></i> สำรับมาตรฐาน ๕๒ ใบ
+                </span>
+            </div>
+
+            <!-- Oracle Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <a href="pages/prommayan.html" class="hub-nav-item">
+                    🎴 ไพ่พรหมญาณ (๖๙ ใบ)
+                </a>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('tarotPage')">
+                    🃏 ไพ่ยิปซี เซลติกครอส (๑๐ ใบ)
+                </button>
+                <button type="button" class="hub-nav-item active">
+                    🂠 ไพ่ป๊อกโบราณ (๕๒ ใบ)
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('siamsiPage')">
+                    🎋 เซียมซี ๒๘ ใบ
+                </button>
+            </div>
+
+            <!-- Main Card Container -->
+            <div class="card shadow-2xl" style="background: linear-gradient(145deg, rgba(23, 16, 42, 0.95) 0%, rgba(13, 9, 26, 0.98) 100%); border: 1.5px solid rgba(212, 175, 55, 0.4); border-radius: 24px; padding: 35px 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1); backdrop-filter: blur(20px);">
+                
+                <!-- Hero Header -->
+                <div class="text-center mb-4">
+                    <div style="font-size: 3rem; margin-bottom: 8px; filter: drop-shadow(0 0 20px rgba(255, 77, 77, 0.5));">
+                        ♥️ ♠️ ♦️ ♣️
+                    </div>
+                    <h2 style="font-size: 2.1rem; font-weight: 700; background: linear-gradient(135deg, #ffffff 0%, #fff3b0 40%, #ffd700 80%, #d4af37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; letter-spacing: 0.5px;">
+                        ไพ่ป๊อกทำนายดวง (ศาสตร์ไพ่ ๕๒ ใบ)
+                    </h2>
+                    <p class="text-white-50 mx-auto mb-0" style="max-width: 650px; font-size: 0.95rem; line-height: 1.5;">
+                        ถอดรหัสชะตากรรมผ่านพลังงาน ๔ หน้าไพ่โบราณ: <span class="text-white font-weight-bold">โพดำ</span> (อุปสรรค), <span class="text-danger font-weight-bold">โพแดง</span> (ความรัก), <span class="text-warning font-weight-bold">ข้าวหลามตัด</span> (ทรัพย์สิน), และ <span class="text-info font-weight-bold">ดอกจิก</span> (การงาน)
+                    </p>
+                </div>
+                
+                <!-- เลือกรูปแบบผังการทำนาย (Pill Tabs - Compact & Sleek) -->
+                <div class="d-flex justify-content-center flex-wrap gap-2 mb-3 p-1 mx-auto" id="cartomancyModeSelector" style="background: rgba(0,0,0,0.35); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 50px; max-width: 620px; gap: 6px;">
+                    <button class="btn btn-sm btn-warning rounded-pill px-3 py-1 font-weight-bold text-dark active" id="cartoModeBtn1" onclick="switchCartomancyMode('daily')" style="font-size: 0.85rem; transition: all 0.2s;">
+                        <i class="fas fa-sun mr-1"></i> จั่วรายวัน (๑ ใบ)
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning rounded-pill px-3 py-1 font-weight-bold" id="cartoModeBtn3" onclick="switchCartomancyMode('timeline')" style="font-size: 0.85rem; transition: all 0.2s;">
+                        <i class="fas fa-history mr-1"></i> ผัง ๓ กาล (อดีต-ปัจจุบัน-อนาคต)
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning rounded-pill px-3 py-1 font-weight-bold" id="cartoModeBtn4" onclick="switchCartomancyMode('quadrant')" style="font-size: 0.85rem; transition: all 0.2s;">
+                        <i class="fas fa-th-large mr-1"></i> ผัง ๔ มิติ (ตนเอง-งาน-เงิน-รัก)
                     </button>
                 </div>
-                <div id="cartomancyResult" style="display: none;"></div>
+
+                <!-- Call to Action Button (Compact & Elegant) -->
+                <div class="text-center my-2">
+                    <button id="drawCartomancyBtn" class="btn rounded-pill px-4 py-2 font-weight-bold" onclick="drawCartomancyUser()" style="background: linear-gradient(135deg, #e63946 0%, #b7094c 100%); color: #fff; border: 1.5px solid #ff758f; box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4); font-size: 0.95rem; letter-spacing: 0.3px; transition: all 0.25s ease;">
+                        <i class="fas fa-hand-sparkles mr-2"></i> สับไพ่และเสี่ยงทาย
+                    </button>
+                </div>
+
+                <!-- Results Output Container -->
+                <div id="cartomancyResult" style="display: none; margin-top: 25px;"></div>
             </div>
         </div>
     </section>
@@ -4272,6 +4589,7 @@
     <script charset="UTF-8" src="src/engine/personalized-auspicious.js"></script>
     <script charset="UTF-8" src="src/data/cartomancy-data.js"></script>
     <script charset="UTF-8" src="src/ui/cartomancy-user.js"></script>
+    <script charset="UTF-8" src="src/data/prommayan-data.js"></script>
 
             <!-- Siamsi Modal Overlay -->
             <div id="siamsiResult" class="siamsi-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1050; align-items: center; padding: 3rem 1rem; backdrop-filter: blur(5px); flex-direction: column; overflow-y: auto; justify-content: flex-start;">

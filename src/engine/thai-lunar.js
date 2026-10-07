@@ -256,3 +256,11 @@ function displayLunar() {
     document.getElementById('resThaiMonth').innerText = `เดือนทางจันทรคติ: เดือน ${result.month}`;
     document.getElementById('resZodiac').innerText = `ปีนักษัตร: ${result.zodiac}`;
 }
+
+if (typeof window !== "undefined") {
+    window.THAI_ANCHORS = THAI_ANCHORS;
+    window.getThaiLunar = getThaiLunar;
+}
+if (typeof module !== "undefined" && module.exports) {
+    module.exports = { THAI_ANCHORS, getThaiLunar };
+}

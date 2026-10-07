@@ -157,6 +157,35 @@ function compatitable() {
     const html = `
         <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
             
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-heart mr-1"></i> ศูนย์รวมสมพงศ์ความรัก
+                </span>
+            </div>
+
+            <!-- Love & Synastry Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <button type="button" class="hub-nav-item active">
+                    💑 สมพงศ์ธาตุ & ปีนักษัตร
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('marriage-compatibility')">
+                    💍 สมพงศ์นาคราช
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('soulmate-direction')">
+                    🧭 ทิศเนื้อคู่
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('sompong-wealth')">
+                    💰 สมพงศ์มหาสมบัติ
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('deepSynastryPage')">
+                    👑 VIP ผูกดวงคู่สมพงษ์
+                </button>
+            </div>
+
             <!-- Main Hero Card -->
             <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
                 

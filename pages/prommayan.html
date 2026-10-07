@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ไพ่พรหมญาณพยากรณ์ (๖๙ ใบ) - สยามโหรามงคล</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <style>
+        :root {
+            --bg-base: #070b14;
+            --bg-card: rgba(18, 26, 46, 0.88);
+            --gold-primary: #ffd700;
+            --gold-light: #fef08a;
+            --gold-glow: rgba(255, 215, 0, 0.35);
+            --border-gold: rgba(241, 208, 110, 0.35);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif !important;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(26, 54, 93, 0.25) 0%, transparent 50%),
+                linear-gradient(180deg, #060911 0%, #0d1629 50%, #060911 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .prommayan-container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 24px 18px 80px 18px;
+        }
+
+        /* Top Nav */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--gold-primary);
+            border-color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.15);
+            transform: translateX(-3px);
+        }
+
+        /* Header Hero */
+        .hero-banner {
+            text-align: center;
+            padding: 35px 20px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(30, 45, 78, 0.7) 0%, rgba(13, 21, 39, 0.9) 100%);
+            border: 1px solid var(--border-gold);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(20px);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-title {
+            font-size: 2.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #fff3b0 40%, #f1d06e 80%, #c99727 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Mode Selection Tabs */
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .mode-btn {
+            background: rgba(18, 26, 46, 0.85);
+            border: 1px solid rgba(241, 208, 110, 0.3);
+            color: #cbd5e1;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .mode-btn:hover {
+            border-color: var(--gold-primary);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #b8860b 0%, #ffd700 100%);
+            color: #0b1120;
+            font-weight: 700;
+            border-color: #ffd700;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Prayer / Intention Box */
+        .intention-card {
+            background: rgba(18, 26, 46, 0.7);
+            border: 1px solid rgba(241, 208, 110, 0.25);
+            border-radius: 18px;
+            padding: 22px 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Deck & Card Spread Area */
+        .spread-board {
+            min-height: 380px;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(10, 16, 28, 0.6);
+            border: 1px dashed rgba(241, 208, 110, 0.3);
+            margin-bottom: 40px;
+        }
+
+        /* Interactive Deck Fan */
+        .deck-fan-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 280px;
+            overflow-x: auto;
+            padding: 30px 10px;
+            perspective: 1000px;
+        }
+
+        .deck-fan-card {
+            width: 90px;
+            height: 140px;
+            margin-left: -50px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(241, 208, 110, 0.5);
+            box-shadow: -4px 6px 15px rgba(0, 0, 0, 0.6);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            flex-shrink: 0;
+        }
+
+        .deck-fan-card:hover {
+            transform: translateY(-25px) scale(1.15) !important;
+            z-index: 50 !important;
+            border-color: #ffd700;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.6);
+        }
+
+        .deck-fan-card.selected {
+            opacity: 0.2;
+            pointer-events: none;
+            filter: grayscale(1);
+        }
+
+        /* Results Display Grid */
+        .results-grid {
+            display: grid;
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .results-grid.cols-1 { grid-template-columns: minmax(0, 480px); justify-content: center; }
+        .results-grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .results-grid.cols-12 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+        /* Prommayan Card Presentation Component */
+        .card-item {
+            background: linear-gradient(145deg, rgba(22, 32, 58, 0.9) 0%, rgba(13, 20, 38, 0.95) 100%);
+            border: 1px solid var(--border-gold);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-item:hover {
+            transform: translateY(-6px);
+            border-color: #ffd700;
+            box-shadow: 0 16px 38px rgba(255, 215, 0, 0.25);
+        }
+
+        .card-header-badge {
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(241, 208, 110, 0.2);
+            font-size: 0.85rem;
+            color: #f1d06e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-image-box {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 2/3;
+            background: #090e1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .card-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card-item:hover .card-image-box img {
+            transform: scale(1.04);
+        }
+
+        .card-fallback-art {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(30, 45, 78, 0.8) 0%, rgba(14, 23, 42, 0.9) 100%);
+            border: 4px double rgba(241, 208, 110, 0.35);
+            box-sizing: border-box;
+        }
+
+        .card-body-content {
+            padding: 18px 20px 22px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title-th {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 4px;
+        }
+
+        .card-title-en {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 30px;
+            background: rgba(241, 208, 110, 0.12);
+            color: #fef08a;
+            border: 1px solid rgba(241, 208, 110, 0.25);
+        }
+
+        .card-meaning-text {
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            margin-bottom: 15px;
+            flex: 1;
+        }
+
+        .card-tabs-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 6px;
+        }
+
+        .card-tab-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 0.82rem;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .card-tab-btn.active {
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.15);
+            font-weight: 600;
+        }
+
+        .advice-badge {
+            background: rgba(59, 130, 246, 0.12);
+            border-left: 3px solid #60a5fa;
+            padding: 8px 12px;
+            font-size: 0.84rem;
+            color: #93c5fd;
+            border-radius: 0 8px 8px 0;
+            margin-top: 10px;
+        }
+
+        /* Action Buttons */
+        .btn-action-gold {
+            background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
+            color: #0b1120;
+            font-weight: 700;
+            padding: 12px 32px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.05rem;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-action-gold:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+        }
+
+        /* Modal for Card Encyclopedia */
+        .deck-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            max-height: 65vh;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .gallery-card-thumb {
+            cursor: pointer;
+            border-radius: 10px;
+            border: 1px solid rgba(241, 208, 110, 0.25);
+            background: rgba(18, 26, 46, 0.85);
+            padding: 8px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .gallery-card-thumb:hover {
+            transform: translateY(-4px);
+            border-color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="prommayan-container">
+        <!-- Top Nav -->
+        <div class="top-nav">
+            <a href="../index.html" class="back-btn">
+                <i class="fas fa-chevron-left"></i> กลับห้องพยากรณ์
+            </a>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-warning rounded-pill px-3" onclick="openDeckDirectoryModal()">
+                    <i class="fas fa-book-open mr-1"></i> สารบัญไพ่ ๖๙ ใบ
+                </button>
+            </div>
+        </div>
+
+        <!-- Oracle Hub Switcher Tabs -->
+        <div class="hub-nav-bar">
+            <button type="button" class="hub-nav-item active">
+                🎴 ไพ่พรหมญาณ (๖๙ ใบ)
+            </button>
+            <a href="../index.html#tarotPage" class="hub-nav-item">
+                🃏 ไพ่ยิปซี เซลติกครอส (๑๐ ใบ)
+            </a>
+            <a href="../index.html#cartomancyPage" class="hub-nav-item">
+                🂠 ไพ่ป๊อกโบราณ (๕๒ ใบ)
+            </a>
+            <a href="../index.html#siamsiPage" class="hub-nav-item">
+                🎋 เซียมซี ๒๘ ใบ
+            </a>
+        </div>
+
+        <!-- Hero Header -->
+        <div class="hero-banner">
+            <div style="font-size: 3.2rem; filter: drop-shadow(0 0 18px rgba(255,215,0,0.6)); margin-bottom: 8px;">🎴</div>
+            <h1 class="hero-title">ไพ่พรหมญาณพยากรณ์ (๖๙ ใบ)</h1>
+            <p style="color: #cbd5e1; font-size: 1.05rem; max-width: 700px; margin: 0 auto;">
+                ศาสตร์พยากรณ์ไพ่ไทยแท้ชุดแรก ผสานภูมิปัญญาโหราศาสตร์ เทพเทวา นพเคราะห์ และสัจธรรมจากวรรณคดีไทย
+            </p>
+        </div>
+
+        <!-- Mode Selectors -->
+        <div class="mode-selector">
+            <button class="mode-btn active" id="modeBtn1" onclick="switchMode(1)">
+                <i class="fas fa-hand-sparkles"></i> เปิด ๑ ใบ (ถามตอบเจาะจง)
+            </button>
+            <button class="mode-btn" id="modeBtn3" onclick="switchMode(3)">
+                <i class="fas fa-layer-group"></i> เปิด ๓ ใบ (อดีต - ปัจจุบัน - อนาคต)
+            </button>
+            <button class="mode-btn" id="modeBtn12" onclick="switchMode(12)">
+                <i class="fas fa-dharmachakra"></i> ผัง ๑๒ ภพภูมิ (ตรวจดวงชะตาใหญ่)
+            </button>
+        </div>
+
+        <!-- Intention & Prayer Box -->
+        <div class="intention-card">
+            <div style="font-size: 1.15rem; font-weight: 600; color: #ffd700; margin-bottom: 6px;">
+                <i class="fas fa-praying-hands mr-2"></i> คำอธิษฐานจิตก่อนเปิดไพ่
+            </div>
+            <p style="color: #94a3b8; font-size: 0.92rem; max-width: 680px; margin: 0 auto 15px auto;">
+                "ขออำนาจคุณพระศรีรัตนตรัย บารมีท้าวมหาพรหม พระยาพิเภก และสิ่งศักดิ์สิทธิ์ จงโปรดเมตตาประทานญาณทัศนะและคำชี้แนะอันเป็นมงคลแก่ข้าพเจ้าด้วยเทอญ"
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <button class="btn-action-gold" id="startDrawBtn" onclick="prepareDeckSpread()">
+                    <i class="fas fa-random"></i> สับไพ่และเสี่ยงทาย
+                </button>
+            </div>
+        </div>
+
+        <!-- Spread & Draw Board -->
+        <div class="spread-board" id="spreadBoard">
+            <div id="deckStatusText" class="text-center text-muted mb-3" style="font-size: 0.95rem;">
+                กดปุ่ม "สับไพ่และเสี่ยงทาย" เพื่อตั้งสมาธิและเริ่มเลือกไพ่
+            </div>
+
+            <!-- Card Fan -->
+            <div class="deck-fan-container" id="deckFanContainer" style="display: none;"></div>
+
+            <!-- Results Output -->
+            <div id="resultsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Modal สารบัญไพ่ 69 ใบ -->
+    <div class="modal fade" id="deckDirectoryModal" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content" style="background: #0f172a; border: 1px solid var(--border-gold); color: #fff; border-radius: 20px;">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-warning"><i class="fas fa-book-open mr-2"></i> สารบัญไพ่พรหมญาณ ทั้ง ๖๙ ใบ</h5>
+                    <button type="button" class="btn-close btn-close-white" onclick="closeDeckDirectoryModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3 d-flex gap-2 flex-wrap" id="categoryFilterBtns">
+                        <!-- Filled by JS -->
+                    </div>
+                    <div class="deck-gallery-grid" id="deckGalleryGrid">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Detail Modal -->
+    <div class="modal fade" id="cardDetailModal" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="background: #0f172a; border: 1px solid var(--border-gold); color: #fff; border-radius: 20px;">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-warning" id="modalCardTitle"></h5>
+                    <button type="button" class="btn-close btn-close-white" onclick="closeCardDetailModal()"></button>
+                </div>
+                <div class="modal-body" id="modalCardBody">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../src/data/prommayan-data.js"></script>
+
+    <script>
+        let currentMode = 1; // 1, 3, 12
+        let selectedCards = [];
+        let requiredPicks = 1;
+
+        const HOUSES_12 = [
+            { pos: 1, name: "ตนุ", desc: "วาสนา ตัวตน และจิตใจ" },
+            { pos: 2, name: "กดุมภะ", desc: "การเงิน ทรัพย์สิน รายได้" },
+            { pos: 3, name: "สหัชชะ", desc: "เพื่อน คนใกล้ชิด การติดต่อ" },
+            { pos: 4, name: "พันธุ", desc: "ครอบครัว ญาติ บ้านช่อง" },
+            { pos: 5, name: "ปุตตะ", desc: "บริวาร บุตรหลาน โครงการใหม่" },
+            { pos: 6, name: "อริ", desc: "อุปสรรค ศัตรู หนี้สิน" },
+            { pos: 7, name: "ปัตนิ", desc: "คู่ครอง คนรัก หุ้นส่วนคู่สัญญา" },
+            { pos: 8, name: "มรณะ", desc: "โรคภัย พลัดพราก มรดก" },
+            { pos: 9, name: "ศุภะ", desc: "ความสำเร็จ ความสุข การศึกษา" },
+            { pos: 10, name: "กัมมะ", desc: "การงาน อาชีพ ภาระหน้าที่" },
+            { pos: 11, name: "ลาภะ", desc: "โชคลาภ ชื่อเสียง มิตรแท้" },
+            { pos: 12, name: "วินาศ", desc: "บทสรุป สิ่งคาดไม่ถึง ข้อพึงระวัง" }
+        ];
+
+        const SPREAD_3_LABELS = [
+            { pos: 1, name: "อดีต / รากฐานของปัญหา", desc: "ที่มาและสิ่งที่เป็นเหตุ" },
+            { pos: 2, name: "ปัจจุบัน / สภาพการณ์ขณะนี้", desc: "จุดที่คุณยืนอยู่และอารมณ์" },
+            { pos: 3, name: "อนาคต / ทิศทางและบทสรุป", desc: "แนวโน้มและคำแนะนำสูงสุด" }
+        ];
+
+        function switchMode(mode) {
+            currentMode = mode;
+            requiredPicks = mode;
+            selectedCards = [];
+            
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('modeBtn' + mode).classList.add('active');
+
+            document.getElementById('deckFanContainer').style.display = 'none';
+            document.getElementById('resultsContainer').innerHTML = '';
+            document.getElementById('deckStatusText').innerHTML = `เลือกโหมด <strong>${mode === 1 ? 'เปิด ๑ ใบ' : (mode === 3 ? 'เปิด ๓ ใบ' : 'ผัง ๑๒ ภพภูมิ')}</strong> เรียบร้อยแล้ว กดปุ่มเพื่อสับไพ่`;
+        }
+
+        function prepareDeckSpread() {
+            selectedCards = [];
+            document.getElementById('resultsContainer').innerHTML = '';
+            
+            const fanContainer = document.getElementById('deckFanContainer');
+            fanContainer.innerHTML = '';
+            fanContainer.style.display = 'flex';
+
+            document.getElementById('deckStatusText').innerHTML = `
+                <span class="text-warning"><i class="fas fa-sparkles"></i> สับไพ่เรียบร้อยแล้ว!</span> 
+                โปรดตั้งจิตอธิษฐานแล้วเลือกไพ่จำนวน <strong class="text-white">${requiredPicks}</strong> ใบ (เลือกแล้ว <span id="pickCountSpan" class="text-warning">0</span>/${requiredPicks})
+            `;
+
+            // สร้างสำรับ 69 ใบแบบสุ่มกระจาย
+            const shuffledDeck = [...window.PROMMAYAN_CARDS].sort(() => 0.5 - Math.random());
+
+            shuffledDeck.forEach((card, idx) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'deck-fan-card';
+                cardEl.style.backgroundImage = `url('../assets/images/prommayan/card_back.jpg')`;
+                cardEl.title = `ไพ่ใบที่ ${idx + 1}`;
+                cardEl.dataset.cardId = card.id;
+
+                // slight tilt angle for fan effect
+                const angle = (idx - 34) * 0.45;
+                cardEl.style.transform = `rotate(${angle}deg)`;
+
+                cardEl.onclick = function() {
+                    handlePickCard(card, cardEl);
+                };
+
+                fanContainer.appendChild(cardEl);
+            });
+        }
+
+        function handlePickCard(card, cardEl) {
+            if (selectedCards.length >= requiredPicks) return;
+
+            cardEl.classList.add('selected');
+            selectedCards.push(card);
+
+            document.getElementById('pickCountSpan').innerText = selectedCards.length;
+
+            if (selectedCards.length === requiredPicks) {
+                document.getElementById('deckStatusText').innerHTML = `
+                    <span class="text-success"><i class="fas fa-check-circle"></i> เลือกไพ่ครบแล้ว!</span> กำลังเปิดเผยญาณทัศนะ...
+                `;
+                setTimeout(() => {
+                    document.getElementById('deckFanContainer').style.display = 'none';
+                    renderResults();
+                }, 700);
+            }
+        }
+
+        function renderResults() {
+            const container = document.getElementById('resultsContainer');
+            let colClass = 'cols-1';
+            if (currentMode === 3) colClass = 'cols-3';
+            if (currentMode === 12) colClass = 'cols-12';
+
+            let html = `
+                <div class="text-center mb-4">
+                    <h3 class="text-warning fw-bold"><i class="fas fa-star-of-david mr-2"></i> คำทำนายไพ่พรหมญาณ</h3>
+                    <p class="text-muted small">พยากรณ์ ณ วันที่ ${new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                </div>
+                <div class="results-grid ${colClass}">
+            `;
+
+            selectedCards.forEach((card, index) => {
+                let positionMeta = { name: "คำทำนายเจาะจง", desc: "ผลการพยากรณ์ภาพรวม" };
+                if (currentMode === 3) positionMeta = SPREAD_3_LABELS[index];
+                if (currentMode === 12) positionMeta = HOUSES_12[index];
+
+                html += renderSingleCardHtml(card, positionMeta, index);
+            });
+
+            html += `</div>`;
+            html += `
+                <div class="text-center mt-5">
+                    <button class="btn btn-outline-warning rounded-pill px-4 py-2" onclick="prepareDeckSpread()">
+                        <i class="fas fa-redo mr-2"></i> เสี่ยงทายใหม่อีกครั้ง
+                    </button>
+                </div>
+            `;
+
+            container.innerHTML = html;
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function renderSingleCardHtml(card, meta, index) {
+            const imageHtml = card.image 
+                ? `<img src="../${card.image}" alt="${card.name}">`
+                : `
+                    <div class="card-fallback-art">
+                        <i class="fas ${card.fallbackIcon || 'fa-dharmachakra'}" style="font-size: 3.5rem; color: #ffd700; margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));"></i>
+                        <div style="font-weight: 700; color: #fef08a; font-size: 1.05rem;">${card.name}</div>
+                        <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 4px;">${card.engName}</div>
+                    </div>
+                `;
+
+            return `
+                <div class="card-item">
+                    <div class="card-header-badge">
+                        <span><strong class="text-warning">ใบที่ ${index + 1}</strong> : ${meta.name}</span>
+                        <span class="small text-muted">${card.category}</span>
+                    </div>
+
+                    <div class="card-image-box">
+                        ${imageHtml}
+                    </div>
+
+                    <div class="card-body-content">
+                        <div class="card-title-th">${card.name}</div>
+                        <div class="card-title-en">${card.engName}</div>
+
+                        <div class="card-tags">
+                            ${card.keywords.map(kw => `<span class="card-tag">#${kw}</span>`).join('')}
+                        </div>
+
+                        <!-- Meaning Tabs -->
+                        <div class="card-tabs-bar">
+                            <button class="card-tab-btn active" onclick="switchCardTab(${index}, 'general', this)"><i class="fas fa-globe"></i> ภาพรวม</button>
+                            <button class="card-tab-btn" onclick="switchCardTab(${index}, 'work', this)"><i class="fas fa-briefcase"></i> การงาน</button>
+                            <button class="card-tab-btn" onclick="switchCardTab(${index}, 'finance', this)"><i class="fas fa-coins"></i> การเงิน</button>
+                            <button class="card-tab-btn" onclick="switchCardTab(${index}, 'love', this)"><i class="fas fa-heart"></i> ความรัก</button>
+                            <button class="card-tab-btn" onclick="switchCardTab(${index}, 'health', this)"><i class="fas fa-heartbeat"></i> สุขภาพ</button>
+                        </div>
+
+                        <div class="card-meaning-text" id="cardMeaning_${index}">
+                            ${card.meaning.general}
+                        </div>
+
+                        ${card.meaning.advice ? `
+                            <div class="advice-badge">
+                                <i class="fas fa-lightbulb mr-1"></i> <strong>ข้อคิดเตือนใจ:</strong> ${card.meaning.advice}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        window.switchCardTab = function(cardIndex, tabKey, btn) {
+            const card = selectedCards[cardIndex];
+            if (!card) return;
+
+            const textContainer = document.getElementById(`cardMeaning_${cardIndex}`);
+            if (textContainer) {
+                textContainer.innerHTML = card.meaning[tabKey] || card.meaning.general;
+            }
+
+            const parentBar = btn.closest('.card-tabs-bar');
+            if (parentBar) {
+                parentBar.querySelectorAll('.card-tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        };
+
+        // Modal Directory Logic
+        function openDeckDirectoryModal() {
+            const filterContainer = document.getElementById('categoryFilterBtns');
+            const gridContainer = document.getElementById('deckGalleryGrid');
+
+            // Render category buttons
+            const categories = ["ทั้งหมด", ...Object.values(window.PROMMAYAN_CATEGORIES)];
+            filterContainer.innerHTML = categories.map((cat, idx) => `
+                <button class="btn btn-sm ${idx === 0 ? 'btn-warning' : 'btn-outline-secondary'} rounded-pill" onclick="filterGallery('${cat}', this)">
+                    ${cat}
+                </button>
+            `).join('');
+
+            renderGalleryGrid("ทั้งหมด");
+
+            document.getElementById('deckDirectoryModal').style.display = 'block';
+            document.getElementById('deckDirectoryModal').classList.add('show');
+        }
+
+        function closeDeckDirectoryModal() {
+            document.getElementById('deckDirectoryModal').style.display = 'none';
+            document.getElementById('deckDirectoryModal').classList.remove('show');
+        }
+
+        function filterGallery(category, btn) {
+            document.querySelectorAll('#categoryFilterBtns button').forEach(b => {
+                b.className = 'btn btn-sm btn-outline-secondary rounded-pill';
+            });
+            btn.className = 'btn btn-sm btn-warning rounded-pill';
+
+            renderGalleryGrid(category);
+        }
+
+        function renderGalleryGrid(category) {
+            const grid = document.getElementById('deckGalleryGrid');
+            const filtered = category === "ทั้งหมด" 
+                ? window.PROMMAYAN_CARDS 
+                : window.PROMMAYAN_CARDS.filter(c => c.category === category);
+
+            grid.innerHTML = filtered.map(card => `
+                <div class="gallery-card-thumb" onclick="openCardDetail(${card.id})">
+                    <div style="width: 100%; aspect-ratio: 2/3; background: #0b1120; border-radius: 6px; overflow: hidden; margin-bottom: 6px; display: flex; align-items: center; justify-content: center;">
+                        ${card.image 
+                            ? `<img src="../${card.image}" style="width:100%; height:100%; object-fit: cover;">`
+                            : `<i class="fas ${card.fallbackIcon || 'fa-dharmachakra'}" style="color: #ffd700; font-size: 1.5rem;"></i>`
+                        }
+                    </div>
+                    <div class="small text-truncate" style="color: #fef08a; font-weight: 500;">${card.id}. ${card.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function openCardDetail(cardId) {
+            const card = window.getPrommayanCardById(cardId);
+            if (!card) return;
+
+            document.getElementById('modalCardTitle').innerText = `${card.id}. ${card.name}`;
+            document.getElementById('modalCardBody').innerHTML = `
+                <div class="row">
+                    <div class="col-md-5 mb-3 text-center">
+                        <div style="max-width: 260px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--border-gold);">
+                            ${card.image 
+                                ? `<img src="../${card.image}" style="width: 100%; height: auto; display: block;">` 
+                                : `
+                                    <div class="card-fallback-art" style="height: 350px;">
+                                        <i class="fas ${card.fallbackIcon || 'fa-dharmachakra'}" style="font-size: 4rem; color: #ffd700; margin-bottom: 12px;"></i>
+                                        <div class="text-warning fw-bold">${card.name}</div>
+                                        <div class="text-muted small">${card.engName}</div>
+                                    </div>
+                                `
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="badge badge-warning text-dark mb-2">${card.category}</div>
+                        <h4 class="text-warning mb-1">${card.name}</h4>
+                        <div class="text-muted small mb-3">${card.engName}</div>
+                        <p style="color: #cbd5e1; font-size: 0.95rem;"><strong>สัญลักษณ์:</strong> ${card.symbol}</p>
+                        
+                        <div class="mb-3">
+                            <strong class="text-warning d-block mb-1">ภาพรวม:</strong>
+                            <p class="text-light small">${card.meaning.general}</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong class="text-warning d-block mb-1">การงาน & การเงิน:</strong>
+                            <p class="text-light small">${card.meaning.work} / ${card.meaning.finance}</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong class="text-warning d-block mb-1">ความรัก & สุขภาพ:</strong>
+                            <p class="text-light small">${card.meaning.love} / ${card.meaning.health}</p>
+                        </div>
+                        <div class="p-2 rounded" style="background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3);">
+                            <span class="text-warning small"><strong>คำแนะนำ:</strong> ${card.meaning.advice}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('cardDetailModal').style.display = 'block';
+            document.getElementById('cardDetailModal').classList.add('show');
+        }
+
+        function closeCardDetailModal() {
+            document.getElementById('cardDetailModal').style.display = 'none';
+            document.getElementById('cardDetailModal').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

@@ -366,6 +366,156 @@ if (waentaHtmlExists) {
     assert(waentaHtml.includes("src/data/waenta-hora-data.js") && waentaHtml.includes("src/engine/waenta-hora-engine.js"), "waenta-hora.html เชื่อมโยง Data และ Engine ครบถ้วน");
 }
 
+// -----------------------------------------------------------------------------
+// Suite 21: Kalachakra Wiphak System (พ.ต. หลวงวุฒิรณพัสดุ์)
+// -----------------------------------------------------------------------------
+console.log('📜 [Suite 21] Kalachakra Wiphak System Verification');
+
+const kalachakraHtmlExists = fs.existsSync('pages/kalachakra-wiphak.html');
+const kalachakraDataExists = fs.existsSync('src/data/kalachakra-data.js');
+const kalachakraEngineExists = fs.existsSync('src/engine/kalachakra-engine.js');
+
+assert(kalachakraHtmlExists, "มีไฟล์หน้า HTML pages/kalachakra-wiphak.html สำหรับระบบตำรากาลจักรจรวิภาค");
+assert(kalachakraDataExists, "มีไฟล์ฐานข้อมูลตำรา src/data/kalachakra-data.js ครบ ๔ จัตวาราศีและเคสศึกษา");
+assert(kalachakraEngineExists, "มีไฟล์คำนวณเอนจิน src/engine/kalachakra-engine.js");
+
+const tiersCodeSuite21 = fs.readFileSync('src/utils/tiers.js', 'utf8');
+const mainpageCodeSuite21 = fs.readFileSync('src/ui/mainpage.js', 'utf8');
+
+assert(tiersCodeSuite21.includes("'kalachakraWiphakPage': 10"), "tiers.js กำหนดสิทธิ์ kalachakraWiphakPage ขั้นต่ำระดับเพชร (Tier 10) ขึ้นไป");
+assert(mainpageCodeSuite21.includes("'kalachakraWiphakPage'") && mainpageCodeSuite21.includes("pages/kalachakra-wiphak.html"), "mainpage.js ลงทะเบียนการ์ดตำรากาลจักรจรวิภาคในห้องพยากรณ์ (APP_MENU)");
+
+if (kalachakraHtmlExists) {
+    const htmlContent = fs.readFileSync('pages/kalachakra-wiphak.html', 'utf8');
+    assert(htmlContent.includes('id="memberSelector"'), "kalachakra-wiphak.html มีช่อง Dropdown เลือกสมาชิกจากประวัติ (id='memberSelector')");
+    assert(htmlContent.includes('initMemberPicker()'), "kalachakra-wiphak.html มีระบบเชื่อมโยงและโหลดข้อมูลสมาชิกอัตโนมัติ (initMemberPicker)");
+}
+
+if (kalachakraDataExists && kalachakraEngineExists) {
+    const kData = require('./src/data/kalachakra-data.js');
+    const kEngine = require('./src/engine/kalachakra-engine.js');
+
+    assert(kData.CHATUWA_RASI_CATEGORIES.nara.periodYears === 28, "เกณฑ์นระราศีมีรอบ ๒๘ ปี");
+    assert(kData.CHATUWA_RASI_CATEGORIES.pasawa.periodYears === 44, "เกณฑ์ปัสวะราศีมีรอบ ๔๔ ปี");
+    assert(kData.CHATUWA_RASI_CATEGORIES.amphu.periodYears === 56, "เกณฑ์อัมพุราศีมีรอบ ๕๖ ปี");
+    assert(kData.CHATUWA_RASI_CATEGORIES.kada.periodYears === 20, "เกณฑ์กฎะราศีมีรอบ ๒๐ ปี");
+
+    // ทดสอบเคสศึกษา พ.ต. หลวงวุฒิรณพัสดุ์ (ธนู สมพุส 13 องศา 17 ลิบดา)
+    const authorRes = kEngine.analyzeKalachakra({
+        name: kData.HISTORICAL_CASES[0].name,
+        birthDate: kData.HISTORICAL_CASES[0].birthDate,
+        birthLagnaRasiIndex: 8,
+        birthLagnaDeg: 13,
+        birthLagnaMin: 17,
+        targetDate: kData.HISTORICAL_CASES[0].targetDate,
+        customActualAge: { years: 22, months: 10, days: 5 }
+    });
+
+    assert(authorRes.sawoei.rasiName === "พิจิก", "เคสหลวงวุฒิรณพัสดุ์ ตัวเสวยคือราศีพิจิก (กฎะ)");
+    assert(authorRes.thaek.rasiName === "กรกฎ", "เคสหลวงวุฒิรณพัสดุ์ ตัวแทรกคือราศีกรกฎ (อัมพุ)");
+    assert(authorRes.thaek.elapsed.months === 1 && authorRes.thaek.elapsed.days === 25, "เคสหลวงวุฒิรณพัสดุ์ แทรกมาแล้ว ๑ เดือน ๒๕ วัน");
+    assert(authorRes.thaek.remaining.months === 10 && authorRes.thaek.remaining.days === 15, "เคสหลวงวุฒิรณพัสดุ์ คงเหลือ ๑๐ เดือน ๑๕ วันก่อนพ้นแทรก");
+
+    // ทดสอบเคสศึกษา พ.อ. หลวงธรณ์นิติญาณ (เกณฑ์ฆาตนระโสโร)
+    const thornRes = kEngine.analyzeKalachakra({
+        name: kData.HISTORICAL_CASES[1].name,
+        birthDate: kData.HISTORICAL_CASES[1].birthDate,
+        birthLagnaRasiIndex: 5,
+        birthLagnaDeg: 18,
+        birthLagnaMin: 59,
+        targetDate: kData.HISTORICAL_CASES[1].targetDate,
+        customActualAge: { years: 25, months: 9, days: 13 },
+        transitingPlanets: [{ num: 7, name: 'เสาร์', rasiIndex: 5 }]
+    });
+
+    assert(thornRes.sawoei.rasiName === "กันย์", "เคสหลวงธรณ์นิติญาณ ตัวเสวยคือราศีกันย์ (นระ)");
+    assert(thornRes.khat.isKhatActive === true, "เคสหลวงธรณ์นิติญาณ ตรวจพบเกณฑ์ฆาตนระโสโร (เสาร์ทับลัคน์)");
+    assert(thornRes.khat.isLagnaClash === true, "เคสหลวงธรณ์นิติญาณ ตรวจพบลัคน์จรทับลัคน์เดิม");
+
+    // ทดสอบรายงานเส้นทางชีวิต ๐ - ๑๐๐ ปี (calculateLifeTimeline)
+    const timeline = kEngine.calculateLifeTimeline(8, 13, 17, 1247);
+    assert(Array.isArray(timeline) && timeline.length === 101, "รายงานเส้นทางชีวิตคำนวณครบ ๑๐๑ จุด (๐ ถึง ๑๐๐ ปี)");
+    assert(timeline[0].age === 0 && timeline[100].age === 100, "รายงานเส้นทางชีวิตครอบคลุมตั้งแต่แรกเกิดถึง ๑๐๐ ปี");
+    assert(timeline[22].sawoeiRasi === "พิจิก", "อายุ ๒๒ ปี ตัวเสวยตรงกับราศีพิจิก");
+    assert(Array.isArray(timeline[22].sawoeiDetails) && timeline[22].sawoeiDetails.length > 0, "รายงานเส้นทางชีวิตบรรจุรายละเอียดคัมภีร์ตัวเสวยเจาะลึก");
+    assert(Array.isArray(timeline[22].thaekDetails) && timeline[22].thaekDetails.length > 0, "รายงานเส้นทางชีวิตบรรจุรายละเอียดคัมภีร์ตัวแทรกเจาะลึก");
+    assert(typeof timeline[22].advice === "string" && timeline[22].advice.length > 10, "รายงานเส้นทางชีวิตมีคำแนะนำการดำเนินชีวิตประจำปี");
+}
+
+// -----------------------------------------------------------------------------
+// Suite 22: Seven Digits Pisadan System (วิธีดูหมอเลข ๗ ตัว ภาคพิสดาร)
+// -----------------------------------------------------------------------------
+console.log('✨ [Suite 22] Seven Digits Pisadan System Verification');
+
+const pisadanHtmlExists = fs.existsSync('pages/seven-digits-pisadan.html');
+const pisadanDataExists = fs.existsSync('src/data/seven-digits-pisadan-data.js');
+const pisadanEngineExists = fs.existsSync('src/engine/seven-digits-pisadan-engine.js');
+
+assert(pisadanHtmlExists, "มีไฟล์หน้า HTML pages/seven-digits-pisadan.html สำหรับระบบวิธีดูหมอเลข ๗ ตัว ภาคพิสดาร");
+assert(pisadanDataExists, "มีไฟล์ฐานข้อมูลตำรา src/data/seven-digits-pisadan-data.js ครบ ๑๖ บท");
+assert(pisadanEngineExists, "มีไฟล์คำนวณเอนจิน src/engine/seven-digits-pisadan-engine.js");
+
+const tiersCodeSuite22 = fs.readFileSync('src/utils/tiers.js', 'utf8');
+const mainpageCodeSuite22 = fs.readFileSync('src/ui/mainpage.js', 'utf8');
+
+assert(tiersCodeSuite22.includes("'sevenDigitsPisadanPage': 10"), "tiers.js กำหนดสิทธิ์ sevenDigitsPisadanPage ขั้นต่ำระดับเพชร (Tier 10) ขึ้นไป");
+assert(mainpageCodeSuite22.includes("'sevenDigitsPisadanPage'") && mainpageCodeSuite22.includes("pages/seven-digits-pisadan.html"), "mainpage.js ลงทะเบียนการ์ดวิธีดูหมอเลข ๗ ตัว ภาคพิสดาร ในห้องพยากรณ์ (APP_MENU)");
+
+if (pisadanHtmlExists) {
+    const htmlContent = fs.readFileSync('pages/seven-digits-pisadan.html', 'utf8');
+    assert(htmlContent.includes('id="memberSelector"'), "seven-digits-pisadan.html มีช่อง Dropdown เลือกสมาชิกจากประวัติ (id='memberSelector')");
+    assert(htmlContent.includes('initMemberPicker()'), "seven-digits-pisadan.html มีระบบเชื่อมโยงและโหลดข้อมูลสมาชิกอัตโนมัติ (initMemberPicker)");
+    assert(htmlContent.includes('checkDiamondTierAccess()'), "seven-digits-pisadan.html ตรวจสอบสิทธิ์ระดับเพชรก่อนเข้าใช้งาน");
+}
+
+if (pisadanDataExists && pisadanEngineExists) {
+    const pData = require('./src/data/seven-digits-pisadan-data.js');
+    const pEngine = require('./src/engine/seven-digits-pisadan-engine.js');
+
+    // ทดสอบตัวอย่างในตำราบทที่ ๔: พฤหัสบดี (๕) เดือน ๓ ปีระกา (๓)
+    const bookTest = pEngine.calculateChart({
+        dayOfWeek: 5,
+        lunarMonth: 3,
+        zodiacIndex: 10, // ระกา
+        birthDayDate: 9,
+        birthHour: 10,
+        birthMinute: 30,
+        ageYears: 23,
+        ageMonths: 5
+    });
+
+    assert(JSON.stringify(bookTest.matrix.row1) === JSON.stringify([5, 6, 7, 1, 2, 3, 4]), "ฐานที่ ๑ วันพฤหัสบดี ถูกต้อง: 5,6,7,1,2,3,4");
+    assert(JSON.stringify(bookTest.matrix.row2) === JSON.stringify([3, 4, 5, 6, 7, 1, 2]), "ฐานที่ ๒ เดือน ๓ ถูกต้อง: 3,4,5,6,7,1,2");
+    assert(JSON.stringify(bookTest.matrix.row3) === JSON.stringify([3, 4, 5, 6, 7, 1, 2]), "ฐานที่ ๓ ปีระกา ถูกต้อง: 3,4,5,6,7,1,2");
+    assert(JSON.stringify(bookTest.matrix.row4) === JSON.stringify([11, 14, 17, 13, 16, 5, 8]), "ฐานที่ ๔ ผลบวกถูกต้องตามตำรา: 11,14,17,13,16,5,8");
+
+    // ทดสอบอายุย่าง ๒๔ ปี (ปัดขึ้นจาก 23 ปี 5 เดือน)
+    assert(bookTest.actualAge === 24, "อายุ ๒๓ ปี ๕ เดือน ปรับเป็นอายุย่าง ๒๔ ปี");
+    // 24 ปี: 24 - 21 = 3 -> ตกหลักที่ 3 ฐานที่ 1
+    assert(bookTest.ageTransit.base === 1 && bookTest.ageTransit.colIndex === 2, "อายุย่าง ๒๔ ปี ตกฐานที่ ๑ หลักที่ ๓");
+    assert(bookTest.ageTransit.house.name === "ธนัง", "อายุย่าง ๒๔ ปี ตกนิมิต 'ธนัง'");
+
+    // ทดสอบตัวอย่างทายจร ๔ จุด บทที่ ๑๖: อังคาร (๓) เดือน ๒ ปีชวด (๑)
+    const transitTest = pEngine.calculateChart({
+        dayOfWeek: 3,
+        lunarMonth: 2,
+        zodiacIndex: 1, // ชวด
+        birthDayDate: 15,
+        birthHour: 14,
+        birthMinute: 20,
+        ageYears: 23,
+        ageMonths: 5,
+        targetYearZodiac: 3, // ขาล (๓)
+        targetMonth: 7,      // เดือน ๗ (๗)
+        targetDayOfWeek: 6   // ศุกร์ (๖)
+    });
+
+    assert(transitTest.ageTransit.house.name === "ธนัง", "ดวงทายจร: อายุย่าง ๒๔ ปี ตกนิมิต ธนัง");
+    assert(transitTest.transitSummary.year.star === 3, "ดวงทายจร: ปีจรตรงกับดาว ๓ (กัมมะ)");
+    assert(transitTest.transitSummary.month.star === 7, "ดวงทายจร: เดือนจรตรงกับดาว ๗ (อริ)");
+    assert(transitTest.transitSummary.day.star === 6, "ดวงทายจร: วันจรตรงกับดาว ๖ (ปิตา)");
+}
+
 console.log('');
 
 // -----------------------------------------------------------------------------

@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ คัมภีร์วิธีดูหมอเลข ๗ ตัว ภาคพิสดาร (ครบ ๑๖ บท) - สยามโหรามงคล</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;900&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & SweetAlert2 & html2canvas -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/modern-theme.css">
+
+    <style>
+        :root {
+            --sd-gold: #f59e0b;
+            --sd-gold-light: #fef3c7;
+            --sd-gold-dark: #b45309;
+            --sd-gold-gradient: linear-gradient(135deg, #ffffff 0%, #fef3c7 25%, #fcd34d 60%, #f59e0b 100%);
+            --sd-blue: #0284c7;
+            --sd-purple: #8b5cf6;
+            --sd-bg-dark: #0a0f1d;
+            --sd-card-bg: linear-gradient(135deg, rgba(17, 24, 39, 0.94) 0%, rgba(15, 23, 42, 0.98) 100%);
+            --sd-card-border: rgba(245, 158, 11, 0.28);
+            --sd-card-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.25);
+            --sd-radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Prompt', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--sd-bg-dark);
+            color: #f1f5f9;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0 0 80px 0;
+            background-image: 
+                radial-gradient(circle at 12% 15%, rgba(245, 158, 11, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 88% 85%, rgba(139, 92, 246, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(2, 132, 199, 0.09) 0%, transparent 60%),
+                linear-gradient(180deg, #070b16 0%, #0d1527 50%, #080c18 100%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        .sd-wrapper {
+            max-width: 1420px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* Top Bar */
+        .sd-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-back-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(30, 41, 59, 0.85);
+            color: #f1f5f9;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            padding: 9px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+        .btn-back-main:hover {
+            color: #ffd700;
+            background: rgba(51, 65, 85, 0.95);
+            border-color: #ffd700;
+            transform: translateY(-2px);
+        }
+
+        .preset-badge-btn {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            color: #cbd5e1;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .preset-badge-btn:hover {
+            border-color: var(--sd-gold);
+            color: #fef08a;
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        /* Hero Header */
+        .sd-hero {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid var(--sd-card-border);
+            border-radius: var(--sd-radius);
+            padding: 28px 30px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--sd-card-shadow);
+        }
+        .sd-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 320px;
+            height: 100%;
+            background: radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .sd-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fcd34d;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        .sd-hero-title {
+            font-size: 2.1rem;
+            font-weight: 800;
+            margin: 0 0 8px 0;
+            background: var(--sd-gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.3;
+        }
+        .sd-hero-subtitle {
+            color: #cbd5e1;
+            font-size: 0.98rem;
+            line-height: 1.6;
+            margin: 0;
+            max-width: 960px;
+        }
+
+        /* Cards & Containers */
+        .sd-card {
+            background: var(--sd-card-bg);
+            border: 1px solid var(--sd-card-border);
+            border-radius: var(--sd-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--sd-card-shadow);
+            position: relative;
+        }
+
+        .sd-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed rgba(245, 158, 11, 0.25);
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .sd-section-title {
+            color: #fef08a;
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        /* Form Inputs */
+        .sd-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            align-items: flex-end;
+        }
+        .sd-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .sd-input-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sd-input {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            color: #f8fafc;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 0.92rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .sd-input:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .btn-calc-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #0f172a;
+            border: none;
+            padding: 11px 24px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+            width: 100%;
+        }
+        .btn-calc-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(245, 158, 11, 0.55);
+            color: #000000;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+
+        /* ๗ ตัว ๔ ฐาน Table Matrix */
+        .sd-matrix-wrapper {
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            background: rgba(11, 17, 33, 0.9);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.4);
+        }
+        .sd-matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            min-width: 720px;
+        }
+        .sd-matrix-table th, .sd-matrix-table td {
+            padding: 12px 10px;
+            border: 1px solid rgba(245, 158, 11, 0.18);
+        }
+        .sd-matrix-table th {
+            background: rgba(30, 41, 59, 0.85);
+            color: #fcd34d;
+            font-weight: 700;
+            font-size: 0.88rem;
+            letter-spacing: 0.3px;
+        }
+        .sd-matrix-table td.header-col {
+            background: rgba(30, 41, 59, 0.65);
+            color: #fef08a;
+            font-weight: 700;
+            text-align: left;
+            padding-left: 16px;
+            font-size: 0.9rem;
+            width: 170px;
+        }
+        .sd-num-cell {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #f8fafc;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .sd-num-cell .house-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+        .sd-num-cell.lagna-highlight {
+            background: rgba(139, 92, 246, 0.25);
+            border: 2px solid #a855f7 !important;
+            border-radius: 8px;
+        }
+        .sd-num-cell.lagna-highlight::after {
+            content: '(ลั)';
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 0.72rem;
+            color: #c084fc;
+            font-weight: 800;
+        }
+        .sd-num-cell.age-highlight {
+            background: rgba(245, 158, 11, 0.25);
+            border: 2px solid #f59e0b !important;
+            border-radius: 8px;
+        }
+        .sd-num-cell.age-highlight::before {
+            content: 'อายุจร';
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            font-size: 0.68rem;
+            color: #fcd34d;
+            font-weight: 700;
+        }
+        .row4-cell {
+            background: rgba(245, 158, 11, 0.12);
+            font-size: 1.45rem;
+            font-weight: 900;
+            color: #fbbf24;
+        }
+        .row4-cell.high-tier {
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.15);
+        }
+        .row4-cell.low-tier {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.12);
+        }
+
+        /* Navigation Tabs */
+        .sd-tabs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .sd-tab-btn {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            color: #cbd5e1;
+            border-radius: 14px;
+            padding: 14px 16px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sd-tab-btn:hover {
+            border-color: #f59e0b;
+            background: rgba(30, 41, 59, 0.9);
+            color: #fef08a;
+            transform: translateY(-2px);
+        }
+        .sd-tab-btn.active {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(180, 83, 9, 0.3) 100%);
+            border-color: #f59e0b;
+            color: #ffffff;
+            box-shadow: 0 4px 18px rgba(245, 158, 11, 0.25);
+        }
+        .tab-icon {
+            font-size: 1.4rem;
+            color: #f59e0b;
+        }
+        .sd-tab-btn.active .tab-icon {
+            color: #fef08a;
+        }
+
+        /* Result Sections */
+        .tab-content-area {
+            animation: fadeIn 0.35s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+        .badge-gold {
+            background: rgba(245, 158, 11, 0.18);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fde047;
+        }
+        .badge-green {
+            background: rgba(34, 197, 94, 0.18);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #86efac;
+        }
+        .badge-red {
+            background: rgba(239, 68, 68, 0.18);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+        }
+        .badge-blue {
+            background: rgba(2, 132, 199, 0.18);
+            border: 1px solid rgba(2, 132, 199, 0.4);
+            color: #7dd3fc;
+        }
+
+        .sd-callout {
+            background: rgba(30, 41, 59, 0.6);
+            border-left: 4px solid var(--sd-gold);
+            padding: 14px 18px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 14px;
+            line-height: 1.6;
+            color: #e2e8f0;
+            font-size: 0.94rem;
+        }
+
+        .sd-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+        }
+
+        .sd-detail-box {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 14px;
+            padding: 16px 18px;
+            transition: all 0.2s;
+        }
+        .sd-detail-box:hover {
+            border-color: rgba(245, 158, 11, 0.45);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        }
+        .sd-box-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fde047;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tier Lock Overlay */
+        #tierLockOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(7, 11, 22, 0.92);
+            backdrop-filter: blur(12px);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            text-align: center;
+        }
+        .lock-dialog {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.45);
+            border-radius: 24px;
+            padding: 40px 32px;
+            max-width: 520px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(245, 158, 11, 0.25);
+        }
+        .lock-icon {
+            font-size: 3.5rem;
+            color: #f59e0b;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        @media (max-width: 768px) {
+            .sd-hero-title { font-size: 1.6rem; }
+            .sd-card { padding: 18px 14px; }
+            .sd-tabs-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🔒 Overlay ตรวจสอบสิทธิ์ระดับเพชร -->
+    <div id="tierLockOverlay">
+        <div class="lock-dialog">
+            <i class="fas fa-lock lock-icon"></i>
+            <h2 style="color: #fef08a; font-weight: 800; font-size: 1.55rem; margin-bottom: 12px;">
+                สิทธิพิเศษระดับเพชรขึ้นไป (Diamond Tier)
+            </h2>
+            <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px;">
+                คัมภีร์วิธีดูหมอเลข ๗ ตัว ภาคพิสดาร (ครบ ๑๖ บทแม่บทโบราณ)<br>
+                ระบบจำแนกผัง ๔ ฐาน ยามอัฏฐกาล ลัคนา คู่มิตร-ศัตรู-ธาตุ-สมพล และการทายจร ๔ จุด<br>
+                <span style="color: #f87171; font-weight: 600;">⚠️ แพ็กเกจปัจจุบันของคุณยังไม่ถึงเกณฑ์สิทธิ์การเข้าใช้งาน</span>
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" class="btn-back-main" onclick="window.location.href='../index.html#mainpage'">
+                    <i class="fas fa-arrow-left"></i> กลับห้องพยากรณ์
+                </button>
+                <button type="button" class="btn-calc-gold" style="width: auto;" onclick="window.location.href='../index.html#package'">
+                    <i class="fas fa-crown"></i> อัปเกรดระดับเพชร
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sd-wrapper">
+        <!-- Top Navigation Bar -->
+        <div class="sd-top-bar">
+            <a href="../index.html#mainpage" class="btn-back-main">
+                <i class="fas fa-chevron-left"></i> ย้อนกลับห้องพยากรณ์
+            </a>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="preset-badge-btn" onclick="window.location.href='../index.html#knowledgePage'">
+                    <i class="fas fa-book-open text-warning"></i> หอสมุดโหราศาสตร์
+                </button>
+                <button type="button" class="preset-badge-btn" onclick="loadBookExample()">
+                    <i class="fas fa-scroll text-info"></i> ตัวอย่างในตำรา: พฤหัสบดี เดือน ๓ ปีระกา
+                </button>
+                <button type="button" class="preset-badge-btn" onclick="loadTransitExample()">
+                    <i class="fas fa-clock text-success"></i> ตัวอย่างทายจร: อังคาร เดือน ๒ ปีชวด (อายุ ๒๔)
+                </button>
+            </div>
+        </div>
+
+        <!-- 7-Digits Master Suite Switcher Bar -->
+        <div class="hub-nav-bar">
+            <a href="../index.html#sevenDigitsPage" class="hub-nav-item">
+                🔢 ผัง ๔ ฐานดั้งเดิม
+            </a>
+            <a href="taksasattalek.html" class="hub-nav-item">
+                📜 คัมภีร์มหาทักษาสัตตเลข
+            </a>
+            <button type="button" class="hub-nav-item active">
+                ✨ วิธีดูหมอ ภาคพิสดาร (๑๖ บท)
+            </button>
+        </div>
+
+        <!-- Hero Header -->
+        <div class="sd-hero">
+            <div class="sd-hero-badge">
+                <i class="fas fa-gem"></i> สิทธิพิเศษระดับเพชรขึ้นไป • Diamond & Above
+            </div>
+            <h1 class="sd-hero-title">✨ วิธีดูหมอเลข ๗ ตัว ภาคพิสดาร</h1>
+            <p class="sd-hero-subtitle">
+                ศาสตร์รากเหง้าโหราศาสตร์ไทยโบราณ ผูกดวงชะตา ๔ ฐาน ๗ หลัก ถอดรหัสวาสนาบารมี คู่ดาวสัมฤทธิ์ผล ยามอัฏฐกาล ลัคนาเกาะกุมนิยาม และหลักการพยากรณ์จรครบ ๔ จุด (อายุจร • ปีจร • เดือนจร • วันจร) ตรงตามต้นฉบับตำราครูบาอาจารย์
+            </p>
+        </div>
+
+        <!-- Member Picker & Configuration Drawer -->
+        <div class="sd-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;">
+                <div style="flex: 1; min-width: 280px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 0.9rem; font-weight: 700; color: #fef08a; white-space: nowrap;">
+                        <i class="fas fa-user-circle text-warning"></i> เลือกเจ้าชะตา:
+                    </span>
+                    <select id="memberSelector" class="sd-input" style="width: 100%; font-weight: 600;" onchange="onMemberSelected(this.value)">
+                        <option value="">-- เลือกสมาชิกจากประวัติ (Auto-Fill) --</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn-calc-gold" style="width: auto; padding: 10px 22px;" onclick="calculateAndRenderAll()">
+                        <i class="fas fa-calculator"></i> คำนวณผังดวงพิสดาร
+                    </button>
+                </div>
+            </div>
+
+            <!-- Parameters Grid Form -->
+            <div class="sd-form-grid">
+                <div class="sd-input-group">
+                    <label class="sd-input-label"><i class="fas fa-user"></i> ชื่อเจ้าชะตา:</label>
+                    <input type="text" id="personName" class="sd-input" value="เจ้าชะตา">
+                </div>
+                <div class="sd-input-group">
+                    <label class="sd-input-label"><i class="fas fa-calendar-day"></i> วันเกิด (ประจำสัปดาห์):</label>
+                    <select id="birthDayOfWeek" class="sd-input" onchange="calculateAndRenderAll()">
+                        <option value="1">วันอาทิตย์ (๑)</option>
+                        <option value="2">วันจันทร์ (๒)</option>
+                        <option value="3">วันอังคาร (๓)</option>
+                        <option value="4">วันพุธ (๔)</option>
+                        <option value="5" selected>วันพฤหัสบดี (๕)</option>
+                        <option value="6">วันศุกร์ (๖)</option>
+                        <option value="7">วันเสาร์ (๗)</option>
+                    </select>
+                </div>
+                <div class="sd-input-group">
+                    <label class="sd-input-label"><i class="fas fa-moon"></i> เดือนเกิด (จันทรคติไทย ๑-๑๒):</label>
+                    <select id="birthMonth" class="sd-input" onchange="calculateAndRenderAll()">
+                        <option value="1">เดือนอ้าย (๑ / ๘ - ๗ = ๑)</option>
+                        <option value="2">เดือนยี่ (๒ / ๙ - ๗ = ๒)</option>
+                        <option value="3" selected>เดือนสาม (๓ / มีนาคม / ๑๐ - ๗ = ๓)</option>
+                        <option value="4">เดือนสี่ (๔ / ๑๑ - ๗ = ๔)</option>
+                        <option value="5">เดือนห้า (๕ / ๑๒ - ๗ = ๕)</option>
+                        <option value="6">เดือนหก (๖)</option>
+                        <option value="7">เดือนเจ็ด (๗)</option>
+                        <option value="8">เดือนแปด (๘)</option>
+                        <option value="9">เดือนเก้า (๙)</option>
+                        <option value="10">เดือนสิบ (๑๐)</option>
+                        <option value="11">เดือนสิบเอ็ด (๑๑)</option>
+                        <option value="12">เดือนสิบสอง (๑๒)</option>
+                    </select>
+                </div>
+                <div class="sd-input-group">
+                    <label class="sd-input-label"><i class="fas fa-dragon"></i> ปีเกิด (๑๒ นักษัตร):</label>
+                    <select id="birthZodiac" class="sd-input" onchange="calculateAndRenderAll()">
+                        <option value="1">ปีชวด (๑)</option>
+                        <option value="2">ปีฉลู (๒)</option>
+                        <option value="3">ปีขาล (๓)</option>
+                        <option value="4">ปีเถาะ (๔)</option>
+                        <option value="5">ปีมะโรง (๕)</option>
+                        <option value="6">ปีมะเส็ง (๖)</option>
+                        <option value="7">ปีมะเมีย (๗)</option>
+                        <option value="8">ปีมะแม (๘ - ๗ = ๑)</option>
+                        <option value="9">ปีวอก (๙ - ๗ = ๒)</option>
+                        <option value="10" selected>ปีระกา (๑๐ - ๗ = ๓)</option>
+                        <option value="11">ปีจอ (๑๑ - ๗ = ๔)</option>
+                        <option value="12">ปีกุน (๑๒ - ๗ = ๕)</option>
+                    </select>
+                </div>
+                <div class="sd-input-group">
+                    <label class="sd-input-label"><i class="fas fa-calendar-alt"></i> วันเดือนปีเกิด (สากล):</label>
+                    <input type="date" id="birthDate" class="sd-input" onchange="onBirthDateChange()">
+                </div>
+                <div class="sd-input-group">
+                    <label class="sd-input-label"><i class="fas fa-calendar-alt"></i> วันที่เกิด (๑ - ๓๑):</label>
+                    <input type="number" id="birthDateNum" class="sd-input" value="9" min="1" max="31" onchange="calculateAndRenderAll()">
+                </div>
+                <div class="sd-input-group">
+                    <label class="sd-input-label"><i class="fas fa-clock"></i> เวลาเกิด (ยามอัฏฐกาล):</label>
+                    <input type="time" id="birthTime" class="sd-input" value="10:30" onchange="calculateAndRenderAll()">
+                </div>
+                <div class="sd-input-group">
+                    <label class="sd-input-label"><i class="fas fa-birthday-cake"></i> อายุเต็ม (ปี):</label>
+                    <input type="number" id="currentAgeYear" class="sd-input" value="31" min="0" max="120" placeholder="ปี" onchange="calculateAndRenderAll()">
+                </div>
+                <div class="sd-input-group">
+                    <label class="sd-input-label"><i class="fas fa-hourglass-half"></i> เศษเดือน (๐ - ๑๑ เดือน):</label>
+                    <input type="number" id="currentAgeMonth" class="sd-input" value="0" min="0" max="11" placeholder="เศษเดือน" onchange="calculateAndRenderAll()">
+                </div>
+            </div>
+
+            <!-- Parameters for Transits (พารามิเตอร์ทายจร 4 จุด) -->
+            <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed rgba(245, 158, 11, 0.25); display: flex; flex-wrap: wrap; gap: 14px; align-items: center;">
+                <span style="font-size: 0.86rem; font-weight: 700; color: #38bdf8;">
+                    <i class="fas fa-compass"></i> เกณฑ์ตั้งค่าจร ๔ จุด (พยากรณ์จรปัจจุบัน/อนาคต):
+                </span>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; flex: 1;">
+                    <select id="targetYearZodiac" class="sd-input" style="flex: 1; min-width: 140px;" onchange="calculateAndRenderAll()">
+                        <option value="">-- ปีจร (ปีปัจจุบัน) --</option>
+                        <option value="1">ปีชวด (๑)</option>
+                        <option value="2">ปีฉลู (๒)</option>
+                        <option value="3" selected>ปีขาล (๓)</option>
+                        <option value="4">ปีเถาะ (๔)</option>
+                        <option value="5">ปีมะโรง (๕)</option>
+                        <option value="6">ปีมะเส็ง (๖)</option>
+                        <option value="7">ปีมะเมีย (๗)</option>
+                        <option value="8">ปีมะแม (๑)</option>
+                        <option value="9">ปีวอก (๒)</option>
+                        <option value="10">ปีระกา (๓)</option>
+                        <option value="11">ปีจอ (๔)</option>
+                        <option value="12">ปีกุน (๕)</option>
+                    </select>
+                    <select id="targetMonth" class="sd-input" style="flex: 1; min-width: 140px;" onchange="calculateAndRenderAll()">
+                        <option value="">-- เดือนจร (๑-๑๒) --</option>
+                        <option value="1">เดือนอ้าย (๑)</option>
+                        <option value="2">เดือนยี่ (๒)</option>
+                        <option value="3">เดือนสาม (๓)</option>
+                        <option value="4">เดือนสี่ (๔)</option>
+                        <option value="5">เดือนห้า (๕)</option>
+                        <option value="6">เดือนหก (๖)</option>
+                        <option value="7" selected>เดือนเจ็ด (๗)</option>
+                        <option value="8">เดือนแปด (๑)</option>
+                        <option value="9">เดือนเก้า (๒)</option>
+                        <option value="10">เดือนสิบ (๓)</option>
+                        <option value="11">เดือนสิบเอ็ด (๔)</option>
+                        <option value="12">เดือนสิบสอง (๕)</option>
+                    </select>
+                    <select id="targetDayOfWeek" class="sd-input" style="flex: 1; min-width: 140px;" onchange="calculateAndRenderAll()">
+                        <option value="">-- วันจร (๑-๗) --</option>
+                        <option value="1">วันอาทิตย์ (๑)</option>
+                        <option value="2">วันจันทร์ (๒)</option>
+                        <option value="3">วันอังคาร (๓)</option>
+                        <option value="4">วันพุธ (๔)</option>
+                        <option value="5">วันพฤหัสบดี (๕)</option>
+                        <option value="6" selected>วันศุกร์ (๖)</option>
+                        <option value="7">วันเสาร์ (๗)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ๗ ตัว ๔ ฐาน Table Matrix Display -->
+        <div class="sd-card">
+            <div class="sd-section-header">
+                <h3 class="sd-section-title">
+                    <i class="fas fa-th text-warning"></i> ผังพยากรณ์เลข ๗ ตัว ๔ ฐาน (มหาคัมภีร์พิสดาร)
+                </h3>
+                <div id="chartBadgeSummary" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+            </div>
+
+            <div class="sd-matrix-wrapper">
+                <table class="sd-matrix-table" id="matrixTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 170px;">ฐานพยากรณ์</th>
+                            <th>หลักที่ ๑</th>
+                            <th>หลักที่ ๒</th>
+                            <th>หลักที่ ๓</th>
+                            <th>หลักที่ ๔</th>
+                            <th>หลักที่ ๕</th>
+                            <th>หลักที่ ๖</th>
+                            <th>หลักที่ ๗</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrixTableBody">
+                        <!-- Rendered by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top: 12px; font-size: 0.84rem; color: #94a3b8; display: flex; gap: 16px; flex-wrap: wrap;">
+                <span><i class="fas fa-square" style="color: #f59e0b;"></i> กรอบสีทอง: ตำแหน่งอายุย่างจรตก</span>
+                <span><i class="fas fa-square" style="color: #a855f7;"></i> กรอบสีม่วง (ลั): ลัคนาตามยามอัฏฐกาลเกาะกุม</span>
+                <span><i class="fas fa-circle text-success"></i> ฐานบวกเขียว: ฐานบวกระดับสูง</span>
+                <span><i class="fas fa-circle text-danger"></i> ฐานบวกแดง: ฐานบวกระดับต่ำ</span>
+            </div>
+        </div>
+
+        <!-- 📑 หมวดหมู่เนื้อหาการพยากรณ์ ๘ แท็บหลัก (ครอบคลุมครบทั้ง ๑๖ บท) -->
+        <div class="sd-tabs-container">
+            <button class="sd-tab-btn active" onclick="switchTab('tabBase4', this)">
+                <i class="fas fa-crown tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">บทที่ ๔, ๕</div>
+                    <div>วาสนาฐาน ๔ & คู่ดาว</div>
+                </div>
+            </button>
+            <button class="sd-tab-btn" onclick="switchTab('tabTransits', this)">
+                <i class="fas fa-clock tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">บทที่ ๑๓, ๑๖</div>
+                    <div>พยากรณ์จร ๔ จุด & อายุย่าง</div>
+                </div>
+            </button>
+            <button class="sd-tab-btn" onclick="switchTab('tabYarmLagna', this)">
+                <i class="fas fa-compass tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">บทที่ ๑๒, ๑๕</div>
+                    <div>ยามอัฏฐกาล & ลัคนาเกาะกุม</div>
+                </div>
+            </button>
+            <button class="sd-tab-btn" onclick="switchTab('tabRelations', this)">
+                <i class="fas fa-project-diagram tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">บทที่ ๒, ๓</div>
+                    <div>นิยามสัมพันธ์ ๓ ฐาน</div>
+                </div>
+            </button>
+            <button class="sd-tab-btn" onclick="switchTab('tabPersonality', this)">
+                <i class="fas fa-user-astronaut tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">บทที่ ๖, ๑๑, ๑๔</div>
+                    <div>บุคคล • นิสัย • คำพูด • วันที่</div>
+                </div>
+            </button>
+            <button class="sd-tab-btn" onclick="switchTab('tabSoulmate', this)">
+                <i class="fas fa-heart tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">บทที่ ๘</div>
+                    <div>คู่ครอง • บุตร • แนวอาชีพ</div>
+                </div>
+            </button>
+            <button class="sd-tab-btn" onclick="switchTab('tabKaliyoke', this)">
+                <i class="fas fa-shield-alt tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">บทที่ ๙, ๑๐</div>
+                    <div>ดิถีกำเนิด & กาลโยค</div>
+                </div>
+            </button>
+            <button class="sd-tab-btn" onclick="switchTab('tabMystery', this)">
+                <i class="fas fa-search tab-icon"></i>
+                <div>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">บทที่ ๗, ๑๖</div>
+                    <div>อวัยวะ • ของหาย • ลองวิชา</div>
+                </div>
+            </button>
+        </div>
+
+        <!-- 📦 Tab Content Containers -->
+        <!-- Tab 1: วาสนาฐาน ๔ & คู่ดาวสัมฤทธิ์ผล -->
+        <div id="tabBase4" class="tab-content-area">
+            <div class="sd-card">
+                <div class="sd-section-header">
+                    <h3 class="sd-section-title">
+                        <i class="fas fa-medal text-warning"></i> บทที่ ๔ & ๕: การวิเคราะห์วาสนาบารมีฐานที่ ๔ และความสัมพันธ์คู่ดาว
+                    </h3>
+                </div>
+                <div id="base4CardsContainer" class="sd-detail-grid">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: พยากรณ์จร 4 จุด & อายุย่างจร -->
+        <div id="tabTransits" class="tab-content-area" style="display: none;">
+            <div class="sd-card">
+                <div class="sd-section-header">
+                    <h3 class="sd-section-title">
+                        <i class="fas fa-hourglass-half text-warning"></i> บทที่ ๑๓ & ๑๖: การพยากรณ์ชะตาจร ๔ จุด (อายุจร • ปีจร • เดือนจร • วันจร)
+                    </h3>
+                </div>
+                <div id="transitsContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: ยามอัฏฐกาล & ลัคนาเกาะกุม -->
+        <div id="tabYarmLagna" class="tab-content-area" style="display: none;">
+            <div class="sd-card">
+                <div class="sd-section-header">
+                    <h3 class="sd-section-title">
+                        <i class="fas fa-clock text-warning"></i> บทที่ ๑๒ & ๑๕: ยามอัฏฐกาลตกฟาก และการวางลัคนา (ลั) ในแผงดวง ๓ ฐาน
+                    </h3>
+                </div>
+                <div id="yarmLagnaContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: นิยามสัมพันธ์ 3 ฐาน -->
+        <div id="tabRelations" class="tab-content-area" style="display: none;">
+            <div class="sd-card">
+                <div class="sd-section-header">
+                    <h3 class="sd-section-title">
+                        <i class="fas fa-project-diagram text-warning"></i> บทที่ ๒ & ๓: ถอดรหัสการพิจารณาพื้นชะตาจากการสัมพันธ์ของนิยามทั้ง ๓ ฐาน
+                    </h3>
+                </div>
+                <div id="relationsContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: บุคคล นิสัย คำพูด วันที่ 1-31 -->
+        <div id="tabPersonality" class="tab-content-area" style="display: none;">
+            <div class="sd-card">
+                <div class="sd-section-header">
+                    <h3 class="sd-section-title">
+                        <i class="fas fa-user-tag text-warning"></i> บทที่ ๖, ๑๑ & ๑๔: บุคลิกบุคคล • อุปนิสัย • คำพูดการเจรจา • อิทธิพลเลขวันเกิด (๑-๓๑)
+                    </h3>
+                </div>
+                <div id="personalityContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 6: คู่ครอง บุตร แนวอาชีพ -->
+        <div id="tabSoulmate" class="tab-content-area" style="display: none;">
+            <div class="sd-card">
+                <div class="sd-section-header">
+                    <h3 class="sd-section-title">
+                        <i class="fas fa-user-friends text-warning"></i> บทที่ ๘: หลักเกณฑ์พิจารณาคู่ครอง บุตรสืบสกุล และแนวโน้มอาชีพ
+                    </h3>
+                </div>
+                <div id="soulmateContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 7: ดิถีกำเนิด & กาลโยค -->
+        <div id="tabKaliyoke" class="tab-content-area" style="display: none;">
+            <div class="sd-card">
+                <div class="sd-section-header">
+                    <h3 class="sd-section-title">
+                        <i class="fas fa-balance-scale text-warning"></i> บทที่ ๙ & ๑๐: ดิถีกำเนิด (มหาสูญ-พิฆาต-กระทิงวัน-ผีโขมด) และการนำกาลโยคพิจารณาร่วม
+                    </h3>
+                </div>
+                <div id="kaliyokeContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 8: อวัยวะ ของหาย ลองวิชา -->
+        <div id="tabMystery" class="tab-content-area" style="display: none;">
+            <div class="sd-card">
+                <div class="sd-section-header">
+                    <h3 class="sd-section-title">
+                        <i class="fas fa-eye text-warning"></i> บทที่ ๗ & ๑๖: อวัยวะและโรคภัย • การจับยามดูของหาย • ลักษณะคนร้าย • การทดสอบผู้มาให้ทาย (ลองวิชา)
+                    </h3>
+                </div>
+                <div id="mysteryContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="../src/data/seven-digits-pisadan-data.js"></script>
+    <script src="../src/engine/seven-digits-pisadan-engine.js"></script>
+
+    <script>
+        // 🔒 ตรวจสอบสิทธิ์ระดับเพชร (Tier 10)
+        function checkDiamondTierAccess() {
+            let hasAccess = true;
+            if (typeof window.hasPackagePermission === 'function') {
+                hasAccess = window.hasPackagePermission('sevenDigitsPisadanPage');
+            } else {
+                try {
+                    const raw = localStorage.getItem('siamhora_auth_session');
+                    if (raw) {
+                        const sess = JSON.parse(raw);
+                        if (sess.role === 'admin' || sess.role === 'data_manager') return true;
+                        const pkg = sess.package || 'ทดลองใช้';
+                        const pkgOrder = ["ทดลองใช้", "ธรรมดา", "ทองแดง", "เงิน", "ทองคำ", "ทองคำขาว", "ไข่มุก", "ทับทิม", "ไพฑูรย์", "มรกต", "เพชร", "มงกุฎ", "มงกุฎเพชร", "ไตรมงกุฎ", "เพชรยอดมงกุฎ", "วิมาน"];
+                        const pIdx = pkgOrder.indexOf(pkg);
+                        if (pIdx < 10) hasAccess = false;
+                    }
+                } catch(e) {}
+            }
+
+            const overlay = document.getElementById('tierLockOverlay');
+            if (!hasAccess) {
+                if (overlay) overlay.style.display = 'flex';
+                return false;
+            } else {
+                if (overlay) overlay.style.display = 'none';
+                return true;
+            }
+        }
+
+        // สลับแท็บ
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content-area').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.sd-tab-btn').forEach(b => b.classList.remove('active'));
+            
+            const target = document.getElementById(tabId);
+            if (target) target.style.display = 'block';
+            if (btn) btn.classList.add('active');
+        }
+
+        // โหลดข้อมูลสมาชิกจาก localStorage
+        function initMemberPicker() {
+            const sel = document.getElementById('memberSelector');
+            if (!sel) return;
+
+            try {
+                const raw = localStorage.getItem('horo_history');
+                if (raw) {
+                    const list = JSON.parse(raw);
+                    if (Array.isArray(list) && list.length > 0) {
+                        sel.innerHTML = '<option value="">-- เลือกสมาชิกจากประวัติ (Auto-Fill) --</option>';
+                        list.forEach((m, idx) => {
+                            const opt = document.createElement('option');
+                            opt.value = idx;
+                            const fullName = `${m.name || 'ไม่มีชื่อ'} ${m.lastName || ''}`.trim();
+                            opt.textContent = `👤 ${m.memberId ? `[${m.memberId}] ` : ''}${fullName} (${m.birthdate || 'ไม่ระบุวันเกิด'})`;
+                            sel.appendChild(opt);
+                        });
+
+                        sel.selectedIndex = 1;
+                        onMemberSelected(0);
+                        return;
+                    }
+                }
+            } catch(e) {
+                console.warn("Member load error:", e);
+            }
+            calculateAndRenderAll();
+        }
+
+        function onBirthDateChange() {
+            const bDateStr = document.getElementById('birthDate').value;
+            if (!bDateStr) return;
+            const parts = bDateStr.split('-');
+            if (parts.length === 3) {
+                const birthDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                if (!isNaN(birthDate.getTime())) {
+                    // กำหนดวันในสัปดาห์
+                    const dayOfWeek = birthDate.getDay();
+                    document.getElementById('birthDayOfWeek').value = dayOfWeek === 0 ? 1 : dayOfWeek + 1;
+                    document.getElementById('birthDateNum').value = birthDate.getDate();
+
+                    // คำนวณอายุจริง (ปีเต็ม และ เศษเดือน)
+                    const now = new Date();
+                    let years = now.getFullYear() - birthDate.getFullYear();
+                    let months = now.getMonth() - birthDate.getMonth();
+                    if (now.getDate() < birthDate.getDate()) {
+                        months--;
+                    }
+                    if (months < 0) {
+                        years--;
+                        months += 12;
+                    }
+                    if (years < 0) { years = 0; months = 0; }
+
+                    document.getElementById('currentAgeYear').value = years;
+                    document.getElementById('currentAgeMonth').value = months;
+                }
+            }
+            calculateAndRenderAll();
+        }
+
+        function onMemberSelected(idx) {
+            if (idx === "" || idx === undefined) return;
+            try {
+                const list = JSON.parse(localStorage.getItem('horo_history') || '[]');
+                const m = list[idx];
+                if (!m) return;
+
+                document.getElementById('personName').value = `${m.name || ''} ${m.lastName || ''}`.trim() || 'เจ้าชะตา';
+                if (m.birthdate) {
+                    let bDate = m.birthdate;
+                    if (bDate.includes('/')) {
+                        const parts = bDate.split('/');
+                        if (parts.length === 3) {
+                            let y = parseInt(parts[2]);
+                            if (y > 2400) y -= 543;
+                            bDate = `${y}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                        }
+                    }
+                    document.getElementById('birthDate').value = bDate;
+                    
+                    const parts = bDate.split('-');
+                    if (parts.length === 3) {
+                        const birthDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                        if (!isNaN(birthDate.getTime())) {
+                            const dayOfWeek = birthDate.getDay();
+                            document.getElementById('birthDayOfWeek').value = dayOfWeek === 0 ? 1 : dayOfWeek + 1;
+                            document.getElementById('birthDateNum').value = birthDate.getDate();
+
+                            const now = new Date();
+                            let years = now.getFullYear() - birthDate.getFullYear();
+                            let months = now.getMonth() - birthDate.getMonth();
+                            if (now.getDate() < birthDate.getDate()) {
+                                months--;
+                            }
+                            if (months < 0) {
+                                years--;
+                                months += 12;
+                            }
+                            if (years < 0) { years = 0; months = 0; }
+
+                            document.getElementById('currentAgeYear').value = years;
+                            document.getElementById('currentAgeMonth').value = months;
+                        }
+                    }
+                }
+                if (m.birthtime) {
+                    document.getElementById('birthTime').value = m.birthtime.substring(0, 5);
+                }
+                if (m.birthMonththai) {
+                    document.getElementById('birthMonth').value = parseInt(m.birthMonththai) || 3;
+                }
+                if (m.zodiac) {
+                    const zodiacs = ["ชวด", "ฉลู", "ขาล", "เถาะ", "มะโรง", "มะเส็ง", "มะเมีย", "มะแม", "วอก", "ระกา", "จอ", "กุน"];
+                    const zIdx = zodiacs.findIndex(z => m.zodiac.includes(z));
+                    if (zIdx !== -1) {
+                        document.getElementById('birthZodiac').value = zIdx + 1;
+                    }
+                }
+                if (m.age && (!m.birthdate || isNaN(document.getElementById('currentAgeYear').value))) {
+                    document.getElementById('currentAgeYear').value = parseInt(m.age) || 31;
+                }
+            } catch(e) {}
+            calculateAndRenderAll();
+        }
+
+        // โหลดเคสตัวอย่างในตำรา (บทที่ ๔)
+        function loadBookExample() {
+            document.getElementById('personName').value = "ตัวอย่างในตำรา (บทที่ ๔)";
+            document.getElementById('birthDayOfWeek').value = 5; // พฤหัสบดี
+            document.getElementById('birthMonth').value = 3;     // มีนาคม / เดือน 3
+            document.getElementById('birthZodiac').value = 10;   // ปีระกา (3)
+            document.getElementById('birthDateNum').value = 9;
+            document.getElementById('birthTime').value = "10:30";
+            document.getElementById('currentAgeYear').value = 23;
+            document.getElementById('currentAgeMonth').value = 5;
+            calculateAndRenderAll();
+            Swal.fire({
+                icon: 'success',
+                title: 'โหลดตัวอย่างในตำราสำเร็จ',
+                text: 'เกิดวันพฤหัสบดี (๕) เดือนสาม (๓) ปีระกา (๓) ผลบวกฐาน ๔: ๑๑, ๑๔, ๑๗, ๑๓, ๑๖, ๕, ๘',
+                confirmButtonColor: '#f59e0b'
+            });
+        }
+
+        // โหลดเคสตัวอย่างทายจร 4 จุด (บทที่ ๑๖)
+        function loadTransitExample() {
+            document.getElementById('personName').value = "ตัวอย่างทายจร (บทที่ ๑๖)";
+            document.getElementById('birthDayOfWeek').value = 3; // อังคาร
+            document.getElementById('birthMonth').value = 2;     // เดือนยี่ (๒)
+            document.getElementById('birthZodiac').value = 1;    // ปีชวด (๑)
+            document.getElementById('birthDateNum').value = 15;
+            document.getElementById('birthTime').value = "14:20";
+            document.getElementById('currentAgeYear').value = 23;
+            document.getElementById('currentAgeMonth').value = 5; // อายุย่าง 24
+            document.getElementById('targetYearZodiac').value = 3; // ปีขาล (กัมมะ)
+            document.getElementById('targetMonth').value = 7;      // เดือน 7 (อริ)
+            document.getElementById('targetDayOfWeek').value = 6;  // วันศุกร์ (ปิตา)
+            calculateAndRenderAll();
+            switchTab('tabTransits', document.querySelectorAll('.sd-tab-btn')[1]);
+            Swal.fire({
+                icon: 'info',
+                title: 'โหลดตัวอย่างทายจรสำเร็จ',
+                text: 'อายุย่าง ๒๔ ปี ตก ธนัง | ปีจรตก กัมมะ | เดือนจรตก อริ | วันจรตก ปิตา',
+                confirmButtonColor: '#0284c7'
+            });
+        }
+
+        // ฟังก์ชันหลัก: คำนวณและเรนเดอร์เนื้อหาทั้งหมด
+        function calculateAndRenderAll() {
+            const dayOfWeek = parseInt(document.getElementById('birthDayOfWeek').value) || 1;
+            const lunarMonth = parseInt(document.getElementById('birthMonth').value) || 1;
+            const zodiacIndex = parseInt(document.getElementById('birthZodiac').value) || 1;
+            const birthDayDate = parseInt(document.getElementById('birthDateNum').value) || 1;
+            const timeStr = document.getElementById('birthTime').value || "12:00";
+            const [bHour, bMin] = timeStr.split(':').map(Number);
+            const ageYears = parseInt(document.getElementById('currentAgeYear').value) || 0;
+            const ageMonths = parseInt(document.getElementById('currentAgeMonth').value) || 0;
+
+            const targetYearZodiac = document.getElementById('targetYearZodiac').value ? parseInt(document.getElementById('targetYearZodiac').value) : null;
+            const targetMonth = document.getElementById('targetMonth').value ? parseInt(document.getElementById('targetMonth').value) : null;
+            const targetDayOfWeek = document.getElementById('targetDayOfWeek').value ? parseInt(document.getElementById('targetDayOfWeek').value) : null;
+
+            const res = SevenDigitsPisadanEngine.calculateChart({
+                dayOfWeek,
+                lunarMonth,
+                zodiacIndex,
+                birthDayDate,
+                birthHour: bHour || 12,
+                birthMinute: bMin || 0,
+                ageYears,
+                ageMonths,
+                targetYearZodiac,
+                targetMonth,
+                targetDayOfWeek
+            });
+
+            renderMatrixTable(res);
+            renderBase4Tab(res);
+            renderTransitsTab(res);
+            renderYarmLagnaTab(res);
+            renderRelationsTab(res);
+            renderPersonalityTab(res);
+            renderSoulmateTab(res);
+            renderKaliyokeTab(res);
+            renderMysteryTab(res);
+        }
+
+        // 1. เรนเดอร์ผังเลข 7 ตัว 4 ฐาน
+        function renderMatrixTable(res) {
+            const tbody = document.getElementById('matrixTableBody');
+            const data = SevenDigitsPisadanData;
+
+            const rowsMeta = [
+                { name: "ฐานที่ ๑ (วันเกิด)", row: res.matrix.row1, houses: data.positions.base1, baseNum: 1 },
+                { name: "ฐานที่ ๒ (เดือนเกิด)", row: res.matrix.row2, houses: data.positions.base2, baseNum: 2 },
+                { name: "ฐานที่ ๓ (ปีเกิด)", row: res.matrix.row3, houses: data.positions.base3, baseNum: 3 },
+                { name: "ฐานที่ ๔ (ผลบวก)", row: res.matrix.row4, houses: null, baseNum: 4 }
+            ];
+
+            let html = '';
+            rowsMeta.forEach((rMeta, rIdx) => {
+                html += `<tr>`;
+                html += `<td class="header-col">${rMeta.name}</td>`;
+
+                for (let col = 0; col < 7; col++) {
+                    const val = rMeta.row[col];
+                    let cellClass = 'sd-num-cell';
+                    let extraLabel = '';
+
+                    if (rMeta.houses) {
+                        extraLabel = `<span class="house-label">${rMeta.houses[col].name}</span>`;
+                        // ไฮไลต์ลัคนา
+                        if (val === res.lagna.star) {
+                            cellClass += ' lagna-highlight';
+                        }
+                        // ไฮไลต์อายุย่างจร
+                        if (res.ageTransit.base === rMeta.baseNum && res.ageTransit.colIndex === col) {
+                            cellClass += ' age-highlight';
+                        }
+                    } else {
+                        // ฐาน 4
+                        cellClass += ' row4-cell';
+                        const evalB4 = res.base4[col];
+                        if (evalB4.level === 'high') cellClass += ' high-tier';
+                        if (evalB4.level === 'low') cellClass += ' low-tier';
+                        extraLabel = `<span class="house-label" style="color: ${evalB4.level === 'high' ? '#34d399' : (evalB4.level === 'low' ? '#f87171' : '#fde047')};">${evalB4.info.name}</span>`;
+                    }
+
+                    html += `<td class="${cellClass}">${val}${extraLabel}</td>`;
+                }
+                html += `</tr>`;
+            });
+
+            tbody.innerHTML = html;
+
+            // Header summary badges
+            const summaryDiv = document.getElementById('chartBadgeSummary');
+            summaryDiv.innerHTML = `
+                <span class="stat-badge badge-gold"><i class="fas fa-hourglass-start"></i> อายุย่าง <b>${res.actualAge}</b> ปี (ตก ${res.ageTransit.house.name})</span>
+                <span class="stat-badge badge-blue"><i class="fas fa-compass"></i> ลัคนาดาว <b>${res.lagna.star}</b> (${res.yarm.info.label})</span>
+            `;
+        }
+
+        // 2. เรนเดอร์แท็บฐาน ๔ & คู่ดาว
+        function renderBase4Tab(res) {
+            const container = document.getElementById('base4CardsContainer');
+            let html = '';
+
+            res.base4.forEach((b4, idx) => {
+                const b1House = SevenDigitsPisadanData.positions.base1[idx].name;
+                const b2House = SevenDigitsPisadanData.positions.base2[idx].name;
+                const b3House = SevenDigitsPisadanData.positions.base3[idx].name;
+
+                let tierColor = '#f59e0b';
+                let tierBadge = `<span class="stat-badge badge-gold">${b4.levelName}</span>`;
+                if (b4.level === 'high') {
+                    tierColor = '#10b981';
+                    tierBadge = `<span class="stat-badge badge-green"><i class="fas fa-crown"></i> ${b4.levelName}</span>`;
+                } else if (b4.level === 'low') {
+                    tierColor = '#ef4444';
+                    tierBadge = `<span class="stat-badge badge-red"><i class="fas fa-exclamation-triangle"></i> ${b4.levelName}</span>`;
+                }
+
+                let interactionsHtml = '';
+                if (b4.interactions.length > 0) {
+                    interactionsHtml = `<div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(245, 158, 11, 0.2);">`;
+                    b4.interactions.forEach(inter => {
+                        interactionsHtml += `
+                            <div style="font-size: 0.86rem; margin-bottom: 6px;">
+                                <strong style="color: #fde047;"><i class="fas fa-link"></i> ${inter.name} (${inter.label}):</strong>
+                                <span style="color: #cbd5e1;">${inter.meaning}</span>
+                            </div>
+                        `;
+                    });
+                    interactionsHtml += `</div>`;
+                }
+
+                html += `
+                    <div class="sd-detail-box" style="border-left: 4px solid ${tierColor};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 0.88rem; font-weight: 700; color: #94a3b8;">หลักที่ ${idx + 1} (${b1House} • ${b2House} • ${b3House})</span>
+                            ${tierBadge}
+                        </div>
+                        <div class="sd-box-title" style="color: ${tierColor}; font-size: 1.18rem;">
+                            ผลบวก: ${b4.sum} • ${b4.info.name}
+                        </div>
+                        <p style="color: #e2e8f0; font-size: 0.92rem; line-height: 1.6; margin: 0;">
+                            ${b4.info.text}
+                        </p>
+                        ${interactionsHtml}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // 3. เรนเดอร์แท็บพยากรณ์จร 4 จุด
+        function renderTransitsTab(res) {
+            const container = document.getElementById('transitsContainer');
+            const at = res.ageTransit;
+
+            let html = `
+                <div class="sd-callout" style="border-left-color: #f59e0b;">
+                    <h4 style="color: #fde047; font-weight: 700; margin: 0 0 6px 0;">
+                        <i class="fas fa-hourglass-start"></i> จุดที่ ๑: อายุย่างจร (${res.actualAge} ปี)
+                    </h4>
+                    <p style="margin: 0; font-size: 0.95rem;">
+                        คำนวณรอบละ ๒๑ ปี: อายุย่าง <b>${res.actualAge}</b> ปี นับเวียนตกใน <b>ฐานที่ ${at.base} หลักที่ ${at.colIndex + 1}</b> ตรงกับ <b>ดาว ${at.star} นิมิต "${at.house.name}"</b><br>
+                        <strong>คำพยากรณ์หลักประจำปี:</strong> ในปีที่เจ้าชะตามีอายุย่าง ${res.actualAge} ปี วิถีชีวิตหลักจะผูกพันและเน้นหนักในเรื่อง <b>${at.house.name} (${at.house.desc})</b>
+                    </p>
+                </div>
+            `;
+
+            if (res.transitSummary) {
+                const ts = res.transitSummary;
+                html += `
+                    <div class="sd-detail-grid" style="margin-top: 20px;">
+                        <div class="sd-detail-box" style="border-left: 4px solid #38bdf8;">
+                            <div class="sd-box-title" style="color: #38bdf8;">
+                                <i class="fas fa-calendar"></i> จุดที่ ๒: ปีจร (ดาว ${ts.year.star})
+                            </div>
+                            <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                                บอกเหตุการณ์ใหญ่ที่จะเกิดขึ้นในรอบปีนั้น ดาว ${ts.year.star} ไปสถิตในนิมิตดวงเดิม:
+                                <ul style="margin: 6px 0 0 0; padding-left: 20px; color: #fef08a;">
+                                    ${ts.year.houses.map(h => `<li>ฐานที่ ${h.base}: <b>${h.name}</b></li>`).join('')}
+                                </ul>
+                            </p>
+                        </div>
+
+                        <div class="sd-detail-box" style="border-left: 4px solid #a855f7;">
+                            <div class="sd-box-title" style="color: #c084fc;">
+                                <i class="fas fa-moon"></i> จุดที่ ๓: เดือนจร (ดาว ${ts.month.star})
+                            </div>
+                            <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                                บอกเหตุการณ์ที่จะเกิดขึ้นเจาะจงในแต่ละเดือน ดาว ${ts.month.star} ไปสถิตในนิมิตดวงเดิม:
+                                <ul style="margin: 6px 0 0 0; padding-left: 20px; color: #e9d5ff;">
+                                    ${ts.month.houses.map(h => `<li>ฐานที่ ${h.base}: <b>${h.name}</b></li>`).join('')}
+                                </ul>
+                            </p>
+                        </div>
+
+                        <div class="sd-detail-box" style="border-left: 4px solid #34d399;">
+                            <div class="sd-box-title" style="color: #34d399;">
+                                <i class="fas fa-sun"></i> จุดที่ ๔: วันจร (ดาว ${ts.day.star})
+                            </div>
+                            <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                                บอกเหตุการณ์รายวัน หรือเรื่องราวเฉพาะหน้าที่เกิดขึ้นในวันนั้นๆ ดาว ${ts.day.star} ไปสถิตในนิมิตดวงเดิม:
+                                <ul style="margin: 6px 0 0 0; padding-left: 20px; color: #a7f3d0;">
+                                    ${ts.day.houses.map(h => `<li>ฐานที่ ${h.base}: <b>${h.name}</b></li>`).join('')}
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sd-card" style="margin-top: 20px; background: rgba(30, 41, 59, 0.7); border-color: rgba(245, 158, 11, 0.4);">
+                        <h4 style="color: #fde047; font-weight: 700; margin: 0 0 10px 0;">
+                            <i class="fas fa-scroll"></i> การประสมคำทำนายร้อยเรียงทั้ง ๔ จุด (ตามบทที่ ๑๖)
+                        </h4>
+                        <p style="color: #f1f5f9; font-size: 1rem; line-height: 1.8; margin: 0;">
+                            "ในปีที่เจ้าชะตามีอายุย่าง <b>${res.actualAge} ปี</b> วิถีชีวิตหลักจะผูกพันและเน้นหนักเรื่อง <b>${at.house.name}</b> 
+                            โดยมีเหตุการณ์สำคัญประจำปีเกิดขึ้นในหมวด <b>${ts.year.houses.map(h => h.name).join(' / ')}</b> 
+                            ซึ่งเมื่อเจาะจงมาในเดือนนี้ กิจการต่างๆ จะดำเนินไปทางนิมิต <b>${ts.month.houses.map(h => h.name).join(' / ')}</b> 
+                            และในวันนี้ เรื่องราวความเคลื่อนไหวเฉพาะหน้าจะเกี่ยวข้องโดยตรงกับนิมิต <b>${ts.day.houses.map(h => h.name).join(' / ')}</b> เข้ามามีบทบาทสำคัญ"
+                        </p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 4. เรนเดอร์แท็บยามอัฏฐกาล & ลัคนา
+        function renderYarmLagnaTab(res) {
+            const container = document.getElementById('yarmLagnaContainer');
+
+            let lagnaListHtml = '';
+            res.lagna.predictions.forEach(p => {
+                lagnaListHtml += `
+                    <div style="margin-bottom: 12px; padding: 12px; background: rgba(15, 23, 42, 0.6); border-radius: 10px; border-left: 3px solid #a855f7;">
+                        <strong style="color: #c084fc;">ลัคนา (ลั) กุมฐานที่ ${p.base} (${p.house}):</strong>
+                        <div style="color: #e2e8f0; margin-top: 4px; font-size: 0.92rem; line-height: 1.6;">${p.text}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="sd-detail-grid">
+                    <div class="sd-detail-box" style="border-left: 4px solid #f59e0b;">
+                        <div class="sd-box-title" style="color: #fde047;">
+                            <i class="fas fa-sun"></i> ยามอัฏฐกาลตกฟาก: ${res.yarm.info.label}
+                        </div>
+                        <p style="color: #f1f5f9; font-size: 0.95rem; line-height: 1.7;">
+                            ${res.yarm.prediction}
+                        </p>
+                    </div>
+
+                    <div class="sd-detail-box" style="border-left: 4px solid #a855f7;">
+                        <div class="sd-box-title" style="color: #c084fc;">
+                            <i class="fas fa-compass"></i> ลัคนาดวงชะตา: ดาว ${res.lagna.star}
+                        </div>
+                        <p style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 12px;">
+                            คำนวณจากดาวประจำยามอัฏฐกาล แล้วนำสัญลักษณ์ (ลั) ไปเกาะกุมในแผงดวงชะตาทั้ง ๓ ฐาน:
+                        </p>
+                        ${lagnaListHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 5. เรนเดอร์แท็บนิยามสัมพันธ์ 3 ฐาน
+        function renderRelationsTab(res) {
+            const container = document.getElementById('relationsContainer');
+            const data = SevenDigitsPisadanData;
+
+            let html = `
+                <div class="sd-callout" style="border-left-color: #38bdf8;">
+                    <strong>หลักการวิเคราะห์นิยามสัมพันธ์:</strong> ให้ดูตัวเลขที่ตรงกันระหว่างฐานวัน (ฐาน ๑), ฐานเดือน (ฐาน ๒) และฐานปี (ฐาน ๓) แล้วนำคำทำนายมาอ่านร้อยเรียงสัมพันธ์กัน
+                </div>
+                <div class="sd-detail-grid">
+            `;
+
+            for (let num = 1; num <= 7; num++) {
+                const b1Col = res.matrix.row1.indexOf(num);
+                const b2Col = res.matrix.row2.indexOf(num);
+                const b3Col = res.matrix.row3.indexOf(num);
+
+                const h1 = data.positions.base1[b1Col];
+                const h2 = data.positions.base2[b2Col];
+                const h3 = data.positions.base3[b3Col];
+
+                // ค้นหาคำทำนายคู่สัมพันธ์ในตำรา
+                const rel1_2 = data.pairwiseRelations[h1.id]?.[h2.id] || "";
+                const rel1_3 = data.pairwiseRelations[h1.id]?.[h3.id] || "";
+                const rel2_3 = data.pairwiseRelations[h2.id]?.[h3.id] || "";
+
+                html += `
+                    <div class="sd-detail-box">
+                        <div class="sd-box-title">
+                            <i class="fas fa-link"></i> เลข ${num} สัมพันธ์: ${h1.name} (ฐาน ๑) + ${h2.name} (ฐาน ๒) + ${h3.name} (ฐาน ๓)
+                        </div>
+                        <div style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 8px;">
+                            ${h1.name}: ${h1.desc.substring(0, 45)}...
+                        </div>
+                        <div style="font-size: 0.92rem; color: #cbd5e1; line-height: 1.6;">
+                            ${rel1_2 ? `<div>• <b>${h1.name} ไปตรงกับ ${h2.name}:</b> ${rel1_2}</div>` : ''}
+                            ${rel1_3 ? `<div>• <b>${h1.name} ไปตรงกับ ${h3.name}:</b> ${rel1_3}</div>` : ''}
+                            ${rel2_3 ? `<div>• <b>${h2.name} ไปตรงกับ ${h3.name}:</b> ${rel2_3}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        // 6. เรนเดอร์แท็บบุคคล นิสัย คำพูด วันที่
+        function renderPersonalityTab(res) {
+            const container = document.getElementById('personalityContainer');
+            const atta = res.profiles.atta;
+            const tanu = res.profiles.tanu;
+
+            let html = `
+                <div class="sd-detail-grid">
+                    <div class="sd-detail-box" style="border-left: 4px solid #f59e0b;">
+                        <div class="sd-box-title" style="color: #fde047;">
+                            <i class="fas fa-brain"></i> นิมิต "อัตตะ" (ความคิด/จิตใจ): ${atta.planet}
+                        </div>
+                        <p style="font-size: 0.92rem; line-height: 1.6; color: #cbd5e1;">
+                            <b>รูปร่าง:</b> ${atta.body}<br>
+                            <b>บุคลิกลักษณะ:</b> ${atta.personality}<br>
+                            <b>นิสัยใจคอ:</b> ${atta.temperament}<br>
+                            <b>ความคิดนึกคิด:</b> ${atta.mindset}<br>
+                            <b>อาชีพที่ถูกโฉลก:</b> <span style="color: #fde047;">${atta.careers}</span>
+                        </p>
+                    </div>
+
+                    <div class="sd-detail-box" style="border-left: 4px solid #0284c7;">
+                        <div class="sd-box-title" style="color: #38bdf8;">
+                            <i class="fas fa-walking"></i> นิมิต "ตนุ" (พฤติกรรม/การกระทำ): ${tanu.planet}
+                        </div>
+                        <p style="font-size: 0.92rem; line-height: 1.6; color: #cbd5e1;">
+                            <b>รูปร่าง:</b> ${tanu.body}<br>
+                            <b>บุคลิกลักษณะ:</b> ${tanu.personality}<br>
+                            <b>นิสัยใจคอ:</b> ${tanu.temperament}<br>
+                            <b>ความคิดนึกคิด:</b> ${tanu.mindset}<br>
+                            <b>อาชีพที่ถูกโฉลก:</b> <span style="color: #38bdf8;">${tanu.careers}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="sd-card" style="margin-top: 20px; background: rgba(30, 41, 59, 0.6);">
+                    <h4 style="color: #fde047; font-weight: 700; margin: 0 0 12px 0;">
+                        <i class="fas fa-bullhorn"></i> บทที่ ๑๑: คำทำนายเจาะจง คำพูด • อุปนิสัย • ความเป็นอยู่ (หลักที่ ๔)
+                    </h4>
+                    <div class="sd-detail-grid">
+                        <div class="sd-detail-box">
+                            <strong style="color: #fde047;">๑. คำพูด (หลักที่ ๔ ฐาน ๑ - ปิตา ดาว ${res.pillar4.speech.star}):</strong>
+                            <div style="margin-top: 4px; color: #cbd5e1; font-size: 0.92rem;">${res.pillar4.speech.text}</div>
+                        </div>
+                        <div class="sd-detail-box">
+                            <strong style="color: #38bdf8;">๒. อุปนิสัย (หลักที่ ๔ ฐาน ๒ - พันธุ ดาว ${res.pillar4.habit.star}):</strong>
+                            <div style="margin-top: 4px; color: #cbd5e1; font-size: 0.92rem;">${res.pillar4.habit.text}</div>
+                        </div>
+                        <div class="sd-detail-box">
+                            <strong style="color: #34d399;">๓. ความเป็นอยู่ (หลักที่ ๔ ฐาน ๓ - ลาภะ ดาว ${res.pillar4.living.star}):</strong>
+                            <div style="margin-top: 4px; color: #cbd5e1; font-size: 0.92rem;">${res.pillar4.living.text}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sd-card" style="margin-top: 20px; background: rgba(15, 23, 42, 0.8); border-color: rgba(139, 92, 246, 0.4);">
+                    <h4 style="color: #c084fc; font-weight: 700; margin: 0 0 12px 0;">
+                        <i class="fas fa-magic"></i> บทที่ ๑๕: เคล็ดลับสูตรคำนวณเศษ นิสัยกำเนิด & การพูดจา
+                    </h4>
+                    <div class="sd-detail-grid">
+                        <div class="sd-detail-box">
+                            <strong style="color: #c084fc;">สูตรทายนิสัยกำเนิด (เลขอัตตะ + เลขพันธุ ÷ ๗):</strong>
+                            <div style="color: #e2e8f0; font-size: 0.92rem; margin-top: 4px;">
+                                เศษ <b>${res.secrets.habit.remainder}</b>: ${res.secrets.habit.text}
+                            </div>
+                        </div>
+                        <div class="sd-detail-box">
+                            <strong style="color: #c084fc;">สูตรทายการพูดจา (เลขตนุ + เลขปิตา ÷ ๗):</strong>
+                            <div style="color: #e2e8f0; font-size: 0.92rem; margin-top: 4px;">
+                                เศษ <b>${res.secrets.speech.remainder}</b>: ${res.secrets.speech.text}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (res.dayDateInfluence) {
+                html += `
+                    <div class="sd-callout" style="border-left-color: #34d399; margin-top: 20px;">
+                        <strong style="color: #86efac;"><i class="fas fa-calendar-check"></i> บทที่ ๑๔: อิทธิพลของตัวเลขวันเกิด (วันที่ ${res.inputParams.birthDayDate}):</strong>
+                        <div style="margin-top: 6px; font-size: 0.93rem; line-height: 1.6;">${res.dayDateInfluence}</div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // 7. เรนเดอร์แท็บคู่ครอง บุตร แนวอาชีพ
+        function renderSoulmateTab(res) {
+            const container = document.getElementById('soulmateContainer');
+            const sm = res.soulmate.profile;
+            const data = SevenDigitsPisadanData.relationshipLore;
+
+            container.innerHTML = `
+                <div class="sd-detail-grid">
+                    <div class="sd-detail-box" style="border-left: 4px solid #ec4899;">
+                        <div class="sd-box-title" style="color: #f472b6;">
+                            <i class="fas fa-heart"></i> คู่ครอง (อ่านจากเลขปัตนิ ฐาน ๒ - ดาว ${res.soulmate.star})
+                        </div>
+                        <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.7;">
+                            <b>รูปร่างลักษณะ:</b> ${sm.appearance}<br>
+                            <b>อุปนิสัยใจคอ:</b> ${sm.trait}
+                        </p>
+                    </div>
+
+                    <div class="sd-detail-box" style="border-left: 4px solid #38bdf8;">
+                        <div class="sd-box-title" style="color: #38bdf8;">
+                            <i class="fas fa-baby"></i> ลำดับการอ่านบุตร & เพศบุตร
+                        </div>
+                        <ul style="margin: 0; padding-left: 20px; color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                            ${data.childrenOrder.map(c => `<li>${c.label}</li>`).join('')}
+                        </ul>
+                        <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(245, 158, 11, 0.2); font-size: 0.88rem; color: #fde047;">
+                            <b>เกณฑ์เพศบุตร:</b> ${data.childrenGenderRule}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sd-card" style="margin-top: 20px; background: rgba(30, 41, 59, 0.6);">
+                    <h4 style="color: #fde047; font-weight: 700; margin: 0 0 12px 0;">
+                        <i class="fas fa-briefcase"></i> แนวทางอาชีพการงานที่เหมาะสมตามเลขดาว ๑ - ๗
+                    </h4>
+                    <div class="sd-detail-grid">
+                        ${Object.keys(data.suitableCareers).map(k => `
+                            <div class="sd-detail-box">
+                                <strong style="color: #fde047;">ดาว ${k}:</strong>
+                                <div style="margin-top: 4px; color: #cbd5e1; font-size: 0.9rem;">${data.suitableCareers[k]}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 8. เรนเดอร์แท็บดิถีกำเนิด & กาลโยค
+        function renderKaliyokeTab(res) {
+            const container = document.getElementById('kaliyokeContainer');
+
+            let tithiHtml = '';
+            if (res.tithiAnalysis.length > 0) {
+                tithiHtml = res.tithiAnalysis.map(t => `
+                    <div class="sd-callout" style="border-left-color: ${t.type === 'danger' ? '#ef4444' : '#f59e0b'};">
+                        <strong style="color: ${t.type === 'danger' ? '#fca5a5' : '#fde047'};"><i class="fas fa-exclamation-triangle"></i> ${t.name}:</strong>
+                        <div style="margin-top: 4px;">${t.desc}</div>
+                    </div>
+                `).join('');
+            } else {
+                tithiHtml = `
+                    <div class="sd-callout" style="border-left-color: #10b981;">
+                        <strong style="color: #86efac;"><i class="fas fa-check-circle"></i> ปลอดดิถีร้าย:</strong>
+                        <div>ดวงชะตานี้ไม่ติดเกณฑ์ดิถีมหาสูญ ดิถีพิฆาต ดิถีกระทิงวัน หรือวันผีโขมด ดำเนินชีวิตราบรื่นดี</div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="sd-card" style="background: rgba(30, 41, 59, 0.6); margin-bottom: 20px;">
+                    <h4 style="color: #fde047; font-weight: 700; margin: 0 0 12px 0;">
+                        <i class="fas fa-shield-alt"></i> การตรวจเกณฑ์ดิถีกำเนิดทางจันทรคติ
+                    </h4>
+                    ${tithiHtml}
+                </div>
+
+                <div class="sd-detail-grid">
+                    <div class="sd-detail-box" style="border-left: 4px solid #10b981;">
+                        <div class="sd-box-title" style="color: #34d399;">
+                            <i class="fas fa-flag"></i> ธงชัย
+                        </div>
+                        <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                            ${SevenDigitsPisadanData.kaliyokePredictions.thongchai.desc}
+                        </p>
+                    </div>
+
+                    <div class="sd-detail-box" style="border-left: 4px solid #0284c7;">
+                        <div class="sd-box-title" style="color: #38bdf8;">
+                            <i class="fas fa-crown"></i> อธิบดี
+                        </div>
+                        <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                            ${SevenDigitsPisadanData.kaliyokePredictions.athipati.desc}
+                        </p>
+                    </div>
+
+                    <div class="sd-detail-box" style="border-left: 4px solid #f59e0b;">
+                        <div class="sd-box-title" style="color: #fde047;">
+                            <i class="fas fa-bolt"></i> อุบาทว์
+                        </div>
+                        <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                            ${SevenDigitsPisadanData.kaliyokePredictions.ubabat.desc}
+                        </p>
+                    </div>
+
+                    <div class="sd-detail-box" style="border-left: 4px solid #ef4444;">
+                        <div class="sd-box-title" style="color: #f87171;">
+                            <i class="fas fa-skull"></i> โลกาวินาศ
+                        </div>
+                        <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                            ${SevenDigitsPisadanData.kaliyokePredictions.lokawinas.desc}
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 9. เรนเดอร์แท็บอวัยวะ ของหาย ลองวิชา
+        function renderMysteryTab(res) {
+            const container = document.getElementById('mysteryContainer');
+            const data = SevenDigitsPisadanData;
+
+            container.innerHTML = `
+                <div class="sd-card" style="background: rgba(30, 41, 59, 0.6); margin-bottom: 20px;">
+                    <h4 style="color: #fde047; font-weight: 700; margin: 0 0 12px 0;">
+                        <i class="fas fa-heartbeat"></i> บทที่ ๗: อวัยวะในร่างกาย โรคภัย สถานที่ และทิศทาง (เลขประจำวันเกิด: ดาว ${res.inputParams.dayOfWeek})
+                    </h4>
+                    <div class="sd-detail-grid">
+                        ${[1, 2, 3, 4, 5, 6, 7].map(num => {
+                            const m = data.miscellaneousLore[num];
+                            return `
+                                <div class="sd-detail-box">
+                                    <strong style="color: #fde047;">ดาว ${num}:</strong>
+                                    <div style="font-size: 0.88rem; color: #cbd5e1; margin-top: 4px;">
+                                        <b>อวัยวะ:</b> ${m.organs}<br>
+                                        <b>โรคภัย:</b> <span style="color: #fca5a5;">${m.diseases}</span><br>
+                                        <b>ทิศทาง:</b> <span style="color: #93c5fd;">${m.direction}</span><br>
+                                        <b>สถานที่:</b> ${m.places}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <div class="sd-detail-grid">
+                    <div class="sd-detail-box" style="border-left: 4px solid #0284c7;">
+                        <div class="sd-box-title" style="color: #38bdf8;">
+                            <i class="fas fa-search-location"></i> บทที่ ๑๖: การจับยามดูของหาย & สถิตินิมิต
+                        </div>
+                        <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                            • <b style="color: #ef4444;">ยามตกนิมิต อริ, มรณะ, พยายะ:</b> ${data.findingAndMystery.lostItems.badPrediction}<br>
+                            • <b style="color: #10b981;">ยามตกนิมิต ตนุ, สหัชชะ, สุภะ, ลาภะ:</b> ${data.findingAndMystery.lostItems.goodPrediction}<br>
+                            • <b>เกณฑ์ปีจร/เดือนจร:</b> ${data.findingAndMystery.lostItems.transitRuleGood}
+                        </p>
+                    </div>
+
+                    <div class="sd-detail-box" style="border-left: 4px solid #f59e0b;">
+                        <div class="sd-box-title" style="color: #fde047;">
+                            <i class="fas fa-user-secret"></i> รูปร่างลักษณะคนร้าย (ตามเลขดาว ๑-๗)
+                        </div>
+                        <ul style="margin: 0; padding-left: 20px; color: #cbd5e1; font-size: 0.88rem; line-height: 1.6;">
+                            ${Object.keys(data.findingAndMystery.thiefAppearance).map(k => `<li>ดาว ${k}: ${data.findingAndMystery.thiefAppearance[k]}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sd-card" style="margin-top: 20px; background: rgba(15, 23, 42, 0.8); border-color: rgba(245, 158, 11, 0.4);">
+                    <h4 style="color: #fde047; font-weight: 700; margin: 0 0 12px 0;">
+                        <i class="fas fa-vial"></i> บทที่ ๑๖: การทดสอบความจริงผู้มาให้ทาย (ลองวิชาตามตำรา)
+                    </h4>
+                    <div class="sd-detail-grid">
+                        ${data.findingAndMystery.testingTheMaster.map(t => `
+                            <div class="sd-detail-box">
+                                <strong style="color: #fde047;"><i class="fas fa-check-circle"></i> ${t.condition}:</strong>
+                                <div style="color: #cbd5e1; font-size: 0.92rem; margin-top: 4px;">${t.result}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkDiamondTierAccess();
+            initMemberPicker();
+        });
+    </script>
+</body>
+</html>

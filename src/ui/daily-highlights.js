@@ -150,27 +150,59 @@ function showDailytable() {
     const html = `
         <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1280px; margin: 0 auto;">
             
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-calendar-alt mr-1"></i> แผนที่ฤกษ์รายวัน
+                </span>
+            </div>
+
+            <!-- Auspicious & Electional Astrology Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <button type="button" class="hub-nav-item" onclick="navigateTo('auspiciousPage')">
+                    📅 ปฏิทิน ๑๐๐ ปี & บันทึกดวง
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('ubakong-yarm')">
+                    🧭 ยามอุบากอง
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('planetaryHoursPage')">
+                    🌟 ฤกษ์ยาม ๗ เจ้า
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('kaliyokepage')">
+                    ⏰ คำนวณกาลโยค
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('dailyTabooPage')">
+                    🚫 ข้อห้ามประจำวัน
+                </button>
+                <button type="button" class="hub-nav-item active">
+                    🗺️ แผนที่ฤกษ์รายวัน
+                </button>
+            </div>
+
             <!-- Main Hero Card -->
             <div class="card shadow-lg border-0 overflow-hidden mb-4" style="background: radial-gradient(ellipse at top, #1e2246 0%, #111428 60%, #090a16 100%); border: 1px solid rgba(212, 175, 55, 0.4) !important; border-radius: 24px;">
                 
                 <!-- Header -->
                 <div class="card-header text-center py-4 py-md-5 position-relative" style="background: linear-gradient(180deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
-                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(21, 25, 53, 0.8) 100%); border: 2px solid rgba(232, 200, 118, 0.6); box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);" class="mb-2 animate__animated animate__rotateIn">
-                        <i class="fas fa-calendar-alt fa-2x" style="color: #ffd700; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6));"></i>
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(21, 25, 53, 0.8) 100%); border: 1.5px solid rgba(232, 200, 118, 0.6); box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);" class="mb-2 animate__animated animate__rotateIn">
+                        <i class="fas fa-calendar-alt fa-lg" style="color: #ffd700; filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));"></i>
                     </div>
-                    <h1 class="fw-bold mb-2" style="font-family: 'Chonburi', 'Sarabun', serif; color: #ffd700; text-shadow: 0 2px 10px rgba(255,215,0,0.3); font-size: clamp(1.8rem, 4vw, 2.4rem);">📅 แผนที่ฤกษ์มงคลรายวัน</h1>
-                    <p class="text-light mb-0" style="font-size: 1rem; opacity: 0.85; letter-spacing: 0.5px;">วางแผนชีวิตตามจังหวะดวงดาว สรุปเวลาฤกษ์ดีรายชั่วโมงตลอด ๒๔ ชั่วโมง</p>
+                    <h1 class="fw-bold mb-2" style="font-family: 'Chonburi', 'Sarabun', serif; color: #ffd700; text-shadow: 0 2px 10px rgba(255,215,0,0.3); font-size: clamp(1.5rem, 3.5vw, 2rem);">📅 แผนที่ฤกษ์มงคลรายวัน</h1>
+                    <p class="text-light mb-0" style="font-size: 0.92rem; opacity: 0.85; letter-spacing: 0.3px;">วางแผนชีวิตตามจังหวะดวงดาว สรุปเวลาฤกษ์ดีรายชั่วโมงตลอด ๒๔ ชั่วโมง</p>
                 </div>
                 
                 <div class="card-body p-3 p-md-4">
                     
                     <!-- Date Picker Centered -->
-                    <div style="max-width: 500px; margin: 0 auto 24px auto;">
-                        <label class="form-label fw-bold d-flex align-items-center justify-content-center gap-2 mb-2" style="color: #e8c876;">
+                    <div style="max-width: 440px; margin: 0 auto 20px auto;">
+                        <label class="form-label fw-bold d-flex align-items-center justify-content-center gap-2 mb-2" style="color: #e8c876; font-size: 0.9rem;">
                             <i class="fas fa-calendar-day"></i> เลือกวันที่ต้องการวางแผนฤกษ์:
                         </label>
-                        <input type="date" id="highlightDatePicker" class="form-control bg-dark text-white border-gold text-center py-2 fs-5 fw-bold"
-                            value="${todayISO}" onchange="generateDailyMap()" style="border-color: rgba(212, 175, 55, 0.5); border-radius: 14px;">
+                        <input type="date" id="highlightDatePicker" class="form-control bg-dark text-white border-gold text-center py-2 fw-bold"
+                            value="${todayISO}" onchange="generateDailyMap()" style="border-color: rgba(212, 175, 55, 0.5); border-radius: 12px; font-size: 0.95rem;">
                     </div>
 
                     <!-- Capture Card Box -->
@@ -206,8 +238,8 @@ function showDailytable() {
                     </div>
 
                     <!-- Actions -->
-                    <div class="text-center mt-4">
-                        <button class="btn btn-gold btn-lg px-5 py-3 shadow-lg fw-bold d-inline-flex align-items-center gap-2 download-btn" onclick="downloadDailyMap(this)" style="border-radius: 50px; font-size: 1.1rem;">
+                    <div class="text-center mt-3">
+                        <button class="btn btn-gold px-4 py-2 shadow-lg fw-bold d-inline-flex align-items-center gap-2 download-btn" onclick="downloadDailyMap(this)" style="border-radius: 50px; font-size: 0.95rem;">
                             <i class="fas fa-image"></i> เซฟเป็นรูปภาพเก็บไว้
                         </button>
                     </div>

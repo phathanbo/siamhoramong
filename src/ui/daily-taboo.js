@@ -124,6 +124,38 @@ function showdailytaboo(){
     const html = `
         <div class="container-fluid py-4 px-2 px-md-4" style="max-width: 1200px; margin: 0 auto;">
             
+            <!-- Top Navigation & Breadcrumb -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+                    <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+                </button>
+                <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+                    <i class="fas fa-ban mr-1"></i> ข้อห้ามประจำวัน
+                </span>
+            </div>
+
+            <!-- Auspicious & Electional Astrology Hub Switcher Tabs -->
+            <div class="hub-nav-bar">
+                <button type="button" class="hub-nav-item" onclick="navigateTo('auspiciousPage')">
+                    📅 ปฏิทิน ๑๐๐ ปี & บันทึกดวง
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('ubakong-yarm')">
+                    🧭 ยามอุบากอง
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('planetaryHoursPage')">
+                    🌟 ฤกษ์ยาม ๗ เจ้า
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('kaliyokepage')">
+                    ⏰ คำนวณกาลโยค
+                </button>
+                <button type="button" class="hub-nav-item active">
+                    🚫 ข้อห้ามประจำวัน
+                </button>
+                <button type="button" class="hub-nav-item" onclick="navigateTo('dailyHighlightPage')">
+                    🗺️ แผนที่ฤกษ์รายวัน
+                </button>
+            </div>
+
             <!-- Hero Header Card -->
             <div class="card border-0 rounded-4 overflow-hidden mb-4 shadow-lg" style="background: radial-gradient(circle at top, #1e2246 0%, #101226 70%, #0a0b18 100%); border: 1.5px solid rgba(212, 175, 55, 0.4) !important;">
                 <div class="card-body p-4 p-md-5 text-center position-relative">

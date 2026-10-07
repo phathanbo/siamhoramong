@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตำรากาลจักรจรวิภาค (ตัวเสวย-ตัวแทรก & อายุชำระ) - สยามโหรามงคล</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;900&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & SweetAlert2 & html2canvas & Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/modern-theme.css">
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-card: rgba(255, 255, 255, 0.92);
+            --glass-card-hover: #ffffff;
+            --glass-subtle: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.95);
+            --glass-shadow: 0 16px 36px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.06);
+            --glass-shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.08);
+            --glass-blur: blur(28px);
+            
+            --text-main: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #475569;
+            --accent-blue: #0284c7;
+            --accent-navy: #0f172a;
+            --accent-gold: #b45309;
+            --accent-amber: #92400e;
+            --radius-main: 22px;
+            --radius-inner: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Prompt', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: #cbd5e1;
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0 0 80px 0;
+            /* Atmospheric Misty Alpine Slate - Rich & Comfortable to Eyes */
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(186, 230, 253, 0.45) 0%, transparent 45%),
+                radial-gradient(circle at 85% 20%, rgba(203, 213, 225, 0.55) 0%, transparent 50%),
+                radial-gradient(circle at 50% 85%, rgba(148, 163, 184, 0.4) 0%, transparent 60%),
+                linear-gradient(145deg, #cbd5e1 0%, #94a3b8 45%, #64748b 100%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        .kj-wrapper {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* Top Nav Bar */
+        .kj-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-back-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #0f172a;
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 8px rgba(100, 116, 139, 0.08);
+        }
+        .btn-back-main:hover {
+            color: var(--accent-blue);
+            background: #ffffff;
+            border-color: #94a3b8;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Hero Banner */
+        .kj-hero {
+            position: relative;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius-main);
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            margin-bottom: 24px;
+        }
+
+        .kj-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.1);
+        }
+
+        .kj-hero-title {
+            color: #0f172a;
+            font-size: 2.1rem;
+            font-weight: 800;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .kj-hero-subtitle {
+            color: #475569;
+            font-size: 0.95rem;
+            max-width: 780px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Card Elements */
+        .kj-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: var(--radius-main);
+            padding: 24px;
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            margin-bottom: 22px;
+        }
+
+        .kj-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .kj-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .kj-input-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .kj-input {
+            width: 100%;
+            height: 38px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-inner);
+            color: #0f172a;
+            padding: 0 14px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .kj-input:focus {
+            border-color: var(--accent-blue);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+        select.kj-input option {
+            background: #ffffff;
+            color: #0f172a;
+        }
+
+        .btn-calc-gold {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            font-size: 0.88rem;
+            font-weight: 700;
+            border: none;
+            border-radius: var(--radius-inner);
+            padding: 0 20px;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            height: 38px;
+        }
+        .btn-calc-gold:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.3);
+            color: #ffffff;
+        }
+
+        /* Collapsible Drawer & Toggle Button */
+        .btn-toggle-drawer {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+        }
+        .btn-toggle-drawer:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+            border-color: #94a3b8;
+        }
+
+        /* Executive Hero Banner in Tab 1 */
+        .exec-hero-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-main);
+            padding: 22px 26px;
+            margin-bottom: 22px;
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(180deg, #0284c7 0%, #3b82f6 100%);
+        }
+        .exec-phase-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        /* Life Wave Chart Container in Tab 5 */
+        .life-chart-card {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-main);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+        }
+
+        /* Preset Buttons */
+        .preset-badge-btn {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
+            padding: 6px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(100, 116, 139, 0.08);
+        }
+        .preset-badge-btn:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+            transform: translateY(-1px);
+            color: var(--accent-blue);
+        }
+
+        /* Navigation Tabs (Clear Pills with Strong Contrast) */
+        .kj-tabs-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 22px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 6px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(20px);
+        }
+
+        .kj-tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            padding: 8px 16px;
+            color: #334155;
+            cursor: pointer;
+            text-align: left;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .kj-tab-btn:hover {
+            color: #0f172a;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .kj-tab-btn.active {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.15);
+        }
+        .tab-icon {
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+        .kj-tab-btn.active .tab-icon {
+            color: #0284c7;
+        }
+
+        /* 0-100 Timeline Table Styles - High Legibility */
+        .timeline-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            font-size: 0.88rem;
+            border: 1px solid #cbd5e1;
+        }
+        .timeline-table th {
+            background: #f1f5f9;
+            color: #0f172a;
+            padding: 12px 10px;
+            font-weight: 800;
+            text-align: center;
+            border-bottom: 2px solid #cbd5e1;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .timeline-table td {
+            padding: 10px 10px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            color: #1e293b;
+        }
+        .timeline-table tbody tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+        .timeline-table tbody tr:hover td {
+            background: #f1f5f9;
+        }
+        .timeline-table tr.current-age-row td {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+            font-weight: 800 !important;
+            border-top: 2px solid #f59e0b !important;
+            border-bottom: 2px solid #f59e0b !important;
+        }
+        .timeline-expand-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #0284c7;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+        .timeline-expand-btn:hover {
+            background: #0284c7;
+            color: #ffffff;
+            border-color: #0284c7;
+        }
+        .timeline-detail-row td {
+            background: #f8fafc !important;
+            padding: 0 !important;
+            border-bottom: 2px solid #cbd5e1 !important;
+        }
+        .timeline-detail-card {
+            padding: 16px 20px;
+            text-align: left;
+            background: #ffffff;
+            margin: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+        .tone-badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .tone-excellent { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .tone-good { background: #e0f2fe; color: #075985; border: 1px solid #7dd3fc; }
+        .tone-moderate { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+        .tone-danger { background: #ffedd5; color: #9a3412; border: 1px solid #fdba74; }
+        .tone-critical { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        /* Highlight Panels */
+        .sawoei-box {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #fcd34d;
+            border-radius: var(--radius-main);
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--glass-shadow-sm);
+        }
+
+        .thaek-box {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #7dd3fc;
+            border-radius: var(--radius-main);
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--glass-shadow-sm);
+        }
+
+        .alert-khat {
+            background: rgba(254, 242, 242, 0.85);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: var(--radius-main);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
+        }
+
+        /* 2-Row Ayu Chamra Table */
+        .chamra-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 14px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-inner);
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        .chamra-table th {
+            background: rgba(241, 245, 249, 0.9);
+            color: var(--text-main);
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        .chamra-table td {
+            padding: 10px 14px;
+            text-align: center;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+            font-size: 0.92rem;
+        }
+
+        /* Tier Lock Overlay */
+        #tierLockOverlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(241, 245, 249, 0.85);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .kj-lock-box {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-main);
+            max-width: 540px;
+            width: 100%;
+            padding: 40px 32px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .kj-hero { padding: 24px 18px; }
+            .kj-card { padding: 18px 14px; }
+            .kj-tabs-container { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🔒 Modal ล็อกสิทธิ์เฉพาะสมาชิกระดับเพชรขึ้นไป -->
+    <div id="tierLockOverlay">
+        <div class="kj-lock-box">
+            <div style="font-size: 4rem; margin-bottom: 16px; filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.9));">💎</div>
+            <div class="kj-hero-badge mb-3"><i class="fas fa-gem"></i> สิทธิพิเศษระดับเพชรขึ้นไป (Diamond Tier)</div>
+            <h2 style="font-weight: 700; color: #fff8db; margin-bottom: 12px; font-size: 1.6rem;">ตำรากาลจักรจรวิภาค</h2>
+            <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.7; margin-bottom: 28px;">
+                ระบบพยากรณ์วิถีจรชั้นสูง พันตรี หลวงวุฒิรณพัสดุ์ สมาคมโหรแห่งประเทศไทย<br>
+                วิเคราะห์ตัวเสวย-ตัวแทรก ๔ จัตวาราศี อายุชำระ ๒ แถว และเกณฑ์ฆาตประจำราศี<br>
+                <span style="color: #f87171; font-weight: 600; font-size: 0.9rem;">⚠️ ระดับสมาชิกปัจจุบันของคุณยังไม่ถึงระดับเพชร</span>
+            </p>
+            <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" class="btn-back-main" onclick="window.location.href='../index.html#mainpage'">
+                    <i class="fas fa-arrow-left"></i> กลับห้องพยากรณ์
+                </button>
+                <button type="button" class="btn-calc-gold" style="width: auto;" onclick="window.location.href='../index.html#package'">
+                    <i class="fas fa-crown"></i> อัปเกรดระดับเพชร
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="kj-wrapper">
+        <!-- Top Nav -->
+        <div class="kj-top-bar">
+            <a href="../index.html#mainpage" class="btn-back-main">
+                <i class="fas fa-chevron-left"></i> ย้อนกลับห้องพยากรณ์
+            </a>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="preset-badge-btn" style="color: #0284c7; border-color: #bae6fd; background: #f0f9ff;" onclick="window.location.href='../index.html#knowledgePage';">
+                    <i class="fas fa-book-open text-primary"></i> 📖 สารานุกรมตำรา (Wiki)
+                </button>
+                <button type="button" class="preset-badge-btn" onclick="loadCase('case_author')">
+                    <i class="fas fa-book-reader text-warning"></i> เคสศึกษา: พ.ต. หลวงวุฒิรณพัสดุ์
+                </button>
+                <button type="button" class="preset-badge-btn" onclick="loadCase('case_luang_thorn')">
+                    <i class="fas fa-skull-crossbones text-danger"></i> เคสศึกษา: พ.อ. หลวงธรณ์นิติญาณ (ฆาต)
+                </button>
+            </div>
+        </div>
+
+        <!-- Hero Header -->
+        <div class="kj-hero">
+            <div class="kj-hero-badge">
+                <i class="fas fa-gem"></i> สิทธิพิเศษระดับเพชรขึ้นไป • Diamond & Above
+            </div>
+            <h1 class="kj-hero-title">📜 ตำรากาลจักรจรวิภาค</h1>
+            <p class="kj-hero-subtitle">
+                การพยากรณ์วิถีจรชั้นสูง จำแนก <strong>"ตัวเสวย"</strong> และ <strong>"ตัวแทรก"</strong> จบเสร็จในตัวจร<br>
+                เรียบเรียงและรวบรวมโดย <strong>พันตรี หลวงวุฒิรณพัสดุ์</strong> (เล่ม ๒ ต่อจากกาลจักรลัคน์จร)
+            </p>
+        </div>
+
+        <!-- Input Form & Member Selector with Collapsible Drawer -->
+        <div class="kj-card" style="padding: 16px 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <!-- 👥 Member Picker Dropdown (Minimal Clean Light) -->
+                <div style="flex: 1; min-width: 280px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 0.85rem; font-weight: 700; color: #0f172a; white-space: nowrap;">
+                        <i class="fas fa-user-circle text-primary"></i> เจ้าชะตา:
+                    </span>
+                    <select id="memberSelector" class="kj-input" style="height: 38px; font-size: 0.88rem; font-weight: 600; color: #0f172a; background: #ffffff;" onchange="onMemberSelected(this.value)">
+                        <option value="">-- เลือกสมาชิกจากประวัติ (Auto-Fill) --</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button type="button" class="btn-toggle-drawer" onclick="toggleFormDrawer()">
+                        <i class="fas fa-sliders-h" id="formDrawerIcon"></i> <span id="formDrawerLabel">ปรับแต่งข้อมูลคำนวณ</span>
+                    </button>
+                    <button type="button" class="btn-calc-gold" style="width: auto; height: 36px; padding: 0 16px;" onclick="calculateKalachakra()">
+                        <i class="fas fa-dharmachakra"></i> คำนวณ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Collapsible Drawer Container (Default Open for Custom Entry or Toggled) -->
+            <div id="formCollapseDrawer" style="display: none; margin-top: 18px; padding-top: 16px; border-top: 1px dashed #cbd5e1;">
+                <div class="kj-form-grid">
+                    <div class="kj-input-group">
+                        <label class="kj-input-label"><i class="fas fa-user"></i> ชื่อเจ้าชะตา:</label>
+                        <input type="text" id="personName" class="kj-input" value="พ.ต. หลวงวุฒิรณพัสดุ์">
+                    </div>
+                    <div class="kj-input-group">
+                        <label class="kj-input-label"><i class="fas fa-compass"></i> ลัคนากำเนิด:</label>
+                        <select id="birthLagnaRasi" class="kj-input" onchange="calculateKalachakra()">
+                            <option value="0">เมษ (ปัสวะ ๔๔ ปี)</option>
+                            <option value="1">พฤษภ (ปัสวะ ๔๔ ปี)</option>
+                            <option value="2">เมถุน (นระ ๒๘ ปี)</option>
+                            <option value="3">กรกฎ (อัมพุ ๕๖ ปี)</option>
+                            <option value="4">สิงห์ (ปัสวะ ๔๔ ปี)</option>
+                            <option value="5">กันย์ (นระ ๒๘ ปี)</option>
+                            <option value="6">ตุลย์ (นระ ๒๘ ปี)</option>
+                            <option value="7">พิจิก (กฎะ ๒๐ ปี)</option>
+                            <option value="8" selected>ธนู (นระ ๒๘ ปี)</option>
+                            <option value="9">มังกร (อัมพุ ๕๖ ปี)</option>
+                            <option value="10">กุมภ์ (นระ ๒๘ ปี)</option>
+                            <option value="11">มีน (อัมพุ ๕๖ ปี)</option>
+                        </select>
+                    </div>
+                    <div class="kj-input-group">
+                        <label class="kj-input-label"><i class="fas fa-ring"></i> สมพุสลัคน์ (องศา/ลิบดา):</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="lagnaDeg" class="kj-input" value="13" min="0" max="29" placeholder="องศา">
+                            <input type="number" id="lagnaMin" class="kj-input" value="17" min="0" max="59" placeholder="ลิบดา">
+                        </div>
+                    </div>
+                    <div class="kj-input-group">
+                        <label class="kj-input-label"><i class="fas fa-calendar-alt"></i> วันเกิด (จันทรคติ/จ.ศ.):</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="birthCSYear" class="kj-input" value="1247" placeholder="จ.ศ.เกิด">
+                            <select id="birthLunarMonth" class="kj-input">
+                                <option value="10" selected>เดือน ๑๐</option>
+                                <option value="9">เดือน ๙</option>
+                                <option value="8">เดือน ๘</option>
+                                <option value="7">เดือน ๗</option>
+                                <option value="6">เดือน ๖</option>
+                                <option value="5">เดือน ๕</option>
+                                <option value="4">เดือน ๔</option>
+                                <option value="3">เดือน ๓</option>
+                                <option value="2">เดือน ๒</option>
+                                <option value="1">เดือน ๑</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="kj-input-group">
+                        <label class="kj-input-label"><i class="fas fa-hourglass-half"></i> อายุปัจจุบันจริง (อายุชำระ):</label>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="number" id="actualAgeYear" class="kj-input" value="22" placeholder="ปี">
+                            <input type="number" id="actualAgeMonth" class="kj-input" value="10" placeholder="เดือน">
+                            <input type="number" id="actualAgeDay" class="kj-input" value="5" placeholder="วัน">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs (Sleek Minimalist with High Contrast) -->
+        <div class="kj-tabs-container">
+            <button class="kj-tab-btn active" onclick="switchKjTab('overviewTab', this)">
+                <i class="fas fa-chart-pie tab-icon"></i>
+                <span>ตัวเสวย & ตัวแทรก</span>
+            </button>
+            <button class="kj-tab-btn" onclick="switchKjTab('timelineTab', this)">
+                <i class="fas fa-stream tab-icon" style="color:#0284c7;"></i>
+                <span style="color:#0f172a; font-weight:700;">รายงานชีวิต ๐ - ๑๐๐ ปี</span>
+            </button>
+            <button class="kj-tab-btn" onclick="switchKjTab('chamraTab', this)">
+                <i class="fas fa-table tab-icon"></i>
+                <span>วิธีคำนวณ ๒ แถว</span>
+            </button>
+            <button class="kj-tab-btn" onclick="switchKjTab('khatTab', this)">
+                <i class="fas fa-skull-crossbones tab-icon" style="color:#dc2626;"></i>
+                <span>เกณฑ์ฆาต & ลัคน์ขาด</span>
+            </button>
+            <button class="kj-tab-btn" onclick="switchKjTab('poemTab', this)">
+                <i class="fas fa-feather-alt tab-icon"></i>
+                <span>โคลงพยากรณ์ ๑๒ ราศี</span>
+            </button>
+        </div>
+
+        <!-- 📑 Tab 1: Overview Sawoei & Thaek -->
+        <div id="overviewTab" class="tab-content-area">
+            <div id="khatBannerContainer"></div>
+
+            <!-- 🌟 Executive Summary Hero Banner (Current Life Phase & Momentum) -->
+            <div class="exec-hero-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 14px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                            <span id="heroPhaseBadge" class="exec-phase-badge" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;">
+                                <i class="fas fa-compass"></i> กำลังวิเคราะห์จังหวะชีวิต
+                            </span>
+                            <span id="heroAgePill" style="font-size: 0.84rem; color: #475569; font-weight: 700;">
+                                อายุชำระสุทธิ: ๒๒ ปี
+                            </span>
+                        </div>
+                        <h2 id="heroHeadline" style="font-size: 1.45rem; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.3;">
+                            จังหวะชีวิตช่วงเปลี่ยนผ่าน: วาสนาตัวเสวยพิจิก สู่ตัวแทรกกรกฎ
+                        </h2>
+                    </div>
+                    <div style="text-align: right; min-width: 140px;">
+                        <div style="font-size: 0.78rem; color: #64748b; font-weight: 600;">ดัชนีจังหวะชีวิต (Momentum)</div>
+                        <div id="heroScoreBadge" style="font-size: 1.6rem; font-weight: 900; color: #0284c7; margin-top: 2px;">
+                            75 / 100
+                        </div>
+                    </div>
+                </div>
+
+                <div id="heroPlainThaiSummary" style="font-size: 0.95rem; color: #334155; line-height: 1.7; background: rgba(241, 245, 249, 0.7); padding: 12px 18px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
+                    กำลังประมวลผลคำพยากรณ์ภาษาเข้าใจง่าย...
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 18px; font-size: 0.82rem; color: #64748b;">
+                    <div><i class="fas fa-clock text-primary mr-1"></i> เข้าแทรกมาแล้ว: <strong id="heroTimeElapsedText" style="color: #0284c7;">-</strong></div>
+                    <div><i class="fas fa-hourglass-end text-warning mr-1"></i> เวลาคงเหลือก่อนพ้น: <strong id="heroTimeRemainingText" style="color: #d97706;">-</strong></div>
+                    <div><i class="fas fa-flag-checkered text-success mr-1"></i> สิ้นสุดแทรกที่อายุจริง: <strong id="heroExitAgeText" style="color: #16a34a;">-</strong></div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 22px;">
+                <!-- ตัวเสวย -->
+                <div class="sawoei-box">
+                    <div style="color: #b45309; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">
+                        <i class="fas fa-crown"></i> ลัคน์จรตัวเสวย (รอบใหญ่ประจำช่วงอายุ)
+                    </div>
+                    <div id="sawoeiTitle" style="font-size: 1.8rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+                        ราศีพิจิก (กฎะราศี)
+                    </div>
+                    <div id="sawoeiSub" style="color: #64748b; font-size: 0.88rem; margin-bottom: 12px;">
+                        ดาวเกษตรเจ้าเรือน: พระอังคาร (๓)
+                    </div>
+                    <div id="sawoeiSummary" style="background: rgba(254, 243, 199, 0.6); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 12px; text-align: left; font-size: 0.88rem; line-height: 1.5; color: #78350f;">
+                        เจ้านายจะมอบยศและศักดินาให้ เคราะห์ดีลาภผลหนักหนา สมความปรารถนาทุกประการ
+                    </div>
+                </div>
+
+                <!-- ตัวแทรก -->
+                <div class="thaek-box">
+                    <div style="color: #0369a1; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">
+                        <i class="fas fa-exchange-alt"></i> ลัคน์จรตัวแทรก (ช่วงเวลาปัจจุบัน)
+                    </div>
+                    <div id="thaekTitle" style="font-size: 1.8rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+                        ราศีกรกฎ (อัมพุราศี)
+                    </div>
+                    <div id="thaekSub" style="color: #64748b; font-size: 0.88rem; margin-bottom: 12px;">
+                        ดาวเกษตรเจ้าเรือน: พระจันทร์ (๒)
+                    </div>
+                    <div id="thaekSummary" style="background: rgba(224, 242, 254, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 12px; text-align: left; font-size: 0.88rem; line-height: 1.5; color: #0c4a6e;">
+                        ให้ผลร้าย กายวิโยค เดือดร้อนลูกเมีย เจ็บไข้ได้ป่วยเหน็บชา เกิดถ้อยความลุกลาม เสียทรัพย์สิน
+                    </div>
+                </div>
+            </div>
+
+            <!-- กล่องสรุปเวลาแทรกมาแล้ว และเวลาคงเหลือ -->
+            <div class="kj-card">
+                <h4 style="color: #0f172a; font-weight: 700; margin-bottom: 14px; font-size: 1rem;">
+                    <i class="fas fa-clock mr-2 text-primary"></i> สรุปจังหวะเวลาการเข้าแทรกและการพ้นแทรก
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
+                    <div style="background: rgba(255, 255, 255, 0.8); border-radius: 14px; padding: 14px 16px; border: 1px solid rgba(226, 232, 240, 0.9); box-shadow: var(--glass-shadow-sm);">
+                        <div style="color: #64748b; font-size: 0.8rem; font-weight: 500;">ตัวแทรกนี้เข้าแทรกมาแล้ว:</div>
+                        <div id="timeElapsed" style="font-size: 1.25rem; font-weight: 700; color: #0284c7; margin-top: 4px;">
+                            ๑ เดือน ๒๕ วัน
+                        </div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.8); border-radius: 14px; padding: 14px 16px; border: 1px solid rgba(226, 232, 240, 0.9); box-shadow: var(--glass-shadow-sm);">
+                        <div style="color: #64748b; font-size: 0.8rem; font-weight: 500;">เวลาคงเหลือก่อนพ้นตัวแทรกนี้:</div>
+                        <div id="timeRemaining" style="font-size: 1.25rem; font-weight: 700; color: #d97706; margin-top: 4px;">
+                            ๑๐ เดือน ๑๕ วัน
+                        </div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.8); border-radius: 14px; padding: 14px 16px; border: 1px solid rgba(226, 232, 240, 0.9); box-shadow: var(--glass-shadow-sm);">
+                        <div style="color: #64748b; font-size: 0.8rem; font-weight: 500;">อายุปัจจุบันจริงที่จะพ้นจากตัวแทรกนี้:</div>
+                        <div id="actualAgeExit" style="font-size: 1.25rem; font-weight: 700; color: #16a34a; margin-top: 4px;">
+                            ๒๓ ปี ๘ เดือน ๒๐ วัน
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- คำพยากรณ์เจาะลึกตัวเสวย-แทรก -->
+            <div class="kj-card">
+                <h4 style="color: #0f172a; font-weight: 800; margin-bottom: 16px; font-size: 1.1rem;">
+                    <i class="fas fa-scroll mr-2 text-primary"></i> คำพยากรณ์วิถีชีวิตตามคัมภีร์กาลจักรจรวิภาค
+                </h4>
+                <div id="detailedPredictions" style="line-height: 1.8; color: #1e293b; font-size: 0.95rem;"></div>
+            </div>
+        </div>
+
+        <!-- 📑 Tab 2: Ayu Chamra Calculation Table -->
+        <div id="chamraTab" class="tab-content-area" style="display: none;">
+            <div class="kj-card">
+                <h3 style="color: #0f172a; font-weight: 800; margin-bottom: 12px; font-size: 1.15rem;">
+                    <i class="fas fa-list-ol mr-2 text-primary"></i> วิธีคำนวณอายุชำระ (ตั้งเลข ๒ แถว)
+                </h3>
+                <p style="color: #475569; font-size: 0.92rem; line-height: 1.7;">
+                    การคำนวณอายุชำระเป็นวิธีตามตำรับโบราณ ละเอียดถึง ปี เดือน วัน ชั่วโมง นาที นิยมใช้ในการพยากรณ์กาลจักร และทำพิธีรับส่งเทวดาเสวยอายุ
+                </p>
+
+                <table class="chamra-table">
+                    <thead>
+                        <tr>
+                            <th>แถวการคำนวณ</th>
+                            <th>ปี</th>
+                            <th>เดือน</th>
+                            <th>วัน</th>
+                            <th>ชั่วโมง</th>
+                            <th>นาที</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chamraTableBody"></tbody>
+                </table>
+
+                <div style="margin-top: 24px; padding: 20px; background: #f8fafc; border-radius: 14px; border: 1px solid #cbd5e1;">
+                    <h5 style="color: #0f172a; margin-bottom: 10px; font-weight: 700;"><i class="fas fa-calculator text-primary"></i> การคิดเวลาอดีตและอายุประสงค์</h5>
+                    <div id="pastTimeDetails" style="color: #334155; font-size: 0.93rem; line-height: 1.8;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📑 Tab 3: Khat & Danger Rules -->
+        <div id="khatTab" class="tab-content-area" style="display: none;">
+            <div class="kj-card">
+                <h3 style="color: #991b1b; font-weight: 800; margin-bottom: 12px; font-size: 1.15rem;">
+                    <i class="fas fa-shield-virus mr-2 text-danger"></i> เกณฑ์ฆาตประจำราศีบังคับ ๔ ประเภท
+                </h3>
+                <p style="color: #475569; font-size: 0.92rem; line-height: 1.7; margin-bottom: 20px;">
+                    คัมภีร์ระบุว่า <em>"การพยากรณ์ราศีกาลจักรเสวยและแทรกจะทายว่าดีได้แท้จริงก็ต่อเมื่ออายุไม่ถูกฆาต หากอายุต้องเกณฑ์ฆาตเมื่อใด แม้ราศีเสวยและแทรกจะดีสักปานใด ห้ามด่วนพยากรณ์ว่าดีเด็ดขาด"</em>
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 14px; padding: 18px;">
+                        <h5 style="color: #991b1b; font-weight: 700;">๑. ปัสวะชีโว (ราศีปัสวะ)</h5>
+                        <p style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+                            ลัคน์จรตกราศีปัสวะ (เมษ, พฤษภ, สิงห์) ถูก <strong>พระพฤหัสบดี (๕)</strong> จรมาทับ/ต้อง เป็นเกณฑ์ฆาตอันตรายถึงชีวิต
+                        </p>
+                    </div>
+
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 14px; padding: 18px;">
+                        <h5 style="color: #991b1b; font-weight: 700;">๒. นระโสโร (ราศีนระ)</h5>
+                        <p style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+                            ลัคน์จรตกราศีนระ (เมถุน, กันย์, ตุลย์, ธนู, กุมภ์) ถูก <strong>พระเสาร์ (๗)</strong> จรมาทับ/ต้อง เป็นเกณฑ์ฆาตอันตรายถึงชีวิต
+                        </p>
+                    </div>
+
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 14px; padding: 18px;">
+                        <h5 style="color: #991b1b; font-weight: 700;">๓. อัมพุภูมโม (ราศีอัมพุ)</h5>
+                        <p style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+                            ลัคน์จรตกราศีอัมพุ (กรกฎ, มังกร, มีน) ถูก <strong>พระอังคาร (๓)</strong> จรมาทับ/ต้อง เป็นเกณฑ์ฆาต เกิดอุบัติเหตุ เจ็บป่วยรุนแรง
+                        </p>
+                    </div>
+
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 14px; padding: 18px;">
+                        <h5 style="color: #991b1b; font-weight: 700;">๔. กฎะอสุรินโท (ราศีกฎะ)</h5>
+                        <p style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+                            ลัคน์จรตกราศีกฎะ (พิจิก) ถูก <strong>พระราหู (๘)</strong> จรมาทับ/ต้อง เป็นเกณฑ์ฆาต เกิดคดีความอื้อฉาว หรือเคราะห์ร้ายถึงชีวิต
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; padding: 18px; background: #fff1f2; border-left: 4px solid #ef4444; border-radius: 12px; border: 1px solid #ffe4e6;">
+                    <h5 style="color: #991b1b; font-weight: 700;"><i class="fas fa-exclamation-triangle"></i> เกณฑ์ลัคน์ขาด</h5>
+                    <p style="color: #334155; font-size: 0.92rem; margin: 0; line-height: 1.7;">
+                        ลัคนากำเนิดอยู่ในราศีนระ แล้วลัคน์จรเดินไปตกในราศีอัมพุ และมีดาวบาปเคราะห์ (๑, ๓, ๕, ๗, ๘) จรมาต้องในราศีอัมพุ เรียกว่า <strong>"ลัคน์ขาด"</strong> หากเจ็บไข้จะร้ายนัก ผิดไข้จะจากที่อยู่ที่กิน พลัดพรากจากบริวาร
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📑 Tab 4: Poetic 12 Rasi -->
+        <div id="poemTab" class="tab-content-area" style="display: none;">
+            <div class="kj-card">
+                <h3 style="color: #0f172a; font-weight: 800; margin-bottom: 12px; font-size: 1.15rem;">
+                    <i class="fas fa-feather-alt mr-2 text-primary"></i> โคลงพยากรณ์ลัคน์จร ๑๒ ราศี
+                </h3>
+                <p style="color: #475569; font-size: 0.92rem; margin-bottom: 24px;">
+                    คำพยากรณ์โบราณอีกนิติหนึ่ง เมื่อลัคน์จรโคจรเข้าสู่ราศีต่าง ๆ
+                </p>
+
+                <div id="poeticCardContainer"></div>
+            </div>
+        </div>
+
+        <!-- 📑 Tab 5: Lifetime Timeline 0-100 Years -->
+        <div id="timelineTab" class="tab-content-area" style="display: none;">
+            <div class="kj-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="color: #0f172a; font-weight: 800; margin: 0; font-size: 1.25rem;">
+                            <i class="fas fa-stream mr-2 text-primary"></i> บัญชีเส้นทางชีวิต ๐ - ๑๐๐ ปี (กาลจักรจรวิภาค)
+                        </h3>
+                        <p style="color: #475569; font-size: 0.88rem; margin: 4px 0 0 0;">
+                            แผนผังการโคจรของลัคน์จรตัวเสวย-แทรก ภพเรือนจร และจังหวะชีวิตรุ่งเรือง/เฝ้าระวังตลอด ๑๐๐ ปี
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button type="button" class="preset-badge-btn" onclick="filterTimeline('all')">ทั้งหมด</button>
+                        <button type="button" class="preset-badge-btn" style="color:#15803d; border-color:#86efac; background:#f0fdf4;" onclick="filterTimeline('good')">เฉพาะช่วงรุ่งเรือง</button>
+                        <button type="button" class="preset-badge-btn" style="color:#b91c1c; border-color:#fca5a5; background:#fef2f2;" onclick="filterTimeline('danger')">เฉพาะช่วงเฝ้าระวัง/ฆาต</button>
+                        <button type="button" class="preset-badge-btn" style="color:#b45309; border-color:#fde047; background:#fefce8;" onclick="scrollToCurrentAge()">
+                            <i class="fas fa-crosshairs"></i> ไปที่อายุปัจจุบัน
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 📈 Interactive Visual Life Momentum Wave (Chart.js) -->
+                <div class="life-chart-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                        <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">
+                            <i class="fas fa-chart-line text-primary mr-2"></i> กราฟคลื่นพลังชีวิต ๑๐๐ ปี (Life Momentum Wave)
+                        </div>
+                        <div style="font-size: 0.78rem; color: #64748b;">
+                            <span style="display:inline-block; width:10px; height:10px; background:#16a34a; border-radius:50%; margin-right:4px;"></span>รุ่งเรือง (75-95)
+                            <span style="display:inline-block; width:10px; height:10px; background:#0284c7; border-radius:50%; margin: 0 4px 0 8px;"></span>ราบรื่น (60-74)
+                            <span style="display:inline-block; width:10px; height:10px; background:#eab308; border-radius:50%; margin: 0 4px 0 8px;"></span>ชะลอตัว (45-59)
+                            <span style="display:inline-block; width:10px; height:10px; background:#dc2626; border-radius:50%; margin: 0 4px 0 8px;"></span>เฝ้าระวัง/ฆาต (&lt;45)
+                        </div>
+                    </div>
+                    <div style="position: relative; height: 180px; width: 100%;">
+                        <canvas id="lifeWaveCanvas"></canvas>
+                    </div>
+                    <div style="margin-top: 6px; font-size: 0.75rem; color: #64748b; text-align: right;">
+                        <i class="fas fa-mouse-pointer"></i> คลิกจุดบนเส้นกราฟเพื่อกระโดดไปยังแถวอายุนั้นในตารางอัตโนมัติ
+                    </div>
+                </div>
+
+                <!-- สรุปสถิติตลอด 100 ปี (สีเข้ม คอนทราสต์ชัดเจน อ่านง่ายมาก) -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="font-size: 0.82rem; color: #166534; font-weight: 700;">ปีรุ่งเรือง/ได้ลาภยศ</div>
+                        <div id="statExcellent" style="font-size: 1.4rem; font-weight: 800; color: #15803d; margin-top: 2px;">-</div>
+                    </div>
+                    <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="font-size: 0.82rem; color: #075985; font-weight: 700;">ปีราบรื่นมงคล</div>
+                        <div id="statGood" style="font-size: 1.4rem; font-weight: 800; color: #0369a1; margin-top: 2px;">-</div>
+                    </div>
+                    <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="font-size: 0.82rem; color: #854d0e; font-weight: 700;">ปีเหน็ดเหนื่อย/ชะลอตัว</div>
+                        <div id="statModerate" style="font-size: 1.4rem; font-weight: 800; color: #a16207; margin-top: 2px;">-</div>
+                    </div>
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="font-size: 0.82rem; color: #991b1b; font-weight: 700;">ปีเฝ้าระวัง/มีเกณฑ์ฆาต</div>
+                        <div id="statDanger" style="font-size: 1.4rem; font-weight: 800; color: #dc2626; margin-top: 2px;">-</div>
+                    </div>
+                </div>
+
+                <div style="max-height: 580px; overflow-y: auto; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <table class="timeline-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 75px;">อายุ</th>
+                                <th style="width: 85px;">ปี พ.ศ.</th>
+                                <th style="width: 140px;">ลัคน์จรตัวเสวย</th>
+                                <th style="width: 95px;">ภพเสวย</th>
+                                <th style="width: 140px;">ลัคน์จรตัวแทรก</th>
+                                <th style="width: 95px;">ภพแทรก</th>
+                                <th>คำพยากรณ์สังเขปประจำปี</th>
+                                <th style="width: 130px;">ระดับเกณฑ์</th>
+                                <th style="width: 95px;">คำพยากรณ์</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timelineTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="../src/data/kalachakra-data.js"></script>
+    <script src="../src/engine/kalachakra-engine.js"></script>
+    <script src="../src/utils/tiers.js"></script>
+
+    <script>
+        "use strict";
+
+        function checkDiamondTierAccess() {
+            let hasAccess = false;
+            if (typeof window.hasPackagePermission === 'function') {
+                hasAccess = window.hasPackagePermission('kalachakraWiphakPage');
+            } else {
+                try {
+                    const raw = localStorage.getItem('siamhora_auth_session');
+                    const isSimulating = localStorage.getItem('siamhora_simulate_package');
+                    if (raw) {
+                        const sess = JSON.parse(raw);
+                        if (sess && sess.role === 'admin' && !isSimulating) {
+                            hasAccess = true;
+                        } else {
+                            const pkg = isSimulating || sess.simulatePackage || sess.package || 'ทดลองใช้';
+                            const pkgIdx = packages.findIndex(p => p.name === pkg);
+                            hasAccess = (pkgIdx >= 10);
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            const overlay = document.getElementById('tierLockOverlay');
+            if (overlay) {
+                overlay.style.display = hasAccess ? 'none' : 'flex';
+            }
+        }
+
+        function switchKjTab(tabId, btn) {
+            document.querySelectorAll('.tab-content-area').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.kj-tab-btn').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(tabId);
+            if (target) target.style.display = 'block';
+            if (btn) btn.classList.add('active');
+
+            if (tabId === 'timelineTab' && currentTimelineData.length > 0) {
+                setTimeout(() => {
+                    if (lifeWaveChartInstance) {
+                        lifeWaveChartInstance.resize();
+                    } else {
+                        initLifeWaveChart(currentTimelineData);
+                    }
+                }, 50);
+            }
+        }
+
+        function loadCase(caseId) {
+            const c = KalachakraData.HISTORICAL_CASES.find(item => item.id === caseId);
+            if (!c) return;
+
+            document.getElementById('personName').value = c.name;
+            document.getElementById('birthLagnaRasi').value = c.birthDate.lagnaRasiIndex;
+            document.getElementById('lagnaDeg').value = c.birthDate.lagnaDeg;
+            document.getElementById('lagnaMin').value = c.birthDate.lagnaMin;
+            document.getElementById('birthCSYear').value = c.birthDate.csYear;
+            document.getElementById('actualAgeYear').value = c.expectedResult.actualAge.years;
+            document.getElementById('actualAgeMonth').value = c.expectedResult.actualAge.months;
+            document.getElementById('actualAgeDay').value = c.expectedResult.actualAge.days;
+
+            calculateKalachakra(c);
+        }
+
+        function calculateKalachakra(presetCase = null) {
+            const name = document.getElementById('personName').value;
+            const lagnaRasi = parseInt(document.getElementById('birthLagnaRasi').value);
+            const lagnaDeg = parseInt(document.getElementById('lagnaDeg').value) || 0;
+            const lagnaMin = parseInt(document.getElementById('lagnaMin').value) || 0;
+            const csYear = parseInt(document.getElementById('birthCSYear').value) || 1247;
+            const ageY = parseInt(document.getElementById('actualAgeYear').value) || 22;
+            const ageM = parseInt(document.getElementById('actualAgeMonth').value) || 0;
+            const ageD = parseInt(document.getElementById('actualAgeDay').value) || 0;
+
+            const transitingPlanets = (presetCase && presetCase.id === 'case_luang_thorn') ?
+                [{ num: 7, name: 'เสาร์', rasiIndex: 5 }] : [];
+
+            const result = KalachakraEngine.analyzeKalachakra({
+                name,
+                birthDate: { csYear },
+                birthLagnaRasiIndex: lagnaRasi,
+                birthLagnaDeg: lagnaDeg,
+                birthLagnaMin: lagnaMin,
+                targetDate: { csYear: csYear + ageY },
+                customActualAge: { years: ageY, months: ageM, days: ageD },
+                transitingPlanets
+            });
+
+            renderResults(result, presetCase);
+        }
+
+        function renderResults(res, presetCase) {
+            // 1. Sawoei & Thaek Card
+            document.getElementById('sawoeiTitle').innerText = `ราศี${res.sawoei.rasiName} (${res.sawoei.category.nameTh})`;
+            document.getElementById('sawoeiSub').innerText = `ดาวเกษตรเจ้าเรือน: พระ${res.sawoei.lord.planet} (${res.sawoei.lord.planetNum}) • เกณฑ์รอบ ${res.sawoei.category.periodYears} ปี`;
+            document.getElementById('sawoeiSummary').innerText = res.sawoei.prediction.summary;
+
+            document.getElementById('thaekTitle').innerText = `ราศี${res.thaek.rasiName} (${res.thaek.category.nameTh})`;
+            document.getElementById('thaekSub').innerText = `ดาวเกษตรเจ้าเรือน: พระ${res.thaek.lord.planet} (${res.thaek.lord.planetNum})`;
+            document.getElementById('thaekSummary').innerText = res.thaek.prediction.summary;
+
+            // 2. Timing
+            document.getElementById('timeElapsed').innerText = `${res.thaek.elapsed.months} เดือน ${res.thaek.elapsed.days} วัน`;
+            document.getElementById('timeRemaining').innerText = `${res.thaek.remaining.months} เดือน ${res.thaek.remaining.days} วัน`;
+            document.getElementById('actualAgeExit').innerText = `${res.thaek.actualAgeAtExit.years} ปี ${res.thaek.actualAgeAtExit.months} เดือน ${res.thaek.actualAgeAtExit.days} วัน`;
+
+            // Executive Hero Population
+            populateExecutiveHero(res);
+
+            // 3. Khat Banner (พร้อมระบุเวลาที่แน่นอน Exact Timing Window)
+            const banner = document.getElementById('khatBannerContainer');
+            if (res.khat.isKhatActive || res.khat.isLagnaClash || res.khat.isLagnaKhad) {
+                let timingBadge = '';
+                if (res.khat.timingWindow) {
+                    timingBadge = `
+                        <div style="background: rgba(254, 226, 226, 0.7); border: 1px solid rgba(248, 113, 113, 0.4); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+                            <div style="color: #991b1b; font-size: 0.88rem; font-weight: 700;">
+                                <i class="fas fa-stopwatch text-danger"></i> กรอบเวลาเกิดเหตุแน่นอน:
+                            </div>
+                            <div style="color: #b91c1c; font-size: 0.86rem; font-weight: 600;">
+                                ${res.khat.timingWindow.peakRiskPeriod}
+                            </div>
+                        </div>
+                    `;
+                }
+                let itemsHtml = res.khat.warnings.map(w => `
+                    <div style="margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed rgba(248, 113, 113, 0.3);">
+                        <div style="font-weight: 700; color: #991b1b; font-size: 0.92rem;">
+                            <i class="fas fa-exclamation-triangle text-danger"></i> ${w.title}
+                        </div>
+                        <div style="font-size: 0.85rem; color: #334155; margin-top: 3px; line-height: 1.5;">
+                            ${w.desc}
+                        </div>
+                        ${w.timing ? `<div style="font-size: 0.8rem; color: #b45309; margin-top: 4px; font-weight: 600;"><i class="fas fa-calendar-alt"></i> ${w.timing}</div>` : ''}
+                    </div>
+                `).join('');
+                banner.innerHTML = `
+                    <div class="alert-khat" style="background: rgba(254, 242, 242, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(252, 165, 165, 0.8); border-radius: 16px; padding: 18px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.08);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
+                            <h4 style="color:#991b1b;font-weight:800;margin:0; font-size: 1.05rem;">
+                                <i class="fas fa-skull-crossbones text-danger"></i> คำเตือนเกณฑ์ฆาต & การระบุช่วงเวลาเกิดเหตุแน่นอน (Timing Pinpointing)
+                            </h4>
+                            <span style="background: #ef4444; color: #fff; font-size: 0.72rem; padding: 3px 10px; border-radius: 12px; font-weight: 700; letter-spacing: 0.3px;">
+                                เฝ้าระวังระดับสูง
+                            </span>
+                        </div>
+                        ${timingBadge}
+                        ${itemsHtml}
+                    </div>
+                `;
+            } else {
+                banner.innerHTML = '';
+            }
+
+            // 4. Detailed Predictions (วิเคราะห์ครบ ๕ มิติเชิงลึกตามคัมภีร์กาลจักรจรวิภาค)
+            let detailsHtml = `
+
+                <!-- มิติที่ ๑: ตัวเสวย (ราศี ${res.sawoei.rasiName} - ${res.sawoei.category.nameTh}) -->
+                <div style="margin-bottom: 16px; padding: 18px; background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 16px; box-shadow: var(--glass-shadow-sm);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom: 8px;">
+                        <h5 style="color:#b45309; font-weight:700; margin:0; font-size: 1rem;">
+                            <i class="fas fa-crown"></i> ๑. วิเคราะห์วาสนาตัวเสวย (ราศี${res.sawoei.rasiName} • ${res.sawoei.category.nameTh})
+                        </h5>
+                        <span style="font-size:0.75rem; background:rgba(254, 243, 199, 0.9); color:#92400e; padding:3px 10px; border-radius:12px; font-weight:600; border:1px solid #fde68a;">
+                            ${res.sawoei.category.nature}
+                        </span>
+                    </div>
+                    <div style="font-size:0.88rem; color:#1e293b; line-height:1.6; margin-bottom:8px;">
+                        <strong>สภาวะเกณฑ์ประจำราศี:</strong> ${res.sawoei.prediction.summary}
+                    </div>
+                    <div style="font-size:0.84rem; color:#64748b; margin-bottom:10px;">
+                        <strong style="color:#b45309;">อิทธิพลดาวเกษตรเจ้าเรือน:</strong> พระ${res.sawoei.lord.planet} (${res.sawoei.lord.planetNum}) เป็นผู้กุมอำนาจวาสนาในรอบตัวเสวยนี้
+                    </div>
+                    <div style="background:rgba(248, 250, 252, 0.9); padding:10px 14px; border-radius:10px; border:1px solid rgba(226, 232, 240, 0.8);">
+                        <span style="color:#475569; font-weight:600; font-size:0.82rem;"><i class="fas fa-scroll mr-1"></i> ข้อระบุตามคัมภีร์กาลจักรดั้งเดิม:</span>
+                        <ul style="padding-left: 20px; margin: 4px 0 0 0; color:#334155; font-size:0.84rem; line-height:1.6;">
+                            ${res.sawoei.prediction.details.map(d => `<li style="margin-bottom:3px;">${d}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- มิติที่ ๒: ตัวแทรก (ราศี ${res.thaek.rasiName} - ${res.thaek.category.nameTh}) -->
+                <div style="margin-bottom: 16px; padding: 18px; background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 16px; box-shadow: var(--glass-shadow-sm);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom: 8px;">
+                        <h5 style="color:#0369a1; font-weight:700; margin:0; font-size: 1rem;">
+                            <i class="fas fa-crosshairs"></i> ๒. วิเคราะห์เหตุการณ์เฉพาะหน้าตัวแทรก (ราศี${res.thaek.rasiName} • ${res.thaek.category.nameTh})
+                        </h5>
+                        <span style="font-size:0.75rem; background:rgba(224, 242, 254, 0.9); color:#0369a1; padding:3px 10px; border-radius:12px; font-weight:600; border:1px solid #bae6fd;">
+                            ${res.thaek.category.nature}
+                        </span>
+                    </div>
+                    <div style="font-size:0.88rem; color:#1e293b; line-height:1.6; margin-bottom:8px;">
+                        <strong>สภาวะการจรแทรก:</strong> ${res.thaek.prediction.summary}
+                    </div>
+                    <div style="font-size:0.84rem; color:#64748b; margin-bottom:10px;">
+                        <strong style="color:#0284c7;">ดาวเจ้าเรือนแทรก:</strong> พระ${res.thaek.lord.planet} (${res.thaek.lord.planetNum}) กำกับช่วงเวลาอายุสุทธิที่แทรกนี้
+                    </div>
+                    <div style="background:rgba(248, 250, 252, 0.9); padding:10px 14px; border-radius:10px; border:1px solid rgba(226, 232, 240, 0.8);">
+                        <span style="color:#475569; font-weight:600; font-size:0.82rem;"><i class="fas fa-stream mr-1"></i> เหตุการณ์และผลพยากรณ์ประจำช่วง:</span>
+                        <ul style="padding-left: 20px; margin: 4px 0 0 0; color:#334155; font-size:0.84rem; line-height:1.6;">
+                            ${res.thaek.prediction.details.map(d => `<li style="margin-bottom:3px;">${d}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- มิติที่ ๓: ภพเรือนจรสัมพันธ์ (บทที่ ๓ ตอนที่ ๓ ข้อ ๒) -->
+                <div style="margin-bottom: 16px; padding: 18px; background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(147, 51, 234, 0.2); border-radius: 16px; box-shadow: var(--glass-shadow-sm);">
+                    <h5 style="color:#7e22ce; font-weight:700; margin-bottom:10px; font-size: 1rem;">
+                        <i class="fas fa-compass"></i> ๓. วิเคราะห์ภพเรือนจรสัมพันธ์กับลัคนากำเนิด (นับจากลัคนาราศี${res.birthInfo.lagnaRasiName})
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div style="background:rgba(254, 243, 199, 0.4); padding:12px 14px; border-radius:12px; height:100%; border-left:4px solid #f59e0b; border-top:1px solid rgba(245,158,11,0.2); border-right:1px solid rgba(245,158,11,0.2); border-bottom:1px solid rgba(245,158,11,0.2);">
+                                <div style="font-size:0.88rem; color:#92400e; font-weight:700; margin-bottom:2px;">
+                                    ภพตัวเสวย: ภพที่ ${res.sawoei.bhava ? res.sawoei.bhava.bhavaNum : '-'} (${res.sawoei.bhava ? res.sawoei.bhava.bhavaName : '-'})
+                                </div>
+                                <div style="font-size:0.78rem; color:#78350f; margin-bottom:6px;">
+                                    หมวด: ${res.sawoei.bhava ? res.sawoei.bhava.category : '-'} | เกณฑ์: ${res.sawoei.bhava ? res.sawoei.bhava.quality : '-'}
+                                </div>
+                                <div style="font-size:0.84rem; color:#334155; line-height:1.5;">
+                                    ${res.sawoei.bhava ? res.sawoei.bhava.desc : '-'}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="background:rgba(224, 242, 254, 0.4); padding:12px 14px; border-radius:12px; height:100%; border-left:4px solid #0284c7; border-top:1px solid rgba(2,132,199,0.2); border-right:1px solid rgba(2,132,199,0.2); border-bottom:1px solid rgba(2,132,199,0.2);">
+                                <div style="font-size:0.88rem; color:#075985; font-weight:700; margin-bottom:2px;">
+                                    ภพตัวแทรก: ภพที่ ${res.thaek.bhava ? res.thaek.bhava.bhavaNum : '-'} (${res.thaek.bhava ? res.thaek.bhava.bhavaName : '-'})
+                                </div>
+                                <div style="font-size:0.78rem; color:#0c4a6e; margin-bottom:6px;">
+                                    หมวด: ${res.thaek.bhava ? res.thaek.bhava.category : '-'} | เกณฑ์: ${res.thaek.bhava ? res.thaek.bhava.quality : '-'}
+                                </div>
+                                <div style="font-size:0.84rem; color:#334155; line-height:1.5;">
+                                    ${res.thaek.bhava ? res.thaek.bhava.desc : '-'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- มิติที่ ๔: คำแนะนำและแนวทางการดำเนินชีวิต/เสริมดวงชะตา -->
+                <div style="margin-bottom: 16px; padding: 18px; background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: 16px; box-shadow: var(--glass-shadow-sm);">
+                    <h5 style="color:#15803d; font-weight:700; margin-bottom:8px; font-size: 1rem;">
+                        <i class="fas fa-hand-holding-heart"></i> ๔. เคล็ดลับการปฏิบัติตนและแนวทางเสริมสิริมงคล
+                    </h5>
+                    <div style="font-size:0.86rem; color:#334155; line-height:1.6;">
+                        <p style="margin-bottom:6px;">
+                            <strong style="color:#16a34a;">• การบริหารจัดการชีวิต:</strong> 
+                            ${res.thaek.category.id === 'nara' || res.thaek.category.id === 'kada' 
+                                ? 'ช่วงนี้เป็นจังหวะแห่งการสร้างผลงาน เจรจาเรื่องยศถาบรรดาศักดิ์และการเติบโตทางวิชาชีพ ให้เร่งสร้างสัมพันธภาพอันดีกับผู้ใหญ่และรักษาความซื่อสัตย์' 
+                                : 'ควรดำเนินชีวิตด้วยความรอบคอบสุขุม ไม่ควรใจร้อนหรือริเริ่มการเสี่ยงภัยที่ไม่จำเป็น ระวังการใช้จ่ายเงินทองอันเกิดจากความใจอ่อนหรือถูกหยิบยืม'}
+                        </p>
+                        <p style="margin-bottom:6px;">
+                            <strong style="color:#16a34a;">• ข้อควรระวังสุขภาพและอุบัติเหตุ:</strong> 
+                            ${res.khat.isKhatActive || res.khat.isLagnaClash 
+                                ? 'มีเกณฑ์กระทบจากดาวบาปเคราะห์หรือลัคน์จรบรรจบเดิม ควรหลีกเลี่ยงการเดินทางไกลยามวิกาล งดเว้นกิจกรรมโลดโผน และหมั่นตรวจเช็กร่างกายสม่ำเสมอ' 
+                                : 'รักษาสมดุลธาตุอาหารและการพักผ่อน ระวังโรคประจำตัวตามธาตุของราศีประจำตัวแทรก'}
+                        </p>
+                        <p style="margin-bottom:0;">
+                            <strong style="color:#16a34a;">• การสร้างบุญบารมี:</strong> 
+                            หมั่นเจริญพระพุทธมนต์ (โดยเฉพาะบทชยปริตรและโมรปริตร) ถวายสังฆทาน ปล่อยชีวิตสัตว์น้ำ หรือร่วมสมทบทุนจัดซื้ออุปกรณ์การแพทย์ จะช่วยหนุนดวงชะตาให้ผ่อนหนักเป็นเบาและทวีคุณลาภผลให้รุ่งเรืองยิ่งขึ้น
+                        </p>
+                    </div>
+                </div>
+            `;
+            if (presetCase && presetCase.lifeEvents) {
+                detailsHtml += `
+                    <div style="margin-top: 16px; padding: 14px 18px; background: rgba(240, 249, 255, 0.9); border-radius: 14px; border: 1px solid rgba(186, 230, 253, 0.9); border-left: 4px solid #0284c7;">
+                        <h5 style="color:#0369a1;font-weight:700; font-size:0.95rem; margin-bottom:6px;"><i class="fas fa-history mr-1"></i> บันทึกการพิสูจน์ผลเหตุการณ์จริงในประวัติศาสตร์ (กรณีศึกษา)</h5>
+                        <ul style="padding-left: 20px; margin: 4px 0 0 0; font-size:0.84rem; color:#334155; line-height:1.6;">
+                            ${presetCase.lifeEvents.map(e => `<li style="margin-bottom:3px;">${e}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            document.getElementById('detailedPredictions').innerHTML = detailsHtml;
+
+            // 5. Chamra Table
+            const body = document.getElementById('chamraTableBody');
+            body.innerHTML = `
+                <tr>
+                    <td style="text-align:left;font-weight:700;color:#b45309;">แถวบน (เวลาเหลือในปีกำเนิด)</td>
+                    <td style="font-weight:600;color:#0f172a;">${res.ayuChamra.topRow ? res.ayuChamra.topRow.years : res.targetAge.years}</td>
+                    <td style="font-weight:600;color:#0f172a;">${res.ayuChamra.topRow ? res.ayuChamra.topRow.months : 6}</td>
+                    <td style="font-weight:600;color:#0f172a;">${res.ayuChamra.topRow ? res.ayuChamra.topRow.days : 11}</td>
+                    <td style="font-weight:600;color:#0f172a;">${res.ayuChamra.topRow ? res.ayuChamra.topRow.hours : 15}</td>
+                    <td style="font-weight:600;color:#0f172a;">${res.ayuChamra.topRow ? res.ayuChamra.topRow.minutes : 30}</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left;font-weight:700;color:#0284c7;">แถวล่าง (เวลาที่ผ่านไปในปีประสงค์)</td>
+                    <td style="font-weight:600;color:#0f172a;">${res.ayuChamra.bottomRow ? res.ayuChamra.bottomRow.years : 0}</td>
+                    <td style="font-weight:600;color:#0f172a;">${res.ayuChamra.bottomRow ? res.ayuChamra.bottomRow.months : 0}</td>
+                    <td style="font-weight:600;color:#0f172a;">${res.ayuChamra.bottomRow ? res.ayuChamra.bottomRow.days : 9}</td>
+                    <td style="font-weight:600;color:#0f172a;">${res.ayuChamra.bottomRow ? res.ayuChamra.bottomRow.hours : 4}</td>
+                    <td style="font-weight:600;color:#0f172a;">${res.ayuChamra.bottomRow ? res.ayuChamra.bottomRow.minutes : 15}</td>
+                </tr>
+                <tr style="background: #f0fdf4; font-weight: 700; border-top: 2px solid #86efac;">
+                    <td style="text-align:left;color:#15803d;font-weight:800;">อายุชำระสุทธิ (หัก ๑ ปีชำระ)</td>
+                    <td style="color:#15803d;font-weight:800;">${res.ayuChamra.finalAgeChamra.years}</td>
+                    <td style="color:#15803d;font-weight:800;">${res.ayuChamra.finalAgeChamra.months}</td>
+                    <td style="color:#15803d;font-weight:800;">${res.ayuChamra.finalAgeChamra.days}</td>
+                    <td style="color:#15803d;font-weight:800;">${res.ayuChamra.finalAgeChamra.hours || 0}</td>
+                    <td style="color:#15803d;font-weight:800;">${res.ayuChamra.finalAgeChamra.minutes || 0}</td>
+                </tr>
+            `;
+
+            document.getElementById('pastTimeDetails').innerHTML = `
+                <div style="margin-bottom:6px;">• <strong style="color:#0f172a;">สมพุสลัคน์:</strong> ${res.birthInfo.lagnaRasiName} ${res.birthInfo.deg} องศา ${res.birthInfo.min} ลิบดา</div>
+                <div style="margin-bottom:6px;">• <strong style="color:#0f172a;">เวลาอดีตที่คำนวณได้:</strong> ${res.pastTime.formatted}</div>
+                <div>• <strong style="color:#0f172a;">อายุประสงค์ (อายุปัจจุบัน + เวลาอดีต):</strong> <span style="color:#b45309;font-weight:800;">${res.targetAge.years} ปี ${res.targetAge.months} เดือน ${res.targetAge.days} วัน</span></div>
+            `;
+
+            // 6. Poetic Card
+            const poemBox = document.getElementById('poeticCardContainer');
+            if (res.poem) {
+                poemBox.innerHTML = `
+                    <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 24px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+                        <h4 style="color:#0f172a;font-weight:800;margin-bottom:12px;font-size:1.15rem;">
+                            ${res.poem.rasiName}: "${res.poem.title}"
+                        </h4>
+                        <div style="font-size: 1.05rem; line-height: 2; color: #334155; max-width: 800px; margin: 0 auto; font-style: italic;">
+                            "${res.poem.poem}"
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 7. Render 0-100 Timeline
+            renderLifeTimeline(res);
+        }
+
+        let currentTimelineData = [];
+        let currentActualAgeYears = 22;
+
+        function renderLifeTimeline(res) {
+            const lagnaRasi = res.birthInfo.lagnaRasiIndex;
+            const deg = res.birthInfo.deg || 0;
+            const min = res.birthInfo.min || 0;
+            const csYear = res.birthInfo.csYear || 1247;
+            currentActualAgeYears = res.ayuChamra.finalAgeChamra.years;
+
+            currentTimelineData = KalachakraEngine.calculateLifeTimeline(lagnaRasi, deg, min, csYear);
+
+            // คำนวณสถิติ
+            let countExc = 0, countGood = 0, countMod = 0, countDan = 0;
+            currentTimelineData.forEach(item => {
+                if (item.tone === 'excellent') countExc++;
+                else if (item.tone === 'good') countGood++;
+                else if (item.tone === 'moderate') countMod++;
+                else if (item.tone === 'danger' || item.tone === 'critical') countDan++;
+            });
+
+            document.getElementById('statExcellent').innerText = `${countExc} ปี`;
+            document.getElementById('statGood').innerText = `${countGood} ปี`;
+            document.getElementById('statModerate').innerText = `${countMod} ปี`;
+            document.getElementById('statDanger').innerText = `${countDan} ปี`;
+
+            displayTimelineRows(currentTimelineData);
+            initLifeWaveChart(currentTimelineData);
+        }
+
+        // 🌟 Collapsible Drawer Toggle Function
+        function toggleFormDrawer() {
+            const drawer = document.getElementById('formCollapseDrawer');
+            const icon = document.getElementById('formDrawerIcon');
+            const label = document.getElementById('formDrawerLabel');
+            if (!drawer) return;
+            if (drawer.style.display === 'none' || drawer.style.display === '') {
+                drawer.style.display = 'block';
+                if (icon) icon.className = 'fas fa-chevron-up text-primary';
+                if (label) label.innerText = 'ซ่อนแผงคำนวณ';
+            } else {
+                drawer.style.display = 'none';
+                if (icon) icon.className = 'fas fa-sliders-h text-primary';
+                if (label) label.innerText = 'ปรับแต่งข้อมูลคำนวณ';
+            }
+        }
+
+        // 🌟 Executive Dashboard Status Calculation & Population
+        function populateExecutiveHero(res) {
+            const ageY = res.ayuChamra.finalAgeChamra.years;
+            const sawoeiRasi = res.sawoei.rasiName;
+            const thaekRasi = res.thaek.rasiName;
+            const sawoeiLord = res.sawoei.lord.planet;
+            const thaekLord = res.thaek.lord.planet;
+
+            // Score Momentum Index
+            let score = 70;
+            let phaseTitle = 'ช่วงเสริมสร้างรากฐานและสั่งสมบารมี';
+            let phaseBadgeBg = '#e0f2fe';
+            let phaseBadgeColor = '#0369a1';
+            let phaseBadgeBorder = '#bae6fd';
+            let phaseIcon = 'fa-compass';
+
+            if (res.khat.isKhatActive || res.khat.isLagnaClash || res.khat.isLagnaKhad) {
+                score = 35;
+                phaseTitle = 'ช่วงเฝ้าระวังพิเศษ (มีเกณฑ์ฆาต/ลัคน์ขาดจรเข้ากระทบ)';
+                phaseBadgeBg = '#fee2e2';
+                phaseBadgeColor = '#991b1b';
+                phaseBadgeBorder = '#fca5a5';
+                phaseIcon = 'fa-skull-crossbones';
+            } else if (res.sawoei.category.id === 'nara' && res.thaek.category.id === 'nara') {
+                score = 92;
+                phaseTitle = 'มหาศุภมงคล: รอบนระบรรจบ ยศฐาบรรดาศักดิ์รุ่งเรืองสูงสุด';
+                phaseBadgeBg = '#dcfce7';
+                phaseBadgeColor = '#166534';
+                phaseBadgeBorder = '#86efac';
+                phaseIcon = 'fa-crown';
+            } else if (res.sawoei.category.id === 'kada' || res.thaek.category.id === 'kada') {
+                score = 82;
+                phaseTitle = 'ช่วงจังหวะเกียรติยศ ลาภผลเจริญก้าวหน้า';
+                phaseBadgeBg = '#fef3c7';
+                phaseBadgeColor = '#92400e';
+                phaseBadgeBorder = '#fde68a';
+                phaseIcon = 'fa-medal';
+            } else if (res.sawoei.category.id === 'amphu' || res.thaek.category.id === 'amphu') {
+                score = 55;
+                phaseTitle = 'ช่วงทดสอบความอดทน ผันผวนตามสายน้ำ ระวังสุขภาพ';
+                phaseBadgeBg = '#ffedd5';
+                phaseBadgeColor = '#9a3412';
+                phaseBadgeBorder = '#fdba74';
+                phaseIcon = 'fa-water';
+            }
+
+            // Header Elements
+            const badgeEl = document.getElementById('heroPhaseBadge');
+            if (badgeEl) {
+                badgeEl.style.background = phaseBadgeBg;
+                badgeEl.style.color = phaseBadgeColor;
+                badgeEl.style.borderColor = phaseBadgeBorder;
+                badgeEl.innerHTML = `<i class="fas ${phaseIcon}"></i> ${phaseTitle}`;
+            }
+
+            const agePill = document.getElementById('heroAgePill');
+            if (agePill) {
+                agePill.innerText = `อายุชำระสุทธิ: ${res.ayuChamra.finalAgeChamra.years} ปี ${res.ayuChamra.finalAgeChamra.months} เดือน ${res.ayuChamra.finalAgeChamra.days} วัน`;
+            }
+
+            const headline = document.getElementById('heroHeadline');
+            if (headline) {
+                headline.innerText = `จังหวะชีวิตวัย ${ageY} ปี: วาสนาตัวเสวย${sawoeiRasi} (ดาว${sawoeiLord}) สู่ตัวแทรก${thaekRasi} (ดาว${thaekLord})`;
+            }
+
+            const scoreBadge = document.getElementById('heroScoreBadge');
+            if (scoreBadge) {
+                scoreBadge.innerText = `${score} / 100`;
+                scoreBadge.style.color = score >= 75 ? '#16a34a' : (score >= 50 ? '#d97706' : '#dc2626');
+            }
+
+            // Plain-Thai modern interpretation
+            const summaryBox = document.getElementById('heroPlainThaiSummary');
+            if (summaryBox) {
+                let plainText = `<strong>สรุปทิศทางชะตาภาพรวม:</strong> ในช่วงวัยนี้ ชีวิตอยู่ภายใต้การกำกับของ <em>ลัคน์ตัวเสวยราศี${sawoeiRasi}</em> ซึ่งเป็นรากฐานวาสนาระยะยาว `;
+                if (res.khat.isKhatActive || res.khat.isLagnaClash) {
+                    plainText += `แต่เนื่องจากปัจจุบันมีเกณฑ์ฆาตหรือลัคน์จรบรรจบเดิมเกิดขึ้น จึงแนะนำให้ชะลอการลงทุนใหญ่ งดเสี่ยงภัย รักษาสุขภาพอย่างเคร่งครัด`;
+                } else if (score >= 75) {
+                    plainText += `สอดรับกับ <em>ตัวแทรกราศี${thaekRasi}</em> ที่ส่งเสริมให้เกิดความก้าวหน้า เกียรติยศ และผู้ใหญ่อุปถัมภ์ เป็นช่วงเวลาทองที่ควรเร่งสร้างผลงาน`;
+                } else {
+                    plainText += `และกำลังขับเคลื่อนผ่าน <em>ตัวแทรกราศี${thaekRasi}</em> มีความผันผวนเกิดขึ้นบ้าง ควรวางแผนการเงินรอบคอบและสร้างกัลยาณมิตร`;
+                }
+                summaryBox.innerHTML = plainText;
+            }
+
+            // Time elements
+            const elTimeElapsed = document.getElementById('heroTimeElapsedText');
+            if (elTimeElapsed) elTimeElapsed.innerText = `${res.thaek.elapsed.months} เดือน ${res.thaek.elapsed.days} วัน`;
+
+            const elTimeRem = document.getElementById('heroTimeRemainingText');
+            if (elTimeRem) elTimeRem.innerText = `${res.thaek.remaining.months} เดือน ${res.thaek.remaining.days} วัน`;
+
+            const elExitAge = document.getElementById('heroExitAgeText');
+            if (elExitAge) elExitAge.innerText = `${res.thaek.actualAgeAtExit.years} ปี ${res.thaek.actualAgeAtExit.months} เดือน ${res.thaek.actualAgeAtExit.days} วัน`;
+        }
+
+        let lifeWaveChartInstance = null;
+
+        function initLifeWaveChart(timelineData) {
+            const canvas = document.getElementById('lifeWaveCanvas');
+            if (!canvas || typeof Chart === 'undefined') return;
+
+            const labels = [];
+            const scores = [];
+            const pointColors = [];
+            const pointRadii = [];
+
+            timelineData.forEach(item => {
+                labels.push(`${item.age} ปี`);
+                let s = 65;
+                let color = '#0284c7';
+                let radius = 2;
+
+                if (item.tone === 'excellent') {
+                    s = 90;
+                    color = '#16a34a';
+                } else if (item.tone === 'good') {
+                    s = 75;
+                    color = '#0284c7';
+                } else if (item.tone === 'moderate') {
+                    s = 55;
+                    color = '#eab308';
+                } else if (item.tone === 'danger') {
+                    s = 35;
+                    color = '#f97316';
+                } else if (item.tone === 'critical') {
+                    s = 20;
+                    color = '#dc2626';
+                }
+
+                // Highlight Current Age
+                if (item.age === currentActualAgeYears) {
+                    radius = 8;
+                    color = '#f59e0b';
+                }
+
+                scores.push(s);
+                pointColors.push(color);
+                pointRadii.push(radius);
+            });
+
+            if (lifeWaveChartInstance) {
+                lifeWaveChartInstance.destroy();
+            }
+
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+            gradient.addColorStop(0, 'rgba(2, 132, 199, 0.25)');
+            gradient.addColorStop(1, 'rgba(2, 132, 199, 0.01)');
+
+            lifeWaveChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'พลังชีวิต (0-100)',
+                        data: scores,
+                        borderColor: '#0284c7',
+                        borderWidth: 2.2,
+                        backgroundColor: gradient,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: pointColors,
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 1.5,
+                        pointRadius: pointRadii,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    onClick: (event, elements) => {
+                        if (elements && elements.length > 0) {
+                            const index = elements[0].index;
+                            const targetAge = timelineData[index].age;
+                            scrollToAge(targetAge);
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => {
+                                    const idx = items[0].dataIndex;
+                                    const d = timelineData[idx];
+                                    return `วัยอายุ ${d.age} ปี (พ.ศ. ${d.solarYearTh})`;
+                                },
+                                label: (context) => {
+                                    const idx = context.dataIndex;
+                                    const d = timelineData[idx];
+                                    return [
+                                        `เกณฑ์: ${d.toneText} (${d.tone})`,
+                                        `เสวย: ราศี${d.sawoeiRasi} (ภพ${d.sawoeiBhavaName})`,
+                                        `แทรก: ราศี${d.thaekRasi} (ภพ${d.thaekBhavaName})`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                maxTicksLimit: 12,
+                                color: '#64748b',
+                                font: { size: 11, family: 'Prompt' }
+                            }
+                        },
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(226, 232, 240, 0.8)' },
+                            ticks: {
+                                stepSize: 25,
+                                color: '#64748b',
+                                font: { size: 10, family: 'Prompt' }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function scrollToAge(age) {
+            const target = document.getElementById(`timeline-age-${age}`);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                target.style.transition = 'background-color 0.5s ease';
+                const originalBg = target.style.backgroundColor;
+                target.style.backgroundColor = '#fef08a';
+                setTimeout(() => {
+                    target.style.backgroundColor = originalBg;
+                }, 1500);
+            }
+        }
+
+        function displayTimelineRows(data) {
+            const tbody = document.getElementById('timelineTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = data.map(item => {
+                const isCurrentAge = (item.age === currentActualAgeYears);
+                const rowClass = isCurrentAge ? 'current-age-row' : '';
+                const currentBadge = isCurrentAge ? '<span style="background:#f59e0b;color:#ffffff;padding:2px 8px;border-radius:6px;font-size:0.72rem;margin-left:6px;font-weight:700;">ปัจจุบัน</span>' : '';
+
+                // ข้อความขยายเชิงลึก
+                const sawoeiDetailsList = (item.sawoeiDetails && item.sawoeiDetails.length > 0)
+                    ? item.sawoeiDetails.map(d => `<li style="margin-bottom:3px;">${d}</li>`).join('')
+                    : `<li>${item.sawoeiSummary}</li>`;
+
+                const thaekDetailsList = (item.thaekDetails && item.thaekDetails.length > 0)
+                    ? item.thaekDetails.map(d => `<li style="margin-bottom:3px;">${d}</li>`).join('')
+                    : `<li>${item.thaekSummary}</li>`;
+
+                return `
+                    <tr id="timeline-age-${item.age}" class="${rowClass}">
+                        <td style="font-weight:700; color:#0f172a;">${item.age} ปี ${currentBadge}</td>
+                        <td style="color:#475569; font-weight:600;">${item.solarYearTh}</td>
+                        <td style="color:#b45309; font-weight:700;">ราศี${item.sawoeiRasi} <span style="font-size:0.75rem;color:#64748b;font-weight:500;">(ดาว${item.sawoeiLord})</span></td>
+                        <td><span style="font-size:0.78rem; background:#fef3c7; color:#92400e; padding:3px 8px; border-radius:6px; font-weight:700; border:1px solid #fde68a;">${item.sawoeiBhavaName}</span></td>
+                        <td style="color:#0284c7; font-weight:700;">ราศี${item.thaekRasi} <span style="font-size:0.75rem;color:#64748b;font-weight:500;">(ดาว${item.thaekLord})</span></td>
+                        <td><span style="font-size:0.78rem; background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:6px; font-weight:700; border:1px solid #bae6fd;">${item.thaekBhavaName}</span></td>
+                        <td style="text-align:left; font-size:0.86rem; color:#1e293b; line-height:1.5;">
+                            <strong>${item.thaekSummary}</strong>
+                            <div style="font-size:0.8rem; color:#64748b; margin-top:3px;">
+                                <em>วาสนาเสวย:</em> ${item.sawoeiSummary}
+                            </div>
+                            ${item.isLagnaClash ? '<div style="color:#dc2626;font-weight:700;font-size:0.78rem;margin-top:4px;"><i class="fas fa-exclamation-triangle"></i> ลัคน์จรทับลัคน์เดิม (รอบกาลจักรบรรจบ)</div>' : ''}
+                            ${item.isLagnaKhad ? '<div style="color:#b91c1c;font-weight:800;font-size:0.78rem;margin-top:4px;"><i class="fas fa-skull"></i> เกณฑ์ลัคน์ขาด (นระจรไปอัมพุ บาปเคราะห์เบียน)</div>' : ''}
+                        </td>
+                        <td><span class="tone-badge tone-${item.tone}">${item.toneText}</span></td>
+                        <td>
+                            <button type="button" class="timeline-expand-btn" onclick="toggleTimelineDetail(${item.age})">
+                                <i class="fas fa-search-plus" id="icon-expand-${item.age}"></i> ดูเจาะลึก
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- แถวแจกแจงคำทำนายเชิงลึกประจำปี (Expandable Drawer) -->
+                    <tr id="timeline-detail-${item.age}" class="timeline-detail-row" style="display: none;">
+                        <td colspan="9">
+                            <div class="timeline-detail-card">
+                                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; border-bottom:1px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px;">
+                                    <h5 style="margin:0; font-size:1.05rem; font-weight:800; color:#0f172a;">
+                                        <i class="fas fa-calendar-check text-primary mr-2"></i> วิเคราะห์เจาะลึกชะตาชีวิต วัยอายุ ${item.age} ปี (ปี พ.ศ. ${item.solarYearTh} / จ.ศ. ${item.csYear})
+                                    </h5>
+                                    <span class="tone-badge tone-${item.tone}">เกณฑ์: ${item.toneText}</span>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:12px; height:100%;">
+                                            <div style="color:#92400e; font-weight:700; font-size:0.9rem; margin-bottom:4px;">
+                                                <i class="fas fa-crown mr-1"></i> ลัคน์จรตัวเสวย: ราศี${item.sawoeiRasi} (${item.sawoeiCategory})
+                                            </div>
+                                            <div style="font-size:0.8rem; color:#b45309; margin-bottom:6px;">
+                                                ดาวเกษตร: พระ${item.sawoeiLord} (${item.sawoeiLordNum}) | ภพ${item.sawoeiBhavaName} (${item.sawoeiBhavaCategory})
+                                            </div>
+                                            <div style="font-size:0.84rem; color:#334155; line-height:1.5;">
+                                                <strong>ความหมายภพเรือน:</strong> ${item.sawoeiBhavaDesc}
+                                            </div>
+                                            <div style="margin-top:8px; font-size:0.82rem; color:#475569;">
+                                                <strong>คำพยากรณ์คัมภีร์ดั้งเดิม:</strong>
+                                                <ul style="padding-left:18px; margin:4px 0 0 0; line-height:1.5;">
+                                                    ${sawoeiDetailsList}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:10px; padding:12px; height:100%;">
+                                            <div style="color:#0369a1; font-weight:700; font-size:0.9rem; margin-bottom:4px;">
+                                                <i class="fas fa-crosshairs mr-1"></i> ลัคน์จรตัวแทรก: ราศี${item.thaekRasi} (${item.thaekCategory})
+                                            </div>
+                                            <div style="font-size:0.8rem; color:#0284c7; margin-bottom:6px;">
+                                                ดาวเกษตร: พระ${item.thaekLord} (${item.thaekLordNum}) | ภพ${item.thaekBhavaName} (${item.thaekBhavaCategory})
+                                            </div>
+                                            <div style="font-size:0.84rem; color:#334155; line-height:1.5;">
+                                                <strong>ความหมายภพเรือน:</strong> ${item.thaekBhavaDesc}
+                                            </div>
+                                            <div style="margin-top:8px; font-size:0.82rem; color:#475569;">
+                                                <strong>เหตุการณ์ประจำช่วงแทรก:</strong>
+                                                <ul style="padding-left:18px; margin:4px 0 0 0; line-height:1.5;">
+                                                    ${thaekDetailsList}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:12px 16px;">
+                                            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                                                <div style="flex:1; min-width:280px;">
+                                                    <strong style="color:#0f172a; font-size:0.86rem;"><i class="fas fa-compass text-primary mr-1"></i> แนวทางปฏิบัติตนและข้อพึงระวังประจำวัยอายุนี้:</strong>
+                                                    <p style="margin:4px 0 0 0; color:#334155; font-size:0.84rem; line-height:1.6;">
+                                                        ${item.advice}
+                                                    </p>
+                                                </div>
+                                                ${item.poemTitle ? `
+                                                <div style="flex:1; min-width:280px; border-left:1px dashed #cbd5e1; padding-left:14px;">
+                                                    <strong style="color:#b45309; font-size:0.86rem;"><i class="fas fa-feather-alt mr-1"></i> โคลงโบราณประจำราศี: "${item.poemTitle}"</strong>
+                                                    <p style="margin:4px 0 0 0; color:#475569; font-size:0.82rem; font-style:italic; line-height:1.5;">
+                                                        "${item.poemSnippet}"
+                                                    </p>
+                                                </div>
+                                                ` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function toggleTimelineDetail(age) {
+            const row = document.getElementById(`timeline-detail-${age}`);
+            const icon = document.getElementById(`icon-expand-${age}`);
+            if (!row) return;
+
+            if (row.style.display === 'none' || row.style.display === '') {
+                row.style.display = 'table-row';
+                if (icon) {
+                    icon.className = 'fas fa-chevron-up';
+                }
+            } else {
+                row.style.display = 'none';
+                if (icon) {
+                    icon.className = 'fas fa-search-plus';
+                }
+            }
+        }
+
+        function filterTimeline(type) {
+            if (type === 'all') {
+                displayTimelineRows(currentTimelineData);
+            } else if (type === 'good') {
+                displayTimelineRows(currentTimelineData.filter(i => i.tone === 'excellent' || i.tone === 'good'));
+            } else if (type === 'danger') {
+                displayTimelineRows(currentTimelineData.filter(i => i.tone === 'danger' || i.tone === 'critical'));
+            }
+        }
+
+        function scrollToCurrentAge() {
+            const target = document.getElementById(`timeline-age-${currentActualAgeYears}`);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // โหลดข้อมูลสมาชิกจากประวัติ (horo_history)
+        function initMemberPicker() {
+            const sel = document.getElementById('memberSelector');
+            if (!sel) return;
+
+            try {
+                const raw = localStorage.getItem('horo_history');
+                if (raw) {
+                    const list = JSON.parse(raw);
+                    if (Array.isArray(list) && list.length > 0) {
+                        sel.innerHTML = '<option value="">-- เลือกสมาชิกจากประวัติ (Auto-Fill) --</option>';
+                        list.forEach((m, idx) => {
+                            const opt = document.createElement('option');
+                            opt.value = idx;
+                            const fullName = `${m.name || 'ไม่มีชื่อ'} ${m.lastName || ''}`.trim();
+                            const bDate = m.birthdate || 'ไม่ระบุวันเกิด';
+                            opt.textContent = `👤 ${m.memberId ? `[${m.memberId}] ` : ''}${fullName} (${bDate})`;
+                            sel.appendChild(opt);
+                        });
+                    }
+                }
+            } catch (e) {
+                console.warn("Member load error:", e);
+            }
+        }
+
+        function onMemberSelected(idx) {
+            if (idx === "" || idx === undefined) return;
+            try {
+                const list = JSON.parse(localStorage.getItem('horo_history') || '[]');
+                const m = list[idx];
+                if (!m) return;
+
+                // 1. ชื่อ-นามสกุล
+                const fullName = `${m.name || ''} ${m.lastName || ''}`.trim() || 'เจ้าชะตา';
+                document.getElementById('personName').value = fullName;
+
+                // 2. วันเดือนปีเกิด
+                let birthDateObj = null;
+                if (m.birthdate) {
+                    let bDate = m.birthdate;
+                    if (bDate.includes('/')) {
+                        const parts = bDate.split('/');
+                        if (parts.length === 3) {
+                            let y = parseInt(parts[2]);
+                            if (y > 2400) y -= 543;
+                            birthDateObj = new Date(y, parseInt(parts[1]) - 1, parseInt(parts[0]));
+                        }
+                    } else {
+                        birthDateObj = new Date(bDate);
+                    }
+                }
+
+                if (birthDateObj && !isNaN(birthDateObj.getTime())) {
+                    const birthYearAD = birthDateObj.getFullYear();
+                    const birthYearCS = birthYearAD - 638; // จุลศักราช = ค.ศ. - 638
+                    document.getElementById('birthCSYear').value = birthYearCS > 0 ? birthYearCS : 1247;
+
+                    // คำนวณอายุย่างปัจจุบัน
+                    const now = new Date();
+                    let ageY = now.getFullYear() - birthYearAD;
+                    let ageM = now.getMonth() - birthDateObj.getMonth();
+                    let ageD = now.getDate() - birthDateObj.getDate();
+                    if (ageD < 0) {
+                        ageM -= 1;
+                        ageD += 30;
+                    }
+                    if (ageM < 0) {
+                        ageY -= 1;
+                        ageM += 12;
+                    }
+                    document.getElementById('actualAgeYear').value = Math.max(1, ageY);
+                    document.getElementById('actualAgeMonth').value = Math.max(0, ageM);
+                    document.getElementById('actualAgeDay').value = Math.max(0, ageD);
+                }
+
+                // 3. เดือนจันทรคติ
+                if (m.birthMonththai) {
+                    const mVal = parseInt(m.birthMonththai);
+                    if (mVal >= 1 && mVal <= 12) {
+                        document.getElementById('birthLunarMonth').value = mVal;
+                    }
+                }
+
+                // 4. ลัคนาเกิดและสมพุส (ถ้าสมาชิกมีบันทึกไว้ในประวัติ)
+                if (m.lagnaRasi !== undefined) {
+                    document.getElementById('birthLagnaRasi').value = m.lagnaRasi;
+                } else if (m.zodiac) {
+                    // แผนผังคู่ขนาน
+                    const rasiMap = { "เมษ": 0, "พฤษภ": 1, "เมถุน": 2, "มิถุน": 2, "กรกฎ": 3, "สิงห์": 4, "กันย์": 5, "ตุลย์": 6, "ตุล": 6, "พิจิก": 7, "ธนู": 8, "มังกร": 9, "กุมภ์": 10, "มีน": 11 };
+                    for (const key in rasiMap) {
+                        if (m.zodiac.includes(key)) {
+                            document.getElementById('birthLagnaRasi').value = rasiMap[key];
+                            break;
+                        }
+                    }
+                }
+
+                if (m.lagnaDegree !== undefined) {
+                    document.getElementById('lagnaDeg').value = m.lagnaDegree;
+                }
+                if (m.lagnaMinute !== undefined) {
+                    document.getElementById('lagnaMin').value = m.lagnaMinute;
+                }
+
+                calculateKalachakra();
+            } catch (e) {
+                console.error("Error auto-filling member data:", e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkDiamondTierAccess();
+            initMemberPicker();
+            calculateKalachakra();
+        });
+    </script>
+</body>
+</html>

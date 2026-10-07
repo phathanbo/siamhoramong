@@ -1084,8 +1084,9 @@
             </div>
         </a>
         <div class="header-actions">
+            <a href="chaldean-numerology.html" class="btn-nav" style="border-color: rgba(245, 158, 11, 0.45); color: #fde68a;"><i class="fas fa-scroll"></i> คัมภีร์ปูมโหรตัวเลข</a>
             <button onclick="window.print()" class="btn-nav"><i class="fas fa-print"></i> พิมพ์รายงาน</button>
-            <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าหลัก</a>
+            <a href="../index.html#mainpage" class="btn-nav"><i class="fas fa-home"></i> ห้องพยากรณ์</a>
         </div>
     </header>
 
@@ -1185,6 +1186,9 @@
                 <button class="filter-tab" onclick="filterPredictions('houses', this)">🏛️ 12 ภพ & เจ้าเรือน</button>
                 <button class="filter-tab" onclick="filterPredictions('spouse-career', this)">💍 คู่ครอง & อาชีพ</button>
                 <button class="filter-tab" onclick="filterPredictions('transit', this)">🔮 ดวงจร & มหาทักษา</button>
+                <a href="chaldean-numerology.html" class="filter-tab" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; background:rgba(245,158,11,0.18); border-color:rgba(245,158,11,0.5); color:#fde68a;">
+                    <i class="fas fa-scroll"></i> รหัสลับตัวเลขแคลเดียน
+                </a>
             </div>
 
             <div id="predictionContent" style="display: flex; flex-direction: column; gap: 18px;"></div>
@@ -3114,6 +3118,31 @@
                     <span style="font-size:0.9em;">เหตุการณ์ที่เข้ามาแทรก: ${antarText}</span>
                 </div>`;
                 predHtml += `</div></div></div>`; // Close section
+
+                // ================= รหัสลับจากตัวเลข (Chaldean Numerology Connection Card) =================
+                predHtml += `
+                    <div class="prediction-section pred-card-item no-print" style="border: 1px solid rgba(245, 158, 11, 0.4); background: linear-gradient(135deg, rgba(22, 30, 52, 0.9) 0%, rgba(13, 19, 36, 0.95) 100%);">
+                        <div class="section-header">
+                            <h3 style="color:#fde68a;"><i class="fas fa-scroll text-warning"></i> คัมภีร์ปูมโหรโบราณ · รหัสลับจากตัวเลข (Chaldean Numerology)</h3>
+                            <a href="chaldean-numerology.html" class="export-btn-sm" style="text-decoration:none;">
+                                <i class="fas fa-external-link-alt"></i> เปิดระบบถอดรหัส
+                            </a>
+                        </div>
+                        <div class="prediction-grid" style="grid-template-columns: 1fr;">
+                            <div class="birth-card" style="background: rgba(10, 17, 34, 0.7); border: none; border-left: 4px solid #f59e0b;">
+                                <p style="margin: 0 0 10px 0; color: #e2e8f0; font-size: 0.95rem; line-height: 1.7;">
+                                    ตามตำราโบราณ นอกเหนือจากการผูกดวงชะตาราศีจักรแล้ว <b>"ชื่อ-นามสกุล และวันเกิด"</b> ยังแฝงด้วยรหัสตัวเลขแคลเดียน ๑–๕๒ 
+                                    ที่สามารถตรวจเช็คพลังสะท้อนของดวงดาว กฎเหล็ก ๘ ข้อ การคงค่า ๑๑/๒๒ และวิบากกรรมแฝงเร้นในชาติต่างๆ ได้อย่างแม่นยำ
+                                </p>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <a href="chaldean-numerology.html" class="action-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); color: #000; font-weight: bold; text-decoration: none; padding: 8px 18px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-calculator"></i> ถอดรหัสชื่อและวันเกิดของท่านด้วยระบบแคลเดียน
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
 
                 predContent.innerHTML = predHtml;
             }

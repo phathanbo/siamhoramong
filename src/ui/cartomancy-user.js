@@ -1,29 +1,77 @@
 /**
  * cartomancy-user.js
- * โลจิกสำหรับสุ่มไพ่ป๊อก 52 ใบ สำหรับสมาชิก (หน้าบ้าน)
+ * โลจิกสำหรับทำนายไพ่ป๊อก 52 ใบ สำหรับสมาชิก (หน้าบ้าน)
+ * รองรับโหมด:
+ * 1. daily: จั่วรายวัน 1 ใบ
+ * 2. timeline: ผัง 3 กาล (อดีต - ปัจจุบัน - อนาคต)
+ * 3. quadrant: ผัง 4 มิติ (ตนเอง - การงาน - การเงิน - ความรัก)
  */
 
+let currentCartoMode = 'daily'; // 'daily', 'timeline', 'quadrant'
+let lastDrawnCards = [];
+
+function switchCartomancyMode(mode) {
+    currentCartoMode = mode;
+    
+    // อัปเดตสถานะปุ่ม
+    const btnMap = {
+        daily: 'cartoModeBtn1',
+        timeline: 'cartoModeBtn3',
+        quadrant: 'cartoModeBtn4'
+    };
+    
+    ['daily', 'timeline', 'quadrant'].forEach(m => {
+        const btn = document.getElementById(btnMap[m]);
+        if (btn) {
+            if (m === mode) {
+                btn.classList.add('active');
+                btn.classList.replace('btn-outline-warning', 'btn-warning');
+            } else {
+                btn.classList.remove('active');
+                btn.classList.replace('btn-warning', 'btn-outline-warning');
+            }
+        }
+    });
+
+    const drawBtn = document.getElementById('drawCartomancyBtn');
+    if (drawBtn) {
+        drawBtn.innerHTML = '<i class="fas fa-hand-sparkles mr-2"></i> สับไพ่และเสี่ยงทาย';
+        drawBtn.disabled = false;
+        drawBtn.classList.replace('btn-secondary', 'btn-danger');
+    }
+
+    const resultDiv = document.getElementById('cartomancyResult');
+    if (resultDiv) {
+        resultDiv.style.display = 'none';
+        resultDiv.innerHTML = '';
+    }
+
+    // หากเป็นโหมดรายวัน ให้เช็คว่าวันนี้เคยจั่วไปแล้วหรือไม่
+    if (mode === 'daily') {
+        initCartomancyUser();
+    }
+}
+
 function initCartomancyUser() {
-    // โหลดประวัติการเปิดไพ่จาก LocalStorage
+    if (currentCartoMode !== 'daily') return;
+
     const lastDrawDate = localStorage.getItem('cartomancyLastDrawDate');
     const todayStr = new Date().toISOString().split('T')[0];
     const btn = document.getElementById('drawCartomancyBtn');
     
     if (lastDrawDate === todayStr) {
-        // วันนี้จั่วไปแล้ว แสดงผลลัพธ์เดิม
         if (btn) {
-            btn.innerHTML = '<i class="fas fa-check"></i> เปิดไพ่ไปแล้ววันนี้';
+            btn.innerHTML = '<i class="fas fa-check"></i> ดูผลทำนายวันนี้';
             btn.classList.replace('btn-danger', 'btn-secondary');
-            // btn.disabled = true; // ไม่ปิดเพื่อให้กดดูซ้ำได้
         }
         
         const savedData = JSON.parse(localStorage.getItem('cartomancyTodayData'));
         if (savedData) {
-            renderCartomancyResult(savedData, false);
+            renderCartomancyResult([savedData], false, 'daily');
         }
     } else {
         if (btn) {
-            btn.innerHTML = '<i class="fas fa-hand-sparkles mr-2"></i> จั่วไพ่';
+            btn.innerHTML = '<i class="fas fa-hand-sparkles mr-2"></i> จั่วไพ่รายวัน';
             btn.classList.replace('btn-secondary', 'btn-danger');
             btn.disabled = false;
         }
@@ -34,38 +82,61 @@ function drawCartomancyUser() {
     const todayStr = new Date().toISOString().split('T')[0];
     const lastDrawDate = localStorage.getItem('cartomancyLastDrawDate');
     
-    // ถ้าเคยจั่วแล้ว ให้ดูซ้ำได้ แต่ไม่สุ่มใหม่
-    if (lastDrawDate === todayStr) {
+    // ถ้าโหมดรายวันและเคยจั่วแล้ว ให้เปิดดูผลเดิม
+    if (currentCartoMode === 'daily' && lastDrawDate === todayStr) {
         const savedData = JSON.parse(localStorage.getItem('cartomancyTodayData'));
         if (savedData) {
-            renderCartomancyResult(savedData, false);
+            renderCartomancyResult([savedData], false, 'daily');
             return;
         }
     }
 
     const btn = document.getElementById('drawCartomancyBtn');
-    if(btn) {
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสับไพ่...';
+    if (btn) {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสับไพ่ ๕๒ ใบ...';
         btn.disabled = true;
     }
     
-    // จำลองเวลาสับไพ่
     setTimeout(() => {
-        const card = drawSingleCartomancy();
+        let cards = [];
+        if (currentCartoMode === 'daily') {
+            const single = drawSingleCartomancy();
+            cards = [single];
+            localStorage.setItem('cartomancyLastDrawDate', todayStr);
+            localStorage.setItem('cartomancyTodayData', JSON.stringify(single));
+        } else if (currentCartoMode === 'timeline') {
+            cards = drawMultipleCartomancy(3);
+        } else if (currentCartoMode === 'quadrant') {
+            cards = drawMultipleCartomancy(4);
+        }
         
-        // บันทึกลง LocalStorage
-        localStorage.setItem('cartomancyLastDrawDate', todayStr);
-        localStorage.setItem('cartomancyTodayData', JSON.stringify(card));
-        
-        if(btn) {
-            btn.innerHTML = '<i class="fas fa-check"></i> เปิดไพ่สำเร็จ';
+        lastDrawnCards = cards;
+
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-redo"></i> เสี่ยงทายใหม่อีกครั้ง';
             btn.classList.replace('btn-danger', 'btn-secondary');
             btn.disabled = false;
         }
         
-        renderCartomancyResult(card, true);
+        renderCartomancyResult(cards, true, currentCartoMode);
         
-    }, 1200);
+    }, 900);
+}
+
+function drawMultipleCartomancy(count = 3) {
+    const activeData = (typeof ACTIVE_CARTOMANCY_DATA !== 'undefined' && Object.keys(ACTIVE_CARTOMANCY_DATA).length > 0)
+        ? ACTIVE_CARTOMANCY_DATA 
+        : CARTOMANCY_DATA;
+
+    const keys = Object.keys(activeData);
+    const shuffled = [...keys].sort(() => 0.5 - Math.random());
+    const pickedKeys = shuffled.slice(0, Math.min(count, keys.length));
+    
+    return pickedKeys.map(k => {
+        const c = Object.assign({}, activeData[k]);
+        c.id = k;
+        return c;
+    });
 }
 
 // Helper to generate CSS pips for playing cards
@@ -74,13 +145,13 @@ function generatePips(rank, symbol) {
         let icon = rank === 'K' ? '♚' : (rank === 'Q' ? '♛' : '♞');
         return `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-                <span style="font-size: 50px; line-height: 1;">${icon}</span>
-                <span class="rank-large" style="font-size: 70px; margin-top: -5px;">${rank}</span>
+                <span style="font-size: 42px; line-height: 1;">${icon}</span>
+                <span class="rank-large" style="font-size: 55px; margin-top: -5px;">${rank}</span>
             </div>
         `;
     }
     if (rank === 'A') {
-        return `<div style="display: flex; justify-content: center; align-items: center; height: 100%;"><span style="font-size: 80px;">${symbol}</span></div>`;
+        return `<div style="display: flex; justify-content: center; align-items: center; height: 100%;"><span style="font-size: 65px;">${symbol}</span></div>`;
     }
     const num = parseInt(rank);
     let pips = [];
@@ -94,13 +165,13 @@ function generatePips(rank, symbol) {
     if (num === 9) pips = ['L1', 'R1', 'L2', 'R2', 'C3', 'L4', 'R4', 'L5', 'R5'];
     if (num === 10) pips = ['L1', 'R1', 'C2', 'L2', 'R2', 'L4', 'R4', 'C4', 'L5', 'R5'];
 
-    let gridHtml = `<div class="pip-container" style="display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: repeat(5, 1fr); width: 100%; height: 100%; padding: 25px; box-sizing: border-box;">`;
+    let gridHtml = `<div class="pip-container" style="display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: repeat(5, 1fr); width: 100%; height: 100%; padding: 18px; box-sizing: border-box;">`;
     for (let r = 1; r <= 5; r++) {
         for (let c of ['L', 'C', 'R']) {
             let pos = `${c}${r}`;
             let hasPip = pips.includes(pos);
             let invert = (r > 3) ? 'transform: rotate(180deg);' : '';
-            gridHtml += `<div style="display: flex; justify-content: center; align-items: center; font-size: 26px; line-height: 1; ${invert}">
+            gridHtml += `<div style="display: flex; justify-content: center; align-items: center; font-size: 20px; line-height: 1; ${invert}">
                             ${hasPip ? symbol : ''}
                          </div>`;
         }
@@ -109,12 +180,12 @@ function generatePips(rank, symbol) {
     return gridHtml;
 }
 
-function generateCardHtml(card, animate = false) {
+function generateSingleCardMarkup(card, idx = 0, animate = false) {
     const rank = card.name.split(' ')[0];
     const centerContent = generatePips(rank, card.symbol);
     return `
-        <div class="cartomancy-wrapper mt-4">
-            <div class="cartomancy-card mx-auto ${animate ? '' : 'flipped'}" id="userCartomancyCard" onclick="this.classList.toggle('flipped')">
+        <div class="cartomancy-wrapper mt-2">
+            <div class="cartomancy-card mx-auto ${animate ? '' : 'flipped'}" id="userCartoCard_${idx}" onclick="this.classList.toggle('flipped')">
                 <div class="card-back"></div>
                 <div class="card-front ${card.color}">
                     <div class="corner top-left">
@@ -134,37 +205,134 @@ function generateCardHtml(card, animate = false) {
     `;
 }
 
-function renderCartomancyResult(card, animate = false) {
+function renderCartomancyResult(cards, animate = false, mode = 'daily') {
     const resultDiv = document.getElementById('cartomancyResult');
     resultDiv.style.display = 'block';
-    
-    let html = generateCardHtml(card, animate);
-    
-    html += `
-        <div class="mt-4 text-left p-3" style="background: rgba(0,0,0,0.5); border: 1px solid #d4af37; border-radius: 10px;">
-            <h4 class="text-gold text-center mb-3">${card.name}</h4>
-            <p><strong>🔮 ความหมาย:</strong> ${card.meaning}</p>
-            <hr class="border-secondary">
-            <p><strong class="text-info"><i class="fas fa-briefcase"></i> การงาน:</strong> ${card.work}</p>
-            <p><strong class="text-success"><i class="fas fa-coins"></i> การเงิน:</strong> ${card.finance}</p>
-            <p><strong class="text-danger"><i class="fas fa-heart"></i> ความรัก:</strong> ${card.love}</p>
-        </div>
-        <div class="text-center mt-4">
-            <button onclick="downloadCartomancyUserImage()" class="btn btn-warning rounded-pill px-4 py-2 font-weight-bold" style="color: #1a0831; border: 2px solid #d4af37; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);">
-                <i class="fas fa-download mr-2"></i> ดาวน์โหลดคำทำนาย
-            </button>
-        </div>
-    `;
-    
-    resultDiv.innerHTML = html;
-    
-    if (animate) {
-        // ให้ผู้ใช้เห็นหลังไพ่แป๊บนึง แล้วค่อยพลิก
-        setTimeout(() => {
-            const cardEl = document.getElementById('userCartomancyCard');
-            if(cardEl) cardEl.classList.add('flipped');
-        }, 500);
+    lastDrawnCards = cards;
+
+    let positionLabels = [];
+    if (mode === 'daily') {
+        positionLabels = [{ title: "ดวงชะตาประจำวัน", badge: "ภาพรวมวันนี้", icon: "fa-sun" }];
+    } else if (mode === 'timeline') {
+        positionLabels = [
+            { title: "๑. อดีต (สิ่งที่เป็นรากฐาน/ที่มา)", badge: "อดีต", icon: "fa-history" },
+            { title: "๒. ปัจจุบัน (สถานการณ์ที่กำลังเผชิญ)", badge: "ปัจจุบัน", icon: "fa-clock" },
+            { title: "๓. อนาคต (แนวโน้มและบทสรุป)", badge: "อนาคต", icon: "fa-arrow-right" }
+        ];
+    } else if (mode === 'quadrant') {
+        positionLabels = [
+            { title: "๑. ตัวตนและจิตใจ (สภาวะตนเอง)", badge: "ตัวตน", icon: "fa-user" },
+            { title: "๒. การงานและหน้าที่ (ความก้าวหน้า)", badge: "การงาน", icon: "fa-briefcase" },
+            { title: "๓. การเงินและโชคลาภ (ทรัพย์สิน)", badge: "การเงิน", icon: "fa-coins" },
+            { title: "๔. ความรักและความสัมพันธ์ (คนใกล้ชิด)", badge: "ความรัก", icon: "fa-heart" }
+        ];
     }
+
+    let html = `
+        <div class="text-center my-4">
+            <h4 class="text-warning font-weight-bold" style="letter-spacing: 0.5px;">
+                <i class="fas fa-crown mr-2"></i> ผลการทำนาย${mode === 'daily' ? 'รายวัน' : (mode === 'timeline' ? 'ผัง ๓ กาล' : 'ผัง ๔ มิติ')}
+            </h4>
+            <p class="text-white-50 small mb-0">ถอดรหัสคำทำนายจากสำรับมาตรฐาน ๕๒ ใบ</p>
+        </div>
+        <div class="row justify-content-center">
+    `;
+
+    cards.forEach((card, i) => {
+        const meta = positionLabels[i] || { title: `ตำแหน่งที่ ${i+1}`, badge: `ใบที่ ${i+1}`, icon: "fa-star" };
+        const colClass = cards.length === 1 ? 'col-12 col-md-8' : (cards.length === 3 ? 'col-12 col-lg-4 mb-4' : 'col-12 col-md-6 mb-4');
+
+        // ตรวจสอบสีและชื่อดอก
+        const suitNameMap = {
+            'Spades': 'โพดำ',
+            'Hearts': 'โพแดง',
+            'Diamonds': 'ข้าวหลามตัด',
+            'Clubs': 'ดอกจิก'
+        };
+        const suitTh = suitNameMap[card.suit] || '';
+
+        html += `
+            <div class="${colClass}">
+                <div class="card h-100 shadow-lg text-white" style="background: linear-gradient(145deg, rgba(20, 28, 50, 0.95) 0%, rgba(11, 17, 33, 0.98) 100%); border: 1.5px solid rgba(212, 175, 55, 0.35); border-radius: 20px; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.5);">
+                    
+                    <!-- Card Top Header -->
+                    <div class="d-flex justify-content-between align-items-center px-3 py-2" style="background: rgba(0,0,0,0.45); border-bottom: 1px solid rgba(212, 175, 55, 0.25);">
+                        <span class="text-warning font-weight-bold" style="font-size: 0.92rem;">
+                            <i class="fas ${meta.icon} mr-1"></i> ${meta.title}
+                        </span>
+                        <span class="badge px-2 py-1" style="background: rgba(212, 175, 55, 0.2); color: #ffd700; border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 12px; font-size: 0.78rem;">
+                            ${meta.badge}
+                        </span>
+                    </div>
+
+                    <!-- Card Body & Interactive Card -->
+                    <div class="card-body p-3 p-md-4 text-center">
+                        ${generateSingleCardMarkup(card, i, animate)}
+                        
+                        <!-- Title & Badges -->
+                        <div class="mt-3 mb-2">
+                            <h5 class="text-gold font-weight-bold mb-1" style="font-size: 1.25rem;">
+                                ${card.name}
+                            </h5>
+                            <span class="badge px-2 py-1 text-white-50" style="background: rgba(255,255,255,0.06); font-size: 0.8rem;">
+                                หมวดหมู่: ${suitTh} (${card.symbol})
+                            </span>
+                        </div>
+
+                        <!-- Core Meaning Box -->
+                        <div class="text-left p-3 my-3 rounded" style="background: rgba(0, 0, 0, 0.35); border-left: 3.5px solid #ffd700; font-size: 0.92rem; line-height: 1.6; color: #e2e8f0;">
+                            <strong class="text-warning d-block mb-1"><i class="fas fa-sparkles mr-1"></i> ภาพรวมดวงชะตา:</strong>
+                            ${card.meaning}
+                        </div>
+                        
+                        <!-- Aspects Section (Grid breakdown) -->
+                        <div class="text-left" style="display: grid; gap: 8px;">
+                            <div class="p-2 rounded d-flex align-items-start" style="background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.2);">
+                                <span class="badge badge-info mr-2 px-2 py-1" style="min-width: 58px; font-size: 0.78rem;"><i class="fas fa-briefcase mr-1"></i>การงาน</span>
+                                <span style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.45;">${card.work}</span>
+                            </div>
+
+                            <div class="p-2 rounded d-flex align-items-start" style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.2);">
+                                <span class="badge badge-success mr-2 px-2 py-1" style="min-width: 58px; font-size: 0.78rem;"><i class="fas fa-coins mr-1"></i>การเงิน</span>
+                                <span style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.45;">${card.finance}</span>
+                            </div>
+
+                            <div class="p-2 rounded d-flex align-items-start" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2);">
+                                <span class="badge badge-danger mr-2 px-2 py-1" style="min-width: 58px; font-size: 0.78rem;"><i class="fas fa-heart mr-1"></i>ความรัก</span>
+                                <span style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.45;">${card.love}</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+
+    if (mode === 'daily') {
+        html += `
+            <div class="text-center mt-3">
+                <button onclick="downloadCartomancyUserImage()" class="btn btn-sm btn-outline-warning rounded-pill px-3 py-1 font-weight-bold" style="border: 1.5px solid #d4af37; box-shadow: 0 2px 10px rgba(212, 175, 55, 0.25); font-size: 0.85rem;">
+                    <i class="fas fa-download mr-1"></i> บันทึกรูปภาพคำทำนาย
+                </button>
+            </div>
+        `;
+    }
+
+    resultDiv.innerHTML = html;
+
+    if (animate) {
+        cards.forEach((_, idx) => {
+            setTimeout(() => {
+                const cardEl = document.getElementById(`userCartoCard_${idx}`);
+                if (cardEl) cardEl.classList.add('flipped');
+            }, 300 + (idx * 250));
+        });
+    }
+
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 async function downloadCartomancyUserImage() {
@@ -429,3 +597,11 @@ async function downloadCartomancyUserImage() {
         else alert("เกิดข้อผิดพลาดในการสร้างรูปภาพ กรุณาลองใหม่อีกครั้ง");
     }
 }
+
+// Global exposure for UI onclick handlers and tab switches
+window.switchCartomancyMode = switchCartomancyMode;
+window.initCartomancyUser = initCartomancyUser;
+window.drawCartomancyUser = drawCartomancyUser;
+window.downloadCartomancyUserImage = downloadCartomancyUserImage;
+window.downloadCartomancyShareImage = downloadCartomancyUserImage;
+

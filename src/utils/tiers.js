@@ -73,7 +73,7 @@ const systemMinTier = {
     // 🟢 ฟรี / ทดลองใช้ (index 0) — ระบบสำเร็จรูป กรอกวันเกิดได้คำตอบทันที
     'todayDashboard': 0, 'promchartsection': 0, 'zodiacdetailsection': 0,
     'daily-horoscope': 0, 'showdaylife': 0, 'dreamPage': 0,
-    'siamsiPage': 0, 'cartomancyPage': 0, 'lottoPage': 0,
+    'siamsiPage': 0, 'cartomancyPage': 0, 'prommayanPage': 0, 'lottoPage': 0,
     'weeklyColorSection': 0, 'elementManualPage': 0, 'yearClashPage': 0,
 
     // 🔵 ธรรมดา (index 1) — กรอกข้อมูลมากขึ้น ผลลัพธ์หลายมิติ
@@ -111,8 +111,8 @@ const systemMinTier = {
     // 👑 มรกต (index 9) — ภพเรือนชะตา ทศาดาว
     'twelveHousesPage': 9, 'dashaPage': 9,
 
-    // 👑 เพชร (index 10) — ผูกดวงสมบูรณ์ & คัมภีร์แว่นตาโหร
-    'thaiAstrologyEngine': 10, 'waentaHoraPage': 10,
+    // 👑 เพชร (index 10) — ผูกดวงสมบูรณ์ & คัมภีร์แว่นตาโหร & ตำรากาลจักรจรวิภาค & วิธีดูหมอเลข ๗ ตัว ภาคพิสดาร
+    'thaiAstrologyEngine': 10, 'waentaHoraPage': 10, 'kalachakraWiphakPage': 10, 'sevenDigitsPisadanPage': 10,
 
     // 👑 มงกุฎ (index 11) — ผูกดวงมืออาชีพ นิรายนะ
     'thaiHoroscopeProPage': 11, 'ayanamsaPage': 11,

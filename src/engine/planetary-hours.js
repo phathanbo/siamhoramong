@@ -168,6 +168,38 @@ function showPlanetaryHoursPage() {
   if (!c) return;
 
   c.innerHTML = `
+    <!-- Top Navigation & Breadcrumb -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <button class="btn btn-outline-light rounded-pill px-3 py-1 small" onclick="navigateTo('mainpage')">
+            <i class="fas fa-chevron-left mr-1"></i> กลับห้องพยากรณ์
+        </button>
+        <span class="badge badge-gold px-3 py-2 text-dark font-weight-bold" style="background: linear-gradient(135deg, #ffd700, #f1c40f); border-radius: 30px;">
+            <i class="fas fa-clock mr-1"></i> ฤกษ์ยาม ๗ เจ้า
+        </span>
+    </div>
+
+    <!-- Auspicious & Electional Astrology Hub Switcher Tabs -->
+    <div class="hub-nav-bar">
+        <button type="button" class="hub-nav-item" onclick="navigateTo('auspiciousPage')">
+            📅 ปฏิทิน ๑๐๐ ปี & บันทึกดวง
+        </button>
+        <button type="button" class="hub-nav-item" onclick="navigateTo('ubakong-yarm')">
+            🧭 ยามอุบากอง
+        </button>
+        <button type="button" class="hub-nav-item active">
+            🌟 ฤกษ์ยาม ๗ เจ้า
+        </button>
+        <button type="button" class="hub-nav-item" onclick="navigateTo('kaliyokepage')">
+            ⏰ คำนวณกาลโยค
+        </button>
+        <button type="button" class="hub-nav-item" onclick="navigateTo('dailyTabooPage')">
+            🚫 ข้อห้ามประจำวัน
+        </button>
+        <button type="button" class="hub-nav-item" onclick="navigateTo('dailyHighlightPage')">
+            🗺️ แผนที่ฤกษ์รายวัน
+        </button>
+    </div>
+
     <div class="headpage">
       <h1>🌟 ฤกษ์ยาม 7 เจ้า</h1>
       <p class="text">ยามดาวพระเคราะห์ตามหลักโหราศาสตร์คัลเดีย-ไทย</p>
