@@ -49,145 +49,200 @@ function showmainpage() {
 
 
     const html = `
-    
-        <div class="text-center my-4">
-            <h1 id="userGreeting" style="font-size: 2.6rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 25px rgba(241,208,110,0.4); margin-bottom: 8px;">
-                ✨ ยินดีต้อนรับสู่ สยามโหรามงคล ✨
-            </h1>
-            <p style="color: #CBD5E1; font-size: 1.05rem; font-weight: 400; max-width: 600px; margin: 0 auto 15px auto;">ระบบพยากรณ์โหราศาสตร์ไทยชั้นสูง คำนวณชะตาชีวิตและฤกษ์ยามแม่นยำตามตำราโบราณ</p>
+        <div class="container py-4" style="max-width: 920px; margin: 0 auto;">
+            <!-- Header Hero -->
+            <div class="text-center mb-4">
+                <div style="display: inline-flex; align-items: center; justify-content: center; width: 68px; height: 68px; border-radius: 20px; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.35); margin-bottom: 14px; box-shadow: 0 0 25px rgba(212, 175, 55, 0.2);">
+                    <i class="fas fa-scroll" style="font-size: 2rem; color: #ffd700;"></i>
+                </div>
+                <h1 id="userGreeting" style="font-size: 2.1rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px;">
+                    ผูกดวงชะตาส่วนบุคคล
+                </h1>
+                <p style="color: #cbd5e1; font-size: 0.95rem; max-width: 540px; margin: 0 auto;">
+                    กรอกข้อมูลวันเวลาตกฟาก เพื่อถอดรหัสวาสนาและเปิดตำราคำทำนายเฉพาะตัวคุณ
+                </p>
+            </div>
+
+            <!-- Modern Form Container Card -->
+            <section id="form" class="shadow-lg border-0" style="background: linear-gradient(145deg, rgba(20, 28, 48, 0.85) 0%, rgba(11, 16, 32, 0.95) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid rgba(212, 175, 55, 0.35) !important; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12) !important; overflow: hidden; animation: fadeIn 0.5s ease;">
+                
+                <div class="p-4 p-md-5">
+                    
+                    <!-- Section 1: ข้อมูลบุคคลพื้นฐาน -->
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+                            <span style="display:inline-block; width: 4px; height: 16px; background: #ffd700; border-radius: 4px;"></span>
+                            <h5 style="color: #ffd700; font-weight: 600; font-size: 1.05rem; margin: 0;">
+                                ๑. ข้อมูลผู้รับคำทำนาย
+                            </h5>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="text-white-50 small font-weight-medium mb-1"><i class="fas fa-user text-warning mr-1"></i> ชื่อจริง:</label>
+                                <input type="text" class="form-control modern-form-input" id="targetName" placeholder="ระบุชื่อจริง" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-white-50 small font-weight-medium mb-1"><i class="fas fa-signature text-warning mr-1"></i> นามสกุล:</label>
+                                <input type="text" class="form-control modern-form-input" id="targetLastName" placeholder="ระบุนามสกุล" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-white-50 small font-weight-medium mb-1" for="targetGender"><i class="fas fa-venus-mars text-warning mr-1"></i> เพศสภาพ:</label>
+                                <select class="form-control modern-form-input" id="targetGender" required>
+                                    <option value="male">ชาย</option>
+                                    <option value="female">หญิง</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-white-50 small font-weight-medium mb-1" for="targetProvince"><i class="fas fa-map-marker-alt text-warning mr-1"></i> จังหวัดที่เกิด:</label>
+                                <input type="text" class="form-control modern-form-input" id="targetProvince" placeholder="เช่น กรุงเทพมหานคร, เชียงใหม่">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: เวลาตกฟากและดวงกำเนิด -->
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+                            <span style="display:inline-block; width: 4px; height: 16px; background: #38bdf8; border-radius: 4px;"></span>
+                            <h5 style="color: #38bdf8; font-weight: 600; font-size: 1.05rem; margin: 0;">
+                                ๒. วัน-เวลาตกฟาก (สุริยคติ)
+                            </h5>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="text-white-50 small font-weight-medium mb-1" for="birthdate"><i class="fas fa-calendar-alt text-info mr-1"></i> วันเกิด:</label>
+                                <input type="text" class="form-control modern-form-input" id="birthdate" placeholder="วว/ดด/ปปปป" required autocomplete="off" onchange="autoSyncLunarFields(this.value)">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-white-50 small font-weight-medium mb-1" for="birthtime"><i class="fas fa-clock text-info mr-1"></i> เวลาเกิด (น.):</label>
+                                <input type="time" class="form-control modern-form-input" id="birthtime" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: ข้อมูลโหราศาสตร์ไทย & เลขศาสตร์ -->
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+                            <span style="display:inline-block; width: 4px; height: 16px; background: #eab308; border-radius: 4px;"></span>
+                            <h5 style="color: #eab308; font-weight: 600; font-size: 1.05rem; margin: 0;">
+                                ๓. ข้อมูลจันทรคติ & เลขศาสตร์ (คำนวณอัตโนมัติ)
+                            </h5>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4 mb-3">
+                                <label class="text-white-50 small font-weight-medium mb-1" for="dayjanta"><i class="fas fa-moon text-warning mr-1"></i> ดิถีขึ้น/แรม:</label>
+                                <select class="form-control modern-form-input" id="dayjanta" required>
+                                    <option value="1">ขึ้น 1 ค่ำ</option>
+                                    <option value="2">ขึ้น 2 ค่ำ</option>
+                                    <option value="3">ขึ้น 3 ค่ำ</option>
+                                    <option value="4">ขึ้น 4 ค่ำ</option>
+                                    <option value="5">ขึ้น 5 ค่ำ</option>
+                                    <option value="6">ขึ้น 6 ค่ำ</option>
+                                    <option value="7">ขึ้น 7 ค่ำ</option>
+                                    <option value="8">ขึ้น 8 ค่ำ</option>   
+                                    <option value="9">ขึ้น 9 ค่ำ</option>
+                                    <option value="10">ขึ้น 10 ค่ำ</option>
+                                    <option value="11">ขึ้น 11 ค่ำ</option>
+                                    <option value="12">ขึ้น 12 ค่ำ</option>
+                                    <option value="13">ขึ้น 13 ค่ำ</option>
+                                    <option value="14">ขึ้น 14 ค่ำ</option>
+                                    <option value="15">ขึ้น 15 ค่ำ</option>
+                                    <option value="16">แรม 1 ค่ำ</option>
+                                    <option value="17">แรม 2 ค่ำ</option>
+                                    <option value="18">แรม 3 ค่ำ</option>
+                                    <option value="19">แรม 4 ค่ำ</option>
+                                    <option value="20">แรม 5 ค่ำ</option>
+                                    <option value="21">แรม 6 ค่ำ</option>
+                                    <option value="22">แรม 7 ค่ำ</option>
+                                    <option value="23">แรม 8 ค่ำ</option>
+                                    <option value="24">แรม 9 ค่ำ</option>
+                                    <option value="25">แรม 10 ค่ำ</option>
+                                    <option value="26">แรม 11 ค่ำ</option>
+                                    <option value="27">แรม 12 ค่ำ</option>
+                                    <option value="28">แรม 13 ค่ำ</option>
+                                    <option value="29">แรม 14 ค่ำ</option>
+                                    <option value="30">แรม 15 ค่ำ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="text-white-50 small font-weight-medium mb-1" for="birthMonththai"><i class="fas fa-om text-warning mr-1"></i> เดือนไทย (๑–๑๒):</label>
+                                <input type="number" class="form-control modern-form-input" id="birthMonththai" max="12" min="1" placeholder="เช่น 5" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="text-white-50 small font-weight-medium mb-1" for="ThaiId"><i class="fas fa-id-card text-warning mr-1"></i> เลขประจำตัว (เลขศาสตร์):</label>
+                                <input type="text" class="form-control modern-form-input" id="ThaiId" maxlength="13" placeholder="เลข 13 หลัก" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 mt-4 pt-2" style="gap: 14px;">
+                        <button type="button" class="btn btn-outline-light px-4 py-2" onclick="navigateTo('mainpage')" style="border-radius: 50px; font-weight: 500; font-size: 0.95rem; border-color: rgba(255,255,255,0.25);">
+                            <i class="fas fa-arrow-left mr-1"></i> กลับห้องพยากรณ์
+                        </button>
+                        <button type="button" class="btn btn-gold-action px-5 py-3" onclick="calculateEsh()">
+                            <i class="fas fa-magic mr-2"></i> บันทึกและเปิดดวงชะตา
+                        </button>
+                    </div>
+
+                </div>
+            </section>
         </div>
 
-        <section id="form" class="card shadow-lg mb-5 border-0" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%); backdrop-filter: blur(28px) saturate(190%); -webkit-backdrop-filter: blur(28px) saturate(190%); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px rgba(241,208,110,0.12), inset 0 1px 0 rgba(255,255,255,0.3) !important; border: 1px solid rgba(241, 208, 110, 0.35) !important; overflow: hidden; animation: fadeIn 0.8s ease;">
-            
-            <div class="card-header text-center py-4" style="background: linear-gradient(90deg, rgba(241,208,110,0.05) 0%, rgba(241,208,110,0.2) 50%, rgba(241,208,110,0.05) 100%); border-bottom: 1px solid rgba(241, 208, 110, 0.35);">
-                <h2 style="background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; margin: 0; text-shadow: 0 2px 10px rgba(241,208,110,0.3);"><i class="fas fa-scroll mr-2" style="-webkit-text-fill-color: #F1D06E;"></i> กรอกข้อมูลเพื่อทำนายดวง</h2>
-                <p class="text-white-50 small mb-0 mt-2">กรุณาระบุข้อมูลพื้นฐานให้ครบถ้วนเพื่อความแม่นยำ</p>
-            </div>
+        <script>
+            // คำนวณเดือนไทยอัตโนมัติเมื่อเลือกวันเกิด
+            window.autoSyncLunarFields = function(val) {
+                if (!val) return;
+                try {
+                    let month = null;
+                    if (val.includes('/')) {
+                        month = parseInt(val.split('/')[1], 10);
+                    } else if (val.includes('-')) {
+                        month = parseInt(val.split('-')[1], 10);
+                    }
+                    if (month && !isNaN(month)) {
+                        const mInput = document.getElementById('birthMonththai');
+                        if (mInput && !mInput.value) mInput.value = month;
+                    }
+                } catch(e) {}
+            };
+        </script>
 
-            <div class="card-body p-4 p-md-5">
-                <!-- Row 1: ชื่อ - นามสกุล -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group mb-4">
-                            <label class="text-gold small font-weight-bold mb-2"><i class="fas fa-user mr-2"></i>ชื่อผู้รับคำทำนาย:</label>
-                            <input type="text" class="form-control bg-dark text-white border-gold-subtle custom-input" id="targetName" placeholder="กรุณากรอกชื่อ" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-4">
-                            <label class="text-gold small font-weight-bold mb-2"><i class="fas fa-signature mr-2"></i>นามสกุล:</label>
-                            <input type="text" class="form-control bg-dark text-white border-gold-subtle custom-input" id="targetLastName" placeholder="กรุณากรอกนามสกุล" required>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Row 2: เพศ - วันเกิด -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group mb-4">
-                            <label class="text-gold small font-weight-bold mb-2" for="targetGender"><i class="fas fa-venus-mars mr-2"></i>เพศ:</label>
-                            <select class="form-control bg-dark text-gold border-gold-subtle custom-input" id="targetGender" required>
-                                <option value="male">ชาย</option>
-                                <option value="female">หญิง</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-4">
-                            <label class="text-gold small font-weight-bold mb-2" for="birthdate"><i class="fas fa-calendar-alt mr-2"></i>วันเกิด (ปี ค.ศ.):</label>
-                            <input type="text" class="form-control bg-dark text-white border-gold-subtle custom-input" id="birthdate" placeholder="วว/ดด/ปปปป" required autocomplete="off">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Row 3: เวลาเกิด - จังหวัด -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group mb-4">
-                            <label class="text-gold small font-weight-bold mb-2" for="birthtime"><i class="fas fa-clock mr-2"></i>เวลาเกิด:</label>
-                            <input type="time" class="form-control bg-dark text-white border-gold-subtle custom-input" id="birthtime" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-4">
-                            <label class="text-gold small font-weight-bold mb-2" for="targetProvince"><i class="fas fa-map-marker-alt mr-2"></i>จังหวัดที่เกิด:</label>
-                            <input type="text" class="form-control bg-dark text-white border-gold-subtle custom-input" id="targetProvince" placeholder="เช่น กรุงเทพฯ (ถ้าไม่ทราบให้เว้นว่าง)">
-                        </div>
-                    </div>
-                </div>
-                
-                <hr class="border-gold-subtle my-3" style="opacity: 0.3;">
-                
-                <!-- Row 4: จันทรคติ (เฉพาะทาง) -->
-                <p class="text-white-50 small mb-3"><i class="fas fa-info-circle mr-1"></i> <strong>ข้อมูลเชิงลึก (สำหรับวิชาโหราศาสตร์ไทย):</strong></p>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group mb-4">
-                            <label class="text-gold small font-weight-bold mb-2" for="dayjanta"><i class="fas fa-moon mr-2"></i>ดิถีขึ้น/แรม:</label>
-                            <select class="form-control bg-dark text-gold border-gold-subtle custom-input" id="dayjanta" required>
-                                <option value="1">ขึ้น 1 ค่ำ</option>
-                                <option value="2">ขึ้น 2 ค่ำ</option>
-                                <option value="3">ขึ้น 3 ค่ำ</option>
-                                <option value="4">ขึ้น 4 ค่ำ</option>
-                                <option value="5">ขึ้น 5 ค่ำ</option>
-                                <option value="6">ขึ้น 6 ค่ำ</option>
-                                <option value="7">ขึ้น 7 ค่ำ</option>
-                                <option value="8">ขึ้น 8 ค่ำ</option>   
-                                <option value="9">ขึ้น 9 ค่ำ</option>
-                                <option value="10">ขึ้น 10 ค่ำ</option>
-                                <option value="11">ขึ้น 11 ค่ำ</option>
-                                <option value="12">ขึ้น 12 ค่ำ</option>
-                                <option value="13">ขึ้น 13 ค่ำ</option>
-                                <option value="14">ขึ้น 14 ค่ำ</option>
-                                <option value="15">ขึ้น 15 ค่ำ</option>
-                                <option value="16">แรม 1 ค่ำ</option>
-                                <option value="17">แรม 2 ค่ำ</option>
-                                <option value="18">แรม 3 ค่ำ</option>
-                                <option value="19">แรม 4 ค่ำ</option>
-                                <option value="20">แรม 5 ค่ำ</option>
-                                <option value="21">แรม 6 ค่ำ</option>
-                                <option value="22">แรม 7 ค่ำ</option>
-                                <option value="23">แรม 8 ค่ำ</option>
-                                <option value="24">แรม 9 ค่ำ</option>
-                                <option value="25">แรม 10 ค่ำ</option>
-                                <option value="26">แรม 11 ค่ำ</option>
-                                <option value="27">แรม 12 ค่ำ</option>
-                                <option value="28">แรม 13 ค่ำ</option>
-                                <option value="29">แรม 14 ค่ำ</option>
-                                <option value="30">แรม 15 ค่ำ</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-4">
-                            <label class="text-gold small font-weight-bold mb-2" for="birthMonththai"><i class="fas fa-om mr-2"></i>เดือนเกิด (ไทย):</label>
-                            <input type="number" class="form-control bg-dark text-white border-gold-subtle custom-input" id="birthMonththai" max="12" min="1" placeholder="ระบุเดือน 1-12" required>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-4">
-                            <label class="text-gold small font-weight-bold mb-2" for="ThaiId"><i class="fas fa-id-card mr-2"></i>เลขบัตร (สำหรับเลขศาสตร์):</label>
-                            <input type="text" class="form-control bg-dark text-white border-gold-subtle custom-input" id="ThaiId" maxlength="13" placeholder="ระบุเลขบัตรประชาชน 13 หลัก" required>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Button -->
-                <div class="form-group mt-4 text-center">
-                    <button type="button" class="btn btn-gold btn-lg px-5 py-3 shadow-lg" onclick="calculateEsh()" style="border-radius: 50px; font-weight: 700; letter-spacing: 1px; font-size: 1.2rem; transition: all 0.3s ease;">
-                        <i class="fas fa-magic mr-2"></i> เปิดดวงชะตา
-                    </button>
-                </div>
-            </div>
-            
-            <style>
-                .border-gold-subtle { border: 1px solid rgba(212, 175, 55, 0.4) !important; }
-                .custom-input { border-radius: 12px; padding: 12px 18px; height: auto; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
-                .custom-input:focus { border-color: #d4af37 !important; box-shadow: 0 0 15px rgba(212, 175, 55, 0.6) !important; background: rgba(0,0,0,0.9) !important; outline: none; }
-                .btn-gold { background: linear-gradient(135deg, #f1c40f 0%, #d4af37 100%); color: #000; border: none; }
-                .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(212,175,55,0.5) !important; color: #fff; }
-            </style>
-        </section>   
+        <style>
+            .modern-form-input {
+                background: rgba(15, 23, 42, 0.7) !important;
+                border: 1.5px solid rgba(212, 175, 55, 0.3) !important;
+                color: #ffffff !important;
+                border-radius: 12px !important;
+                padding: 10px 14px !important;
+                height: 46px !important;
+                font-size: 0.95rem !important;
+                transition: all 0.25s ease !important;
+            }
+            .modern-form-input:focus {
+                border-color: #ffd700 !important;
+                background: rgba(15, 23, 42, 0.95) !important;
+                box-shadow: 0 0 0 3px rgba(241, 208, 110, 0.25) !important;
+                outline: none !important;
+            }
+            .btn-gold-action {
+                background: linear-gradient(135deg, #f1d06e 0%, #c99727 50%, #9a7318 100%) !important;
+                color: #0b1120 !important;
+                font-weight: 700 !important;
+                border: none !important;
+                border-radius: 50px !important;
+                font-size: 1.05rem !important;
+                box-shadow: 0 8px 25px rgba(201, 151, 39, 0.4) !important;
+                transition: all 0.25s ease !important;
+            }
+            .btn-gold-action:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 12px 30px rgba(241, 208, 110, 0.6) !important;
+                color: #000 !important;
+            }
+        </style>
     `;
     contianer.innerHTML = html;
 }

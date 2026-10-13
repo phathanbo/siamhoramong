@@ -28,6 +28,35 @@
         #all-positions > g { cursor: pointer; }
         #all-positions > g circle { transition: r 0.2s, filter 0.2s; }
         #all-positions > g:hover circle { r: 19px; filter: drop-shadow(0px 0px 6px rgba(212, 175, 55, 0.8)) !important; }
+
+        /* Protect FontAwesome Icons */
+        i.fa, i.fas, i.far, i.fab, .fa, .fas, .far, .fab {
+            font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands", "FontAwesome" !important;
+            font-style: normal;
+        }
+
+        /* Responsive Mobile Header & Navigation */
+        @media (max-width: 991px) {
+            header.sticky-top nav {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-top: 6px;
+                padding-bottom: 2px;
+            }
+            header.sticky-top nav ul.nav {
+                flex-wrap: nowrap !important;
+                white-space: nowrap;
+                gap: 4px;
+            }
+            header.sticky-top nav ul.nav .nav-link {
+                padding: 6px 10px !important;
+                font-size: 0.85rem !important;
+            }
+            #topHeaderDateBar {
+                font-size: 0.78rem !important;
+            }
+        }
     </style>
 
     <!-- ===== DNS PREFETCH (เพิ่มความเร็ว) ===== -->
@@ -44,7 +73,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
     <!-- ===== PRELOAD (โหลดทรัพยากรที่สำคัญก่อน) ===== -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" as="style">
     <link rel="preload" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" as="style">
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" as="style">
     <link rel="preload" href="assets/css/style.css" as="style">
@@ -58,7 +87,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/cartomancy.css">
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
     <!-- ===== AUTH OVERLAY & PARTICLES STYLES (LOADED AFTER ALL CSS TO ENSURE MAXIMUM PRIORITY) ===== -->
     <style>
@@ -901,7 +930,7 @@
  
     <header class="sticky-top header-bar-main" style="background: rgba(10, 17, 40, 0.92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid rgba(212, 175, 55, 0.35); box-shadow: 0 4px 25px rgba(0, 0, 0, 0.45); padding: 0; z-index: 1000;">
         <div class="container-fluid px-3 px-md-4 px-lg-5 py-3 d-flex justify-content-between align-items-center">
-            <div onclick="navigateTo('mainContent')" style="cursor: pointer; display: flex; align-items: center; gap: 12px;">
+            <div onclick="navigateTo('mainpage')" style="cursor: pointer; display: flex; align-items: center; gap: 12px;">
                 <i class="fas fa-dharmachakra" style="font-size: 1.9rem; color: #f3ba2f; filter: drop-shadow(0 0 10px rgba(243, 186, 47, 0.7));"></i>
                 <div>
                     <span style="background: linear-gradient(135deg, #ffd700, #f3ba2f, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.4rem; font-weight: 700; letter-spacing: 0.5px; display: block; line-height: 1.2;">สยามโหรามงคล</span>
@@ -944,17 +973,32 @@
         </div>
 
 
-        <!-- 📅 แถบแสดงวันเดือนปีสุริยคติ จันทรคติ และเวลา -->
-        <div id="topHeaderDateBar" class="w-100 py-1" style="background: rgba(0, 0, 0, 0.4); border-top: 1px solid rgba(212, 175, 55, 0.25); border-bottom: 1px solid rgba(212, 175, 55, 0.25); font-size: 0.88rem;">
-            <div class="container-fluid px-3 px-md-4 px-lg-5 d-flex flex-wrap justify-content-between align-items-center text-gold">
-                <div class="my-1">
-                    <span class="mr-3" id="topSolarDate"><i class="far fa-calendar-alt text-warning mr-1"></i> <span id="topSolarText">กำลังโหลดวันที่...</span></span>
-                    <span class="mr-3" id="topLunarDate"><i class="fas fa-moon text-warning mr-1"></i> <span id="topLunarText">กำลังคำนวณจันทรคติ...</span></span>
+        <!-- 📅 แถบแสดงวันเดือนปีสุริยคติ จันทรคติ และเวลา (บรรทัดเดียว สวยงาม มีระดับ) -->
+        <div id="topHeaderDateBar" class="w-100 py-1" style="background: rgba(6, 11, 24, 0.7); border-top: 1px solid rgba(212, 175, 55, 0.2); border-bottom: 1px solid rgba(212, 175, 55, 0.2); font-size: 0.85rem;">
+            <div class="container-fluid px-3 px-md-4 px-lg-5 d-flex justify-content-between align-items-center text-gold" style="white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; gap: 12px;">
+                <div class="d-flex align-items-center flex-nowrap" style="gap: 14px;">
+                    <span id="topSolarDate" style="display: inline-flex; align-items: center; gap: 5px;">
+                        <i class="far fa-calendar-alt text-warning"></i> 
+                        <span id="topSolarText" style="color: #cbd5e1;">กำลังโหลดวันที่...</span>
+                    </span>
+                    <span class="text-white-50" style="opacity: 0.4;">|</span>
+                    <span id="topLunarDate" style="display: inline-flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-moon text-warning"></i> 
+                        <span id="topLunarText" style="color: #cbd5e1;">กำลังคำนวณจันทรคติ...</span>
+                    </span>
                 </div>
-                <div class="my-1 d-flex align-items-center">
-                    <span id="topClock"><i class="far fa-clock text-warning mr-1"></i> <span id="topClockText">00:00:00</span></span>
-                    <a href="pages/thai-horoscope-pro.html?tab=suriyayatra" class="btn btn-sm btn-outline-warning ml-3" style="font-size: 0.78rem; padding: 2px 10px; border-radius: 20px; text-decoration: none; border-color: rgba(212,175,55,0.6); color: #ffd700;" title="สร้างภาพปฏิทินโหราศาสตร์ไทยรายวัน (สไตล์สมุดจดดวง)">
-                        <i class="fas fa-image mr-1"></i> แผ่นปฏิทินดวงรายวัน
+                <div class="d-flex align-items-center flex-nowrap" style="gap: 12px;">
+                    <span id="topClock" style="display: inline-flex; align-items: center; gap: 5px; color: #f1d06e; font-weight: 600;">
+                        <i class="far fa-clock text-warning"></i> 
+                        <span id="topClockText">00:00:00</span>
+                    </span>
+                    <a href="pages/thai-horoscope-pro.html?tab=suriyayatra" class="btn btn-sm" 
+                       style="font-size: 0.78rem; padding: 3px 12px; border-radius: 20px; text-decoration: none; border: 1px solid rgba(212,175,55,0.45); color: #ffd700; background: rgba(212,175,55,0.1); line-height: 1.3; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" 
+                       onmouseover="this.style.background='rgba(212,175,55,0.25)';" 
+                       onmouseout="this.style.background='rgba(212,175,55,0.1)';"
+                       title="สร้างภาพปฏิทินโหราศาสตร์ไทยรายวัน (สไตล์สมุดจดดวง)">
+                        <i class="fas fa-image" style="font-size: 0.75rem;"></i> 
+                        <span>ปฏิทินดวงรายวัน</span>
                     </a>
                 </div>
             </div>
@@ -3374,16 +3418,50 @@
 
 
     <section id="mainpage" class="main-section" style="display: none;">
-        <!-- Hero Title Banner in Mainpage -->
-        <div class="text-center pt-4 pb-2 px-3">
+        <!-- Hero Title Banner in Mainpage with Smart Search & Quick Actions -->
+        <div class="text-center pt-4 pb-3 px-3">
             <h2 style="font-weight: 700; background: linear-gradient(135deg, #ffd700 0%, #f3ba2f 50%, #d4af37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.1rem; margin-bottom: 6px;">
                 🏛️ ห้องพยากรณ์ศาสตร์ชั้นสูง
             </h2>
-            <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 0;">
+            <p style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 20px;">
                 ศูนย์รวมศาสตร์พยากรณ์ไทยโบราณ โหราศาสตร์ไทย ๑๒ ภพ ฤกษ์ยามมงคล และระบบผูกดวงชะตาครบวงจร
             </p>
+
+            <!-- 🌟 Quick Action Buttons (5 ยอดนิยม จัดแถวเดียวสวยงาม ไม่ตกบรรทัด) -->
+            <div class="d-flex justify-content-center align-items-center mb-3" style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 4px 0;">
+                <div class="d-flex align-items-center flex-nowrap" style="gap: 8px; white-space: nowrap;">
+                    <button type="button" class="btn btn-quick-feature" onclick="navigateTo('todayDashboard')">
+                        <i class="fas fa-sun text-warning mr-1"></i> สรุปดวงวันนี้
+                    </button>
+                    <button type="button" class="btn btn-quick-feature" onclick="navigateTo('tarotPage')">
+                        <i class="fas fa-layer-group text-warning mr-1"></i> เซียมซี & ไพ่พยากรณ์
+                    </button>
+                    <button type="button" class="btn btn-quick-feature" onclick="navigateTo('compatibilityPage')">
+                        <i class="fas fa-heart text-danger mr-1"></i> ดูดวงความรัก & สมพงศ์
+                    </button>
+                    <button type="button" class="btn btn-quick-feature" onclick="navigateTo('auspiciousPage')">
+                        <i class="fas fa-calendar-check text-success mr-1"></i> ศูนย์รวมฤกษ์ยาม
+                    </button>
+                    <button type="button" class="btn btn-quick-feature" onclick="navigateTo('dreamPage')">
+                        <i class="fas fa-moon text-info mr-1"></i> ทำนายฝัน & เลขมงคล
+                    </button>
+                </div>
+            </div>
+
+            <!-- 🔍 Search Bar ในหน้าหลัก -->
+            <div style="max-width: 640px; margin: 0 auto; position: relative;">
+                <i class="fas fa-search" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #f1d06e; font-size: 1.1rem; z-index: 5; pointer-events: none;"></i>
+                <input type="text" id="mainMenuSearchInput" class="form-control"
+                    placeholder="ค้นหาศาสตร์พยากรณ์ (เช่น ความรัก, ไพ่, ฤกษ์, เลข ๗ ตัว, ดาวจร)..."
+                    oninput="filterDashboardMenu(this.value)"
+                    style="padding-left: 50px; padding-right: 40px; height: 48px; border-radius: 50px; background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(212, 175, 55, 0.4); color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.35); font-size: 0.95rem;">
+                <button type="button" id="clearMenuSearchBtn" onclick="clearMenuSearch()" style="display: none; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer; padding: 4px;">
+                    <i class="fas fa-times-circle"></i>
+                </button>
+            </div>
+            <div id="menuSearchResultCount" class="text-white-50 mt-2 small" style="display: none;"></div>
         </div>
-        <div class="container-fluid px-3 px-md-4 px-lg-5 py-3" style="max-width: 1600px; margin: 0 auto;">
+        <div class="container-fluid px-3 px-md-4 px-lg-5 py-2" style="max-width: 1600px; margin: 0 auto;">
             <div class="row" id="menuGrid"></div>            
         </div>
     </section>

@@ -119,56 +119,92 @@ function buildDashboard() {
     if (!menuGrid) return;
 
     const categories = [
-        { name: '⭐ ดูดวงและพยากรณ์ทั่วไป', color: '#f1c40f' },
-        { name: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', color: '#d4af37' },
-        { name: '📅 ฤกษ์ยามและวันมงคล', color: '#2ecc71' },
-        { name: '💖 ความรักและสมพงศ์', color: '#e74c3c' },
-        { name: '🔤 ชื่อและเลขศาสตร์', color: '#3498db' },
-        { name: '⚙️ ระบบและอื่นๆ', color: '#95a5a6' }
+        { id: 'all', name: 'ทั้งหมด', icon: 'fa-th-large', color: '#ffd700' },
+        { id: 'general', name: 'ดูดวงทั่วไป', icon: 'fa-sun', matchCategory: '⭐ ดูดวงและพยากรณ์ทั่วไป', color: '#f1c40f' },
+        { id: 'astrology', name: 'โหราศาสตร์ไทย & ๗ ตัว', icon: 'fa-dharmachakra', matchCategory: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', color: '#d4af37' },
+        { id: 'auspicious', name: 'ฤกษ์ยามมงคล', icon: 'fa-calendar-alt', matchCategory: '📅 ฤกษ์ยามและวันมงคล', color: '#2ecc71' },
+        { id: 'love', name: 'ความรัก & สมพงศ์', icon: 'fa-heart', matchCategory: '💖 ความรักและสมพงศ์', color: '#e74c3c' },
+        { id: 'numerology', name: 'ชื่อ & เลขศาสตร์', icon: 'fa-signature', matchCategory: '🔤 ชื่อและเลขศาสตร์', color: '#3498db' }
     ];
 
     let html = '';
-    let globalDelay = 0;
 
+    // 1. หมวดหมู่แบบ Modern Filter Pill Tabs ด้านบน (บรรทัดเดียว ไม่แตกแถว)
+    html += `
+        <div class="col-12 mb-4">
+            <div class="category-tabs-container d-flex justify-content-center align-items-center" style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 4px 0;">
+                <div class="d-flex align-items-center flex-nowrap" style="gap: 8px; white-space: nowrap;">
+    `;
     categories.forEach(cat => {
-        // กรองเฉพาะเมนูที่ไม่ใช่การ์ดย่อยที่ถูกรวมเข้า Hub แล้ว (isHubChild) เพื่อความสะอาดและไม่ซ้ำซ้อน
+        const isActive = cat.id === 'all' ? 'active' : '';
+        html += `
+            <button type="button" class="category-tab-btn ${isActive}" 
+                    data-cat-id="${cat.id}"
+                    onclick="switchCategoryTab('${cat.id}')">
+                <i class="fas ${cat.icon} mr-1" style="color: ${cat.color};"></i>
+                <span>${cat.name}</span>
+            </button>
+        `;
+    });
+    html += `
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 2. เรนเดอร์การ์ดทั้งหมด
+    let globalDelay = 0;
+    const realCategories = [
+        { id: 'general', name: '⭐ ดูดวงและพยากรณ์ทั่วไป', color: '#f1c40f' },
+        { id: 'astrology', name: '📜 โหราศาสตร์ไทยและเลข 7 ตัว', color: '#d4af37' },
+        { id: 'auspicious', name: '📅 ฤกษ์ยามและวันมงคล', color: '#2ecc71' },
+        { id: 'love', name: '💖 ความรักและสมพงศ์', color: '#e74c3c' },
+        { id: 'numerology', name: '🔤 ชื่อและเลขศาสตร์', color: '#3498db' }
+    ];
+
+    realCategories.forEach(cat => {
         const items = APP_MENU.filter(item => item.category === cat.name && !item.isHubChild);
         if (items.length === 0) return;
 
-        // หัวข้อหมวดหมู่
+        // Group Header
         html += `
-            <div class="col-12 mt-3 mb-2 text-left w-100">
-                <div class="d-flex align-items-center gap-2" style="border-bottom: 1px solid rgba(255, 215, 0, 0.15); padding-bottom: 8px;">
-                    <span style="display:inline-block; width: 6px; height: 16px; background: ${cat.color}; border-radius: 4px;"></span>
-                    <h5 style="color: #f1d06e; font-weight: 600; font-size: 1.1rem; margin: 0; letter-spacing: 0.3px;">
+            <div class="col-12 mt-3 mb-2 category-group-header" data-category-group="${cat.id}">
+                <div class="d-flex align-items-center gap-2" style="border-bottom: 1px solid rgba(241, 208, 110, 0.2); padding-bottom: 8px;">
+                    <span style="display:inline-block; width: 4px; height: 18px; background: ${cat.color}; border-radius: 4px;"></span>
+                    <h5 style="color: #f1d06e; font-weight: 600; font-size: 1.15rem; margin: 0; letter-spacing: 0.3px;">
                         ${cat.name}
                     </h5>
+                    <span class="badge badge-dark ml-2 text-white-50" style="background: rgba(255,255,255,0.06); font-weight: normal; border-radius: 12px; font-size: 0.75rem;">${items.length} รายการ</span>
                 </div>
             </div>
         `;
 
-        // ปุ่มเมนูในหมวดหมู่
-        items.forEach((item) => {
+        items.forEach(item => {
             const hasAccess = (typeof window.hasPackagePermission === 'function') ? window.hasPackagePermission(item.id) : true;
             
             let lockedOverlay = '';
             if (!hasAccess) {
                 lockedOverlay = `
-                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 12, 24, 0.85); border-radius: 14px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; backdrop-filter: blur(4px);">
-                        <i class="fas fa-lock" style="color: #d4af37; font-size: 1.3rem; margin-bottom: 4px;"></i>
-                        <span style="color: #cbd5e1; font-size: 0.72rem; font-weight: 600; text-align: center; padding: 0 4px; line-height: 1.2;">อัพเกรดสมาชิก</span>
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 12, 24, 0.82); border-radius: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; backdrop-filter: blur(4px);">
+                        <i class="fas fa-lock" style="color: #d4af37; font-size: 1.2rem; margin-bottom: 4px;"></i>
+                        <span style="color: #e2e8f0; font-size: 0.72rem; font-weight: 600;">อัปเกรดสมาชิก</span>
                     </div>
                 `;
             }
-            
+
             const targetAction = hasAccess ? (item.url || '') : 'package';
-            
+            const cleanTitle = item.title.replace(/<[^>]*>/g, ' ');
+            const searchKeyword = `${cleanTitle} ${item.desc || ''} ${cat.name}`.toLowerCase();
+
             html += `
-                <div class="col-6 col-md-4 col-lg-3 mb-3" style="animation: fadeIn 0.4s ease ${globalDelay * 0.04}s both; position: relative;">
+                <div class="col-6 col-md-4 col-lg-3 mb-3 menu-card-column"
+                     data-menu-id="${item.id}"
+                     data-category-group="${cat.id}"
+                     data-search-term="${searchKeyword}"
+                     style="animation: fadeIn 0.4s ease ${globalDelay * 0.03}s both;">
                     <div class="dashboard-card"
                          id="menu-card-${item.id}"
                          data-menu-id="${item.id}"
-                         style="cursor:pointer; position: relative; height: 100%;"
                          onclick="handleMenuCardClick('${item.id}', '${targetAction}')">
                         
                         ${lockedOverlay}
@@ -177,7 +213,7 @@ function buildDashboard() {
                             <i class="fas ${item.icon}" style="color: ${item.color};"></i>
                         </div>
 
-                        <div class="card-body text-center px-1 py-2" style="${!hasAccess ? 'opacity:0.35;' : ''}">
+                        <div class="card-body text-center px-1 py-1" style="${!hasAccess ? 'opacity:0.35;' : ''}">
                             <h6 class="card-title fw-bold mb-1">${item.title}</h6>
                             ${item.desc ? `<p class="card-desc text-white-50 mb-0">${item.desc}</p>` : ''}
                         </div>
@@ -192,94 +228,247 @@ function buildDashboard() {
 
     menuGrid.innerHTML = html;
 
-    // เพิ่ม CSS สำหรับ dashboard cards แบบ Sleek Modern Glass
+    // เพิ่ม CSS Dashboard Theme แบบ Modern Luxury Sarabun
     if (!document.getElementById('dashboardStyles')) {
         const style = document.createElement('style');
         style.id = 'dashboardStyles';
-        style.textContent = '.dashboard-card {' +
-            'background: linear-gradient(145deg, rgba(23, 28, 48, 0.7) 0%, rgba(13, 17, 34, 0.85) 100%) !important;' +
-            'border: 1px solid rgba(255, 255, 255, 0.1) !important;' +
-            'border-radius: 14px;' +
-            'padding: 14px 12px;' +
-            'height: 100%;' +
-            'position: relative;' +
-            'overflow: hidden;' +
-            'box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;' +
-            'backdrop-filter: blur(16px);' +
-            '-webkit-backdrop-filter: blur(16px);' +
-            'transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);' +
-            '}' +
-            '.dashboard-card:hover {' +
-            'transform: translateY(-4px);' +
-            'border-color: rgba(241, 208, 110, 0.5) !important;' +
-            'box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 18px rgba(241, 208, 110, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;' +
-            'background: linear-gradient(145deg, rgba(30, 38, 66, 0.85) 0%, rgba(18, 23, 44, 0.95) 100%) !important;' +
-            '}' +
-            '.card-icon-wrapper {' +
-            'font-size: 1.6rem;' +
-            'margin: 0 auto 10px auto;' +
-            'display: flex;' +
-            'justify-content: center;' +
-            'align-items: center;' +
-            'width: 48px;' +
-            'height: 48px;' +
-            'background: rgba(255, 255, 255, 0.04);' +
-            'border: 1px solid rgba(255, 255, 255, 0.12);' +
-            'border-radius: 12px;' +
-            'box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);' +
-            'transition: all 0.25s ease;' +
-            '}' +
-            '.dashboard-card:hover .card-icon-wrapper { transform: scale(1.08); border-color: rgba(241, 208, 110, 0.6); box-shadow: 0 0 14px rgba(241, 208, 110, 0.35); }' +
-            '.dashboard-card .card-title {' +
-            'color: #f1f5f9 !important;' +
-            'font-size: 0.88rem !important;' +
-            'font-weight: 600 !important;' +
-            'letter-spacing: 0.2px;' +
-            'line-height: 1.35 !important;' +
-            'margin: 0 0 4px 0;' +
-            '}' +
-            '.dashboard-card:hover .card-title {' +
-            'color: #ffd700 !important;' +
-            '}' +
-            '.dashboard-card .card-desc {' +
-            'font-size: 0.72rem !important;' +
-            'line-height: 1.25 !important;' +
-            'color: #94a3b8 !important;' +
-            '}' +
-            '.card-shine {' +
-            'position: absolute;' +
-            'top: 0;' +
-            'left: 0;' +
-            'width: 100%;' +
-            'height: 100%;' +
-            'background: radial-gradient(circle at 50% 0%, rgba(241, 208, 110, 0.15) 0%, transparent 60%);' +
-            'pointer-events: none;' +
-            'opacity: 0;' +
-            'transition: opacity 0.25s;' +
-            '}' +
-            '.dashboard-card:hover .card-shine { opacity: 1; }' +
-            '@keyframes fadeIn {' +
-            'from { opacity: 0; transform: translateY(14px); }' +
-            'to { opacity: 1; transform: translateY(0); }' +
-            '}' +
-            '@keyframes cardGlowPulse {' +
-            '0% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 215, 0, 0); border-color: rgba(241, 208, 110, 0.35); }' +
-            '50% { transform: scale(1.03); box-shadow: 0 0 20px rgba(255, 215, 0, 0.7); border-color: #ffd700; }' +
-            '100% { transform: scale(1); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); border-color: rgba(241, 208, 110, 0.35); }' +
-            '}' +
-            '.menu-card-highlight {' +
-            'animation: cardGlowPulse 1.8s ease-out !important;' +
-            'z-index: 10 !important;' +
-            '}' +
-            '@media (max-width: 767px) {' +
-            '.dashboard-card { padding: 12px 8px; border-radius: 12px; }' +
-            '.card-icon-wrapper { width: 40px; height: 40px; font-size: 1.3rem; margin-bottom: 6px; border-radius: 10px; }' +
-            '.dashboard-card .card-title { font-size: 0.82rem !important; }' +
-            '.dashboard-card .card-desc { font-size: 0.68rem !important; }' +
-            '}';
+        style.textContent = `
+            .category-tab-btn {
+                background: rgba(15, 23, 42, 0.65);
+                border: 1px solid rgba(241, 208, 110, 0.25);
+                color: #cbd5e1;
+                padding: 7px 18px;
+                border-radius: 50px;
+                font-size: 0.92rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.25s ease;
+                backdrop-filter: blur(10px);
+                outline: none;
+            }
+            .category-tab-btn:hover {
+                border-color: rgba(241, 208, 110, 0.7);
+                color: #fff;
+                transform: translateY(-2px);
+                background: rgba(30, 41, 69, 0.85);
+            }
+            .category-tab-btn.active {
+                background: linear-gradient(135deg, rgba(241, 208, 110, 0.25), rgba(201, 151, 39, 0.35));
+                border-color: #ffd700;
+                color: #ffd700;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(241, 208, 110, 0.2);
+            }
+            .dashboard-card {
+                background: linear-gradient(145deg, rgba(20, 27, 45, 0.75) 0%, rgba(11, 15, 28, 0.88) 100%) !important;
+                border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                border-radius: 16px;
+                padding: 16px 14px;
+                height: 100%;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+                cursor: pointer;
+            }
+            .dashboard-card:hover {
+                transform: translateY(-4px);
+                border-color: rgba(241, 208, 110, 0.55) !important;
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 0 18px rgba(241, 208, 110, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+                background: linear-gradient(145deg, rgba(28, 36, 60, 0.88) 0%, rgba(15, 21, 38, 0.95) 100%) !important;
+            }
+            .card-icon-wrapper {
+                font-size: 1.6rem;
+                margin: 0 auto 10px auto;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 48px;
+                height: 48px;
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 14px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                transition: all 0.25s ease;
+            }
+            .dashboard-card:hover .card-icon-wrapper {
+                transform: scale(1.08);
+                border-color: rgba(241, 208, 110, 0.6);
+                box-shadow: 0 0 14px rgba(241, 208, 110, 0.35);
+            }
+            .dashboard-card .card-title {
+                color: #f8fafc !important;
+                font-size: 0.95rem !important;
+                font-weight: 600 !important;
+                letter-spacing: 0.2px;
+                line-height: 1.35 !important;
+                margin: 0 0 4px 0;
+            }
+            .dashboard-card:hover .card-title {
+                color: #ffd700 !important;
+            }
+            .dashboard-card .card-desc {
+                font-size: 0.78rem !important;
+                line-height: 1.3 !important;
+                color: #94a3b8 !important;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .card-shine {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(circle at 50% 0%, rgba(241, 208, 110, 0.15) 0%, transparent 60%);
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.25s;
+            }
+            .dashboard-card:hover .card-shine { opacity: 1; }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(12px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .btn-quick-feature {
+                background: rgba(30, 41, 69, 0.65);
+                border: 1px solid rgba(212, 175, 55, 0.35);
+                color: #f1f5f9;
+                font-size: 0.88rem;
+                font-weight: 500;
+                padding: 8px 18px;
+                border-radius: 50px;
+                transition: all 0.2s ease;
+                backdrop-filter: blur(10px);
+                display: inline-flex;
+                align-items: center;
+            }
+            .btn-quick-feature:hover {
+                background: linear-gradient(135deg, rgba(241, 208, 110, 0.25), rgba(201, 151, 39, 0.25));
+                border-color: #ffd700;
+                color: #ffd700;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(241, 208, 110, 0.25);
+            }
+            @media (max-width: 767px) {
+                .dashboard-card { padding: 12px 10px; border-radius: 14px; }
+                .card-icon-wrapper { width: 42px; height: 42px; font-size: 1.3rem; margin-bottom: 6px; }
+                .dashboard-card .card-title { font-size: 0.88rem !important; }
+                .dashboard-card .card-desc { font-size: 0.72rem !important; }
+                .category-tab-btn { font-size: 0.82rem; padding: 6px 12px; }
+                .btn-quick-feature { font-size: 0.8rem; padding: 6px 12px; }
+            }
+        `;
         document.head.appendChild(style);
     }
 }
+
+// 🗂️ ฟังก์ชันสลับหมวดหมู่แท็บแบบมืออาชีพ
+window.switchCategoryTab = function(categoryId) {
+    // ปรับ active button
+    document.querySelectorAll('.category-tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-cat-id') === categoryId) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    const cardColumns = document.querySelectorAll('.menu-card-column');
+    const groupHeaders = document.querySelectorAll('.category-group-header');
+
+    if (categoryId === 'all') {
+        cardColumns.forEach(c => c.style.display = '');
+        groupHeaders.forEach(h => h.style.display = '');
+    } else {
+        cardColumns.forEach(card => {
+            const grp = card.getAttribute('data-category-group');
+            if (grp === categoryId) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        groupHeaders.forEach(header => {
+            const grp = header.getAttribute('data-category-group');
+            if (grp === categoryId) {
+                header.style.display = '';
+            } else {
+                header.style.display = 'none';
+            }
+        });
+    }
+
+    // ล้างช่องค้นหาถ้าเปลี่ยนแท็บเพื่อไม่ให้เงื่อนไขชนกัน
+    const searchInput = document.getElementById('mainMenuSearchInput');
+    if (searchInput && searchInput.value) {
+        searchInput.value = '';
+        const clearBtn = document.getElementById('clearMenuSearchBtn');
+        if (clearBtn) clearBtn.style.display = 'none';
+        const resultCount = document.getElementById('menuSearchResultCount');
+        if (resultCount) resultCount.style.display = 'none';
+    }
+};
+
+// 🔍 ฟังก์ชันค้นหาเมนูใน Dashboard
+window.filterDashboardMenu = function(query) {
+    const term = (query || '').trim().toLowerCase();
+    const clearBtn = document.getElementById('clearMenuSearchBtn');
+    const resultCount = document.getElementById('menuSearchResultCount');
+    
+    if (clearBtn) {
+        clearBtn.style.display = term ? 'block' : 'none';
+    }
+
+    const cardColumns = document.querySelectorAll('.menu-card-column');
+    const groupHeaders = document.querySelectorAll('.category-group-header');
+    let matchCount = 0;
+
+    if (!term) {
+        // คืนค่ากลับตามแท็บปัจจุบันที่เลือก
+        const activeTab = document.querySelector('.category-tab-btn.active');
+        const activeCatId = activeTab ? activeTab.getAttribute('data-cat-id') : 'all';
+        switchCategoryTab(activeCatId);
+        if (resultCount) resultCount.style.display = 'none';
+        return;
+    }
+
+    // เมื่อพิมพ์ค้นหา ให้ซ่อนหัวข้อกลุ่มและกรองการ์ดทั้งหมด
+    groupHeaders.forEach(h => h.style.display = 'none');
+
+    cardColumns.forEach(card => {
+        const searchKey = card.getAttribute('data-search-term') || '';
+        if (searchKey.includes(term)) {
+            card.style.display = '';
+            matchCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    if (resultCount) {
+        resultCount.style.display = 'block';
+        if (matchCount > 0) {
+            resultCount.innerHTML = `<span class="text-warning">พบ ${matchCount} ศาสตร์พยากรณ์</span> ที่ตรงกับคำค้นหา`;
+        } else {
+            resultCount.innerHTML = `<span class="text-danger">ไม่พบศาสตร์พยากรณ์ที่ตรงกับ "${query}"</span> ลองค้นหาด้วยคำอื่น เช่น ดูดวง, ไพ่, ฤกษ์`;
+        }
+    }
+};
+
+window.clearMenuSearch = function() {
+    const input = document.getElementById('mainMenuSearchInput');
+    if (input) {
+        input.value = '';
+        filterDashboardMenu('');
+        input.focus();
+    }
+};
 
 // 📌 ฟังก์ชันจัดการเมื่อคลิกเลือกการ์ดในห้องพยากรณ์
 window.handleMenuCardClick = function(menuId, targetAction) {

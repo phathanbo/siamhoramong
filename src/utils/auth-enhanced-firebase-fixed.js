@@ -800,27 +800,30 @@ function updateUserBadge(session) {
         const currentSimPkg = localStorage.getItem('siamhora_simulate_package') || session.simulatePackage;
 
         badge.innerHTML = `
-        <div class="Usename" style="display: flex; justify-content: space-between; width: 100%; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
-                <span id="userProfileLink" style="font-weight:bold; font-size:16px; cursor: pointer; padding: 4px; border-radius: 4px; display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px;"
+        <div class="Usename" style="display: flex; justify-content: space-between; width: 100%; align-items: center; white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 4px 0; gap: 12px;">
+            <div class="d-flex align-items-center flex-nowrap" style="gap: 8px;">
+                <span id="userProfileLink" style="font-weight:600; font-size: 0.92rem; color: #f1f5f9; cursor: pointer; padding: 2px 6px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s ease;"
                       title="คลิกเพื่อไปหน้าโปรไฟล์">
-                        <i class="fas fa-user-circle" style="color: #d4af37;"></i>
-                        ${escapeHtml(session.displayName)} 
-                        ${session.role === 'admin' ? '<span class="text-danger ml-1" style="font-size: 0.8em;"><i class="fas fa-crown"></i> ผู้ดูแลระบบ</span>' : ''}
-                        <span id="packageBadge" style="margin-left:4px; padding:2px 8px; border-radius:12px; font-size:0.82em; background:rgba(212,175,55,0.2); border:1px solid #d4af37; color:#d4af37; display:inline-flex; align-items:center; gap:6px; ${session.role === 'admin' ? 'box-shadow: 0 0 10px rgba(212,175,55,0.5);' : ''}">
-                            <span>👑 ${session.role === 'admin' ? (isSimulating ? `ทดสอบ: ${currentSimPkg}` : 'วิมาน (ผู้ดูแลระบบ)') : (session.package || 'ทดลองใช้')}</span>
-                            <span id="packageCountdownText" style="font-weight:normal; font-size:0.9em;"></span>
+                        <i class="fas fa-user-circle" style="color: #d4af37; font-size: 1.1rem;"></i>
+                        <span>${escapeHtml(session.displayName)}</span>
+                        ${session.role === 'admin' ? '<span class="badge badge-danger ml-1" style="font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;"><i class="fas fa-crown"></i> ผู้ดูแลระบบ</span>' : ''}
+                        <span id="packageBadge" style="margin-left: 4px; padding: 2px 8px; border-radius: 20px; font-size: 0.78rem; background: rgba(212,175,55,0.18); border: 1px solid rgba(212,175,55,0.6); color: #ffd700; display: inline-flex; align-items: center; gap: 5px; ${session.role === 'admin' ? 'box-shadow: 0 0 8px rgba(212,175,55,0.35);' : ''}">
+                            <span>👑 ${session.role === 'admin' ? (isSimulating ? `ทดสอบ: ${currentSimPkg}` : 'วิมาน (ผู้ดูแล)') : (session.package || 'ทดลองใช้')}</span>
+                            <span id="packageCountdownText" style="font-weight: normal; font-size: 0.85em;"></span>
                             ${isAdminUser ? `
-                            <button type="button" id="adminSimulateTierBtn" class="btn btn-sm" style="background: rgba(245, 158, 11, 0.25); color: #ffe082; font-weight: 600; font-size: 0.65rem; line-height: 1; border-radius: 4px; padding: 2px 6px; border: 1px solid rgba(245, 158, 11, 0.6); cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 3px;" title="คลิกเพื่อจำลองสิทธิ์หรือเลือกระดับแพ็กเกจทดสอบระบบ" onmouseover="this.style.background='rgba(245, 158, 11, 0.45)';" onmouseout="this.style.background='rgba(245, 158, 11, 0.25)';">
+                            <button type="button" id="adminSimulateTierBtn" class="btn btn-sm" style="background: rgba(245, 158, 11, 0.25); color: #ffe082; font-weight: 600; font-size: 0.65rem; line-height: 1; border-radius: 4px; padding: 1px 5px; border: 1px solid rgba(245, 158, 11, 0.6); cursor: pointer; display: inline-flex; align-items: center; gap: 2px;" title="คลิกเพื่อจำลองสิทธิ์หรือเลือกระดับแพ็กเกจทดสอบระบบ">
                                 <i class="fas fa-flask" style="font-size: 0.62rem;"></i> <span>${isSimulating ? `${currentSimPkg}` : 'ทดสอบ'}</span>
                             </button>
                             ` : ''}
                         </span>
                 </span>
             </div>
-            <span id="logoutBtn" class="btn-eixt btn-link btn-sm p-0 ml-2" style="cursor: pointer; color: #ff6b6b;">
-                <i class="fas fa-sign-out-alt mr-1"></i> ออกจากระบบ
-            </span>
+            <div class="d-flex align-items-center flex-nowrap" style="gap: 8px;">
+                <span id="logoutBtn" style="cursor: pointer; color: #f87171; font-size: 0.82rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; transition: background 0.2s ease;"
+                      onmouseover="this.style.background='rgba(239,68,68,0.15)';" onmouseout="this.style.background='transparent';">
+                    <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+                </span>
+            </div>
         </div>
         `;
 

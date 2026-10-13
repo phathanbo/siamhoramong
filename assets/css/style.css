@@ -3,7 +3,7 @@
  * สยามโหรามงคล: รวมระบบ CSS เป็นหนึ่งเดียว ไร้ความซ้ำซ้อน
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 :root {
     --gold: #F1D06E;
@@ -56,8 +56,20 @@
 /* --------------------------------------------------------------------------
    3. BASE
    -------------------------------------------------------------------------- */
+/* Exclude FontAwesome and icon fonts from universal font-family override */
+*:not(i):not([class*="fa-"]):not(.fa):not(.fas):not(.far):not(.fab):not(.fal):not(.fad),
+*::before:not(i):not([class*="fa-"]):not(.fa):not(.fas):not(.far):not(.fab),
+*::after:not(i):not([class*="fa-"]):not(.fa):not(.fas):not(.far):not(.fab) {
+    font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+i.fa, i.fas, i.far, i.fab, i.fal, i.fad,
+.fa, .fas, .far, .fab, .fal, .fad {
+    font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands", "FontAwesome" !important;
+}
+
 body {
-    font-family: 'Prompt', sans-serif !important;
+    font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     background-color: var(--modern-bg-base) !important;
     background-image: 
         radial-gradient(circle at 10% 15%, var(--modern-glow-purple) 0%, transparent 45%),
@@ -2245,3 +2257,93 @@ tr:hover td {
     color: #ffd700 !important;
     filter: drop-shadow(0 0 5px rgba(241, 208, 110, 0.5));
 }
+
+/* ==========================================================================
+   HIGH-CONTRAST READABILITY ENGINE (ตัดปัญหาตัวหนังสือกลืนกับพื้นหลังทุกหน้า)
+   ========================================================================== */
+/* เมื่อคอนเทนเนอร์เป็นการ์ดสีขาว สว่าง หรือไลท์: บังคับให้ตัวอักษรทุกตัวเป็นโทนเข้มคมชัด */
+.bg-white, .bg-light,
+[style*="background: #fff"], [style*="background:#fff"],
+[style*="background: white"], [style*="background:white"],
+[style*="background-color: #fff"], [style*="background-color:#fff"],
+[style*="background-color: white"], [style*="background-color:white"],
+[style*="background: #faf"], [style*="background:#faf"],
+[style*="background: #f8"], [style*="background:#f8"],
+.wiki-container, .wiki-infobox, .wiki-main-body,
+#horoscopeCaptureArea, #taksaInputConsole, .taksa-card {
+    color: #0f172a !important;
+}
+
+.bg-white h1, .bg-white h2, .bg-white h3, .bg-white h4, .bg-white h5, .bg-white h6,
+.bg-light h1, .bg-light h2, .bg-light h3, .bg-light h4, .bg-light h5, .bg-light h6,
+[style*="background: #fff"] h1, [style*="background: #fff"] h2, [style*="background: #fff"] h3,
+[style*="background: #fff"] h4, [style*="background: #fff"] h5, [style*="background: #fff"] h6,
+[style*="background: #ffffff"] h1, [style*="background: #ffffff"] h2, [style*="background: #ffffff"] h3,
+[style*="background: #ffffff"] h4, [style*="background: #ffffff"] h5, [style*="background: #ffffff"] h6,
+#horoscopeCaptureArea h1, #horoscopeCaptureArea h2, #horoscopeCaptureArea h3,
+#horoscopeCaptureArea h4, #horoscopeCaptureArea h5, #horoscopeCaptureArea h6,
+.taksa-card h1, .taksa-card h2, .taksa-card h3, .taksa-card h4, .taksa-card h5, .taksa-card h6 {
+    color: #0b1329 !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+    -webkit-text-fill-color: initial !important;
+}
+
+.bg-white p, .bg-white span, .bg-white label, .bg-white div,
+.bg-light p, .bg-light span, .bg-light label, .bg-light div,
+[style*="background: #fff"] p, [style*="background: #fff"] span, [style*="background: #fff"] label,
+[style*="background: #ffffff"] p, [style*="background: #ffffff"] span, [style*="background: #ffffff"] label,
+#horoscopeCaptureArea p, #horoscopeCaptureArea span:not(.badge), #horoscopeCaptureArea label,
+.taksa-card p, .taksa-card span:not(.badge), .taksa-card label {
+    color: #1e293b;
+}
+
+/* ปรับ text-muted บนพื้นที่สว่างให้ใช้สีเทาเข้ม ชัดเจน อ่านง่าย ไม่จาง */
+.bg-white .text-muted, .bg-light .text-muted,
+[style*="background: #fff"] .text-muted, [style*="background: #ffffff"] .text-muted,
+#horoscopeCaptureArea .text-muted, .taksa-card .text-muted,
+.wiki-container .text-muted, .modal .text-muted {
+    color: #334155 !important;
+}
+
+/* ปรับ text-white-50 ถ้าหลุดเข้ามาในส่วนสว่างให้ปรับเป็นสีเข้ม */
+.bg-white .text-white-50, .bg-light .text-white-50,
+[style*="background: #fff"] .text-white-50, [style*="background: #ffffff"] .text-white-50,
+#horoscopeCaptureArea .text-white-50 {
+    color: #475569 !important;
+}
+
+/* Form Controls & Inputs บนหน้าสว่าง */
+.bg-white input:not([type="submit"]):not([type="button"]),
+.bg-white select,
+.bg-white textarea,
+#taksaInputConsole select,
+#taksaInputConsole input {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* Modals & Dialogs คอนทราสต์สูง */
+.modal-content, #paymentModalOverlay .card, #siamsiTicketWrapper .card-body {
+    color: #0f172a !important;
+}
+.modal-content h1, .modal-content h2, .modal-content h3, .modal-content h4, .modal-content h5,
+#paymentModalOverlay h1, #paymentModalOverlay h2, #paymentModalOverlay h3, #paymentModalOverlay h4 {
+    color: #090d16 !important;
+    text-shadow: none !important;
+    -webkit-text-fill-color: initial !important;
+}
+.modal-content p, .modal-content label,
+#paymentModalOverlay p, #paymentModalOverlay label {
+    color: #1e293b !important;
+}
+
+/* ปุ่มและแท็บใน Taksa & Profile */
+.taksa-tab-btn {
+    color: #1e293b !important;
+}
+.taksa-glass-pill {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}

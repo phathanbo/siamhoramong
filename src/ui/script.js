@@ -826,15 +826,51 @@ function navigateTo(pageId, addHistory = true, targetScrollPos = null) {
     if (typeof updateAllMemberSelectors === 'function') {
         updateAllMemberSelectors();
     }
-    if (!canViewAll && typeof autoFillMemberData === 'function') {
-        const currentTargetId = window.currentMemberId || (typeof loadLastProfileFromStorage === 'function' ? (loadLastProfileFromStorage()?.memberId || loadLastProfileFromStorage()?.birthdate) : null);
-        if (currentTargetId) {
-            autoFillMemberData(currentTargetId);
-        }
+    const currentTargetId = window.currentMemberId || (typeof loadLastProfileFromStorage === 'function' ? (loadLastProfileFromStorage()?.memberId || loadLastProfileFromStorage()?.birthdate) : null);
+    if (currentTargetId && typeof autoFillMemberData === 'function') {
+        autoFillMemberData(currentTargetId);
     }
 
     // 8. โหลดข้อมูลผู้ใช้มาเติม (ถ้ามีระบบ Profile)
     if (typeof UserProfile !== 'undefined') UserProfile.load();
+
+    // 9. แสดง/ซ่อน Floating Back to Mainpage Button
+    updateFloatingBackBtn(pageId);
+}
+
+// 🔙 ฟังก์ชันควบคุมปุ่มย้อนกลับห้องพยากรณ์แบบ Floating
+function updateFloatingBackBtn(currentPageId) {
+    let btn = document.getElementById('globalFloatingBackBtn');
+    if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'globalFloatingBackBtn';
+        btn.type = 'button';
+        btn.innerHTML = '<i class="fas fa-arrow-left mr-2"></i><span>กลับห้องพยากรณ์</span>';
+        btn.onclick = () => navigateTo('mainpage');
+        btn.style.cssText = 'position: fixed; bottom: 24px; right: 24px; z-index: 999; ' +
+            'background: linear-gradient(135deg, #1e293b, #0f172a); ' +
+            'border: 1.5px solid #d4af37; border-radius: 50px; ' +
+            'color: #ffd700; font-size: 0.9rem; font-weight: 600; ' +
+            'padding: 10px 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.5), 0 0 12px rgba(212,175,55,0.3); ' +
+            'cursor: pointer; display: none; align-items: center; transition: all 0.25s ease; ' +
+            'backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);';
+        
+        btn.onmouseover = () => {
+            btn.style.transform = 'translateY(-3px) scale(1.03)';
+            btn.style.boxShadow = '0 10px 25px rgba(0,0,0,0.6), 0 0 20px rgba(241,208,110,0.5)';
+        };
+        btn.onmouseout = () => {
+            btn.style.transform = 'translateY(0) scale(1)';
+            btn.style.boxShadow = '0 6px 20px rgba(0,0,0,0.5), 0 0 12px rgba(212,175,55,0.3)';
+        };
+        document.body.appendChild(btn);
+    }
+
+    if (currentPageId && currentPageId !== 'mainpage' && currentPageId !== 'mainContent') {
+        btn.style.display = 'inline-flex';
+    } else {
+        btn.style.display = 'none';
+    }
 }
 
 // ฟังก์ชันย้อนกลับที่ใช้หน้าที่เก็บไว้
@@ -879,6 +915,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (initialPage === 'planetRelationPage' && typeof renderTablerelation === 'function') {
                 renderTablerelation();
             }
+        } else if (document.getElementById('mainpage')) {
+            navigateTo('mainpage');
         } else if (document.getElementById('mainContent')) {
             navigateTo('mainContent');
         }

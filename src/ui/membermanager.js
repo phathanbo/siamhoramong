@@ -2623,21 +2623,49 @@ if (horoseven) {
     }
 }
 
-// ---- ส่วนของหน้าเลขมงคล (lotto.js) ----
-const isLottoPage = isPageVisible('lottoResultpage');
+    // ---- ส่วนของหน้าเลขมงคล (lotto.js) ----
+    const isLottoPage = isPageVisible('lottoResultpage');
 
-if (isLottoPage && finalMember) {
-    const lottoBirthday = document.getElementById('lottoBirthday');
-    const lottoUserName = document.getElementById('lottoUserName');
+    if (isLottoPage && finalMember) {
+        const lottoBirthday = document.getElementById('lottoBirthday');
+        const lottoUserName = document.getElementById('lottoUserName');
 
-    if (lottoBirthday) {
-        lottoBirthday.value = formattedDate;
+        if (lottoBirthday) {
+            lottoBirthday.value = formattedDate;
+        }
+
+        if (lottoUserName && finalMember.name) {
+            lottoUserName.value = finalMember.name;
+        }
     }
 
-    if (lottoUserName && finalMember.name) {
-        lottoUserName.value = finalMember.name;
+    // 🌟 Universal Auto-Fill: เติมฟิลด์วันเกิด/เวลาเกิด/ชื่อในฟอร์มทั่วทั้งแอปโดยอัตโนมัติ
+    if (formattedDate) {
+        // อัปเดต input ทุกตัวที่มีคลาสหรือ ID มาตรฐาน
+        document.querySelectorAll('input[type="date"], input.birth-date-input').forEach(el => {
+            if (!el.value || el.classList.contains('auto-sync-field')) {
+                el.value = formattedDate;
+            }
+        });
+
+        // อัปเดตเวลาเกิด
+        if (finalMember && finalMember.birthtime) {
+            document.querySelectorAll('input[type="time"], input.birth-time-input').forEach(el => {
+                if (!el.value || el.classList.contains('auto-sync-field')) {
+                    el.value = finalMember.birthtime;
+                }
+            });
+        }
+
+        // ซิงค์ canonical storage ของ UserProfile ด้วย
+        localStorage.setItem('userBirthdate', formattedDate);
+        if (finalMember && finalMember.birthtime) {
+            localStorage.setItem('userBirthTime', finalMember.birthtime);
+        }
+        if (finalMember && finalMember.name) {
+            localStorage.setItem('userName', finalMember.name);
+        }
     }
-}
 
 };
 
