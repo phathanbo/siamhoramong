@@ -179,21 +179,35 @@ function buildDashboard() {
             </div>
         `;
 
+        const freeMenuIds = ['todayDashboard', 'showdaylife', 'dreamPage', 'weeklyColorSection', 'elementManualPage'];
         items.forEach(item => {
-            const hasAccess = (typeof window.hasPackagePermission === 'function') ? window.hasPackagePermission(item.id) : true;
+            const hasAccess = (typeof window.hasPackagePermission === 'function') 
+                ? window.hasPackagePermission(item.id) 
+                : freeMenuIds.includes(item.id);
             
             let lockedOverlay = '';
+            let lockCornerBadge = '';
             if (!hasAccess) {
+                const isLoggedIn = Boolean(localStorage.getItem('siamhora_auth_session'));
+                const lockLabel = isLoggedIn ? 'อัปเกรดสมาชิก' : 'สมัครสมาชิกเพื่อดู';
+                lockCornerBadge = `
+                    <div class="lock-corner-badge" style="position: absolute; top: 8px; right: 8px; z-index: 10; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(212, 175, 55, 0.7); color: #ffd700; border-radius: 8px; padding: 2px 7px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
+                        <i class="fas fa-lock" style="color: #ffd700; font-size: 0.75rem;"></i>
+                        <span style="font-size: 0.68rem; font-weight: 600; color: #f1f5f9;">ล็อก</span>
+                    </div>
+                `;
                 lockedOverlay = `
-                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 12, 24, 0.82); border-radius: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; backdrop-filter: blur(4px);">
-                        <i class="fas fa-lock" style="color: #d4af37; font-size: 1.2rem; margin-bottom: 4px;"></i>
-                        <span style="color: #e2e8f0; font-size: 0.72rem; font-weight: 600;">อัปเกรดสมาชิก</span>
+                    <div class="locked-card-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 12, 24, 0.88); border-radius: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 5; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); border: 1px dashed rgba(212, 175, 55, 0.5); pointer-events: none;">
+                        <div style="width: 42px; height: 42px; border-radius: 50%; background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.5); display: flex; justify-content: center; align-items: center; margin-bottom: 6px; box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);">
+                            <i class="fas fa-lock" style="color: #ffd700; font-size: 1.3rem;"></i>
+                        </div>
+                        <span style="color: #ffd700; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.3px; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">${lockLabel}</span>
                     </div>
                 `;
             }
 
             const targetAction = hasAccess ? (item.url || '') : 'package';
-            const cleanTitle = item.title.replace(/<[^>]*>/g, ' ');
+            const cleanTitle = item.title.replace(/<[^>]*>/g, ' ').replace(/'/g, "\\'");
             const searchKeyword = `${cleanTitle} ${item.desc || ''} ${cat.name}`.toLowerCase();
 
             html += `
@@ -202,18 +216,20 @@ function buildDashboard() {
                      data-category-group="${cat.id}"
                      data-search-term="${searchKeyword}"
                      style="animation: fadeIn 0.4s ease ${globalDelay * 0.03}s both;">
-                    <div class="dashboard-card"
+                    <div class="dashboard-card ${!hasAccess ? 'card-locked' : ''}"
                          id="menu-card-${item.id}"
                          data-menu-id="${item.id}"
-                         onclick="handleMenuCardClick('${item.id}', '${targetAction}')">
+                         onclick="handleMenuCardClick('${item.id}', '${targetAction}', '${cleanTitle.trim()}')"
+                         style="${!hasAccess ? 'cursor: pointer; position: relative; border-color: rgba(212,175,55,0.3) !important;' : 'position: relative;'}">
                         
+                        ${lockCornerBadge}
                         ${lockedOverlay}
 
-                        <div class="card-icon-wrapper" style="${!hasAccess ? 'opacity:0.35;' : ''}">
+                        <div class="card-icon-wrapper" style="${!hasAccess ? 'opacity:0.25;' : ''}">
                             <i class="fas ${item.icon}" style="color: ${item.color};"></i>
                         </div>
 
-                        <div class="card-body text-center px-1 py-1" style="${!hasAccess ? 'opacity:0.35;' : ''}">
+                        <div class="card-body text-center px-1 py-1" style="${!hasAccess ? 'opacity:0.25;' : ''}">
                             <h6 class="card-title fw-bold mb-1">${item.title}</h6>
                             ${item.desc ? `<p class="card-desc text-white-50 mb-0">${item.desc}</p>` : ''}
                         </div>
@@ -471,15 +487,21 @@ window.clearMenuSearch = function() {
 };
 
 // 📌 ฟังก์ชันจัดการเมื่อคลิกเลือกการ์ดในห้องพยากรณ์
-window.handleMenuCardClick = function(menuId, targetAction) {
+window.handleMenuCardClick = function(menuId, targetAction, menuTitle) {
     // บันทึก ID การ์ดล่าสุดและตำแหน่ง Scroll ลงใน SessionStorage
     sessionStorage.setItem('lastSelectedMenuId', menuId);
     sessionStorage.setItem('lastMainpageScrollY', window.scrollY.toString());
 
-    // 🔒 ตรวจสอบสิทธิ์ซ้ำเพื่อความปลอดภัย 100%
-    const hasAccess = (typeof window.hasPackagePermission === 'function') ? window.hasPackagePermission(menuId) : true;
+    const freeMenuIds = ['todayDashboard', 'showdaylife', 'dreamPage', 'weeklyColorSection', 'elementManualPage'];
+    const hasAccess = (typeof window.hasPackagePermission === 'function') 
+        ? window.hasPackagePermission(menuId) 
+        : freeMenuIds.includes(menuId);
     if (!hasAccess || targetAction === 'package') {
-        navigateTo('package');
+        if (typeof window.showTierUpgradePrompt === 'function') {
+            window.showTierUpgradePrompt(menuTitle || menuId, menuId);
+        } else {
+            navigateTo('package');
+        }
         return;
     }
 

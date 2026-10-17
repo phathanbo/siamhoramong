@@ -70,13 +70,13 @@ async function loadPackagePermissions() {
 // 🗂️ ระบบ → แพ็กเกจขั้นต่ำที่เปิดใช้ (index ใน packages[])
 // จัดลำดับตามความละเอียดของการพยากรณ์ 5 ระดับ
 const systemMinTier = {
-    // 🟢 ฟรี / ทดลองใช้ (index 0) — ระบบสำเร็จรูป กรอกวันเกิดได้คำตอบทันที
-    'todayDashboard': 0, 'promchartsection': 0, 'zodiacdetailsection': 0,
-    'daily-horoscope': 0, 'showdaylife': 0, 'dreamPage': 0,
-    'siamsiPage': 0, 'cartomancyPage': 0, 'prommayanPage': 0, 'lottoPage': 0,
-    'weeklyColorSection': 0, 'elementManualPage': 0, 'yearClashPage': 0,
+    // 🟢 ฟรี / ทดลองใช้ (index 0) — สรุปดวงวันนี้, คำนวณวันเกิด, ทำนายฝัน, สีมงคลประจำปี, ธาตุประจำวันเกิด
+    'todayDashboard': 0, 'showdaylife': 0, 'dreamPage': 0,
+    'weeklyColorSection': 0, 'elementManualPage': 0,
 
     // 🔵 ธรรมดา (index 1) — กรอกข้อมูลมากขึ้น ผลลัพธ์หลายมิติ
+    'promchartsection': 1, 'zodiacdetailsection': 1, 'daily-horoscope': 1,
+    'siamsiPage': 1, 'cartomancyPage': 1, 'prommayanPage': 1, 'lottoPage': 1, 'yearClashPage': 1,
     'zodiacFortunePage': 1, 'businessFortune': 1, 'chantPage': 1,
     'chantLibraryPage': 1, 'auspicious-day': 1, 'dailyTabooPage': 1,
     'lunarSection': 1,
@@ -105,20 +105,21 @@ const systemMinTier = {
     'planetaryHoursPage': 7, 'climate-section': 7,
     'personalizedAuspiciousPage': 7,
 
-    // 🔴 ไพฑูรย์ (index 8) — ทักษา ฉัตร สัตตเลข
-    'thaksaninesection': 8, 'chatninePage': 8, 'sevenDigitsPage': 8,
+    // 👑 ไพฑูรย์ (index 8) — ทักษา ฉัตร สัตตเลข
+    'thaksaninesection': 8, 'chatninePage': 8, 'sevenDigitsPage': 8, 'horoscopeseven': 8,
 
     // 👑 มรกต (index 9) — ภพเรือนชะตา ทศาดาว
     'twelveHousesPage': 9, 'dashaPage': 9,
 
-    // 👑 เพชร (index 10) — ผูกดวงสมบูรณ์ & คัมภีร์แว่นตาโหร & ตำรากาลจักรจรวิภาค & วิธีดูหมอเลข ๗ ตัว ภาคพิสดาร
+    // 👑 เพชร (index 10) — ผูกดวงสมบูรณ์ & คัมภีร์แว่นตาโหร & ตำรากาลจักรจรวิภาค & วิธีดูหมอเลข ๗ ตัว ภาคพิสดาร & คัมภีร์ปูมโหรโบราณ
     'thaiAstrologyEngine': 10, 'waentaHoraPage': 10, 'kalachakraWiphakPage': 10, 'sevenDigitsPisadanPage': 10,
+    'chaldeanNumerologyPage': 10,
 
-    // 👑 มงกุฎ (index 11) — ผูกดวงมืออาชีพ นิรายนะ
-    'thaiHoroscopeProPage': 11, 'ayanamsaPage': 11,
+    // 👑 มงกุฎ (index 11) — ผูกดวงมืออาชีพ นิรายนะ แผ่นปฏิทินดวงรายวัน
+    'thaiHoroscopeProPage': 11, 'ayanamsaPage': 11, 'dailyAstrologyCalendarSheet': 11,
 
     // 👑 มงกุฎเพชร (index 12) — ดาวจรรายเดือน คัมภีร์มหาทักษาสัตตเลข
-    'monthlyTransitPage': 12, 'taksaSattalekPage': 12,
+    'monthlyTransitPage': 12, 'taksaSattalekPage': 12, 'TaksaSattalek': 12, 'yarmPage': 12,
 
     // 👑 ไตรมงกุฎ (index 13) — ตำราโหราศาสตร์
     'thaiHoraBookPage': 13,
@@ -137,11 +138,11 @@ function checkPermissionDefault(pkgName, menuIndex, menuId) {
         if (pkgIndex === -1) return false;
         return pkgIndex >= systemMinTier[menuId];
     }
-    // Fallback สำหรับ menuId ที่ไม่ได้กำหนดใน systemMinTier → ใช้ index เดิม
+    // Fallback สำหรับ menuId ที่ไม่ได้กำหนดใน systemMinTier:
+    // สำหรับผู้ใช้ทั่วไป / ทดลองใช้ (pkgIndex === 0) ให้ล็อกไว้ทั้งหมด (ห้ามผ่านเด็ดขาด)
     const pkgIndex = packages.findIndex(p => p.name === pkgName);
-    if (pkgIndex === -1) return false;
+    if (pkgIndex === -1 || pkgIndex === 0) return false;
     if (pkgIndex >= 9) return true; // มรกตขึ้นไปได้ทุกอย่าง
-    if (pkgIndex === 0) return menuIndex < 12;
     if (pkgIndex === 1) return menuIndex < 19;
     if (pkgIndex === 2) return menuIndex < 24;
     if (pkgIndex === 3) return menuIndex < 30;
@@ -214,7 +215,15 @@ window.hasPackagePermission = function(menuId) {
         }
     } catch (e) {}
 
-    // 3. ตรวจสอบสิทธิ์จาก window.packagePermissions หรือ default
+    // 3. สำหรับระดับ 'ทดลองใช้' / ผู้ใช้ทั่วไป: ถ้าฟีเจอร์มีระดับขั้นต่ำที่ต้องจ่ายเงิน (systemMinTier > 0) ห้ามผ่านเด็ดขาด
+    if (userPkg === 'ทดลองใช้') {
+        if (menuId && systemMinTier[menuId] !== undefined) {
+            return systemMinTier[menuId] === 0;
+        }
+        return false;
+    }
+
+    // 4. ตรวจสอบสิทธิ์จาก window.packagePermissions หรือ default
     if (window.packagePermissions && window.packagePermissions[userPkg] && window.packagePermissions[userPkg][menuId] !== undefined) {
         return Boolean(window.packagePermissions[userPkg][menuId]);
     }
@@ -239,42 +248,82 @@ window.getRequiredTierInfo = function(menuId) {
 window.showTierUpgradePrompt = function(featureTitle, menuId) {
     const tierInfo = window.getRequiredTierInfo(menuId);
     const titleText = featureTitle ? `ระบบ ${featureTitle}` : 'ระบบนี้';
-    
+    const isLoggedIn = Boolean(localStorage.getItem('siamhora_auth_session'));
+
     if (typeof Swal !== 'undefined') {
-        Swal.fire({
-            icon: 'warning',
-            title: '🔒 สิทธิพิเศษเฉพาะสมาชิก',
-            html: `
-                <div class="text-left px-2" style="font-size: 0.95rem; line-height: 1.6;">
-                    <p class="mb-2"><strong>${titleText}</strong> สงวนสิทธิ์สำหรับสมาชิกแพ็กเกจระดับ <strong>「${tierInfo.packageName}」</strong> ขึ้นไปครับ</p>
-                    <p class="mb-2 text-muted" style="font-size: 0.88rem;">ผู้ใช้ในระดับ <strong>ทดลองใช้</strong> ยังไม่สามารถเข้าใช้งานฟีเจอร์นี้ได้</p>
-                    <div class="p-3 rounded my-2" style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3);">
-                        <i class="fas fa-crown text-warning mr-1"></i> ปลดล็อกเริ่มต้นที่ระดับ: <strong class="text-warning">${tierInfo.packageName}</strong> 
-                        ${tierInfo.priceMonth !== 'ฟรี' && tierInfo.priceMonth !== 'ติดต่อ' ? `(฿${Number(tierInfo.priceMonth).toLocaleString()}/เดือน)` : ''}
+        if (!isLoggedIn) {
+            // กรณีเป็นผู้ใช้ทั่วไป (ยังไม่ได้สมัครสมาชิก/ล็อกอิน)
+            Swal.fire({
+                icon: 'info',
+                title: '🔒 สมัครสมาชิกเพื่อปลดล็อก',
+                html: `
+                    <div class="text-left px-2" style="font-size: 0.95rem; line-height: 1.6;">
+                        <p class="mb-2"><strong>${titleText}</strong> สงวนสิทธิ์สำหรับสมาชิกแพ็กเกจระดับ <strong>「${tierInfo.packageName}」</strong> ขึ้นไปครับ</p>
+                        <p class="mb-2 text-muted" style="font-size: 0.88rem;">ผู้ใช้ทั่วไปสามารถสมัครสมาชิกฟรี เพื่อเริ่มต้นใช้งานและเลือกอัปเกรดแพ็กเกจได้ทันที</p>
+                        <div class="p-3 rounded my-2" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);">
+                            <i class="fas fa-user-plus text-primary mr-1"></i> สมัครสมาชิกง่ายๆ ใน 1 นาที ไม่เสียค่าใช้จ่าย
+                        </div>
                     </div>
-                </div>
-            `,
-            confirmButtonText: '👑 ดูและเลือกแพ็กเกจ',
-            confirmButtonColor: '#d4af37',
-            showCancelButton: true,
-            cancelButtonText: 'ไว้คราวหน้า',
-            cancelButtonColor: '#6c757d',
-            customClass: { popup: 'rounded-4 shadow-lg' }
-        }).then((result) => {
-            if (result.isConfirmed) {
+                `,
+                confirmButtonText: '📝 สมัครสมาชิก / เข้าสู่ระบบ',
+                confirmButtonColor: '#3b82f6',
+                showCancelButton: true,
+                cancelButtonText: 'ไว้คราวหน้า',
+                cancelButtonColor: '#6c757d',
+                customClass: { popup: 'rounded-4 shadow-lg' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (typeof showLoginOverlay === 'function') {
+                        showLoginOverlay();
+                        if (typeof switchToRegister === 'function') {
+                            switchToRegister();
+                        }
+                    }
+                }
+            });
+        } else {
+            // กรณีเป็นสมาชิกแล้ว (ทดลองใช้ หรือ แพ็กเกจที่ยังไม่ถึงระดับ)
+            Swal.fire({
+                icon: 'warning',
+                title: '🔒 สิทธิพิเศษเฉพาะสมาชิก',
+                html: `
+                    <div class="text-left px-2" style="font-size: 0.95rem; line-height: 1.6;">
+                        <p class="mb-2"><strong>${titleText}</strong> สงวนสิทธิ์สำหรับสมาชิกแพ็กเกจระดับ <strong>「${tierInfo.packageName}」</strong> ขึ้นไปครับ</p>
+                        <p class="mb-2 text-muted" style="font-size: 0.88rem;">ระดับของคุณยังไม่สามารถเข้าใช้งานฟีเจอร์นี้ได้</p>
+                        <div class="p-3 rounded my-2" style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3);">
+                            <i class="fas fa-crown text-warning mr-1"></i> ปลดล็อกเริ่มต้นที่ระดับ: <strong class="text-warning">${tierInfo.packageName}</strong> 
+                            ${tierInfo.priceMonth !== 'ฟรี' && tierInfo.priceMonth !== 'ติดต่อ' ? `(฿${Number(tierInfo.priceMonth).toLocaleString()}/เดือน)` : ''}
+                        </div>
+                    </div>
+                `,
+                confirmButtonText: '👑 ดูและเลือกแพ็กเกจ',
+                confirmButtonColor: '#d4af37',
+                showCancelButton: true,
+                cancelButtonText: 'ไว้คราวหน้า',
+                cancelButtonColor: '#6c757d',
+                customClass: { popup: 'rounded-4 shadow-lg' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (typeof navigateTo === 'function') {
+                        navigateTo('package');
+                    } else {
+                        window.location.hash = '#package';
+                    }
+                }
+            });
+        }
+    } else {
+        if (!isLoggedIn) {
+            if (confirm(`${titleText} สงวนสิทธิ์สำหรับสมาชิก\nคุณต้องการสมัครสมาชิกเพื่อปลดล็อกฟีเจอร์นี้หรือไม่?`)) {
+                if (typeof showLoginOverlay === 'function') showLoginOverlay();
+            }
+        } else {
+            if (confirm(`${titleText} สงวนสิทธิ์สำหรับสมาชิกระดับ ${tierInfo.packageName} ขึ้นไป\nคุณต้องการดูรายละเอียดแพ็กเกจเพื่ออัปเกรดหรือไม่?`)) {
                 if (typeof navigateTo === 'function') {
                     navigateTo('package');
                 } else {
                     window.location.hash = '#package';
                 }
-            }
-        });
-    } else {
-        if (confirm(`${titleText} สงวนสิทธิ์สำหรับสมาชิกระดับ ${tierInfo.packageName} ขึ้นไป\nคุณต้องการดูรายละเอียดแพ็กเกจเพื่ออัปเกรดหรือไม่?`)) {
-            if (typeof navigateTo === 'function') {
-                navigateTo('package');
-            } else {
-                window.location.hash = '#package';
             }
         }
     }

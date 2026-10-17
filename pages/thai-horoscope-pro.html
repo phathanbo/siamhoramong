@@ -10,12 +10,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome & SweetAlert2 & QRCode & Tarot Data -->
+    <!-- FontAwesome & SweetAlert2 & QRCode & Tarot Data & Tiers -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="../src/data/tarot-data.js"></script>
+    <script src="../src/utils/tiers.js"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 
     <style>
@@ -673,9 +674,60 @@
                 break-inside: avoid !important;
             }
         }
+
+        /* Tier Lock Modal */
+        #tierLockOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(4, 8, 19, 0.95);
+            z-index: 99999;
+            backdrop-filter: blur(20px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .pro-lock-box {
+            background: linear-gradient(135deg, rgba(23, 33, 58, 0.96) 0%, rgba(13, 20, 39, 0.98) 100%);
+            border: 2px solid rgba(241, 208, 110, 0.5);
+            border-radius: 28px;
+            max-width: 550px;
+            width: 100%;
+            padding: 44px 34px;
+            text-align: center;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 50px rgba(241, 208, 110, 0.3);
+            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
+
+    <!-- 🔒 Modal ล็อกสิทธิ์เฉพาะสมาชิกระดับมงกุฎขึ้นไป -->
+    <div id="tierLockOverlay">
+        <div class="pro-lock-box">
+            <div style="font-size: 4rem; margin-bottom: 16px; filter: drop-shadow(0 0 25px rgba(241, 208, 110, 0.9));">👑</div>
+            <div style="background: rgba(241, 208, 110, 0.15); border: 1px solid rgba(241, 208, 110, 0.4); color: #ffd768; padding: 6px 16px; border-radius: 50px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; font-weight: 600; margin-bottom: 15px;">
+                <i class="fas fa-crown"></i> เฉพาะสมาชิกระดับมงกุฎขึ้นไป (Crown Tier)
+            </div>
+            <h2 style="font-weight: 700; color: #fff8db; margin-bottom: 12px; font-size: 1.6rem;">ระบบผูกดวงโหราศาสตร์ไทยมืออาชีพ</h2>
+            <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.7; margin-bottom: 28px;">
+                ระบบคำนวณสมผุสดาวจริง ราศีจักร นวางค์ ตรียางค์ ทักษา ตรีวัย และสร้างแผ่นปฏิทินดวงรายวัน<br>
+                <span style="color: #f87171; font-weight: 600; font-size: 0.9rem;">⚠️ ผู้ใช้ทั่วไปและผู้ใช้ระดับทดลองใช้ ต้องสมัครสมาชิกและอัปเกรดแพ็กเกจก่อนเข้าใช้งาน</span>
+            </p>
+            <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 22px; border-radius: 50px; font-weight: 600; cursor: pointer;" onclick="window.location.href='../index.html#mainpage'">
+                    <i class="fas fa-arrow-left"></i> กลับห้องพยากรณ์
+                </button>
+                <button type="button" style="background: linear-gradient(135deg, #f1d06e, #c99727); border: none; color: #070d1e; padding: 10px 24px; border-radius: 50px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(241, 208, 110, 0.4);" onclick="window.location.href='../index.html#package'">
+                    <i class="fas fa-crown"></i> ดูแพ็กเกจสมาชิก
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Top Header -->
     <header class="header-bar">
@@ -5356,6 +5408,42 @@
                 Swal.fire('ข้อผิดพลาด', 'ไม่พบโมดูลพิมพ์ปฏิทิน กรุณารีเฟรชหน้าเว็บ', 'error');
             }
         }
+
+        // 🔒 ตรวจสอบสิทธิ์ระดับมงกุฎ (Tier Index >= 11)
+        function checkProTierAccess() {
+            let hasAccess = false;
+            if (typeof window.hasPackagePermission === 'function') {
+                hasAccess = window.hasPackagePermission('thaiHoroscopeProPage');
+            } else {
+                try {
+                    const raw = localStorage.getItem('siamhora_auth_session');
+                    const isSimulating = localStorage.getItem('siamhora_simulate_package');
+                    if (raw) {
+                        const sess = JSON.parse(raw);
+                        if (sess && sess.role === 'admin' && !isSimulating) {
+                            hasAccess = true;
+                        } else {
+                            const pkg = isSimulating || sess.simulatePackage || sess.package || 'ทดลองใช้';
+                            const pkgIdx = (typeof packages !== 'undefined') ? packages.findIndex(p => p.name === pkg) : -1;
+                            hasAccess = (pkgIdx >= 11);
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            const overlay = document.getElementById('tierLockOverlay');
+            if (!hasAccess) {
+                if (overlay) overlay.style.display = 'flex';
+                return false;
+            } else {
+                if (overlay) overlay.style.display = 'none';
+                return true;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkProTierAccess();
+        });
 
 </script>
 </body>

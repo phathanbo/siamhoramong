@@ -795,6 +795,38 @@ function showWelcomeMessage(name) {
 function updateUserBadge(session) {
     const badge = document.getElementById('authUserBadge');
     if (badge) {
+        if (!session) {
+            // โหมดผู้ใช้ทั่วไป / ทดลองใช้ (Guest / Free Trial) เข้าใช้งานได้ทันที ไม่ต้องสมัครสมาชิก
+            badge.innerHTML = `
+            <div class="Usename" style="display: flex; justify-content: space-between; width: 100%; align-items: center; white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 4px 0; gap: 12px;">
+                <div class="d-flex align-items-center flex-nowrap" style="gap: 8px;">
+                    <span style="font-weight:600; font-size: 0.92rem; color: #f1f5f9; padding: 2px 6px; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-user" style="color: #94a3b8; font-size: 1.05rem;"></i>
+                        <span>ผู้ใช้ทั่วไป</span>
+                        <span id="packageBadge" style="margin-left: 4px; padding: 2px 8px; border-radius: 20px; font-size: 0.78rem; background: rgba(148, 163, 184, 0.15); border: 1px solid rgba(148, 163, 184, 0.4); color: #cbd5e1; display: inline-flex; align-items: center; gap: 5px;">
+                            <span>ทดลองใช้ฟรี</span>
+                        </span>
+                    </span>
+                </div>
+                <div class="d-flex align-items-center flex-nowrap" style="gap: 8px;">
+                    <button type="button" onclick="showLoginOverlay()" class="btn btn-sm" style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.5); color: #93c5fd; font-size: 0.8rem; font-weight: 500; padding: 3px 12px; border-radius: 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+                        <i class="fas fa-user-plus"></i> <span>สมัครสมาชิก / เข้าสู่ระบบ</span>
+                    </button>
+                </div>
+            </div>
+            `;
+
+            // ซ่อนปุ่มแอดมินใน Navbar
+            const adminNav = document.getElementById('adminDashboardNav');
+            if (adminNav) {
+                adminNav.style.display = 'none';
+            }
+            if (typeof buildDashboard === 'function') {
+                buildDashboard();
+            }
+            return;
+        }
+
         const isAdminUser = session && session.role === 'admin';
         const isSimulating = Boolean(localStorage.getItem('siamhora_simulate_package') || session.simulatePackage);
         const currentSimPkg = localStorage.getItem('siamhora_simulate_package') || session.simulatePackage;
@@ -819,6 +851,9 @@ function updateUserBadge(session) {
                 </span>
             </div>
             <div class="d-flex align-items-center flex-nowrap" style="gap: 8px;">
+                <button type="button" onclick="navigateTo('package')" class="btn btn-sm" style="background: linear-gradient(135deg, rgba(212,175,55,0.25) 0%, rgba(212,175,55,0.1) 100%); border: 1px solid rgba(212,175,55,0.6); color: #ffd700; font-size: 0.8rem; font-weight: 600; padding: 3px 10px; border-radius: 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+                    <i class="fas fa-crown"></i> <span>อัปเกรดสมาชิก</span>
+                </button>
                 <span id="logoutBtn" style="cursor: pointer; color: #f87171; font-size: 0.82rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; transition: background 0.2s ease;"
                       onmouseover="this.style.background='rgba(239,68,68,0.15)';" onmouseout="this.style.background='transparent';">
                     <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
@@ -865,6 +900,11 @@ function updateUserBadge(session) {
         if (typeof startPackageCountdown === 'function') {
             startPackageCountdown(session);
         }
+    }
+
+    // 🔄 อัปเดตสถานะการล็อกของหน้าห้องพยากรณ์ให้ตรงกับสิทธิ์ของผู้ใช้ปัจจุบัน
+    if (typeof buildDashboard === 'function') {
+        buildDashboard();
     }
 }
 
@@ -989,7 +1029,9 @@ function checkAuth() {
         hideLoginOverlay();
         updateUserBadge(session);
     } else {
-        showLoginOverlay();
+        // ✨ รูปแบบใหม่: ผู้ใช้ทั่วไปและผู้ทดลองใช้ สามารถเข้าใช้งานหน้าฟรีได้ทันทีโดยไม่ต้องล็อกอิน
+        hideLoginOverlay();
+        updateUserBadge(null);
     }
 }
 
@@ -1466,6 +1508,8 @@ window.doRegister = doRegister;
 window.doGoogleLogin = doGoogleLogin; // Export Google Login
 window.doLogout = doLogout;
 window.checkAuth = checkAuth;
+window.showLoginOverlay = showLoginOverlay;
+window.hideLoginOverlay = hideLoginOverlay;
 window.switchToRegister = switchToRegister;
 window.switchToLogin = switchToLogin;
 window.isAdmin = isAdmin;

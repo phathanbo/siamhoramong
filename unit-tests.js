@@ -516,6 +516,64 @@ if (pisadanDataExists && pisadanEngineExists) {
     assert(transitTest.transitSummary.day.star === 6, "ดวงทายจร: วันจรตรงกับดาว ๖ (ปิตา)");
 }
 
+// -----------------------------------------------------------------------------
+// Suite 23: Guest & Trial Tier Access Lock & Protection Verification
+// -----------------------------------------------------------------------------
+console.log('🔒 [Suite 23] Guest & Trial Tier Access Lock & Protection Verification');
+const tiersCodeSuite23 = fs.readFileSync('src/utils/tiers.js', 'utf8');
+const indexHtmlSuite23 = fs.readFileSync('index.html', 'utf8');
+
+// 1. ตรวจสอบ fallback ของ checkPermissionDefault ใน tiers.js ว่าปฏิเสธ pkgIndex === 0 โดยสมบูรณ์
+assert(tiersCodeSuite23.includes("if (pkgIndex === -1 || pkgIndex === 0) return false;"), "checkPermissionDefault ล็อกผู้ใช้ทั่วไป/ทดลองใช้ (pkgIndex === 0) สำหรับเมนูที่ไม่ได้กำหนดใน systemMinTier");
+
+// 2. ตรวจสอบว่าระบบสำคัญมี systemMinTier กำกับครบถ้วน
+assert(tiersCodeSuite23.includes("'rattanakosinCityPage': 14"), "rattanakosinCityPage ล็อกระดับเพชรยอดมงกุฎ (Tier 14)");
+assert(tiersCodeSuite23.includes("'thaiHoroscopeProPage': 11"), "thaiHoroscopeProPage ล็อกระดับมงกุฎ (Tier 11)");
+assert(tiersCodeSuite23.includes("'chaldeanNumerologyPage': 10"), "chaldeanNumerologyPage ล็อกระดับเพชร (Tier 10)");
+assert(tiersCodeSuite23.includes("'taksaSattalekPage': 12"), "taksaSattalekPage ล็อกระดับมงกุฎเพชร (Tier 12)");
+assert(tiersCodeSuite23.includes("'thaiHoraBookPage': 13"), "thaiHoraBookPage ล็อกระดับไตรมงกุฎ (Tier 13)");
+assert(tiersCodeSuite23.includes("'dailyAstrologyCalendarSheet': 11"), "dailyAstrologyCalendarSheet ล็อกระดับมงกุฎ (Tier 11)");
+
+// 3. ตรวจสอบลิงก์ใน index.html navbar & header ว่ามี permission check ดักไว้
+assert(indexHtmlSuite23.includes("window.hasPackagePermission('rattanakosinCityPage')"), "index.html มีการตรวจสิทธิ์ก่อนเปิดดวงชะตากรุงรัตนโกสินทร์");
+assert(indexHtmlSuite23.includes("window.hasPackagePermission('dailyAstrologyCalendarSheet')"), "index.html มีการตรวจสิทธิ์ก่อนเปิดแผ่นปฏิทินดวงรายวัน");
+
+// 4. ตรวจสอบหน้า standalone ว่ามี tierLockOverlay และ check standalone access ครบถ้วน
+const standalonePagesToVerify = [
+    'pages/rattanakosin-city-horoscope.html',
+    'pages/thai-horoscope-pro.html',
+    'pages/siam-horamangkol.html',
+    'pages/horasat.html',
+    'pages/taksasattalek.html',
+    'pages/monthly-transit.html',
+    'pages/ayanamsa.html',
+    'pages/thai-astrology-engine.html',
+    'pages/chaldean-numerology.html'
+];
+for (const p of standalonePagesToVerify) {
+    const pageHtml = fs.readFileSync(p, 'utf8');
+    assert(pageHtml.includes('id="tierLockOverlay"'), `${p} มี modal id="tierLockOverlay" ป้องกันการเข้าดู`);
+    assert(pageHtml.includes('hasPackagePermission') || pageHtml.includes('checkStandaloneTierAccess') || pageHtml.includes('checkCrownTierAccess') || pageHtml.includes('checkProTierAccess'), `${pageHtml.includes('hasPackagePermission')} ${p} มีฟังก์ชันตรวจสิทธิ์แพ็กเกจบนหน้า`);
+}
+
+// 5. ตรวจสอบการโหลดสคริปต์ tiers.js ก่อน mainpage.js ใน index.html
+const tiersScriptIdx = indexHtmlSuite23.indexOf('src/utils/tiers.js');
+const mainpageScriptIdx = indexHtmlSuite23.indexOf('src/ui/mainpage.js');
+assert(tiersScriptIdx !== -1 && tiersScriptIdx < mainpageScriptIdx, "index.html โหลด tiers.js ก่อน mainpage.js ป้องกันการ์ดหลุดเป็นปลดล็อก");
+
+// 6. ตรวจสอบ Fail-closed ใน mainpage.js และ script.js
+const mainpageCodeSuite23 = fs.readFileSync('src/ui/mainpage.js', 'utf8');
+assert(mainpageCodeSuite23.includes("freeMenuIds.includes(item.id)"), "mainpage.js ป้องกัน fail-closed เมื่อ tiers.js ยังไม่พร้อม");
+
+const scriptCodeSuite23 = fs.readFileSync('src/ui/script.js', 'utf8');
+assert(scriptCodeSuite23.includes("window.navigateTo = navigateTo;"), "script.js ประกาศ window.navigateTo = navigateTo สำหรับการเข้าถึงแบบ Global");
+
+// 7. ตรวจสอบเงื่อนไขปุ่มอัปเกรด: ต้องสมัครสมาชิกก่อนถึงจะมีปุ่มอัปเกรด ส่วนผู้ใช้ทั่วไปจะมีปุ่มสมัครสมาชิก/เข้าสู่ระบบ
+const authCodeSuite23 = fs.readFileSync('src/utils/auth-enhanced-firebase-fixed.js', 'utf8');
+assert(!authCodeSuite23.includes("navigateTo('package')") || authCodeSuite23.indexOf("navigateTo('package')") > authCodeSuite23.indexOf("!session"), "auth script วางปุ่มอัปเกรดเฉพาะสมาชิกที่ล็อกอินแล้วเท่านั้น");
+assert(authCodeSuite23.includes("สมัครสมาชิก / เข้าสู่ระบบ"), "auth script แสดงปุ่มสมัครสมาชิก / เข้าสู่ระบบ สำหรับผู้ใช้ทั่วไป");
+assert(tiersCodeSuite23.includes("สมัครสมาชิกเพื่อปลดล็อก"), "tiers.js แนะนำให้ผู้ใช้ทั่วไปสมัครสมาชิกก่อนเมื่อพยายามเข้าเมนูที่ล็อก");
+
 console.log('');
 
 // -----------------------------------------------------------------------------

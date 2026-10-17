@@ -557,7 +557,14 @@ function navigateTo(pageId, addHistory = true, targetScrollPos = null) {
     }
 
     // 🔒 ตรวจสอบสิทธิ์การเข้าถึงแพ็กเกจ (Package Permission Check)
-    if (typeof window.hasPackagePermission === 'function' && !window.hasPackagePermission(pageId)) {
+    const alwaysAllowPages = ['mainpage', 'mainContent', 'package', 'historySection', 'profilePage', 'knowledgePage',
+        'todayDashboard', 'promchartsection', 'zodiacdetailsection', 'daily-horoscope', 'showdaylife', 'dreamPage',
+        'siamsiPage', 'cartomancyPage', 'prommayanPage', 'lottoPage', 'weeklyColorSection', 'elementManualPage', 'yearClashPage'];
+    const isPermitted = (typeof window.hasPackagePermission === 'function') 
+        ? window.hasPackagePermission(pageId) 
+        : alwaysAllowPages.includes(pageId);
+
+    if (!isPermitted) {
         console.warn(`🔒 สิทธิ์ไม่เพียงพอสำหรับหน้า: ${pageId}`);
         const featureTitle = PAGE_TITLES[pageId] ? PAGE_TITLES[pageId].replace(' - สยามโหรามงคล', '').trim() : pageId;
         if (typeof window.showTierUpgradePrompt === 'function') {
@@ -826,9 +833,11 @@ function navigateTo(pageId, addHistory = true, targetScrollPos = null) {
     if (typeof updateAllMemberSelectors === 'function') {
         updateAllMemberSelectors();
     }
-    const currentTargetId = window.currentMemberId || (typeof loadLastProfileFromStorage === 'function' ? (loadLastProfileFromStorage()?.memberId || loadLastProfileFromStorage()?.birthdate) : null);
-    if (currentTargetId && typeof autoFillMemberData === 'function') {
-        autoFillMemberData(currentTargetId);
+    if (!canViewAll && typeof autoFillMemberData === 'function') {
+        const currentTargetId = window.currentMemberId || (typeof loadLastProfileFromStorage === 'function' ? (loadLastProfileFromStorage()?.memberId || loadLastProfileFromStorage()?.birthdate) : null);
+        if (currentTargetId) {
+            autoFillMemberData(currentTargetId);
+        }
     }
 
     // 8. โหลดข้อมูลผู้ใช้มาเติม (ถ้ามีระบบ Profile)
@@ -837,6 +846,7 @@ function navigateTo(pageId, addHistory = true, targetScrollPos = null) {
     // 9. แสดง/ซ่อน Floating Back to Mainpage Button
     updateFloatingBackBtn(pageId);
 }
+window.navigateTo = navigateTo;
 
 // 🔙 ฟังก์ชันควบคุมปุ่มย้อนกลับห้องพยากรณ์แบบ Floating
 function updateFloatingBackBtn(currentPageId) {
