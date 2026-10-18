@@ -1,179 +1,1098 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ศูนย์ควบคุมระบบหลังบ้าน (Admin Console) - สยามโหรามงคล</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>ศูนย์ควบคุมระบบหลังบ้าน (Admin Command Center) - สยามโหรามงคล</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans & Sarabun & Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        body { 
-            font-family: 'Prompt', sans-serif !important; 
-            background-color: var(--modern-bg-base, #0c1424);
-            color: #FFFFFF; 
+        :root {
+            /* Dark Theme (Default) - Synced with member-dashboard.html */
+            --bg-body: #11131c;
+            --bg-sidebar: #171926;
+            --bg-card: #1c1f30;
+            --bg-card-inner: #24273d;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(245, 158, 11, 0.4);
+            --text-main: #ffffff;
+            --text-sub: #94a3b8;
+            --text-muted: #64748b;
+            --accent-primary: #6366f1;
+            --accent-purple: #a855f7;
+            --accent-gold: #f59e0b;
+            --accent-blue: #38bdf8;
+            --accent-green: #10b981;
+            --accent-pink: #f43f5e;
+            --shadow-card: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --table-hover: rgba(255, 255, 255, 0.03);
+            --sidebar-active: #ffffff;
+            --sidebar-active-bg: rgba(255, 255, 255, 0.08);
+            --sidebar-active-color: #ffffff;
+        }
+
+        [data-theme="light"] {
+            /* Light Theme - Synced with member-dashboard.html */
+            --bg-body: #f4f7fc;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-inner: #f8fafc;
+            --border-color: rgba(0, 0, 0, 0.06);
+            --border-highlight: rgba(245, 158, 11, 0.4);
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --text-muted: #94a3b8;
+            --accent-primary: #6366f1;
+            --accent-purple: #9333ea;
+            --accent-gold: #d97706;
+            --accent-blue: #0284c7;
+            --accent-green: #059669;
+            --accent-pink: #e11d48;
+            --shadow-card: 0 8px 24px rgba(148, 163, 184, 0.12);
+            --table-hover: rgba(0, 0, 0, 0.02);
+            --sidebar-active: #0f172a;
+            --sidebar-active-bg: #f1f5f9;
+            --sidebar-active-color: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Sarabun', 'Plus Jakarta Sans', 'Prompt', sans-serif;
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
             min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
         }
-        .admin-glass-card { 
-            background: linear-gradient(135deg, rgba(26, 38, 66, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
-            border: 1px solid rgba(241, 208, 110, 0.25); 
-            border-radius: 20px; 
-            padding: 24px; 
-            margin-bottom: 24px; 
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 250px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 18px;
+            flex-shrink: 0;
+            min-height: 100vh;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .table-dark-glass {
-            background: rgba(13, 21, 39, 0.6) !important;
-            color: #FFFFFF !important;
-            border-radius: 14px;
-            overflow: hidden;
-            font-size: 0.92rem;
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding: 0 8px;
+            text-decoration: none;
+            color: var(--text-main);
         }
-        .table-dark-glass th {
-            background: rgba(241, 208, 110, 0.12) !important;
-            color: #FFF0A8 !important;
-            font-weight: 600;
-            border-bottom: 1px solid rgba(241, 208, 110, 0.25) !important;
-            padding: 12px 14px !important;
-            font-size: 0.88rem;
-        }
-        .table-dark-glass td {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-            padding: 12px 14px !important;
-            vertical-align: middle;
-        }
-        .btn-gold-sm {
-            background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
-            color: #0c1424 !important;
-            font-weight: 600;
-            font-size: 0.88rem;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 18px;
-            transition: all 0.2s ease;
-            display: inline-flex;
+
+        .brand-logo-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f59e0b 0%, #6366f1 100%);
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            color: #ffffff;
+            font-size: 1.15rem;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
         }
-        .btn-gold-sm:hover {
-            background: linear-gradient(135deg, #fff0a8 0%, #ffd700 100%);
-            color: #000 !important;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(241, 208, 110, 0.3);
+
+        .brand-text {
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: -0.5px;
         }
-        .btn-outline-gold-sm {
-            background: transparent;
-            color: #ffd700 !important;
-            border: 1px solid rgba(241, 208, 110, 0.4);
-            font-weight: 500;
-            font-size: 0.85rem;
-            border-radius: 8px;
-            padding: 6px 14px;
+
+        .nav-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 16px 8px 8px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
             transition: all 0.2s ease;
+        }
+
+        .sidebar-menu a:hover {
+            color: var(--text-main);
+            background-color: var(--sidebar-active-bg);
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--sidebar-active-bg);
+            color: var(--sidebar-active-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-menu a i {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Help Support Card in Sidebar */
+        .sidebar-help-card {
+            margin-top: auto;
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+        }
+
+        .sidebar-help-card .help-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin: -32px auto 8px;
+            border: 3px solid var(--bg-sidebar);
+            background: #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-help-card h5 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .sidebar-help-card p {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+        }
+
+        .sidebar-help-card .btn-support {
+            display: block;
+            background: var(--accent-primary);
+            color: #ffffff;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+        .sidebar-help-card .btn-support:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ===== MAIN WRAPPER ===== */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            padding: 24px 32px 40px;
+        }
+
+        /* Top Bar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .topbar-left h1 {
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topbar-left .date-range-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        /* Theme Toggle Switch */
+        .theme-switch {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 4px;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .theme-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            color: var(--text-sub);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .theme-btn.active {
+            background: var(--accent-primary);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+        }
+
+        /* User Profile Pill */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 4px 14px 4px 6px;
+            border-radius: 30px;
+        }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .user-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* ===== HERO BANNER ===== */
+        .hero-banner {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px 28px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-content p {
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            max-width: 680px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .btn-modern-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 0.88rem;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-modern-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
+        }
+
+        .btn-modern-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 0.88rem;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-modern-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.45);
+        }
+
+        .btn-modern-outline {
+            background: transparent;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-color);
+            font-weight: 600;
+            font-size: 0.88rem;
+            border-radius: 10px;
+            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-modern-outline:hover {
+            background: var(--bg-card-inner);
+            border-color: var(--accent-gold);
+            transform: translateY(-1px);
+        }
+
+        /* ===== CARDS & GRIDS ===== */
+        .dash-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-header-flex h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.3px;
+        }
+
+        .card-header-flex p {
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .card-badge {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--accent-gold);
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
-        .btn-outline-gold-sm:hover {
-            background: rgba(241, 208, 110, 0.15);
-            border-color: #ffd700;
-            color: #fff !important;
+
+        /* Metrics Row */
+        .metrics-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
         }
-        .form-control-sleek {
-            background: rgba(15, 23, 42, 0.7) !important;
-            border: 1px solid rgba(241, 208, 110, 0.25) !important;
-            color: #FFFFFF !important;
-            border-radius: 10px !important;
-            padding: 8px 14px !important;
-            font-size: 0.9rem !important;
+
+        .metric-mini-card {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s ease;
         }
-        .form-control-sleek:focus {
-            border-color: #ffd700 !important;
-            box-shadow: 0 0 8px rgba(255, 215, 0, 0.25) !important;
+        .metric-mini-card:hover {
+            border-color: var(--border-highlight);
+            transform: translateY(-2px);
+        }
+
+        .mini-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-sub);
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .mini-header i {
+            font-size: 1.15rem;
+        }
+
+        .mini-value {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 10px 0 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .mini-growth {
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ===== TABLES ===== */
+        .table-glass-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card-inner);
+        }
+
+        table.analytics-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            text-align: left;
+        }
+
+        table.analytics-table th {
+            padding: 12px 16px;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.08);
+            white-space: nowrap;
+        }
+
+        table.analytics-table td {
+            padding: 14px 16px;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        table.analytics-table tr:hover td {
+            background-color: var(--table-hover);
+        }
+
+        table.analytics-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Form Controls Sleek */
+        .form-grid-row {
+            display: grid;
+            grid-template-columns: 2fr 2fr 3fr 1.5fr;
+            gap: 14px;
+            margin-bottom: 14px;
+            align-items: flex-end;
+        }
+
+        .form-group-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group-item label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-sub);
+        }
+
+        .input-sleek {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            outline: none;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+        .input-sleek:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Status Pills */
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-approved { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .status-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .status-rejected { background: rgba(244, 63, 94, 0.15); color: #f43f5e; }
+
+        .btn-action-sm {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s ease;
+        }
+        .btn-action-approve {
+            background: var(--accent-green);
+            color: #ffffff;
+        }
+        .btn-action-approve:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .btn-action-reject {
+            background: var(--accent-pink);
+            color: #ffffff;
+        }
+        .btn-action-reject:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .btn-action-delete {
+            background: rgba(244, 63, 94, 0.15);
+            color: #f43f5e;
+            border: 1px solid rgba(244, 63, 94, 0.3);
+        }
+        .btn-action-delete:hover {
+            background: #f43f5e;
+            color: #ffffff;
+        }
+
+        /* Quick Tools Grid styling in theme */
+        #adminQuickToolsContainer .admin-glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 24px;
+        }
+
+        /* 4x4 Compact Grid */
+        .quick-tools-4x4-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            transition: all 0.25s ease;
+        }
+
+        .qt-card-item {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .qt-card-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-gold);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            background: rgba(245, 158, 11, 0.04);
+        }
+
+        .qt-card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .qt-card-item:hover .qt-card-icon {
+            transform: scale(1.08);
+        }
+
+        .qt-card-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .qt-card-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+        }
+
+        .qt-card-desc {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 1px;
+        }
+
+        .qt-card-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            color: var(--text-sub);
+            flex-shrink: 0;
+        }
+
+        /* Filter Pills */
+        .qt-filter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .qt-filter-btn:hover {
+            color: var(--text-main);
+        }
+
+        .qt-filter-btn.active {
+            background: var(--accent-primary);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.35);
+        }
+
+        @media (max-width: 1200px) {
+            .quick-tools-4x4-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 860px) {
+            .quick-tools-4x4-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 520px) {
+            .quick-tools-4x4-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .metrics-grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .form-grid-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                position: relative;
+                padding: 16px;
+            }
+            .main-wrapper {
+                padding: 16px;
+            }
+            .form-grid-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== TAB SYSTEM STYLES ===== */
+        .admin-tab-pane {
+            display: none;
+            animation: fadeInTab 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+
+        .admin-tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeInTab {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-frame-container {
+            width: 100%;
+            height: calc(100vh - 130px);
+            min-height: 800px;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            overflow: hidden;
+            background: var(--bg-card);
+            box-shadow: var(--shadow-card);
+        }
+
+        .tab-frame-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- Top Header -->
-    <header class="header-bar no-print">
-        <a href="admin-console.html" class="header-title">
-            <i class="fas fa-dharmachakra"></i>
-            <div>
-                <h1>สยามโหรามงคล</h1>
-                <div class="header-sub">Siam Horamongkol • ศูนย์ควบคุมระบบหลังบ้าน (Admin Console)</div>
+
+    <!-- ===== SIDEBAR (Aligned with member-dashboard.html & Single Page Tab Switching) ===== -->
+    <aside class="sidebar">
+        <a href="admin-console.html" class="sidebar-brand">
+            <div class="brand-logo-badge">
+                <i class="fas fa-dharmachakra"></i>
             </div>
+            <span class="brand-text">Siam Horamangkol</span>
         </a>
-        <div class="header-actions">
-            <a href="luang-wuthi-reux.html" class="btn-nav" style="border-color: rgba(251,191,36,0.6);"><i class="fas fa-dharmachakra" style="color: #ffd700;"></i> ให้ฤกษ์สมาคมโหรฯ</a>
-            <a href="../pages/kalachakra-wiphak.html" class="btn-nav" style="border-color: rgba(56,189,248,0.6);"><i class="fas fa-scroll" style="color: #38bdf8;"></i> กาลจักรจรวิภาค</a>
-            <a href="daily-horoscope-dashboard.html" class="btn-nav"><i class="fas fa-bullhorn" style="color: #ffd700;"></i> ดวงประจำวัน & ดาวจร</a>
-            <a href="package-permissions.html" class="btn-nav"><i class="fas fa-crown"></i> สิทธิ์แพ็กเกจ</a>
-            <a href="member-dashboard.html" class="btn-nav"><i class="fas fa-users-cog"></i> แดชบอร์ดสมาชิก</a>
-            <a href="../index.html" class="btn-nav"><i class="fas fa-home"></i> หน้าหลัก</a>
-        </div>
-    </header>
 
-    <div class="container py-4" style="max-width: 1200px;">
+        <div class="nav-section-title">ศูนย์ควบคุม (Management)</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#console" data-tab="console" class="sidebar-nav-tab active" onclick="switchAdminTab('console', this); return false;">
+                    <i class="fas fa-sliders" style="color: var(--accent-gold);"></i>
+                    <span>Admin Console</span>
+                </a>
+            </li>
+            <li>
+                <a href="#members" data-tab="members" class="sidebar-nav-tab" onclick="switchAdminTab('members', this); return false;">
+                    <i class="fas fa-chart-pie" style="color: var(--accent-primary);"></i>
+                    <span>แดชบอร์ดสมาชิก</span>
+                </a>
+            </li>
+            <li>
+                <a href="#daily" data-tab="daily" class="sidebar-nav-tab" onclick="switchAdminTab('daily', this); return false;">
+                    <i class="fas fa-bullhorn" style="color: var(--accent-gold);"></i>
+                    <span>ดวงประจำวัน & ดาวจร</span>
+                </a>
+            </li>
+            <li>
+                <a href="#packages" data-tab="packages" class="sidebar-nav-tab" onclick="switchAdminTab('packages', this); return false;">
+                    <i class="fas fa-crown" style="color: #fbbf24;"></i>
+                    <span>สิทธิ์แพ็กเกจ</span>
+                </a>
+            </li>
+            <li>
+                <a href="#luang-wuthi" data-tab="luang-wuthi" class="sidebar-nav-tab" onclick="switchAdminTab('luang-wuthi', this); return false;">
+                    <i class="fas fa-dharmachakra" style="color: #f59e0b;"></i>
+                    <span>ให้ฤกษ์สมาคมโหรฯ</span>
+                </a>
+            </li>
+            <li>
+                <a href="#kalachakra" data-tab="kalachakra" class="sidebar-nav-tab" onclick="switchAdminTab('kalachakra', this); return false;">
+                    <i class="fas fa-scroll" style="color: #38bdf8;"></i>
+                    <span>กาลจักรจรวิภาค</span>
+                </a>
+            </li>
+            <li>
+                <a href="#lifetime" data-tab="lifetime" class="sidebar-nav-tab" onclick="switchAdminTab('lifetime', this); return false;">
+                    <i class="fas fa-file-invoice" style="color: #a855f7;"></i>
+                    <span>Lifetime Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-section-title">บริการ & นำทาง</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="../pages/thai-horoscope-pro.html">
+                    <i class="fas fa-laptop-code" style="color: #10b981;"></i>
+                    <span>โต๊ะพยากรณ์สำนัก</span>
+                </a>
+            </li>
+            <li>
+                <a href="../index.html">
+                    <i class="fas fa-house" style="color: #38bdf8;"></i>
+                    <span>หน้าหลักเว็บไซต์</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="location.reload(); return false;">
+                    <i class="fas fa-arrows-rotate"></i>
+                    <span>รีเฟรชข้อมูล</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Help Support Card -->
+        <div class="sidebar-help-card">
+            <div class="help-avatar">
+                <i class="fas fa-user-astronaut"></i>
+            </div>
+            <h5>ต้องการความช่วยเหลือ?</h5>
+            <p>ติดต่อทีมงานวิศวกรและผู้ดูแลระบบสยามโหรามงคล</p>
+            <a href="https://lin.ee/xyz" target="_blank" class="btn-support">
+                <i class="fab fa-line mr-1"></i> ติดต่อ Support
+            </a>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT WRAPPER ===== -->
+    <main class="main-wrapper">
         
-        <!-- Header Banner -->
-        <div class="text-center mb-4 p-4 rounded" style="background: linear-gradient(135deg, rgba(241,208,110,0.1) 0%, rgba(20,32,58,0.7) 100%); border: 1px solid rgba(241,208,110,0.25); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(15px);">
-            <div style="font-size: 2.4rem; margin-bottom: 6px; filter: drop-shadow(0 0 12px rgba(241,208,110,0.5));">⚙️</div>
-            <h2 style="font-size: 1.85rem; font-weight: 700; background: linear-gradient(135deg, #FFFFFF 0%, #FFF3B0 40%, #F1D06E 80%, #C99727 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px;">
-                ศูนย์ควบคุมระบบหลังบ้าน (Admin Command Center)
-            </h2>
-            <p style="color: #CBD5E1; font-size: 0.92rem; max-width: 600px; margin: 0 auto;">
-                ศูนย์รวมเครื่องมือสร้างคอนเทนต์ กราฟิกโซเชียล ตรวจสอบรายรับค่าครู มอนิเตอร์ดาวจร และจัดการฐานข้อมูลคำทำนาย
-            </p>
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h1>
+                    <span>ศูนย์ควบคุมระบบหลังบ้าน</span>
+                    <span class="date-range-badge" id="liveDateBadge">
+                        <i class="far fa-calendar-alt"></i> วันนี้
+                    </span>
+                </h1>
+            </div>
+            <div class="topbar-right">
+                <!-- Theme Toggle Switch -->
+                <div class="theme-switch" onclick="toggleTheme()" title="สลับโหมดสว่าง / มืด">
+                    <button class="theme-btn" id="btnThemeLight"><i class="fas fa-sun"></i></button>
+                    <button class="theme-btn active" id="btnThemeDark"><i class="fas fa-moon"></i></button>
+                </div>
+
+                <!-- User Profile Pill -->
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <span class="user-name">Admin Console</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Quick Tools Container (ศูนย์รวมเครื่องมือสร้างสื่อ & แดชบอร์ดสมาชิก) -->
+        <!-- ========================================== -->
+        <!-- TAB 1: ADMIN CONSOLE (Dashboard Overview)   -->
+        <!-- ========================================== -->
+        <section id="tab-console" class="admin-tab-pane active">
+            <!-- Hero Banner -->
+            <div class="hero-banner">
+                <div class="hero-content">
+                    <h2>
+                        <i class="fas fa-sliders text-warning"></i>
+                        ศูนย์รวมเครื่องมือ & บริหารจัดการ (Command Center)
+                    </h2>
+                    <p>
+                        บริหารจัดการระบบสยามโหรามงคลเต็มรูปแบบ ศูนย์รวมเครื่องมือสร้างสื่อกราฟิกโซเชียลมีเดีย ตรวจสอบรายรับค่าครูสำนักพยากรณ์ อนุมัติสลิปแจ้งชำระเงิน และจัดการฐานข้อมูลคำศัพท์พจนานุกรมมงคล
+                    </p>
+                </div>
+                <div class="hero-actions">
+                    <a href="../pages/thai-horoscope-pro.html" class="btn-modern-gold">
+                        <i class="fas fa-external-link-alt"></i> เปิดโต๊ะพยากรณ์
+                    </a>
+                    <button type="button" onclick="switchAdminTab('members');" class="btn-modern-primary">
+                        <i class="fas fa-chart-pie"></i> แดชบอร์ดสมาชิก
+                    </button>
+                </div>
+            </div>
+
+        <!-- Quick Tools Container (ศูนย์รวมเครื่องมือสร้างสื่อ & คอนเทนต์) -->
         <div id="adminQuickToolsContainer"></div>
 
         <!-- 🏛️ Bureau Operations & Revenue Stats (สถิติสำนักพยากรณ์ & ค่าครู) -->
-        <div class="admin-glass-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="m-0 font-weight-bold" style="color: #FFF0A8;">
-                    <i class="fas fa-landmark mr-2 text-warning"></i> สถิติการดำเนินงานสำนักพยากรณ์ (Bureau Operations)
-                </h5>
-                <a href="../pages/thai-horoscope-pro.html" class="btn-outline-gold-sm">
-                    <i class="fas fa-external-link-alt"></i> เปิดโต๊ะพยากรณ์
-                </a>
+        <div class="dash-card">
+            <div class="card-header-flex">
+                <div>
+                    <h3>
+                        <i class="fas fa-landmark text-warning"></i>
+                        สถิติการดำเนินงานสำนักพยากรณ์ (Bureau Operations)
+                    </h3>
+                    <p>สรุปยอดรายรับค่าครูสะสม ประวัติการตรวจดวงชะตา และสมุดบันทึกเคสของอาจารย์พยากรณ์</p>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="card-badge">
+                        <i class="fas fa-coins"></i> ค่าครูสะสม
+                    </span>
+                    <a href="../pages/thai-horoscope-pro.html" class="btn-modern-outline" style="padding: 5px 12px; font-size: 0.8rem;">
+                        <i class="fas fa-desktop"></i> โต๊ะพยากรณ์
+                    </a>
+                </div>
             </div>
-            <p style="color: #CBD5E1; font-size: 0.88rem;">สรุปยอดรายรับค่าครู, ประวัติการให้คำปรึกษา และสมุดบันทึกเคสของอาจารย์</p>
-            
-            <!-- Summary Stats Counters -->
-            <div class="row g-3 mb-3">
-                <div class="col-md-4 mb-2">
-                    <div class="p-3 text-center rounded" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 14px;">
-                        <small class="text-white-50">รายรับค่าครูสะสม</small>
-                        <h3 id="bureauTotalRevenue" class="font-weight-bold my-1 text-success" style="font-size: 1.6rem;">0 ฿</h3>
+
+            <!-- 3 Mini Stats Counters -->
+            <div class="metrics-grid-3">
+                <div class="metric-mini-card">
+                    <div class="mini-header">
+                        <span>รายรับค่าครูสะสม</span>
+                        <i class="fas fa-wallet" style="color: var(--accent-green);"></i>
+                    </div>
+                    <div class="mini-value" id="bureauTotalRevenue" style="color: var(--accent-green);">0 ฿</div>
+                    <div class="mini-growth">
+                        <i class="fas fa-circle-check" style="color: var(--accent-green);"></i> ยอดรับชำระค่าครูทั้งหมด
                     </div>
                 </div>
-                <div class="col-md-4 mb-2">
-                    <div class="p-3 text-center rounded" style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 14px;">
-                        <small class="text-white-50">เคสที่บันทึกคำทำนาย</small>
-                        <h3 id="bureauTotalCases" class="font-weight-bold my-1 text-primary" style="font-size: 1.6rem;">0 เคส</h3>
+
+                <div class="metric-mini-card">
+                    <div class="mini-header">
+                        <span>เคสที่บันทึกคำทำนาย</span>
+                        <i class="fas fa-folder-open" style="color: var(--accent-blue);"></i>
+                    </div>
+                    <div class="mini-value" id="bureauTotalCases" style="color: var(--accent-blue);">0 เคส</div>
+                    <div class="mini-growth">
+                        <i class="fas fa-user-check" style="color: var(--accent-blue);"></i> บันทึกในสมุดดวงชะตา
                     </div>
                 </div>
-                <div class="col-md-4 mb-2">
-                    <div class="p-3 text-center rounded" style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 14px;">
-                        <small class="text-white-50">รายการออกใบเสร็จค่าครู</small>
-                        <h3 id="bureauTotalReceipts" class="font-weight-bold my-1 text-warning" style="font-size: 1.6rem;">0 รายการ</h3>
+
+                <div class="metric-mini-card">
+                    <div class="mini-header">
+                        <span>รายการออกใบเสร็จค่าครู</span>
+                        <i class="fas fa-receipt" style="color: var(--accent-gold);"></i>
+                    </div>
+                    <div class="mini-value" id="bureauTotalReceipts" style="color: var(--accent-gold);">0 รายการ</div>
+                    <div class="mini-growth">
+                        <i class="fas fa-clock-rotate-left" style="color: var(--accent-gold);"></i> ประวัติการทำรายการ
                     </div>
                 </div>
             </div>
 
             <!-- Recent Bureau Payments Table -->
-            <div class="table-responsive" style="border-radius: 12px; border: 1px solid rgba(241,208,110,0.2);">
-                <table class="table table-dark-glass table-hover m-0">
+            <div class="table-glass-wrapper">
+                <table class="analytics-table">
                     <thead>
                         <tr>
                             <th>รหัสใบเสร็จ</th>
@@ -185,26 +1104,29 @@
                         </tr>
                     </thead>
                     <tbody id="bureauPaymentsTableBody">
-                        <tr><td colspan="6" class="text-center py-3 text-white-50">ยังไม่มีประวัติการรับเงินค่าครู</td></tr>
+                        <tr><td colspan="6" style="text-align:center; padding:24px; color:var(--text-muted);">ยังไม่มีประวัติการรับเงินค่าครู</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- ตรวจสอบการชำระเงิน (Payments) -->
-        <div class="admin-glass-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="m-0 font-weight-bold" style="color: #FFF0A8;">
-                    <i class="fas fa-money-check-alt mr-2 text-warning"></i> ตรวจสอบการชำระเงิน (Pending Payments)
-                </h5>
-                <span class="badge px-3 py-1" style="background: rgba(241,208,110,0.15); color: #FFF0A8; border: 1px solid rgba(241,208,110,0.3); border-radius: 20px; font-size: 0.8rem;">
-                    รายการรอตรวจสอบ
+        <!-- 💳 ตรวจสอบการชำระเงิน (Pending Payments) -->
+        <div class="dash-card">
+            <div class="card-header-flex">
+                <div>
+                    <h3>
+                        <i class="fas fa-money-check-dollar" style="color: var(--accent-green);"></i>
+                        ตรวจสอบการชำระเงิน (Pending Payments)
+                    </h3>
+                    <p>รายการแจ้งโอนเงินที่รอการอนุมัติสลิปเพื่ออัปเกรดสถานะและสิทธิ์การใช้งานของสมาชิก</p>
+                </div>
+                <span class="card-badge" style="color: var(--accent-gold);">
+                    <i class="fas fa-hourglass-half"></i> รอการตรวจสอบ
                 </span>
             </div>
-            <p style="color: #CBD5E1; font-size: 0.88rem;">รายการแจ้งโอนเงินที่รอการอนุมัติเพื่ออัปเกรดสถานะสมาชิก</p>
-            
-            <div class="table-responsive mt-3" style="border-radius: 12px; border: 1px solid rgba(241,208,110,0.2);">
-                <table class="table table-dark-glass table-hover m-0">
+
+            <div class="table-glass-wrapper">
+                <table class="analytics-table">
                     <thead>
                         <tr>
                             <th>เวลาที่แจ้ง</th>
@@ -216,54 +1138,68 @@
                         </tr>
                     </thead>
                     <tbody id="paymentsTableBody">
-                        <tr><td colspan="6" class="text-center py-4" style="color: #CBD5E1;">กำลังโหลดข้อมูล...</td></tr>
+                        <tr><td colspan="6" style="text-align:center; padding:24px; color:var(--text-muted);">กำลังโหลดข้อมูลสลิปโอนเงิน...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- จัดการฐานข้อมูลพจนานุกรมตั้งชื่อมงคล -->
-        <div class="admin-glass-card">
-            <h5 class="font-weight-bold mb-2" style="color: #FFF0A8;">
-                <i class="fas fa-book mr-2 text-warning"></i> จัดการพจนานุกรมตั้งชื่อมงคล
-            </h5>
-            <p style="color: #CBD5E1; font-size: 0.88rem;">เพิ่มคำศัพท์ใหม่สำหรับระบบคำนวณและสร้างชื่อมงคล (Name Generator)</p>
-            
-            <form id="addVocabForm" class="row mt-3">
-                <div class="col-md-3 mb-3">
-                    <label for="vocabType" class="text-white-50 small font-weight-bold">ประเภทคำ (Type)</label>
-                    <select id="vocabType" class="form-control form-control-sleek" required>
-                        <option value="prefixes">คำขึ้นต้น (Prefix)</option>
-                        <option value="middles">คำกลาง (Middle)</option>
-                        <option value="suffixes">คำลงท้าย (Suffix)</option>
-                    </select>
+        <!-- 📖 จัดการฐานข้อมูลพจนานุกรมตั้งชื่อมงคล -->
+        <div class="dash-card">
+            <div class="card-header-flex">
+                <div>
+                    <h3>
+                        <i class="fas fa-book-bookmark" style="color: var(--accent-purple);"></i>
+                        จัดการพจนานุกรมตั้งชื่อมงคล
+                    </h3>
+                    <p>เพิ่มคำศัพท์ใหม่สำหรับคลังข้อมูลระบบคำนวณและสร้างชื่อมงคลตามหลักทักษาปกรณ์ (Name Generator)</p>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <label for="vocabWord" class="text-white-50 small font-weight-bold">คำศัพท์ (Word)</label>
-                    <input type="text" id="vocabWord" class="form-control form-control-sleek" required placeholder="เช่น ธน">
+                <span class="card-badge" style="color: var(--accent-purple);">
+                    <i class="fas fa-database"></i> ฐานข้อมูลคำมงคล
+                </span>
+            </div>
+
+            <!-- Form เพิ่มคำศัพท์ -->
+            <form id="addVocabForm" class="mb-4">
+                <div class="form-grid-row">
+                    <div class="form-group-item">
+                        <label for="vocabType">ประเภทคำ (Type)</label>
+                        <select id="vocabType" class="input-sleek" required>
+                            <option value="prefixes">คำขึ้นต้น (Prefix)</option>
+                            <option value="middles">คำกลาง (Middle)</option>
+                            <option value="suffixes">คำลงท้าย (Suffix)</option>
+                        </select>
+                    </div>
+                    <div class="form-group-item">
+                        <label for="vocabWord">คำศัพท์ (Word)</label>
+                        <input type="text" id="vocabWord" class="input-sleek" required placeholder="เช่น ธน, วร, กิตติ">
+                    </div>
+                    <div class="form-group-item">
+                        <label for="vocabMeaning">ความหมาย (Meaning)</label>
+                        <input type="text" id="vocabMeaning" class="input-sleek" required placeholder="เช่น ทรัพย์สมบัติ, ประเสริฐ">
+                    </div>
+                    <div class="form-group-item">
+                        <button type="submit" class="btn-modern-gold" style="width: 100%; justify-content: center; height: 42px;">
+                            <i class="fas fa-plus"></i> เพิ่มคำศัพท์
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="vocabMeaning" class="text-white-50 small font-weight-bold">ความหมาย (Meaning)</label>
-                    <input type="text" id="vocabMeaning" class="form-control form-control-sleek" required placeholder="เช่น ทรัพย์สมบัติ">
-                </div>
-                <div class="col-md-2 mb-3 d-flex align-items-end">
-                    <button type="submit" class="btn-gold-sm w-100" style="height: 38px;">
-                        <i class="fas fa-plus"></i> เพิ่มคำศัพท์
-                    </button>
-                </div>
-                <div class="col-12">
-                    <span id="vocabStatus" class="text-success font-weight-bold small"></span>
+                <div>
+                    <span id="vocabStatus" class="small font-weight-bold" style="color: var(--accent-green);"></span>
                 </div>
             </form>
 
-            <hr style="border-color: rgba(241,208,110,0.15); margin: 20px 0;">
+            <hr style="border-color: var(--border-color); margin: 20px 0;">
 
             <!-- รายการคำศัพท์ปัจจุบัน -->
-            <h6 class="font-weight-bold mb-3" style="color: #FFF0A8;">
-                <i class="fas fa-list mr-2 text-warning"></i> รายการคำศัพท์ในฐานข้อมูล
-            </h6>
-            <div class="table-responsive" style="border-radius: 12px; border: 1px solid rgba(241,208,110,0.2);">
-                <table class="table table-dark-glass table-hover m-0">
+            <div class="card-header-flex mb-3">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">
+                    <i class="fas fa-list-check mr-2 text-warning"></i> รายการคำศัพท์ในฐานข้อมูลปัจจุบัน
+                </h4>
+            </div>
+
+            <div class="table-glass-wrapper">
+                <table class="analytics-table">
                     <thead>
                         <tr>
                             <th>ประเภท</th>
@@ -274,16 +1210,167 @@
                         </tr>
                     </thead>
                     <tbody id="vocabTableBody">
-                        <tr><td colspan="5" class="text-center py-3 text-white-50">กำลังโหลด...</td></tr>
+                        <tr><td colspan="5" style="text-align:center; padding:24px; color:var(--text-muted);">กำลังโหลดข้อมูลคำศัพท์...</td></tr>
                     </tbody>
                 </table>
             </div>
-        </div>
+        </section>
 
-    </div>
+        <!-- ========================================== -->
+        <!-- TAB 2: แดชบอร์ดสมาชิก (Member Analytics)     -->
+        <!-- ========================================== -->
+        <section id="tab-members" class="admin-tab-pane">
+            <div class="tab-frame-container">
+                <iframe id="frameMembers" data-src="member-dashboard.html" title="แดชบอร์ดสมาชิก"></iframe>
+            </div>
+        </section>
 
-    <!-- SweetAlert2 -->
-    <script charset="UTF-8" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <!-- ========================================== -->
+        <!-- TAB 3: ดวงประจำวัน & ดาวจร (Daily Horoscope) -->
+        <!-- ========================================== -->
+        <section id="tab-daily" class="admin-tab-pane">
+            <div class="tab-frame-container">
+                <iframe id="frameDaily" data-src="daily-horoscope-dashboard.html" title="ดวงประจำวัน & ดาวจร"></iframe>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: สิทธิ์แพ็กเกจ (Package Permissions)   -->
+        <!-- ========================================== -->
+        <section id="tab-packages" class="admin-tab-pane">
+            <div class="tab-frame-container">
+                <iframe id="framePackages" data-src="package-permissions.html" title="จัดการสิทธิ์แพ็กเกจ"></iframe>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: ให้ฤกษ์สมาคมโหรฯ (Luang Wuthi Reux)  -->
+        <!-- ========================================== -->
+        <section id="tab-luang-wuthi" class="admin-tab-pane">
+            <div class="tab-frame-container">
+                <iframe id="frameLuangWuthi" data-src="luang-wuthi-reux.html" title="ให้ฤกษ์สมาคมโหรฯ"></iframe>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 6: กาลจักรจรวิภาค (Kalachakra Wiphak)   -->
+        <!-- ========================================== -->
+        <section id="tab-kalachakra" class="admin-tab-pane">
+            <div class="tab-frame-container">
+                <iframe id="frameKalachakra" data-src="../pages/kalachakra-wiphak.html" title="กาลจักรจรวิภาค"></iframe>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 7: Lifetime Reports                     -->
+        <!-- ========================================== -->
+        <section id="tab-lifetime" class="admin-tab-pane">
+            <div class="tab-frame-container">
+                <iframe id="frameLifetime" data-src="lifetime-report.html" title="รายงานดวงชะตาตลอดชีพ"></iframe>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Theme & Live Date Scripts -->
+    <script>
+        function updateLiveDateBadge() {
+            const badge = document.getElementById('liveDateBadge');
+            if (badge) {
+                const now = new Date();
+                const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+                const day = now.getDate().toString().padStart(2, '0');
+                const month = thaiMonths[now.getMonth()];
+                const year = now.getFullYear() + 543;
+                badge.innerHTML = `<i class="far fa-calendar-alt"></i> วันนี้ · ${day} ${month} ${year}`;
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('horo_analytics_theme', newTheme);
+
+            const btnLight = document.getElementById('btnThemeLight');
+            const btnDark = document.getElementById('btnThemeDark');
+            if (btnLight && btnDark) {
+                btnLight.classList.toggle('active', newTheme === 'light');
+                btnDark.classList.toggle('active', newTheme === 'dark');
+            }
+        }
+
+        // ===== SINGLE PAGE TAB SWITCHING LOGIC =====
+        function switchAdminTab(tabKey, clickedElement) {
+            if (!tabKey) tabKey = 'console';
+
+            // Hide all tab panes
+            const panes = document.querySelectorAll('.admin-tab-pane');
+            panes.forEach(p => p.classList.remove('active'));
+
+            // Show selected tab pane
+            const targetPane = document.getElementById('tab-' + tabKey);
+            if (targetPane) {
+                targetPane.classList.add('active');
+
+                // Lazy load iframe if inside pane
+                const iframe = targetPane.querySelector('iframe[data-src]');
+                if (iframe && !iframe.getAttribute('src')) {
+                    iframe.setAttribute('src', iframe.getAttribute('data-src'));
+                }
+            }
+
+            // Update active state in sidebar menu
+            const tabs = document.querySelectorAll('.sidebar-nav-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            } else {
+                const matchingTab = document.querySelector(`.sidebar-nav-tab[data-tab="${tabKey}"]`);
+                if (matchingTab) matchingTab.classList.add('active');
+            }
+
+            // Update URL hash without jumping
+            if (history.replaceState) {
+                history.replaceState(null, null, '#' + tabKey);
+            } else {
+                location.hash = '#' + tabKey;
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Init theme & tab on load
+        (function() {
+            const savedTheme = localStorage.getItem('horo_analytics_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const btnLight = document.getElementById('btnThemeLight');
+            const btnDark = document.getElementById('btnThemeDark');
+            if (btnLight && btnDark) {
+                btnLight.classList.toggle('active', savedTheme === 'light');
+                btnDark.classList.toggle('active', savedTheme === 'dark');
+            }
+            updateLiveDateBadge();
+
+            // Handle initial URL hash
+            const currentHash = (location.hash || '').replace('#', '').trim();
+            if (currentHash && document.getElementById('tab-' + currentHash)) {
+                switchAdminTab(currentHash);
+            }
+        })();
+
+        // Listen for browser back/forward buttons
+        window.addEventListener('hashchange', () => {
+            const hash = (location.hash || '').replace('#', '').trim();
+            if (hash && document.getElementById('tab-' + hash)) {
+                switchAdminTab(hash);
+            } else if (!hash) {
+                switchAdminTab('console');
+            }
+        });
+    </script>
 
     <!-- Firebase Scripts -->
     <script charset="UTF-8" src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>

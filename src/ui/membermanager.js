@@ -6,7 +6,7 @@ let currentMemberId = null;  // ← เพิ่มบรรทัดนี้
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
     getFirestore, collection, addDoc, getDocs,
-    query, where, orderBy, deleteDoc, doc, limit
+    query, where, orderBy, deleteDoc, updateDoc, doc, limit
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // 2. การตั้งค่า Firebase (นำข้อมูลจาก Firebase Console ของคุณมาใส่ที่นี่)
@@ -184,22 +184,33 @@ function updateAllMemberSelectors(allHistory) {
             select.appendChild(option);
         });
 
-        // กำหนดค่ากลับ: ถ้ามี currentVal เดิมให้คงไว้ ถ้าไม่มีและเป็นสมาชิกทั่วไปให้เลือก defaultMemberVal อัตโนมัติ
-        if (currentVal) {
+        // กำหนดค่ากลับ: ถ้ามี currentVal เดิมและยังมีอยู่ในตัวเลือก ให้คงไว้
+        if (currentVal && history.some(m => (m.memberId || m.birthdate) === currentVal)) {
             select.value = currentVal;
         } else if (defaultMemberVal) {
             select.value = defaultMemberVal;
+        } else {
+            select.value = '';
         }
     });
 
     // หากเป็น User ทั่วไป และมีค่า defaultMemberVal ให้อัปเดต window.currentMemberId และเรียก autoFillMemberData อัตโนมัติ
-    if (!canViewAll && defaultMemberVal) {
-        window.currentMemberId = defaultMember.memberId || defaultMemberVal;
-        if (typeof autoFillMemberData === 'function') {
-            try {
-                autoFillMemberData(defaultMemberVal);
-            } catch (err) {
-                console.warn("Auto-fill member data error:", err);
+    if (!canViewAll) {
+        if (defaultMemberVal) {
+            window.currentMemberId = defaultMember.memberId || defaultMemberVal;
+            if (typeof autoFillMemberData === 'function') {
+                try {
+                    autoFillMemberData(defaultMemberVal);
+                } catch (err) {
+                    console.warn("Auto-fill member data error:", err);
+                }
+            }
+        } else {
+            // หากไม่มีข้อมูลของตนเอง (ผู้ใช้ใหม่) เคลียร์ฟอร์มและค่า currentMemberId ทันที
+            window.currentMemberId = null;
+            window.currentActiveProfile = null;
+            if (typeof clearAllFormFields === 'function') {
+                try { clearAllFormFields(); } catch (e) {}
             }
         }
     }
@@ -420,18 +431,14 @@ function loadLastProfileFromStorage() {
         if (profile && profile.birthdate) return profile;
     }
 
-    // Fallback 2: ตรวจสอบจากประวัติ horo_history หรือ loadAllAvailableProfiles
-    if (typeof window.loadAllAvailableProfiles === 'function') {
-        const all = window.loadAllAvailableProfiles();
-        if (Array.isArray(all) && all.length > 0) {
-            return all[0];
-        }
-    }
-
+    // Fallback 2: ตรวจสอบจากประวัติ horo_history ของผู้ใช้ปัจจุบันเท่านั้น
     try {
-        const history = JSON.parse(localStorage.getItem('horo_history')) || [];
-        if (history.length > 0) {
-            return history[0];
+        const allHistory = JSON.parse(localStorage.getItem('horo_history')) || [];
+        const userHistory = (typeof filterHistoryByCurrentUser === 'function')
+            ? filterHistoryByCurrentUser(allHistory)
+            : allHistory;
+        if (userHistory.length > 0) {
+            return userHistory[0];
         }
     } catch (e) {}
 
@@ -976,8 +983,9 @@ function filterHistoryByCurrentUser(allHistory) {
 
     const currentUser = typeof getCurrentUsername === 'function' ? getCurrentUsername() : null;
 
+    // 🔒 ถ้ายังไม่ได้ล็อกอิน: ป้องกันไม่ให้เห็นหรือเลือกประวัติของคนอื่น
     if (!currentUser) {
-        return allHistory; // ถ้ายังไม่ได้ล็อกอิน คืนประวัติในเครื่องทั้งหมด
+        return [];
     }
 
     const canViewAll = typeof canViewAllMembers === 'function' ? canViewAllMembers() : (typeof isAdmin === 'function' && isAdmin());
@@ -985,7 +993,12 @@ function filterHistoryByCurrentUser(allHistory) {
     if (canViewAll) {
         return allHistory;
     } else {
-        return allHistory.filter(item => item && ((item.username || item.name) === currentUser));
+        const cleanUser = currentUser.toLowerCase();
+        return allHistory.filter(item => {
+            if (!item) return false;
+            const itemUser = (item.username || '').toLowerCase();
+            return itemUser === cleanUser;
+        });
     }
 }
 
@@ -1385,6 +1398,8 @@ function showProfilePage(data, memberId) {
     const monthPredFn = typeof getMonthPrediction === 'function' ? getMonthPrediction : (typeof window !== 'undefined' ? window.getMonthPrediction : null);
     const zodiacPredFn = typeof getZodiacPrediction === 'function' ? getZodiacPrediction : (typeof window !== 'undefined' ? window.getZodiacPrediction : null);
 
+    window.currentActiveProfile = data;
+
     // 8. แสดงผลแผ่นดวงชะตา (ธีม Modern Cute Pastel Claymorphism & Royal Gold)
     predictionArea.innerHTML = `
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3" style="border-bottom: 2px dashed #ece7f8; gap: 12px;">
@@ -1394,6 +1409,9 @@ function showProfilePage(data, memberId) {
                 </span>
             </div>
             <div class="d-flex align-items-center flex-wrap" style="gap: 10px;">
+                <button class="btn-cute-action" style="background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);" onclick="if(typeof openEditProfileModal === 'function') openEditProfileModal();" title="แก้ไขข้อมูลดวงชะตาส่วนบุคคล">
+                    <i class="fas fa-user-edit"></i> แก้ไขข้อมูลดวง
+                </button>
                 ${(typeof isAdmin === 'function' && isAdmin()) || role === 'admin' ? `
                 <button class="btn-cute-action" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);" onclick="if(typeof openAdminTierSimulatorModal === 'function') openAdminTierSimulatorModal();" title="แผงจำลองระดับสมาชิกสำหรับทดสอบระบบ">
                     <i class="fas fa-flask"></i> 🧪 ทดสอบระดับสมาชิก
@@ -1605,9 +1623,19 @@ function initProfileOnPageLoad() {
     const lastData = loadLastProfileFromStorage();
     
     if (lastData && lastData.birthdate) {
-        // ✅ ส่งเป็น object ที่มี memberId อยู่
-        showProfilePage(lastData);
-        console.log("✅ โหลดโปรไฟล์: " + lastData.name);
+        // ตรวจสอบว่าผู้ใช้อยู่ที่หน้า profilePage หรือตั้งใจเปิดหน้า profile หรือไม่
+        const hash = window.location.hash;
+        const savedPage = localStorage.getItem('currentPage');
+        const shouldShow = (hash === '#profilePage' || savedPage === 'profilePage');
+
+        if (shouldShow) {
+            showProfilePage(lastData);
+            console.log("✅ โหลดและแสดงโปรไฟล์: " + lastData.name);
+        } else {
+            // เพียงเตรียมข้อมูลไว้เบื้องหลัง โดยไม่บังคับเปิดหน้า profilePage บังหน้าหลัก
+            window.currentActiveProfile = lastData;
+            console.log("✅ โหลดข้อมูลโปรไฟล์พร้อมใช้งาน: " + lastData.name);
+        }
     }
 }
 
@@ -1830,17 +1858,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function getProfileByMemberId(identifier) {
     try {
-        const history = JSON.parse(localStorage.getItem('horo_history')) || [];
+        const allHistory = JSON.parse(localStorage.getItem('horo_history')) || [];
+        const history = (typeof filterHistoryByCurrentUser === 'function')
+            ? filterHistoryByCurrentUser(allHistory)
+            : allHistory;
 
         let profile = history.find(item => item.memberId === identifier);
         if (!profile) profile = history.find(item => item.username === identifier);
         if (!profile) profile = history.find(item => item.name === identifier);
         if (!profile) profile = history.find(item => item.id === identifier);
-
-        if (!profile && typeof window.loadAllAvailableProfiles === 'function') {
-            const allProfiles = window.loadAllAvailableProfiles();
-            profile = allProfiles.find(item => String(item.memberId) === String(identifier) || String(item.id) === String(identifier) || String(item.birthdate) === String(identifier) || item.name === identifier);
-        }
 
         return profile || null;
     } catch (e) {
@@ -2783,3 +2809,296 @@ window.submitPayment = async function() {
         Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง', 'error');
     }
 };
+
+// ===================================================
+// EDIT PROFILE MODAL & UPDATE HANDLER
+// ===================================================
+
+// รายชื่อ 77 จังหวัดของประเทศไทย
+const THAI_PROVINCES = [
+    "กรุงเทพมหานคร", "กระบี่", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี", "ฉะเชิงเทรา",
+    "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่", "ตรัง", "ตราด",
+    "ตาก", "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช", "นครสวรรค์", "นนทบุรี",
+    "นราธิวาส", "น่าน", "บึงกาฬ", "บุรีรัมย์", "ปทุมธานี", "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี",
+    "พระนครศรีอยุธยา", "พะเยา", "พังงา", "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบุรี", "เพชรบูรณ์",
+    "แพร่", "ภูเก็ต", "มหาสารคาม", "มุกดาหาร", "แม่ฮ่องสอน", "ยโสธร", "ยะลา", "ร้อยเอ็ด",
+    "ระนอง", "ระยอง", "ราชบุรี", "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ",
+    "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ", "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี",
+    "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อ่างทอง",
+    "อำนาจเจริญ", "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี"
+];
+
+// หน้าต่างแก้ไขข้อมูลโปรไฟล์ / ดวงชะตา
+window.openEditProfileModal = function() {
+    let profile = window.currentActiveProfile;
+    if (!profile) {
+        profile = (typeof loadLastProfileFromStorage === 'function') ? loadLastProfileFromStorage() : null;
+    }
+    if (!profile) {
+        Swal.fire('แจ้งเตือน', 'ไม่พบข้อมูลโปรไฟล์ที่ต้องการแก้ไข', 'warning');
+        return;
+    }
+
+    // แปลงวันเกิดให้อยู่ในฟอร์แมต YYYY-MM-DD สำหรับ <input type="date">
+    let dateVal = '';
+    if (profile.birthdate) {
+        if (profile.birthdate.includes('/')) {
+            const parts = profile.birthdate.split('/');
+            if (parts.length === 3) {
+                const d = parts[0].padStart(2, '0');
+                const m = parts[1].padStart(2, '0');
+                let y = parseInt(parts[2], 10);
+                if (y > 2400) y -= 543;
+                dateVal = `${y}-${m}-${d}`;
+            }
+        } else if (profile.birthdate.includes('-')) {
+            dateVal = profile.birthdate.split('T')[0];
+        }
+    }
+
+    let timeVal = profile.birthtime || '12:00';
+    if (timeVal.includes('T')) {
+        timeVal = timeVal.split('T')[1].substring(0, 5);
+    } else {
+        timeVal = timeVal.substring(0, 5);
+    }
+
+    const currentProvince = (profile.province || 'กรุงเทพมหานคร').trim();
+    const currentGender = profile.gender || '';
+    const currentDayjanta = profile.dayjanta ? String(profile.dayjanta) : '1';
+    const currentThaiMonth = profile.birthMonththai ? String(profile.birthMonththai) : '';
+    const currentThaiId = profile.ThaiId || '';
+
+    // สร้างตัวเลือกจังหวัด 77 จังหวัด
+    const provinceOptions = THAI_PROVINCES.map(p => {
+        const isSel = (p === currentProvince || (currentProvince && p.includes(currentProvince)) || (currentProvince && currentProvince.includes(p)));
+        return `<option value="${escapeHTML(p)}" ${isSel ? 'selected' : ''}>${escapeHTML(p)}</option>`;
+    }).join('');
+
+    // สร้างตัวเลือกดิถีจันทรคติ 1-30 ค่ำ
+    const lunarOptions = Array.from({ length: 30 }, (_, i) => {
+        const val = i + 1;
+        const label = val <= 15 ? `ขึ้น ${val} ค่ำ` : `แรม ${val - 15} ค่ำ`;
+        const isSel = String(val) === currentDayjanta;
+        return `<option value="${val}" ${isSel ? 'selected' : ''}>${label}</option>`;
+    }).join('');
+
+    const htmlContent = `
+        <div style="text-align: left; font-size: 0.92rem; color: #333; max-height: 68vh; overflow-y: auto; padding-right: 6px;">
+            <div style="font-weight: 700; color: #4338ca; border-bottom: 1.5px solid #e0e7ff; padding-bottom: 4px; margin-bottom: 10px;">
+                <i class="fas fa-user-circle mr-1"></i> ๑. ข้อมูลทั่วไป
+            </div>
+            <div class="row">
+                <div class="col-6 form-group mb-2 pr-1">
+                    <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="fas fa-user mr-1 text-primary"></i> ชื่อจริง:</label>
+                    <input type="text" id="swal_edit_name" class="form-control form-control-sm" value="${escapeHTML(profile.name || '')}" placeholder="ชื่อจริง">
+                </div>
+                <div class="col-6 form-group mb-2 pl-1">
+                    <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="far fa-user mr-1 text-primary"></i> นามสกุล:</label>
+                    <input type="text" id="swal_edit_lastName" class="form-control form-control-sm" value="${escapeHTML(profile.lastName || '')}" placeholder="นามสกุล">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group mb-2 pr-1">
+                    <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="fas fa-venus-mars mr-1 text-info"></i> เพศสภาพ:</label>
+                    <select id="swal_edit_gender" class="form-control form-control-sm">
+                        <option value="">-- ไม่ระบุ --</option>
+                        <option value="ชาย" ${currentGender === 'ชาย' || currentGender === 'male' ? 'selected' : ''}>ชาย</option>
+                        <option value="หญิง" ${currentGender === 'หญิง' || currentGender === 'female' ? 'selected' : ''}>หญิง</option>
+                    </select>
+                </div>
+                <div class="col-6 form-group mb-2 pl-1">
+                    <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="fas fa-map-marker-alt mr-1 text-danger"></i> จังหวัดที่เกิด:</label>
+                    <select id="swal_edit_province" class="form-control form-control-sm">
+                        ${provinceOptions}
+                    </select>
+                </div>
+            </div>
+
+            <div style="font-weight: 700; color: #0284c7; border-bottom: 1.5px solid #e0f2fe; padding-bottom: 4px; margin-top: 12px; margin-bottom: 10px;">
+                <i class="fas fa-calendar-day mr-1"></i> ๒. วัน-เวลาตกฟาก (สุริยคติ)
+            </div>
+            <div class="row">
+                <div class="col-6 form-group mb-2 pr-1">
+                    <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="far fa-calendar-alt mr-1 text-danger"></i> วันเกิด (ค.ศ.):</label>
+                    <input type="date" id="swal_edit_birthdate" class="form-control form-control-sm" value="${dateVal}">
+                </div>
+                <div class="col-6 form-group mb-2 pl-1">
+                    <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="far fa-clock mr-1 text-warning"></i> เวลาเกิด (น.):</label>
+                    <input type="time" id="swal_edit_birthtime" class="form-control form-control-sm" value="${timeVal}">
+                </div>
+            </div>
+
+            <div style="font-weight: 700; color: #d97706; border-bottom: 1.5px solid #fef3c7; padding-bottom: 4px; margin-top: 12px; margin-bottom: 10px;">
+                <i class="fas fa-moon mr-1"></i> ๓. ข้อมูลจันทรคติ & เลขศาสตร์
+            </div>
+            <div class="row">
+                <div class="col-6 form-group mb-2 pr-1">
+                    <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="fas fa-moon mr-1 text-warning"></i> ดิถีขึ้น/แรม:</label>
+                    <select id="swal_edit_dayjanta" class="form-control form-control-sm">
+                        ${lunarOptions}
+                    </select>
+                </div>
+                <div class="col-6 form-group mb-2 pl-1">
+                    <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="fas fa-calendar-alt mr-1 text-warning"></i> เดือนไทย (๑–๑๒):</label>
+                    <input type="number" id="swal_edit_birthMonththai" class="form-control form-control-sm" min="1" max="12" value="${escapeHTML(currentThaiMonth)}" placeholder="เช่น 5">
+                </div>
+            </div>
+            <div class="form-group mb-1">
+                <label style="font-weight: 600; color: #374151; font-size: 0.85rem;"><i class="fas fa-id-card mr-1 text-success"></i> เลขประจำตัว 13 หลัก (เลขศาสตร์):</label>
+                <input type="text" id="swal_edit_ThaiId" class="form-control form-control-sm" maxlength="13" value="${escapeHTML(currentThaiId)}" placeholder="เลขประจำตัว 13 หลัก">
+            </div>
+        </div>
+    `;
+
+    Swal.fire({
+        title: '<span style="color:#4c1d95; font-size:1.35rem; font-weight:800;"><i class="fas fa-user-edit text-primary"></i> แก้ไขข้อมูลดวงชะตา</span>',
+        html: htmlContent,
+        width: '540px',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-save mr-1"></i> บันทึกข้อมูล',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#4f46e5',
+        cancelButtonColor: '#6b7280',
+        focusConfirm: false,
+        preConfirm: () => {
+            const name = document.getElementById('swal_edit_name').value.trim();
+            const lastName = document.getElementById('swal_edit_lastName').value.trim();
+            const bDate = document.getElementById('swal_edit_birthdate').value;
+            const bTime = document.getElementById('swal_edit_birthtime').value;
+            const gender = document.getElementById('swal_edit_gender').value;
+            const province = document.getElementById('swal_edit_province').value.trim() || 'กรุงเทพมหานคร';
+            const dayjanta = document.getElementById('swal_edit_dayjanta').value;
+            const birthMonththai = document.getElementById('swal_edit_birthMonththai').value.trim();
+            const ThaiId = document.getElementById('swal_edit_ThaiId').value.trim();
+
+            if (!name) {
+                Swal.showValidationMessage('กรุณาระบุชื่อจริง');
+                return false;
+            }
+            if (!bDate) {
+                Swal.showValidationMessage('กรุณาเลือกวันเกิด');
+                return false;
+            }
+            if (!bTime) {
+                Swal.showValidationMessage('กรุณาเลือกเวลาเกิด');
+                return false;
+            }
+
+            return { name, lastName, bDate, bTime, gender, province, dayjanta, birthMonththai, ThaiId };
+        }
+    }).then(async (result) => {
+        if (!result.isConfirmed || !result.value) return;
+
+        const val = result.value;
+        const [y, m, d] = val.bDate.split('-');
+        const thYear = parseInt(y, 10) + 543;
+        const formattedBirthdate = `${d}/${m}/${thYear}`;
+
+        let birthDateObj = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
+        let zodiacName = "ไม่ระบุ";
+        if (typeof getThaiZodiac === 'function') {
+            const z = getThaiZodiac(birthDateObj);
+            if (z && z.name) zodiacName = z.name;
+        }
+
+        const yamVal = typeof getYarmFromTime === 'function' ? getYarmFromTime(val.bTime) : "ไม่ระบุ";
+
+        // อัปเดต Object ข้อมูลโปรไฟล์
+        profile.name = val.name;
+        profile.lastName = val.lastName;
+        profile.birthdate = formattedBirthdate;
+        profile.birthMonththai = val.birthMonththai || m;
+        profile.birthDaythai = birthDateObj.getDay().toString();
+        profile.birthtime = val.bTime;
+        profile.gender = val.gender;
+        profile.province = val.province;
+        profile.dayjanta = val.dayjanta;
+        profile.ThaiId = val.ThaiId;
+        profile.zodiac = zodiacName;
+        profile.yam = yamVal;
+        profile.updatedAt = new Date().toISOString();
+
+        // 1. บันทึกลง SingleProfileManager
+        if (typeof SingleProfileManager !== 'undefined' && SingleProfileManager.save) {
+            SingleProfileManager.save(profile);
+        }
+
+        // 2. อัปเดตใน horo_history ของ localStorage
+        try {
+            let history = JSON.parse(localStorage.getItem('horo_history')) || [];
+            let updated = false;
+            if (profile.id) {
+                history = history.map(item => item.id === profile.id ? { ...item, ...profile } : item);
+                updated = true;
+            } else if (profile.memberId) {
+                history = history.map(item => item.memberId === profile.memberId ? { ...item, ...profile } : item);
+                updated = true;
+            }
+            if (!updated) {
+                history.unshift(profile);
+            }
+            localStorage.setItem('horo_history', JSON.stringify(history));
+        } catch (e) {
+            console.error("Error updating history in localStorage:", e);
+        }
+
+        // 3. ซิงค์กับ canonical storage
+        localStorage.setItem('userBirthdate', formattedBirthdate);
+        localStorage.setItem('userBirthTime', val.bTime);
+        localStorage.setItem('userName', val.name);
+
+        // 4. บันทึก/อัปเดตลง Firestore ถ้ามี doc id หรือเชื่อมต่อ Firestore อยู่
+        try {
+            if (window.firebaseDb && profile.id) {
+                const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                await updateDoc(doc(window.firebaseDb, "horo_history", profile.id), {
+                    name: profile.name,
+                    lastName: profile.lastName,
+                    birthdate: profile.birthdate,
+                    birthtime: profile.birthtime,
+                    birthMonththai: profile.birthMonththai,
+                    birthDaythai: profile.birthDaythai,
+                    province: profile.province,
+                    gender: profile.gender,
+                    dayjanta: profile.dayjanta,
+                    ThaiId: profile.ThaiId,
+                    zodiac: profile.zodiac,
+                    yam: profile.yam,
+                    updatedAt: new Date()
+                });
+            }
+        } catch (err) {
+            console.warn("Could not update Firestore document directly:", err);
+        }
+
+        // 5. ซิงค์ค่าลงฟอร์มหน้าแรก หาก element เหล่านี้มีอยู่ในหน้า
+        const inputMap = {
+            'targetName': val.name,
+            'targetLastName': val.lastName,
+            'birthdate': formattedBirthdate,
+            'birthtime': val.bTime,
+            'targetGender': val.gender === 'หญิง' ? 'female' : 'male',
+            'targetProvince': val.province,
+            'dayjanta': val.dayjanta,
+            'birthMonththai': val.birthMonththai || m,
+            'ThaiId': val.ThaiId
+        };
+        Object.entries(inputMap).forEach(([id, v]) => {
+            const el = document.getElementById(id);
+            if (el && v !== undefined) el.value = v;
+        });
+
+        // 6. แสดงผลหน้าโปรไฟล์ใหม่ทันที
+        window.currentActiveProfile = profile;
+        showProfilePage(profile);
+
+        Swal.fire({
+            icon: 'success',
+            title: 'บันทึกสำเร็จ!',
+            text: 'ข้อมูลดวงชะตาได้รับการปรับปรุงเรียบร้อยแล้ว',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    });
+};

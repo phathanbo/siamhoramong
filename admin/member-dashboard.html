@@ -77,6 +77,25 @@
             overflow-x: hidden;
         }
 
+        /* เมื่อเปิดใน iframe ของ Admin Console ให้ซ่อน Sidebar ซ้ำซ้อนทันที */
+        body.in-iframe,
+        html.in-iframe body {
+            display: block !important;
+            background: transparent !important;
+        }
+
+        body.in-iframe .sidebar,
+        html.in-iframe .sidebar {
+            display: none !important;
+        }
+
+        body.in-iframe .main-wrapper,
+        html.in-iframe .main-wrapper {
+            padding: 16px 20px 32px 20px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
         /* ===== SIDEBAR ===== */
         .sidebar {
             width: 250px;
@@ -630,58 +649,70 @@
             <span class="brand-text">Siam Horamangkol</span>
         </a>
 
-        <div class="nav-section-title">Menu</div>
+        <div class="nav-section-title">ศูนย์ควบคุม (Management)</div>
         <ul class="sidebar-menu">
             <li>
-                <a href="member-dashboard.html" class="active">
-                    <i class="fas fa-chart-pie"></i>
-                    <span>Analytics</span>
-                </a>
-            </li>
-            <li>
-                <a href="daily-horoscope-dashboard.html">
-                    <i class="fas fa-bullhorn" style="color: #ffd700;"></i>
-                    <span>ดวงประจำวัน & ดาวจร</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin-console.html">
-                    <i class="fas fa-users-cog"></i>
+                <a href="admin-console.html#console">
+                    <i class="fas fa-sliders" style="color: var(--accent-gold);"></i>
                     <span>Admin Console</span>
                 </a>
             </li>
             <li>
-                <a href="package-permissions.html">
-                    <i class="fas fa-crown"></i>
+                <a href="member-dashboard.html" class="active">
+                    <i class="fas fa-chart-pie" style="color: var(--accent-primary);"></i>
+                    <span>แดชบอร์ดสมาชิก</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-console.html#daily">
+                    <i class="fas fa-bullhorn" style="color: var(--accent-gold);"></i>
+                    <span>ดวงประจำวัน & ดาวจร</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-console.html#packages">
+                    <i class="fas fa-crown" style="color: #fbbf24;"></i>
                     <span>สิทธิ์แพ็กเกจ</span>
                 </a>
             </li>
             <li>
-                <a href="lifetime-report.html">
-                    <i class="fas fa-scroll"></i>
-                    <span>Lifetime Reports</span>
+                <a href="admin-console.html#luang-wuthi">
+                    <i class="fas fa-dharmachakra" style="color: #f59e0b;"></i>
+                    <span>ให้ฤกษ์สมาคมโหรฯ</span>
                 </a>
             </li>
             <li>
-                <a href="../index.html">
-                    <i class="fas fa-compass"></i>
-                    <span>ห้องพยากรณ์หลัก</span>
+                <a href="admin-console.html#kalachakra">
+                    <i class="fas fa-scroll" style="color: #38bdf8;"></i>
+                    <span>กาลจักรจรวิภาค</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-console.html#lifetime">
+                    <i class="fas fa-file-invoice" style="color: #a855f7;"></i>
+                    <span>Lifetime Reports</span>
                 </a>
             </li>
         </ul>
 
-        <div class="nav-section-title">Settings</div>
+        <div class="nav-section-title">บริการ & นำทาง</div>
         <ul class="sidebar-menu">
             <li>
-                <a href="#" onclick="reloadMemberData(); return false;">
-                    <i class="fas fa-arrows-rotate"></i>
-                    <span>Refresh Data</span>
+                <a href="../pages/thai-horoscope-pro.html">
+                    <i class="fas fa-laptop-code" style="color: #10b981;"></i>
+                    <span>โต๊ะพยากรณ์สำนัก</span>
                 </a>
             </li>
             <li>
                 <a href="../index.html">
-                    <i class="fas fa-right-from-bracket"></i>
-                    <span>Sign Out</span>
+                    <i class="fas fa-house" style="color: #38bdf8;"></i>
+                    <span>หน้าหลักเว็บไซต์</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="reloadMemberData(); return false;">
+                    <i class="fas fa-arrows-rotate"></i>
+                    <span>รีเฟรชข้อมูล</span>
                 </a>
             </li>
         </ul>
@@ -1426,7 +1457,21 @@
             });
         }
 
+        // Check if loaded inside an iframe (e.g. inside admin-console)
+        if (window.self !== window.top) {
+            document.documentElement.classList.add('in-iframe');
+            document.body.classList.add('in-iframe');
+            const sb = document.querySelector('.sidebar');
+            if (sb) sb.style.display = 'none';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            if (window.self !== window.top) {
+                document.documentElement.classList.add('in-iframe');
+                document.body.classList.add('in-iframe');
+                const sb = document.querySelector('.sidebar');
+                if (sb) sb.style.display = 'none';
+            }
             initCharts();
             updateMemberDashboardUI();
         });

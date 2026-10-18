@@ -129,11 +129,10 @@ function buildDashboard() {
 
     let html = '';
 
-    // 1. หมวดหมู่แบบ Modern Filter Pill Tabs ด้านบน (บรรทัดเดียว ไม่แตกแถว)
+    // 1. หมวดหมู่แบบ Minimalist Glass Segmented Bar (แคปซูลแถบแก้ว หรูหรา สะอาดตา)
     html += `
-        <div class="col-12 mb-4">
-            <div class="category-tabs-container d-flex justify-content-center align-items-center" style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 4px 0;">
-                <div class="d-flex align-items-center flex-nowrap" style="gap: 8px; white-space: nowrap;">
+        <div class="col-12 mb-4 d-flex justify-content-center">
+            <div class="category-segmented-bar">
     `;
     categories.forEach(cat => {
         const isActive = cat.id === 'all' ? 'active' : '';
@@ -141,13 +140,12 @@ function buildDashboard() {
             <button type="button" class="category-tab-btn ${isActive}" 
                     data-cat-id="${cat.id}"
                     onclick="switchCategoryTab('${cat.id}')">
-                <i class="fas ${cat.icon} mr-1" style="color: ${cat.color};"></i>
-                <span>${cat.name}</span>
+                <i class="fas ${cat.icon} cat-icon"></i>
+                <span class="cat-label">${cat.name}</span>
             </button>
         `;
     });
     html += `
-                </div>
             </div>
         </div>
     `;
@@ -162,8 +160,23 @@ function buildDashboard() {
         { id: 'numerology', name: '🔤 ชื่อและเลขศาสตร์', color: '#3498db' }
     ];
 
+    // รายการเมนูที่แสดงเฉพาะ Admin เท่านั้น (ซ่อนจากสมาชิกทั่วไป)
+    const adminOnlyMenuIds = ['rattanakosinCityPage'];
+    const isCurrentUserAdmin = (function() {
+        try {
+            const raw = localStorage.getItem('siamhora_auth_session');
+            if (!raw) return false;
+            const session = JSON.parse(raw);
+            return session && (session.role === 'admin' || session.role === 'data_manager');
+        } catch(e) { return false; }
+    })();
+
     realCategories.forEach(cat => {
-        const items = APP_MENU.filter(item => item.category === cat.name && !item.isHubChild);
+        const items = APP_MENU.filter(item =>
+            item.category === cat.name &&
+            !item.isHubChild &&
+            (isCurrentUserAdmin || !adminOnlyMenuIds.includes(item.id))
+        );
         if (items.length === 0) return;
 
         // Group Header
@@ -249,31 +262,65 @@ function buildDashboard() {
         const style = document.createElement('style');
         style.id = 'dashboardStyles';
         style.textContent = `
-            .category-tab-btn {
-                background: rgba(15, 23, 42, 0.65);
-                border: 1px solid rgba(241, 208, 110, 0.25);
-                color: #cbd5e1;
-                padding: 7px 18px;
+            /* ✨ MODERN SEGMENTED BAR (แถบเลือกหมวดหมู่สไตล์เรียบหรู คลีนตา) */
+            .category-segmented-bar {
+                display: inline-flex;
+                align-items: center;
+                background: rgba(13, 20, 36, 0.75);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(241, 208, 110, 0.22);
                 border-radius: 50px;
-                font-size: 0.92rem;
+                padding: 4px;
+                gap: 4px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+                overflow-x: auto;
+                max-width: 100%;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            .category-segmented-bar::-webkit-scrollbar {
+                display: none;
+            }
+            .category-tab-btn {
+                background: transparent;
+                border: 1px solid transparent;
+                color: #94a3b8;
+                padding: 8px 16px;
+                border-radius: 40px;
+                font-size: 0.88rem;
                 font-weight: 500;
                 cursor: pointer;
-                transition: all 0.25s ease;
-                backdrop-filter: blur(10px);
+                transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
                 outline: none;
+                white-space: nowrap;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .category-tab-btn .cat-icon {
+                font-size: 0.82rem;
+                opacity: 0.7;
+                transition: all 0.2s ease;
             }
             .category-tab-btn:hover {
-                border-color: rgba(241, 208, 110, 0.7);
-                color: #fff;
-                transform: translateY(-2px);
-                background: rgba(30, 41, 69, 0.85);
+                color: #f1f5f9;
+                background: rgba(255, 255, 255, 0.06);
+            }
+            .category-tab-btn:hover .cat-icon {
+                opacity: 1;
+                transform: scale(1.1);
             }
             .category-tab-btn.active {
-                background: linear-gradient(135deg, rgba(241, 208, 110, 0.25), rgba(201, 151, 39, 0.35));
-                border-color: #ffd700;
-                color: #ffd700;
-                font-weight: 600;
-                box-shadow: 0 4px 15px rgba(241, 208, 110, 0.2);
+                background: linear-gradient(135deg, #f1d06e 0%, #c99727 100%);
+                color: #0b1220 !important;
+                font-weight: 700;
+                border-color: rgba(255, 255, 255, 0.4);
+                box-shadow: 0 4px 14px rgba(201, 151, 39, 0.35);
+            }
+            .category-tab-btn.active .cat-icon {
+                color: #0b1220 !important;
+                opacity: 1;
             }
             .dashboard-card {
                 background: linear-gradient(145deg, rgba(20, 27, 45, 0.75) 0%, rgba(11, 15, 28, 0.88) 100%) !important;
@@ -375,7 +422,8 @@ function buildDashboard() {
                 .card-icon-wrapper { width: 42px; height: 42px; font-size: 1.3rem; margin-bottom: 6px; }
                 .dashboard-card .card-title { font-size: 0.88rem !important; }
                 .dashboard-card .card-desc { font-size: 0.72rem !important; }
-                .category-tab-btn { font-size: 0.82rem; padding: 6px 12px; }
+                .category-segmented-bar { padding: 3px; gap: 2px; }
+                .category-tab-btn { font-size: 0.8rem; padding: 6px 12px; }
                 .btn-quick-feature { font-size: 0.8rem; padding: 6px 12px; }
             }
         `;

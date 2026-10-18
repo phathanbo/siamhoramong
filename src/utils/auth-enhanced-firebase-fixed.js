@@ -193,8 +193,31 @@ function saveSession(user) {
 }
 
 function clearSession() {
+    // 1. ลบ auth session และ userId
     localStorage.removeItem(AUTH_CONFIG.storageKey);
     localStorage.removeItem('userId');
+    sessionStorage.removeItem('userId');
+
+    // 2. ล้างข้อมูลดวงชะตาและประวัติของคนก่อนหน้า เพื่อไม่ให้ผู้ใช้คนใหม่เห็นหรือเลือกได้
+    localStorage.removeItem('horo_history');
+    localStorage.removeItem('userBirthdate');
+    localStorage.removeItem('userBirthTime');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('currentPage');
+    window.currentMemberId = null;
+    window.currentActiveProfile = null;
+
+    // 3. ล้างคีย์โปรไฟล์ fallback
+    try {
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && (k.startsWith('siamHora_Profile_') || k.startsWith('user_profile_'))) {
+                keysToRemove.push(k);
+            }
+        }
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+    } catch (e) {}
 }
 
 // ===================================================
@@ -548,6 +571,13 @@ async function doLogin() {
                 }
                 if (typeof checkConsentStatus === 'function') {
                     checkConsentStatus();
+                }
+
+                // 🔄 ซิงค์ข้อมูลดวงชะตาของผู้ใช้รายนี้จาก Firestore ทันที
+                if (typeof syncDataFromFirestore === 'function') {
+                    syncDataFromFirestore();
+                } else if (typeof updateAllMemberSelectors === 'function') {
+                    updateAllMemberSelectors();
                 }
             }, 1200);
 
@@ -1002,7 +1032,9 @@ window.navigateToProfile = navigateToProfile;
 function doLogout() {
     if (!confirm('ต้องการออกจากระบบใช่หรือไม่?')) return;
     clearSession();
-    location.reload();
+    localStorage.removeItem('currentPage');
+    window.location.hash = '';
+    window.location.replace('index.html');
 }
 
 function checkAuth() {

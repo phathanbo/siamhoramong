@@ -12,11 +12,12 @@ function checkConsentStatus() {
     // ตรวจสอบว่า user เป็น admin หรือไม่
     let userRole = 'user';
     let username = '';
+    let sessionObj = null;
     if (authSession) {
         try {
-            const session = JSON.parse(authSession);
-            userRole = session.role || 'user';
-            username = session.username || '';
+            sessionObj = JSON.parse(authSession);
+            userRole = sessionObj.role || 'user';
+            username = sessionObj.username || '';
         } catch (e) {
             console.error('Error parsing auth session:', e);
         }
@@ -27,7 +28,7 @@ function checkConsentStatus() {
         return;
     }
     
-    const targetUserId = userId || username;
+    const targetUserId = (userId || username || '').trim();
     if (targetUserId) {
         const userSpecificConsent = localStorage.getItem('pdpaConsent_' + targetUserId.toLowerCase());
         if (userSpecificConsent) {
@@ -37,6 +38,19 @@ function checkConsentStatus() {
                 localStorage.setItem('pdpaConsent', userSpecificConsent);
             }
         }
+    }
+
+    // ตรวจสอบว่าเคยยินยอมใน session หรือ local users list หรือไม่
+    if (!consentGiven && username) {
+        try {
+            const users = JSON.parse(localStorage.getItem('siamhora_users') || '[]');
+            const foundUser = users.find(u => (u.username && u.username.toLowerCase() === username.toLowerCase()));
+            if (foundUser && (foundUser.hasConsented || foundUser.pdpaConsent)) {
+                consentGiven = 'true';
+                localStorage.setItem('pdpaConsent', JSON.stringify({ userId: username, allConsents: true }));
+                localStorage.setItem('pdpaConsent_' + username.toLowerCase(), JSON.stringify({ userId: username, allConsents: true }));
+            }
+        } catch (e) {}
     }
     
     // ถ้ายังไม่ได้ยินยอมและเข้าสู่ระบบแล้ว ให้แสดงฟอร์มยินยอม
@@ -142,7 +156,12 @@ function createConsentOverlay() {
                 <div style="position: absolute; top: -50%; right: -10%; width: 300px; height: 300px; background: rgba(255, 255, 255, 0.1); border-radius: 50%;"></div>
                 <div style="position: absolute; bottom: -50%; left: -5%; width: 250px; height: 250px; background: rgba(255, 255, 255, 0.05); border-radius: 50%;"></div>
                 <h2 style="font-size: 32px; margin: 0 0 12px 0; font-weight: 800; position: relative; z-index: 1; letter-spacing: -0.5px;">🔐 ยืนยันข้อมูลส่วนบุคคล</h2>
-                <p style="margin: 0; opacity: 0.95; font-size: 15px; position: relative; z-index: 1; font-weight: 500;">เราให้ความสำคัญกับความเป็นส่วนตัวของคุณ</p>
+                <p style="margin: 0 0 8px 0; opacity: 0.95; font-size: 15px; position: relative; z-index: 1; font-weight: 500;">เราให้ความสำคัญกับความเป็นส่วนตัวของคุณ</p>
+                <div style="position: relative; z-index: 1;">
+                    <a href="privacy-policy.html" target="_blank" style="color: #ffffff; text-decoration: underline; font-size: 13px; font-weight: 600; opacity: 0.9; background: rgba(0,0,0,0.2); padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-external-link-alt" style="font-size: 11px;"></i> อ่านนโยบายความเป็นส่วนตัวฉบับเต็ม (Privacy Policy)
+                    </a>
+                </div>
             </div>
 
             <!-- Tabs Navigation -->
@@ -162,7 +181,10 @@ function createConsentOverlay() {
                     
                     <div style="margin-bottom: 28px;">
                         <h4 style="font-size: 16px; font-weight: 700; color: #6366f1; margin-bottom: 12px;">บทนำ</h4>
-                        <p style="color: #334155; line-height: 1.8; font-size: 15px;">เว็บไซต์ <strong>สยามโหรามงคล</strong> ("เรา" หรือ "ผู้ให้บริการ") ตระหนักถึงความสำคัญของการคุ้มครองข้อมูลส่วนบุคคลของคุณ แบบฟอร์มนี้มีวัตถุประสงค์เพื่อขอความยินยอมจากคุณในการใช้ข้อมูลส่วนบุคคลของคุณเพื่อให้บริการดูดวงออนไลน์ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)</p>
+                        <p style="color: #334155; line-height: 1.8; font-size: 15px;">
+                            เว็บไซต์ <strong>สยามโหรามงคล</strong> ("เรา" หรือ "ผู้ให้บริการ") ตระหนักถึงความสำคัญของการคุ้มครองข้อมูลส่วนบุคคลของคุณ แบบฟอร์มนี้มีวัตถุประสงค์เพื่อขอความยินยอมจากคุณในการใช้ข้อมูลส่วนบุคคลของคุณเพื่อให้บริการดูดวงออนไลน์ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) ท่านสามารถศึกษาเงื่อนไขโดยละเอียดได้ที่ 
+                            <a href="privacy-policy.html" target="_blank" style="color: #6366f1; font-weight: 700; text-decoration: underline;">หน้านโยบายความเป็นส่วนตัว (Privacy Policy)</a>
+                        </p>
                     </div>
 
                     <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(99, 102, 241, 0.02)); border: 2px solid rgba(99, 102, 241, 0.15); border-radius: 14px; padding: 20px; margin-bottom: 28px;">
@@ -455,7 +477,15 @@ function checkAllConsents() {
 
 // ยินยอมและบันทึก
 function acceptConsent() {
-    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const authSession = localStorage.getItem('siamhora_auth_session');
+    let sessionUsername = '';
+    if (authSession) {
+        try {
+            const s = JSON.parse(authSession);
+            sessionUsername = s.username || '';
+        } catch (e) {}
+    }
+    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId') || sessionUsername;
     
     const consentData = {
         userId: userId,
@@ -472,6 +502,19 @@ function acceptConsent() {
     if (userId) {
         localStorage.setItem('pdpaConsent_' + userId.toLowerCase(), JSON.stringify(consentData));
     }
+    if (sessionUsername) {
+        localStorage.setItem('pdpaConsent_' + sessionUsername.toLowerCase(), JSON.stringify(consentData));
+        // อัปเดตใน siamhora_users
+        try {
+            const users = JSON.parse(localStorage.getItem('siamhora_users') || '[]');
+            const idx = users.findIndex(u => u.username && u.username.toLowerCase() === sessionUsername.toLowerCase());
+            if (idx !== -1) {
+                users[idx].hasConsented = true;
+                users[idx].pdpaConsent = true;
+                localStorage.setItem('siamhora_users', JSON.stringify(users));
+            }
+        } catch (e) {}
+    }
 
     sendConsentToServer(consentData);
 
@@ -486,9 +529,14 @@ function rejectConsent() {
         localStorage.removeItem('userId');
         sessionStorage.removeItem('userId');
         hideConsentOverlay();
-        Swal.fire('แจ้งเตือน', 'คุณได้ปฏิเสธการยินยอม ระบบจะนำคุณออกจากระบบ', 'info').then(() => {
-            window.location.href = 'index.html';
-        });
+        const rootPath = window.location.pathname.includes('/pages/') || window.location.pathname.includes('/admin/') ? '../index.html' : 'index.html';
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('แจ้งเตือน', 'คุณได้ปฏิเสธการยินยอม ระบบจะนำคุณออกจากระบบ', 'info').then(() => {
+                window.location.href = rootPath;
+            });
+        } else {
+            window.location.href = rootPath;
+        }
     }
 }
 

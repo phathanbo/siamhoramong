@@ -744,10 +744,13 @@ function viewKnowledgeDetail(key) {
 
                         <!-- References & Verification -->
                         <div class="wiki-references mt-5 pt-3" style="border-top: 1px solid #a2a9b1;">
-                            <h6 style="color:#000000; font-weight:700;"><i class="fas fa-bookmark mr-2"></i>แหล่งข้อมูลและบรรณานุกรม</h6>
-                            <ol>
+                            <h6 style="color:#000000; font-weight:700;"><i class="fas fa-bookmark mr-2 text-warning"></i>แหล่งข้อมูลและบรรณานุกรมอ้างอิง</h6>
+                            <ol style="padding-left: 20px; font-size: 0.9rem; line-height: 1.7; color: #374151;">
+                                ${Array.isArray(item.references) && item.references.length > 0 ? item.references.map(ref => `<li>${ref}</li>`).join('') : `
                                 <li>หอสมุดมหาโหราศาสตร์ไทย สยามโหรามงคล, <i>สารัตถคัมภีร์และพระเวทโบราณ</i>, หมวด ${item.category}, รหัส ${item.id}.</li>
-                                <li>ระบบการคำนวณตำแหน่งดวงดาวและเกณฑ์พยากรณ์, สถาบันโหราศาสตร์ไทยมาตรฐาน.</li>
+                                <li>สมาคมโหรแห่งประเทศไทย ในพระบรมราชินูปถัมภ์, <i>แบบเรียนโหราศาสตร์ไทยมาตรฐาน</i>.</li>
+                                <li>ราชบัณฑิตยสภา, <i>พจนานุกรมศัพท์โหราศาสตร์และประเพณีไทย</i>.</li>
+                                `}
                             </ol>
                         </div>
                     </div>
